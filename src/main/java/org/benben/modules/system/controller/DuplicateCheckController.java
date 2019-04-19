@@ -30,11 +30,11 @@ public class DuplicateCheckController {
 
 	/**
 	 * 校验数据是否在系统中是否存在
-	 * 
+	 *
 	 * @return
 	 */
 	@RequestMapping(value = "/check", method = RequestMethod.GET)
-	@ApiOperation("重复校验接口")
+//	@ApiOperation("重复校验接口")
 	public Result<Object> doDuplicateCheck(DuplicateCheckVo duplicateCheckVo, HttpServletRequest request) {
 		Long num = null;
 
