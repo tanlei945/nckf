@@ -1,16 +1,10 @@
 package org.benben.modules.quartz.controller;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import lombok.extern.slf4j.Slf4j;
 import org.benben.common.api.vo.Result;
 import org.benben.common.constant.CommonConstant;
 import org.benben.common.exception.JeecgBootException;
@@ -23,32 +17,21 @@ import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
 import org.jeecgframework.poi.excel.entity.ImportParams;
 import org.jeecgframework.poi.excel.view.JeecgEntityExcelView;
-import org.quartz.CronScheduleBuilder;
-import org.quartz.CronTrigger;
-import org.quartz.Job;
-import org.quartz.JobBuilder;
-import org.quartz.JobDetail;
-import org.quartz.JobKey;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.TriggerBuilder;
-import org.quartz.TriggerKey;
+import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-
-import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Title: Controller
@@ -77,7 +60,7 @@ public class QuartzJobController {
 	 */
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public Result<IPage<QuartzJob>> queryPageList(QuartzJob quartzJob, @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
-			@RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest req) {
+                                                  @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest req) {
 		Result<IPage<QuartzJob>> result = new Result<IPage<QuartzJob>>();
 		QueryWrapper<QuartzJob> queryWrapper = QueryGenerator.initQueryWrapper(quartzJob, req.getParameterMap());
 		Page<QuartzJob> page = new Page<QuartzJob>(pageNo, pageSize);
@@ -193,7 +176,7 @@ public class QuartzJobController {
 	 * @return
 	 */
 	@RequestMapping(value = "/pause", method = RequestMethod.POST)
-	@ApiOperation(value = "暂停定时任务")
+//	@ApiOperation(value = "暂停定时任务")
 	public Result<Object> pauseJob(@RequestBody QuartzJob job) {
 
 		try {
@@ -212,7 +195,7 @@ public class QuartzJobController {
 	 * @return
 	 */
 	@RequestMapping(value = "/resume", method = RequestMethod.POST)
-	@ApiOperation(value = "恢复定时任务")
+//	@ApiOperation(value = "恢复定时任务")
 	public Result<Object> resumeJob(@RequestBody QuartzJob job) {
 
 		try {
@@ -321,7 +304,7 @@ public class QuartzJobController {
 		List<QuartzJob> pageList = quartzJobService.list(queryWrapper);
 		//导出文件名称
 		mv.addObject(NormalExcelConstants.FILE_NAME,"定时任务列表");
-		mv.addObject(NormalExcelConstants.CLASS,QuartzJob.class);
+		mv.addObject(NormalExcelConstants.CLASS, QuartzJob.class);
 		mv.addObject(NormalExcelConstants.PARAMS,new ExportParams("定时任务列表数据","导出人:Jeecg","导出信息"));
 		mv.addObject(NormalExcelConstants.DATA_LIST,pageList);
 		return mv;

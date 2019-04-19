@@ -84,13 +84,13 @@ spring:
         connectionProperties: druid.stat.mergeSql\=true;druid.stat.slowSqlMillis\=5000
       datasource:
         master:
-          url: jdbc:mysql://127.0.0.1:3306/benben-boot?characterEncoding=UTF-8&useUnicode=true&useSSL=false
+          url: jdbc:mysql://127.0.0.1:3306/nckf-boot?characterEncoding=UTF-8&useUnicode=true&useSSL=false
           username: root
           password: root
           driver-class-name: com.mysql.jdbc.Driver
           # 多数据源配置
           #multi-datasource1:
-          #url: jdbc:mysql://localhost:3306/benben-boot2?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true
+          #url: jdbc:mysql://localhost:3306/nckf-boot2?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true
           #username: root
           #password: root
           #driver-class-name: com.mysql.jdbc.Driver
@@ -129,4 +129,9 @@ weiXin:
   appId: wx4efe77aac1e735c6
   appSecret: 5c5de6885810fc002a351c8654809ed6
   token: cloudtop
-  backUrl: http://iqci3m.natappfree.cc/jeecg-boot/api/user/callBack
+  backUrl: http://iqci3m.natappfree.cc/nckf-boot/api/user/callBack
+
+#邮箱
+mail:
+  username: sanshixuxian@163.com
+  password: a75861943

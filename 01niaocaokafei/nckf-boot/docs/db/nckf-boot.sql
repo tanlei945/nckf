@@ -4,13 +4,13 @@ Navicat MySQL Data Transfer
 Source Server         : local
 Source Server Version : 50725
 Source Host           : localhost:3306
-Source Database       : benben-boot
+Source Database       : nckf-boot
 
 Target Server Type    : MYSQL
 Target Server Version : 50725
 File Encoding         : 65001
 
-Date: 2019-04-19 11:28:52
+Date: 2019-04-19 19:40:19
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -1684,6 +1684,15 @@ INSERT INTO sys_log VALUES ('ce7d38598b7a93d16907808bcd13273c', '1', '用户名:
 INSERT INTO sys_log VALUES ('90712d9352527087391ee07b6b27c149', '1', '用户名: admin,登录成功！', null, null, null, '127.0.0.1', null, null, null, null, null, 'benben-boot', '2019-04-19 10:03:38', null, null);
 INSERT INTO sys_log VALUES ('c4ba5e5984b6bbb4e95e7b90aac05dc4', '1', '用户名: 管理员,退出成功！', null, 'admin', '管理员', '127.0.0.1', null, null, null, null, null, 'admin', '2019-04-19 10:03:54', null, null);
 INSERT INTO sys_log VALUES ('bcb01e35aa2b25a9d0f6bc52641da8b2', '1', '用户名: admin,登录成功！', null, null, null, '127.0.0.1', null, null, null, null, null, 'benben-boot', '2019-04-19 11:22:55', null, null);
+INSERT INTO sys_log VALUES ('d5153ac993ef12ad7d52ad2dcd2d4110', '1', '用户名: 管理员,退出成功！', null, 'admin', '管理员', '127.0.0.1', null, null, null, null, null, 'admin', '2019-04-19 11:34:42', null, null);
+INSERT INTO sys_log VALUES ('5d860274f36853f2445a08ecf4278e2d', '1', '用户名: admin,登录成功！', null, null, null, '127.0.0.1', null, null, null, null, null, 'benben-boot', '2019-04-19 11:34:58', null, null);
+INSERT INTO sys_log VALUES ('d462cc4dc0ab9a0cd13befe84cdd4d9f', '1', '用户名: 管理员,退出成功！', null, 'admin', '管理员', '127.0.0.1', null, null, null, null, null, 'admin', '2019-04-19 11:38:02', null, null);
+INSERT INTO sys_log VALUES ('0d6a95dcac427015308f42c00207c4ef', '1', '用户名: admin,登录成功！', null, null, null, '127.0.0.1', null, null, null, null, null, 'benben-boot', '2019-04-19 11:38:06', null, null);
+INSERT INTO sys_log VALUES ('8e16321c09198f5fc05f05e62d19e369', '1', '用户名: admin,登录成功！', null, null, null, '127.0.0.1', null, null, null, null, null, 'benben-boot', '2019-04-19 14:53:50', null, null);
+INSERT INTO sys_log VALUES ('257b91424632b20ee590411cec1a252d', '1', '用户名: admin,登录成功！', null, null, null, '127.0.0.1', null, null, null, null, null, 'benben-boot', '2019-04-19 17:08:12', null, null);
+INSERT INTO sys_log VALUES ('e193fe34571c4f3f883546c0edd5c60b', '1', '用户名: admin,登录成功！', null, null, null, '127.0.0.1', null, null, null, null, null, 'benben-boot', '2019-04-19 18:57:32', null, null);
+INSERT INTO sys_log VALUES ('3f19b3d6cef608895feb6943ec9b7187', '1', '用户名: 管理员,退出成功！', null, 'admin', '管理员', '127.0.0.1', null, null, null, null, null, 'admin', '2019-04-19 18:57:38', null, null);
+INSERT INTO sys_log VALUES ('0ba9821f5dad201dca56940b7d422ed2', '1', '用户名: admin,登录成功！', null, null, null, '127.0.0.1', null, null, null, null, null, 'benben-boot', '2019-04-19 18:57:42', null, null);
 
 -- ----------------------------
 -- Table structure for `sys_permission`
@@ -1748,7 +1757,7 @@ INSERT INTO sys_permission VALUES ('4f66409ef3bbd69c1d80469d6e2a885e', '6e73eb3c
 INSERT INTO sys_permission VALUES ('4f84f9400e5e92c95f05b554724c2b58', '540a2936940846cb98114ffb0d145cb8', '角色列表', '/list/role-list', 'list/RoleList', null, null, '1', null, '4.00', null, null, '1', '1', null, null, null, '2018-12-25 20:34:38', null, null, '0');
 INSERT INTO sys_permission VALUES ('540a2936940846cb98114ffb0d145cb8', '', '列表页', '/list', 'layouts/PageView', null, '/list/query-list', '0', null, '9.00', '0', 'table', '1', '0', '0', null, null, '2018-12-25 20:34:38', 'admin', '2019-03-31 22:20:20', '0');
 INSERT INTO sys_permission VALUES ('54dd5457a3190740005c1bfec55b1c34', 'd7d6e2e4e2934f2c9385a623fd98c6f3', '菜单管理', '/isystem/permission', 'system/PermissionList', null, null, '1', null, '3.00', null, null, '1', '1', null, null, null, '2018-12-25 20:34:38', null, null, '0');
-INSERT INTO sys_permission VALUES ('56f593b9f8be6ac977b2a1f8adde26e8', 'd7d6e2e4e2934f2c9385a623fd98c6f3', '会员管理', '/userinfo/UserList', 'userinfo/UserList', null, null, '1', null, '3.00', '0', null, '1', '1', '0', null, 'admin', '2019-04-18 16:07:44', 'admin', '2019-04-19 11:23:29', '0');
+INSERT INTO sys_permission VALUES ('56f593b9f8be6ac977b2a1f8adde26e8', 'd7d6e2e4e2934f2c9385a623fd98c6f3', '会员管理', '/userinfo/UserList', 'userinfo/UserList', null, null, '1', null, '3.00', '0', null, '1', '1', '0', null, 'admin', '2019-04-18 16:07:44', 'admin', '2019-04-19 14:54:15', '0');
 INSERT INTO sys_permission VALUES ('58857ff846e61794c69208e9d3a85466', '08e6b9dc3c04489c8e1ff2ce6f105aa4', '日志管理', '/isystem/log', 'system/LogList', null, null, '1', null, '1.00', '0', '', '1', '1', '0', null, null, '2018-12-26 10:11:18', 'admin', '2019-04-02 11:38:17', '0');
 INSERT INTO sys_permission VALUES ('5c8042bd6c601270b2bbd9b20bccc68b', '', '消息中心', '/message', 'layouts/RouteView', null, null, '0', null, '6.00', '0', 'message', '1', '0', '0', null, 'admin', '2019-04-09 11:05:04', 'admin', '2019-04-11 19:47:54', '0');
 INSERT INTO sys_permission VALUES ('6531cf3421b1265aeeeabaab5e176e6d', 'e3c13679c73a4f829bcff2aba8fd68b1', '分步表单', '/form/step-form', 'form/stepForm/StepForm', null, null, '1', null, '2.00', null, null, '1', '1', null, null, null, '2018-12-25 20:34:38', null, null, '0');

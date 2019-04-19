@@ -43,11 +43,11 @@ public class LoginController {
 	@Autowired
 	private ISysLogService logService;
 	@Autowired
-    private RedisUtil redisUtil;
-	
+	private RedisUtil redisUtil;
+
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	@ApiOperation("登录接口")
+//	@ApiOperation("登录接口")
 	public Result<JSONObject> login(@RequestBody SysLoginModel sysLoginModel) {
 		Result<JSONObject> result = new Result<JSONObject>();
 		String username = sysLoginModel.getUsername();
@@ -68,9 +68,9 @@ public class LoginController {
 			//生成token
 			String token = JwtUtil.sign(CommonConstant.SIGN_SYS_USER + username, syspassword);
 			redisUtil.set(CommonConstant.PREFIX_USER_TOKEN + token, token);
-			 //设置超时时间
+			//设置超时时间
 			redisUtil.expire(CommonConstant.PREFIX_USER_TOKEN + token, JwtUtil.EXPIRE_TIME/1000);
-			
+
 			JSONObject obj = new JSONObject();
 			obj.put("token", token);
 			obj.put("userInfo", sysUser);
@@ -80,7 +80,7 @@ public class LoginController {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * 退出登录
 	 * @param username
@@ -93,16 +93,16 @@ public class LoginController {
 		SysUser sysUser = (SysUser)subject.getPrincipal();
 		sysBaseAPI.addLog("用户名: "+sysUser.getRealname()+",退出成功！", CommonConstant.LOG_TYPE_1, null);
 		log.info(" 用户名:  "+sysUser.getRealname()+",退出成功！ ");
-	    subject.logout();
+		subject.logout();
 
-	    String token = request.getHeader(DefContants.X_ACCESS_TOKEN);
-	    //清空用户Token缓存
-	    redisUtil.del(CommonConstant.PREFIX_USER_TOKEN + token);
-	    //清空用户角色缓存
-	    redisUtil.del(CommonConstant.PREFIX_USER_ROLE + sysUser.getUsername());
+		String token = request.getHeader(DefContants.X_ACCESS_TOKEN);
+		//清空用户Token缓存
+		redisUtil.del(CommonConstant.PREFIX_USER_TOKEN + token);
+		//清空用户角色缓存
+		redisUtil.del(CommonConstant.PREFIX_USER_ROLE + sysUser.getUsername());
 		return Result.ok("退出登录成功！");
 	}
-	
+
 	/**
 	 * 获取访问量
 	 * @return
