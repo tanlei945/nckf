@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50725
 File Encoding         : 65001
 
-Date: 2019-04-19 09:14:20
+Date: 2019-04-19 11:28:52
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -1680,6 +1680,10 @@ INSERT INTO sys_log VALUES ('5ebd553b5bf61fea9d2fac89a90d02b0', '1', '用户名:
 INSERT INTO sys_log VALUES ('21e03bf77f85db9c014da762113c1bb8', '1', '用户名: admin,登录成功！', null, null, null, '127.0.0.1', null, null, null, null, null, 'benben-boot', '2019-04-18 18:43:45', null, null);
 INSERT INTO sys_log VALUES ('fe58dc2a6f8b0d07790af2c0478cd3a9', '1', '用户名: admin,登录成功！', null, null, null, '127.0.0.1', null, null, null, null, null, 'benben-boot', '2019-04-18 18:54:47', null, null);
 INSERT INTO sys_log VALUES ('6f370c68a5112f2d9ccfacd22fa2a3aa', '1', '用户名: admin,登录成功！', null, null, null, '127.0.0.1', null, null, null, null, null, 'benben-boot', '2019-04-19 08:32:48', null, null);
+INSERT INTO sys_log VALUES ('ce7d38598b7a93d16907808bcd13273c', '1', '用户名: admin,登录成功！', null, null, null, '127.0.0.1', null, null, null, null, null, 'benben-boot', '2019-04-19 09:15:25', null, null);
+INSERT INTO sys_log VALUES ('90712d9352527087391ee07b6b27c149', '1', '用户名: admin,登录成功！', null, null, null, '127.0.0.1', null, null, null, null, null, 'benben-boot', '2019-04-19 10:03:38', null, null);
+INSERT INTO sys_log VALUES ('c4ba5e5984b6bbb4e95e7b90aac05dc4', '1', '用户名: 管理员,退出成功！', null, 'admin', '管理员', '127.0.0.1', null, null, null, null, null, 'admin', '2019-04-19 10:03:54', null, null);
+INSERT INTO sys_log VALUES ('bcb01e35aa2b25a9d0f6bc52641da8b2', '1', '用户名: admin,登录成功！', null, null, null, '127.0.0.1', null, null, null, null, null, 'benben-boot', '2019-04-19 11:22:55', null, null);
 
 -- ----------------------------
 -- Table structure for `sys_permission`
@@ -1744,7 +1748,7 @@ INSERT INTO sys_permission VALUES ('4f66409ef3bbd69c1d80469d6e2a885e', '6e73eb3c
 INSERT INTO sys_permission VALUES ('4f84f9400e5e92c95f05b554724c2b58', '540a2936940846cb98114ffb0d145cb8', '角色列表', '/list/role-list', 'list/RoleList', null, null, '1', null, '4.00', null, null, '1', '1', null, null, null, '2018-12-25 20:34:38', null, null, '0');
 INSERT INTO sys_permission VALUES ('540a2936940846cb98114ffb0d145cb8', '', '列表页', '/list', 'layouts/PageView', null, '/list/query-list', '0', null, '9.00', '0', 'table', '1', '0', '0', null, null, '2018-12-25 20:34:38', 'admin', '2019-03-31 22:20:20', '0');
 INSERT INTO sys_permission VALUES ('54dd5457a3190740005c1bfec55b1c34', 'd7d6e2e4e2934f2c9385a623fd98c6f3', '菜单管理', '/isystem/permission', 'system/PermissionList', null, null, '1', null, '3.00', null, null, '1', '1', null, null, null, '2018-12-25 20:34:38', null, null, '0');
-INSERT INTO sys_permission VALUES ('56f593b9f8be6ac977b2a1f8adde26e8', 'd7d6e2e4e2934f2c9385a623fd98c6f3', '会员管理', '/userinfo/UserInfoList', 'userinfo/UserInfoList', null, null, '1', null, '3.00', '0', null, '1', '1', '0', null, 'admin', '2019-04-18 16:07:44', 'admin', '2019-04-18 16:08:19', '0');
+INSERT INTO sys_permission VALUES ('56f593b9f8be6ac977b2a1f8adde26e8', 'd7d6e2e4e2934f2c9385a623fd98c6f3', '会员管理', '/userinfo/UserList', 'userinfo/UserList', null, null, '1', null, '3.00', '0', null, '1', '1', '0', null, 'admin', '2019-04-18 16:07:44', 'admin', '2019-04-19 11:23:29', '0');
 INSERT INTO sys_permission VALUES ('58857ff846e61794c69208e9d3a85466', '08e6b9dc3c04489c8e1ff2ce6f105aa4', '日志管理', '/isystem/log', 'system/LogList', null, null, '1', null, '1.00', '0', '', '1', '1', '0', null, null, '2018-12-26 10:11:18', 'admin', '2019-04-02 11:38:17', '0');
 INSERT INTO sys_permission VALUES ('5c8042bd6c601270b2bbd9b20bccc68b', '', '消息中心', '/message', 'layouts/RouteView', null, null, '0', null, '6.00', '0', 'message', '1', '0', '0', null, 'admin', '2019-04-09 11:05:04', 'admin', '2019-04-11 19:47:54', '0');
 INSERT INTO sys_permission VALUES ('6531cf3421b1265aeeeabaab5e176e6d', 'e3c13679c73a4f829bcff2aba8fd68b1', '分步表单', '/form/step-form', 'form/stepForm/StepForm', null, null, '1', null, '2.00', null, null, '1', '1', null, null, null, '2018-12-25 20:34:38', null, null, '0');
@@ -2404,10 +2408,10 @@ INSERT INTO sys_user_role VALUES ('6ec01b4aaab790eac4ddb33d7a524a58', 'e9ca23d68
 INSERT INTO sys_user_role VALUES ('d2233e5be091d39da5abb0073c766224', 'f0019fdebedb443c98dcb17d88222c38', 'ee8626f80f7c2619917b6236f3a7f02b');
 
 -- ----------------------------
--- Table structure for `user_info`
+-- Table structure for `user`
 -- ----------------------------
-DROP TABLE IF EXISTS `user_info`;
-CREATE TABLE `user_info` (
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE `user` (
   `id` varchar(32) NOT NULL COMMENT 'ID',
   `group_id` varchar(32) NOT NULL DEFAULT '' COMMENT '组别ID',
   `username` varchar(32) NOT NULL DEFAULT '' COMMENT '用户名',
@@ -2452,8 +2456,8 @@ CREATE TABLE `user_info` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT COMMENT='会员表';
 
 -- ----------------------------
--- Records of user_info
+-- Records of user
 -- ----------------------------
-INSERT INTO user_info VALUES ('04c8aa8245259b637eb4bb9a9be226ed', '', '星空', '', '', '31f98dfecc7d4708', 'KJ9KiICR', '15678451398@126.com', '15678451398', '', '0', '2', null, '', '0.00', '0', '1', '1', '0', '0', '', '0', '', null, '2019-04-09 17:52:04', null, null, null, '', '1', '', '', '', null, null, null, null);
-INSERT INTO user_info VALUES ('32d4e630098f44bedb32693eb546c71a', '', '王昊', '王浩浩', '王浩浩', 'a9eb881a116aa93e', 'OFIY29d5', '12356887452@126.com', '18903820762', 'http://jeecg-boot.oss-cn-beijing.aliyuncs.com/1554793078543.jpg', '0', '1', '2019-04-18 14:58:07', '切格瓦拉', '0.00', '0', '1', '1', '0', '0', '', '0', '', null, '2019-04-09 14:58:18', 'admin', '2019-04-09 15:58:04', 'admin', '', '1', '', '', '', null, null, 'DC4FC0FC9BD4A56A4A9CAF354A898D2C', 'o11J61NnwFK0D5rCnEjVT_tAoiBY');
-INSERT INTO user_info VALUES ('efad51d21a33a54dab91019a47e478c7', '', '凉凉', '凉', '凉的很', '123456', '', '895992822@qq.com', '15938372251', 'http://jeecg-boot.oss-cn-beijing.aliyuncs.com/1555585185537.jpg', '0', '2', null, '格言格言格言', '0.00', '0', '1', '1', '0', '0', '', '0', '', null, '2019-04-18 18:58:12', 'admin', '2019-04-18 18:59:48', 'admin', '', '1', '', '', '', null, null, null, null);
+INSERT INTO user VALUES ('04c8aa8245259b637eb4bb9a9be226ed', '', '星空', '', '', '31f98dfecc7d4708', 'KJ9KiICR', '15678451398@126.com', '15678451398', '', '0', '2', null, '', '0.00', '0', '1', '1', '0', '0', '', '0', '', null, '2019-04-09 17:52:04', null, null, null, '', '1', '', '', '', null, null, null, null);
+INSERT INTO user VALUES ('32d4e630098f44bedb32693eb546c71a', '', '王昊', '王浩浩', '王浩浩', 'a9eb881a116aa93e', 'OFIY29d5', '12356887452@126.com', '18903820762', 'http://jeecg-boot.oss-cn-beijing.aliyuncs.com/1554793078543.jpg', '0', '1', '2019-04-18 14:58:07', '切格瓦拉', '0.00', '0', '1', '1', '0', '0', '', '0', '', null, '2019-04-09 14:58:18', 'admin', '2019-04-09 15:58:04', 'admin', '', '1', '', '', '', null, null, 'DC4FC0FC9BD4A56A4A9CAF354A898D2C', 'o11J61NnwFK0D5rCnEjVT_tAoiBY');
+INSERT INTO user VALUES ('efad51d21a33a54dab91019a47e478c7', '', '凉凉', '凉', '凉的很', '123456', '', '895992822@qq.com', '15938372251', 'http://jeecg-boot.oss-cn-beijing.aliyuncs.com/1555585185537.jpg', '0', '1', null, '格言格言格言', '0.00', '0', '1', '1', '0', '0', '', '0', '', null, '2019-04-18 18:58:12', 'admin', '2019-04-18 18:59:48', 'admin', '', '1', '', '', '', null, null, null, null);
