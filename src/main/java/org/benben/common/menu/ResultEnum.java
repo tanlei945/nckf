@@ -51,7 +51,7 @@ public enum ResultEnum {
     /**
      * 返回token认证
      */
-     TOKEN_OVERDUE(1010,"token已过期"),
+    TOKEN_OVERDUE(1010,"token已过期"),
     TOKEN_NOT_OVERDUE(1011,"token未过期"),
 
 
@@ -75,7 +75,7 @@ public enum ResultEnum {
      * qq相关
      */
     QQ_BINDING_SUCCESS(811,"绑定成功"),
-    QQ_BINDING_ERROR(812,"绑定失败"),
+    QQ_BINDING_FAIL(812,"绑定失败"),
     QQ_UNBOUND_OPENID(813,"未绑定账号"),
     QQ_REPEATED_BINDING(814,"重复绑定"),
     QQ_LOGIN(815,"登录成功"),
