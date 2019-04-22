@@ -4,24 +4,26 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.qq.connect.QQConnectException;
 import com.qq.connect.utils.QQConnectConfig;
 import org.apache.shiro.SecurityUtils;
-import org.benben.common.api.vo.RestResponseBean;
-import org.benben.common.menu.ResultEnum;
 import org.benben.modules.business.user.entity.User;
+import org.benben.modules.business.user.entity.UserThird;
+import org.benben.modules.business.user.mapper.UserThirdMapper;
 import org.benben.modules.business.user.mapper.UserMapper;
 import org.benben.modules.business.user.service.IUserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Collection;
 
 /**
  * @Description: 普通用户
  * @author： jeecg-boot
- * @date：   2019-04-19
+ * @date：   2019-04-20
  * @version： V1.0
  */
 @Service
@@ -29,6 +31,51 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private UserThirdMapper userThirdMapper;
+
+//	@Override
+//	@Transactional
+//	public void saveMain(User user, List<UserThird> userThirdList) {
+//		userMapper.insert(user);
+//		for(UserThird entity:userThirdList) {
+//			//外键设置
+//			entity.setUserId(user.getId());
+//			userThirdMapper.insert(entity);
+//		}
+//	}
+//
+//	@Override
+//	@Transactional
+//	public void updateMain(User user,List<UserThird> userThirdList) {
+//		userMapper.updateById(user);
+//
+//		//1.先删除子表数据
+//		userThirdMapper.deleteByMainId(user.getId());
+//
+//		//2.子表数据重新插入
+//		for(UserThird entity:userThirdList) {
+//			//外键设置
+//			entity.setUserId(user.getId());
+//			userThirdMapper.insert(entity);
+//		}
+//	}
+
+    @Override
+    @Transactional
+    public void delMain(String id) {
+        userMapper.deleteById(id);
+        userThirdMapper.deleteByMainId(id);
+    }
+
+    @Override
+    @Transactional
+    public void delBatchMain(Collection<? extends Serializable> idList) {
+        for(Serializable id:idList) {
+            userMapper.deleteById(id);
+            userThirdMapper.deleteByMainId(id.toString());
+        }
+    }
 
     @Override
     public User getByUsername(String username) {
@@ -46,78 +93,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         return userInfo;
     }
 
-    @Override
-    public RestResponseBean qqBinding(String openID, User userInfo) {
-
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-
-        queryWrapper.eq("qq_id", openID);
-        User result = userMapper.selectOne(queryWrapper);
-        if (result != null) {
-            return new RestResponseBean(ResultEnum.USER_EXIST.getValue(), ResultEnum.USER_EXIST.getDesc(), null);
-        }
-
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
-
-        userInfo.setQqId(openID);
-        int i = userMapper.updateById(userInfo);
-        if (i == 0)
-            return new RestResponseBean(ResultEnum.ERROR.getValue(), ResultEnum.ERROR.getDesc(), null);
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
-
-    }
-
     /**
-     * 根据QQ openId查询UserInfo
-     *
-     * @param openId
-     * @return
-     */
-    @Override
-    public User queryByQQOpenId(String openId) {
-
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("qq_id", openId);
-
-        return userMapper.selectOne(queryWrapper);
-    }
-
-
-    /**
-     * 根据微信openId查询UserInfo
-     *
-     * @param openId
-     * @return
-     */
-    @Override
-    public User queryByWeChatOpenId(String openId) {
-
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("wx_id", openId);
-
-        return userMapper.selectOne(queryWrapper);
-    }
-
-    /**
-     * 绑定微信
-     *
-     * @param openId
+     * 绑定三方信息
+     * @param openId 识别
+     * @param userId 用户ID
+     * @param type 类型  0/QQ,1/微信,2/微博
      * @return
      */
     @Override
     @Transactional
-    public Boolean bindingWeChat(String openId) {
+    public int bindingThird(String openId, String userId, String type) {
 
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        UserThird userThird = new UserThird();
+        userThird.setUserId(userId);
+        userThird.setOpenid(openId);
 
-        if (user == null) {
-            return false;
-        }
-
-        user.setWxId(openId);
-        userMapper.updateById(user);
-        return true;
+        return userThirdMapper.insert(userThird);
     }
+
 
     @Override
     public String getQQURL(ServletRequest request) throws QQConnectException {
