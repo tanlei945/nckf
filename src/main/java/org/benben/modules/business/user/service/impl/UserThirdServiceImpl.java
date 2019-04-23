@@ -36,7 +36,7 @@ public class UserThirdServiceImpl extends ServiceImpl<UserThirdMapper, UserThird
 	public UserThird queryByOpenid(String openid) {
 
 		QueryWrapper<UserThird> queryWrapper = new QueryWrapper<>();
-		queryWrapper.eq("openid",openid);
+		queryWrapper.eq("open_id",openid);
 
 		return userThirdMapper.selectOne(queryWrapper);
 	}
