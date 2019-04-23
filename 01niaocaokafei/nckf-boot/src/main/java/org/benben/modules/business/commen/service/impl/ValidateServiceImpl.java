@@ -9,7 +9,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-public class IValidateServiceImpl implements IValidateService {
+public class ValidateServiceImpl implements IValidateService {
 
     @Autowired
     private ValidateMapper validateMapper;

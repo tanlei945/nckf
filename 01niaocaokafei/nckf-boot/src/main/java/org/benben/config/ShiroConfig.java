@@ -78,8 +78,6 @@ public class ShiroConfig {
 		filterChainDefinitionMap.put("/api/user/mobilelogin", "anon");
 		filterChainDefinitionMap.put("/api/user/wxLogin", "anon");
 		filterChainDefinitionMap.put("/api/user/callBack", "anon");
-		filterChainDefinitionMap.put("/locaQQLogin", "anon");
-		filterChainDefinitionMap.put("/qqLoginCallback", "anon");
 		//从配置文件读取添加不需要token的路径
 		Yaml yaml = new Yaml();
 		URL url = ShiroConfig.class.getClassLoader().getResource("NotokenLogin.yml");
