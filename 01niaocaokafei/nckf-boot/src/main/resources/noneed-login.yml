@@ -1,0 +1,5 @@
+filterlist:
+  # 用户删除
+  - /api/user/delete
+  - /api/user/wb_login
+  - /api/user/wb_callback
