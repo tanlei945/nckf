@@ -124,9 +124,9 @@ public class RestUserController {
      * @param user
      * @return
      */
-    @PostMapping(value = "/register")
+    @PostMapping(value = "/user_register")
     @ApiOperation(value = "用户注册", tags = {"用户接口"}, notes = "用户注册")
-    public RestResponseBean add(@RequestBody User user) {
+    public RestResponseBean register(@RequestBody User user) {
 
         try {
 
@@ -135,6 +135,34 @@ public class RestUserController {
             String passwordEncode = PasswordUtil.encrypt(user.getUsername(), user.getPassword(), salt);
             user.setPassword(passwordEncode);
             userService.save(user);
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),user);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.info(e.getMessage());
+        }
+
+        return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),user);
+
+    }
+
+    /**
+     * 用户注册
+     * @param user
+     * @return
+     */
+    @PostMapping(value = "/rider_register")
+    @ApiOperation(value = "骑手注册", tags = {"用户接口"}, notes = "骑手注册")
+    public RestResponseBean riderRegister(@RequestBody User user) {
+
+        try {
+
+            String salt = oConvertUtils.randomGen(8);
+            user.setSalt(salt);
+            String passwordEncode = PasswordUtil.encrypt(user.getUsername(), user.getPassword(), salt);
+            user.setPassword(passwordEncode);
+            userService.save(user);
+            //TODO 骑手信息表
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),user);
 
         } catch (Exception e) {
@@ -246,24 +274,22 @@ public class RestUserController {
      */
     @PostMapping(value = "/changeMobile")
     @ApiOperation(value = "修改手机号", tags = {"用户接口"}, notes = "修改手机号")
-    public Result<User> changeMobile(@RequestParam String mobile, @RequestParam String captcha) {
-        Result<User> result = new Result<User>();
+    public RestResponseBean changeMobile(@RequestParam String mobile, @RequestParam String captcha) {
 
-        if (mobile == null || mobile == "") {
-            result.error500("手机号不允许为空");
-            return result;
+        if(StringUtils.equals(mobile,"")||StringUtils.equals(captcha,"")){
+
+            return new RestResponseBean(ResultEnum.PARAMETER_MISSING.getValue(),ResultEnum.PARAMETER_MISSING.desc(),null);
         }
-        if (!"yanzheng".equals(captcha)) {
-            result.error500("验证码错误");
-            return result;
-        }
-        //得到登录会员
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+
+        User user = userService.queryByMobile(mobile);
         user.setMobile(mobile);
-        boolean b = userService.updateById(user);
-        if (b)
-            result.success("修改成功");
-        return result;
+
+        if(userService.updateById(user)){
+
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.desc(),null);
+        }
+
+        return new RestResponseBean(ResultEnum.ERROR.getValue(),ResultEnum.ERROR.getDesc(),null);
     }
 
     /**
@@ -274,41 +300,25 @@ public class RestUserController {
      * @param newpassword
      * @return
      */
-    @PostMapping(value = "/changeResetpwd")
+    @PostMapping(value = "/change_resetpwd")
     @ApiOperation(value = "修改密码", tags = {"用户接口"}, notes = "修改密码")
-    public Result<User> changeResetpwd(@RequestParam String mobile, @RequestParam String captcha, @RequestParam String newpassword) {
-        Result<User> result = new Result<User>();
+    public RestResponseBean changeResetpwd(@RequestParam String mobile, @RequestParam String newpassword) {
 
-        if (mobile == null || mobile == "") {
-            result.error500("手机号不允许为空");
-            return result;
-        }
-        if (captcha == null || captcha == "") {
-            result.error500("验证码不允许为空");
-            return result;
-        }
-        if (!"yanzheng".equals(captcha)) {
-            result.error500("验证码错误");
-            return result;
+        if(StringUtils.equals(mobile,"")||StringUtils.equals(newpassword,"")){
+            return new RestResponseBean(ResultEnum.PARAMETER_MISSING.getValue(),ResultEnum.PARAMETER_MISSING.getDesc(),null);
         }
 
-        if (newpassword == null || newpassword == "") {
-            result.error500("新密码不允许为空");
-            return result;
-        }
-
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        User user = userService.queryByMobile(mobile);
         //随机得到盐
         String salt = oConvertUtils.randomGen(8);
         user.setSalt(salt);
         String passwordEncode = PasswordUtil.encrypt(user.getUsername(), newpassword, salt);
         user.setPassword(passwordEncode);
-        boolean b = userService.updateById(user);
+        if(userService.updateById(user)){
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
+        }
 
-        if (b)
-            result.success("修改成功");
-
-        return result;
+        return new RestResponseBean(ResultEnum.ERROR.getValue(),ResultEnum.ERROR.getDesc(),null);
     }
 
     @PostMapping(value = "/login")
