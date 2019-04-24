@@ -80,7 +80,7 @@ public class ShiroConfig {
 		filterChainDefinitionMap.put("/api/user/callBack", "anon");
 		//从配置文件读取添加不需要token的路径
 		Yaml yaml = new Yaml();
-		URL url = ShiroConfig.class.getClassLoader().getResource("NotokenLogin.yml");
+		URL url = ShiroConfig.class.getClassLoader().getResource("noneed-login.yml");
 		Map map = null;
 		try {
 			map = yaml.load(new FileInputStream(url.getFile()));
