@@ -19,6 +19,6 @@ public interface StoreMapper extends BaseMapper<Store> {
     @Select("select * from bb_store")
    List<Store> queryByDistance();
 
-    @Select("select * from User where id = #{id}")
-    User queryById(String id);
+    @Select("select store_scope from bb_store where id = #{id}")
+    String queryScopeById(String id);
 }

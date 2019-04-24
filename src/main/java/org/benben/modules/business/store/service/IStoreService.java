@@ -17,4 +17,5 @@ public interface IStoreService extends IService<Store> {
 
     List<Store> queryByDistance(double longitude, double latitude);
 
+    Boolean queryScopeById(String id,double lng,double lat);
 }

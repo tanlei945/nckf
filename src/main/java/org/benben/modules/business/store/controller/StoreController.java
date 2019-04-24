@@ -12,7 +12,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.ibatis.jdbc.Null;
+import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.api.vo.Result;
+import org.benben.common.menu.ResultEnum;
 import org.benben.common.system.query.QueryGenerator;
 import org.benben.common.util.oConvertUtils;
 import org.benben.modules.business.store.entity.Store;
@@ -23,6 +26,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
+import org.benben.modules.business.user.entity.User;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -241,8 +245,30 @@ public class StoreController {
   }
 
   @RequestMapping(value = "/query_By_Distance",method = RequestMethod.GET)
-  @ApiOperation("查询距离")
-	public List<Store> queryByDistance(double longitude, double latitude){
-	  return storeService.queryByDistance(longitude, latitude);
-	}
+  @ApiOperation("查询用户离店铺距离")
+	public RestResponseBean queryByDistance(double lng, double lat){
+	  List<Store> storeList = null;
+	  try {
+	  		storeList = storeService.queryByDistance(lng, lat);
+		  return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), storeList);
+	  } catch (Exception e) {
+		  e.printStackTrace();
+		  return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
+	  }
+
+  }
+
+	 @RequestMapping(value = "/queryScope_By_id",method = RequestMethod.GET)
+	 @ApiOperation("查询收货地址距离是否超过限制")
+	 public RestResponseBean queryScopeById(String storeId, double lng, double lat){
+		 Boolean aBoolean = null;
+		 try {
+			 aBoolean = storeService.queryScopeById(storeId,lng,lat);
+			 return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), aBoolean);
+		 } catch (Exception e) {
+			 e.printStackTrace();
+			 return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
+		 }
+
+	 }
 }
