@@ -2,7 +2,6 @@ package org.benben.modules.business.address.mapper;
 
 import java.util.List;
 
-import org.apache.ibatis.annotations.Param;
 import org.benben.modules.business.address.entity.Address;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
@@ -13,5 +12,9 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @version： V1.0
  */
 public interface AddressMapper extends BaseMapper<Address> {
+
+    public boolean deleteByMainId(String mainId);
+
+    public List<Address> selectByMainId(String mainId);
 
 }

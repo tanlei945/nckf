@@ -57,6 +57,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 //		}
 //	}
 
+//    @Override
+//    @Transactional
+//    public void delMain(String id) {
+//        userMapper.deleteById(id);
+//        userAddressMapper.deleteByMainId(id);
+//    }
+//
+//    @Override
+//    @Transactional
+//    public void delBatchMain(Collection<? extends Serializable> idList) {
+//        for(Serializable id:idList) {
+//            userMapper.deleteById(id);
+//            userAddressMapper.deleteByMainId(id.toString());
+//        }
+//    }
+
     @Override
     @Transactional
     public void delMain(String id) {
