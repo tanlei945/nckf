@@ -54,5 +54,13 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store> implements
         return storeList;
     }
 
+    @Override
+    public Boolean queryScopeById(String id,double lng,double lat) {
+        String str = storeMapper.queryScopeById(id);
+        Store store = getById(id);
+        String algorithm = DistanceUtil.algorithm(store.getLng(), store.getLat(), lng, lat);
+        return Double.parseDouble(str)>Double.parseDouble(algorithm);
+    }
+
 
 }

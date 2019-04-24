@@ -7,7 +7,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.api.vo.Result;
+import org.benben.common.menu.ResultEnum;
 import org.benben.common.system.query.QueryGenerator;
 import org.benben.common.util.oConvertUtils;
 import org.benben.modules.business.category.entity.Category;
@@ -239,16 +241,27 @@ public class CategoryController {
   }
 	@ApiOperation("查询0级菜单")
 	@RequestMapping("/get_category")
-	 public List<Category> getCategory(){
-		 return  categoryService.getCategory();
-	 }
+	 public RestResponseBean getCategory(){
+		try {
+			List<Category> category = categoryService.getCategory();
+			return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), category);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
+		}
+	}
 
 
 	 @ApiOperation("查询多级菜单")
 	 @RequestMapping("/find_category_byParentId")
-	 public List<Category> findMenuByParentId(String parentid){
-		 Result<List<Category>> result = new Result<>();
-		 return  categoryService.findMenuByParentId(parentid);
+	 public RestResponseBean findMenuByParentId(String parentid){
+		 try {
+			 List<Category> menuByParentId = categoryService.findMenuByParentId(parentid);
+			 return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), menuByParentId);
+		 } catch (Exception e) {
+			 e.printStackTrace();
+			 return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
+		 }
 	 }
 /*	 @ApiOperation("查询菜单树")
 	 @RequestMapping("/findtree")

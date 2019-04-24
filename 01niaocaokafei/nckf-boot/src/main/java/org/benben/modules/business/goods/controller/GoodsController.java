@@ -1,6 +1,7 @@
 package org.benben.modules.business.goods.controller;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.io.IOException;
@@ -11,7 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.api.vo.Result;
+import org.benben.common.menu.ResultEnum;
 import org.benben.common.system.query.QueryGenerator;
 import org.benben.common.util.oConvertUtils;
 import org.benben.modules.business.goods.entity.Goods;
@@ -243,7 +246,27 @@ public class GoodsController {
 
   @RequestMapping("query_goods_byCotegory")
   @ApiOperation("根据门店id查所属商品")
-  public List<Goods> queryByCotegory(String categoryType,String belongId){
-	  return goodsService.queryByCotegory(categoryType,belongId);
+  public RestResponseBean queryByCotegory(String categoryType,String belongId){
+	  try {
+		  List<Goods> goods = goodsService.queryByCotegory(categoryType, belongId);
+		  return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), goods);
+	  } catch (Exception e) {
+		  e.printStackTrace();
+		  return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
+
+	  }
   }
+	 @RequestMapping("query_goods_spec")
+	 @ApiOperation("根据商品id查商品规格")
+	public RestResponseBean querySpec(String goodId){
+		HashMap<String, List<String>> stringListMap = new HashMap<>();
+		try {
+			stringListMap = goodsService.querySpec(goodId);
+			return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), stringListMap);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), stringListMap);
+		}
+
+	 }
 }
