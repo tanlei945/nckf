@@ -1,12 +1,9 @@
 package org.benben.modules.business.category.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.benben.modules.business.category.entity.Category;
 import org.benben.modules.business.category.mapper.CategoryMapper;
 import org.benben.modules.business.category.service.ICategoryService;
-import org.benben.modules.system.model.CategoryTreeModel;
-import org.benben.modules.system.util.FindsCategoryChildrenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +33,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
     /**
      * queryTreeList 对应 queryTreeList 查询所有的部门数据,以树结构形式响应给前端
      */
-    @Override
+/*    @Override
     public List<CategoryTreeModel> queryTreeList() {
         LambdaQueryWrapper<Category> query = new LambdaQueryWrapper<>();
         query.eq(Category::getDelFlag, 0);
@@ -44,5 +41,5 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         // 调用wrapTreeDataToTreeList方法生成树状数据
         List<CategoryTreeModel> categoryTreeModels = FindsCategoryChildrenUtil.wrapTreeDataToTreeList(list);
         return categoryTreeModels;
-    }
+    }*/
 }

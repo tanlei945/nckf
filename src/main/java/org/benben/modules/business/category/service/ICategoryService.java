@@ -1,8 +1,7 @@
 package org.benben.modules.business.category.service;
 
-import org.benben.modules.business.category.entity.Category;
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.benben.modules.system.model.CategoryTreeModel;
+import org.benben.modules.business.category.entity.Category;
 
 import java.util.List;
 
@@ -15,5 +14,5 @@ import java.util.List;
 public interface ICategoryService extends IService<Category> {
     List<Category> getCategory();
     List<Category> findMenuByParentId(String parentid);
-    List<CategoryTreeModel> queryTreeList();
+    //List<CategoryTreeModel> queryTreeList();
 }

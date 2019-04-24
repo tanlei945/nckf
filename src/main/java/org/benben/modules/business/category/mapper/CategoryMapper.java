@@ -1,11 +1,10 @@
 package org.benben.modules.business.category.mapper;
 
-import java.util.List;
-
-import org.apache.ibatis.annotations.Param;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Select;
 import org.benben.modules.business.category.entity.Category;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+import java.util.List;
 
 /**
  * @Description: 商品种类列表
