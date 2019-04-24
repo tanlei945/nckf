@@ -3,9 +3,12 @@ package org.benben.modules.business.announcement.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.api.vo.Result;
+import org.benben.common.menu.ResultEnum;
 import org.benben.common.system.query.QueryGenerator;
 import org.benben.modules.business.announcement.entity.Announcement;
 import org.benben.modules.business.announcement.service.IAnnouncementService;
@@ -21,6 +24,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/announcement")
 @Slf4j
+@Api(tags = "通告接口")
 public class RestAnnouncementController {
 
     @Autowired
@@ -38,18 +42,15 @@ public class RestAnnouncementController {
      * @return
      */
     @GetMapping(value = "/list")
-    @ApiOperation(value = "通告详情列表", notes = "通告详情列表")
-    public Result<IPage<Announcement>> queryPageList(Announcement announcement,
+    @ApiOperation(value = "通告详情列表", notes = "通告详情列表",tags = "通告详情列表")
+    public RestResponseBean queryPageList(Announcement announcement,
                                                      @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                                      @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
                                                      HttpServletRequest req) {
-        Result<IPage<Announcement>> result = new Result<IPage<Announcement>>();
         QueryWrapper<Announcement> queryWrapper = QueryGenerator.initQueryWrapper(announcement, req.getParameterMap());
         Page<Announcement> page = new Page<Announcement>(pageNo, pageSize);
         IPage<Announcement> pageList = announcementService.page(page, queryWrapper);
-        result.setSuccess(true);
-        result.setResult(pageList);
-        return result;
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
     }
 
     /**
@@ -57,18 +58,16 @@ public class RestAnnouncementController {
      * @param id
      * @return
      */
-    @GetMapping(value = "/queryById")
-    @ApiOperation(value = "通过id查询通告详情", notes = "通过id查询通告详情")
-    public Result<Announcement> queryById(@RequestParam(name="id",required=true) String id) {
-        Result<Announcement> result = new Result<Announcement>();
+    @GetMapping(value = "/query_by_id")
+    @ApiOperation(value = "通过id查询通告详情", notes = "通过id查询通告详情",tags ="通过id查询通告详情")
+    public RestResponseBean queryById(@RequestParam(name="id",required=true) String id) {
         Announcement announcement = announcementService.getById(id);
         if(announcement==null) {
-            result.error500("未找到对应实体");
+            return new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(),ResultEnum.QUERY_NOT_EXIST.getDesc(),null);
         }else {
-            result.setResult(announcement);
-            result.setSuccess(true);
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),announcement);
         }
-        return result;
+
     }
 
 }
