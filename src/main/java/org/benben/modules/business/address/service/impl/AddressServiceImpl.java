@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
+import java.util.List;
+
 /**
  * @Description: 用户地址
  * @author： jeecg-boot
@@ -46,6 +48,11 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
         s = Math.round(s * 10000) / 10000;
         String distance = String.valueOf(s);
         return distance;
+    }
+
+    @Override
+    public List<Address> selectByMainId(String mainId) {
+        return addressMapper.selectByMainId(mainId);
     }
 
     private  double rad(double d){

@@ -26,6 +26,16 @@ public interface IUserService extends IService<User> {
 //	 */
 //	public void updateMain(User user,List<UserThird> userThirdList);
 
+//    /**
+//     * 删除一对多
+//     */
+//    public void delMain (String id);
+//
+//    /**
+//     * 批量删除一对多
+//     */
+//    public void delBatchMain (Collection<? extends Serializable> idList);
+
     /**
      * 删除一对多
      */

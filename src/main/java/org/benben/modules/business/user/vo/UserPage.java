@@ -1,6 +1,8 @@
 package org.benben.modules.business.user.vo;
 
 import java.util.List;
+
+import org.benben.modules.business.address.entity.Address;
 import org.benben.modules.business.user.entity.UserThird;
 import lombok.Data;
 import org.jeecgframework.poi.excel.annotation.Excel;
@@ -119,5 +121,8 @@ public class UserPage {
 
 	@ExcelCollection(name="用户三方关联")
 	private List<UserThird> userThirdList;
+
+	@ExcelCollection(name="用户地址")
+	private List<Address> userAddressList;
 
 }
