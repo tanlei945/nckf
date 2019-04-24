@@ -3,9 +3,12 @@ package org.benben.modules.business.banner.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.api.vo.Result;
+import org.benben.common.menu.ResultEnum;
 import org.benben.common.system.query.QueryGenerator;
 import org.benben.modules.business.banner.entity.Banner;
 import org.benben.modules.business.banner.service.IBannerService;
@@ -22,44 +25,24 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/banner")
 @Slf4j
+@Api(tags = "轮播图接口")
 public class RestBannerController {
 
     @Autowired
     private IBannerService bannerService;
 
+
     /**
-     * 分页列表查询
+     *
      * @param banner
-     * @param pageNo
-     * @param pageSize
      * @param req
      * @return
      */
-    @GetMapping(value = "/list")
-    @ApiOperation(value = "轮播图列表", notes = "轮播图列表")
-    public Result<IPage<Banner>> queryPageList(Banner banner,
-                                               @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-                                               @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
-                                               HttpServletRequest req) {
-        Result<IPage<Banner>> result = new Result<IPage<Banner>>();
-        QueryWrapper<Banner> queryWrapper = QueryGenerator.initQueryWrapper(banner, req.getParameterMap());
-        queryWrapper.eq("del_flag","1");
-        queryWrapper.and(wrapper -> wrapper.eq("use_flag", "1"));
-        Page<Banner> page = new Page<Banner>(pageNo, pageSize);
-        IPage<Banner> pageList = bannerService.page(page, queryWrapper);
-        result.setSuccess(true);
-        result.setResult(pageList);
-        return result;
-    }
-
-    @GetMapping(value = "/queryImageList")
-    @ApiOperation(value = "轮播图", notes = "轮播图")
-    public Result< List<String>> queryImageList(Banner banner,HttpServletRequest req) {
-        Result<List<String>> result = new Result<List<String>>();
+    @GetMapping(value = "/query_image_list")
+    @ApiOperation(value = "轮播图", notes = "轮播图",tags = "轮播图")
+    public RestResponseBean queryImageList(Banner banner,HttpServletRequest req) {
         QueryWrapper<Banner> queryWrapper = QueryGenerator.initQueryWrapper(banner, req.getParameterMap());
         List<String> imageList = bannerService.queryImageList(queryWrapper);
-        result.setSuccess(true);
-        result.setResult(imageList);
-        return result;
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),imageList);
     }
 }

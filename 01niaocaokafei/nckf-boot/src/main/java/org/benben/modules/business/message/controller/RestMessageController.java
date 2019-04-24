@@ -3,9 +3,12 @@ package org.benben.modules.business.message.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.api.vo.Result;
+import org.benben.common.menu.ResultEnum;
 import org.benben.common.system.query.QueryGenerator;
 import org.benben.modules.business.message.entity.Message;
 import org.benben.modules.business.message.service.IMessageService;
@@ -20,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/api/message")
 @Slf4j
+@Api(tags = "消息接口")
 public class RestMessageController {
     @Autowired
     private IMessageService messageService;
@@ -33,19 +37,18 @@ public class RestMessageController {
      * @return
      */
     @GetMapping(value = "/list")
-    @ApiOperation(value = "消息详情列表", notes = "消息详情列表")
-    public Result<IPage<Message>> queryPageList(Message message,
+    @ApiOperation(value = "消息详情列表", notes = "消息详情列表",tags = "消息详情列表")
+    public RestResponseBean queryPageList(Message message,
                                                 @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                                 @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
                                                 HttpServletRequest req) {
-        Result<IPage<Message>> result = new Result<IPage<Message>>();
         QueryWrapper<Message> queryWrapper = QueryGenerator.initQueryWrapper(message, req.getParameterMap());
         queryWrapper.eq("del_flag",1);
         Page<Message> page = new Page<Message>(pageNo, pageSize);
         IPage<Message> pageList = messageService.page(page, queryWrapper);
-        result.setSuccess(true);
-        result.setResult(pageList);
-        return result;
+
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
+
     }
 
 
@@ -54,18 +57,16 @@ public class RestMessageController {
      * @param id
      * @return
      */
-    @GetMapping(value = "/queryById")
-    @ApiOperation(value = "通过id查询消息详情", notes = "通过id查询消息详情")
-    public Result<Message> queryById(@RequestParam(name="id",required=true) String id) {
-        Result<Message> result = new Result<Message>();
+    @GetMapping(value = "/query_by_id")
+    @ApiOperation(value = "通过id查询消息详情", notes = "通过id查询消息详情",tags = "通过id查询消息详情")
+    public RestResponseBean queryById(@RequestParam(name="id",required=true) String id) {
         Message message = messageService.getById(id);
         if(message==null) {
-            result.error500("未找到对应实体");
+            return new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(),ResultEnum.QUERY_NOT_EXIST.getDesc(),null);
         }else {
-            result.setResult(message);
-            result.setSuccess(true);
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),message);
         }
-        return result;
+
     }
 
 }
