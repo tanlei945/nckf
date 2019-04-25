@@ -51,13 +51,18 @@ public class SampleParamJob implements Job {
 		for (OrderNoPay order : orderList) {
 			Date createTime = order.getCreateTime();
 			long timeCreate = createTime.getTime();
-			long timeNow=System.currentTimeMillis();
-			if(timeNow-timeCreate>=1000*60){
-				order.setStatus("9");
-				noPayService.removeById(order.getId());
-				orderService.updateById(orderService.getById(order.getId()));
-				count++;
+			if(createTime!=null){
+				long timeNow=System.currentTimeMillis();
+				if(timeNow-timeCreate>=1000*60){
+					order.setStatus("9");
+					noPayService.removeById(order.getId());
+					orderService.updateById(orderService.getById(order.getId()));
+					count++;
+				}
+			}else{
+				log.error("订单暂存表数据异常！");
 			}
+
 		}
 
 		log.info("本次取消的订单数为"+count+"条");
