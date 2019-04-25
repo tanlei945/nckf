@@ -61,7 +61,7 @@ public class RestWithdrawController {
      * @param id
      * @return
      */
-    @GetMapping(value = "/queryById")
+    @GetMapping(value = "/query_by_id")
     @ApiOperation(value = "提现详情", tags = {"提现接口"}, notes = "提现详情")
     public RestResponseBean queryById(@RequestParam(name = "id", required = true) String id) {
 
@@ -71,7 +71,7 @@ public class RestWithdrawController {
             return new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(), ResultEnum.QUERY_NOT_EXIST.getDesc(), null);
         }
 
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), withdraw);
     }
 
 

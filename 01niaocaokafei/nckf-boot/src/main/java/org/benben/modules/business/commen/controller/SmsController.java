@@ -157,7 +157,7 @@ public class SmsController {
     }
 
 
-    @PostMapping(value = "/ test_send")
+    @PostMapping(value = "/test_send")
     @ApiOperation(value = "测试发送验证码 ", tags = {"短信接口"},notes = "测试发送验证码 ")
     public RestResponseBean test_send(@RequestParam String mobile, @RequestParam String event) {
 

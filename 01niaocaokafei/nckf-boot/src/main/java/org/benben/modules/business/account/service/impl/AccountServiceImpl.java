@@ -81,7 +81,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
 
         Account account = this.queryByUserId(userId);
 
-        if(StringUtils.equals(account.getAccountNo(),"")){
+        if(StringUtils.isNotBlank(account.getPayPassword())){
             return false;
         }
 

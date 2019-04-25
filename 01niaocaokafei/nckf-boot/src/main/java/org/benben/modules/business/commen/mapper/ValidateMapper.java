@@ -13,10 +13,10 @@ import org.benben.modules.business.user.entity.User;
 
 public interface ValidateMapper extends BaseMapper<User>{
 
-    @Select("select * from user_info where id = #{id}")
+    @Select("select * from user where id = #{id}")
     User userInfoValidate(String id);
-    @Select("select id from user_info where email = #{email}")
+    @Select("select id from user where email = #{email}")
     String isExistEmail(String email);
-    @Select("select id from user_info where username = #{username}")
+    @Select("select id from user where username = #{username}")
     String isExistuName(String username);
 }

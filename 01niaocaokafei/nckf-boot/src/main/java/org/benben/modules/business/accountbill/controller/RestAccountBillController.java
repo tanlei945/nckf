@@ -59,7 +59,7 @@ public class RestAccountBillController {
     * @param id
     * @return
     */
-   @GetMapping(value = "/queryById")
+   @GetMapping(value = "/query_by_id")
    @ApiOperation(value = "账单详情", tags = {"账单接口"}, notes = "账单详情")
    public RestResponseBean queryById(@RequestParam(name="id",required=true) String id) {
 
