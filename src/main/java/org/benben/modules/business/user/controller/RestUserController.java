@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qq.connect.QQConnectException;
 import com.qq.connect.oauth.Oauth;
+import com.sun.org.apache.regexp.internal.RE;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -86,31 +87,6 @@ public class RestUserController {
     @Autowired
     private RedisUtil redisUtil;
 
-
-    /**
-     * 分页列表查询
-     * @param user
-     * @param pageNo
-     * @param pageSize
-     * @param req
-     * @return
-     */
-    @GetMapping(value = "/list")
-    @ApiOperation(value = "用户列表", tags = {"用户接口"}, notes = "用户列表")
-    public RestResponseBean queryPageList(User user,
-                                             @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-                                             @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
-                                             HttpServletRequest req) {
-
-        QueryWrapper<User> queryWrapper = QueryGenerator.initQueryWrapper(user, req.getParameterMap());
-        Page<User> page = new Page<User>(pageNo, pageSize);
-        IPage<User> pageList = userService.page(page, queryWrapper);
-
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
-    }
-
-
-
     /**
      * 通过id查询
      * @param id
@@ -132,20 +108,27 @@ public class RestUserController {
 
     /**
      * 用户注册
-     * @param user
+     * @param mobile
+     * @param password
      * @return
      */
     @PostMapping(value = "/user_register")
     @ApiOperation(value = "用户注册", tags = {"用户接口"}, notes = "用户注册")
-    public RestResponseBean register(@RequestBody User user) {
+    public RestResponseBean register(@RequestParam String mobile, @RequestParam String password) {
 
+        User user = new User();
         Account account = new Account();
+
+        if(StringUtils.equals(mobile,"")||StringUtils.equals(password,"")){
+            return new RestResponseBean(ResultEnum.PARAMETER_MISSING.getValue(),ResultEnum.PARAMETER_MISSING.getDesc(),null);
+        }
 
         try {
             //保存用户信息
+            user.setMobile(mobile);
             String salt = oConvertUtils.randomGen(8);
             user.setSalt(salt);
-            String passwordEncode = PasswordUtil.encrypt(user.getMobile(), user.getPassword(), salt);
+            String passwordEncode = PasswordUtil.encrypt(mobile, password, salt);
             user.setPassword(passwordEncode);
             userService.save(user);
             //生成钱包
@@ -179,7 +162,7 @@ public class RestUserController {
 
             BeanUtils.copyProperties(userStoreVo,user);
             BeanUtils.copyProperties(userStoreVo,userStore);
-            user.setUsername(userStoreVo.getMobile());
+//            user.setUsername(userStoreVo.getMobile());
             user.setUserType("1");
             String salt = oConvertUtils.randomGen(8);
             user.setSalt(salt);
@@ -219,6 +202,14 @@ public class RestUserController {
         if(userEntity==null) {
             return new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(),ResultEnum.QUERY_NOT_EXIST.getDesc(),null);
         }else {
+
+            if(StringUtils.isNotBlank(user.getMobile())&&StringUtils.isNotBlank(user.getPassword())){
+                String salt = oConvertUtils.randomGen(8);
+                user.setSalt(salt);
+                String passwordEncode = PasswordUtil.encrypt(user.getMobile(), user.getPassword(), salt);
+                user.setPassword(passwordEncode);
+            }
+
             boolean ok = userService.updateById(user);
 
             if(ok) {
@@ -228,27 +219,6 @@ public class RestUserController {
 
         return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),user);
     }
-
-    /**
-     *   通过id删除
-     * @param id
-     * @return
-     */
-    @PostMapping(value = "/delete")
-    @ApiOperation(value = "用户删除", tags = {"用户接口"}, notes = "用户删除")
-    public RestResponseBean delete(@RequestParam(name="id",required=true) String id) {
-
-        User user = userService.getById(id);
-
-        if(user==null) {
-            return new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(),ResultEnum.QUERY_NOT_EXIST.getDesc(),null);
-        }
-
-        userService.delMain(id);
-
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),user);
-    }
-
 
     /**
      * 根据姓名查找
@@ -264,45 +234,57 @@ public class RestUserController {
         return user;
     }
 
-    /**
-     * 修改邮箱
-     * @param email
-     * @return
-     */
-    @PostMapping(value = "/changeEmail")
-    @ApiOperation(value = "修改邮箱", tags = {"用户接口"}, notes = "修改邮箱")
-    public RestResponseBean changeEmail(@RequestParam String email) {
+//    /**
+//     * 修改邮箱
+//     * @param email
+//     * @return
+//     */
+//    @PostMapping(value = "/change_mail")
+//    @ApiOperation(value = "修改邮箱", tags = {"用户接口"}, notes = "修改邮箱")
+//    public RestResponseBean changeEmail(@RequestParam String email) {
+//
+//        User user = (User) SecurityUtils.getSubject().getPrincipal();
+//        user.setEmail(email);
+//
+//        boolean b = userService.updateById(user);
+//
+//        if(b){
+//            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
+//        }
+//
+//        return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+//    }
 
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
-        user.setEmail(email);
+    @PostMapping(value = "/change_avatar")
+    @ApiOperation(value = "修改头像", tags = {"用户接口"}, notes = "修改头像")
+    public RestResponseBean changeAvatar(String userId,String avatar){
 
-        boolean b = userService.updateById(user);
-
-        if(b){
-            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
+        if(StringUtils.isBlank(userId) || StringUtils.isBlank(avatar)){
+            return new RestResponseBean(ResultEnum.PARAMETER_MISSING.getValue(),ResultEnum.PARAMETER_MISSING.getDesc(),null);
         }
 
-        return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+        User user = userService.getById(userId);
+        user.setAvatar(avatar);
+
+        if(userService.updateById(user)){
+
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.desc(),null);
+        }
+
+        return new RestResponseBean(ResultEnum.ERROR.getValue(),ResultEnum.ERROR.getDesc(),null);
     }
 
-    /**
-     * 修改手机号
-     *
-     * @param mobile
-     * @param captcha
-     * @return
-     */
-    @PostMapping(value = "/changeMobile")
-    @ApiOperation(value = "修改手机号", tags = {"用户接口"}, notes = "修改手机号")
-    public RestResponseBean changeMobile(@RequestParam String mobile, @RequestParam String captcha) {
 
-        if(StringUtils.equals(mobile,"")||StringUtils.equals(captcha,"")){
+    @PostMapping(value = "/change_username")
+    @ApiOperation(value = "修改用户名", tags = {"用户接口"}, notes = "修改用户名")
+    public RestResponseBean changeUsername(String userId,String username){
 
-            return new RestResponseBean(ResultEnum.PARAMETER_MISSING.getValue(),ResultEnum.PARAMETER_MISSING.desc(),null);
+        if(StringUtils.isBlank(userId) || StringUtils.isBlank(username)){
+            return new RestResponseBean(ResultEnum.PARAMETER_MISSING.getValue(),ResultEnum.PARAMETER_MISSING.getDesc(),null);
         }
 
-        User user = userService.queryByMobile(mobile);
-        user.setMobile(mobile);
+        User user = userService.getById(userId);
+        user.setUsername(username);
 
         if(userService.updateById(user)){
 
@@ -313,32 +295,58 @@ public class RestUserController {
     }
 
     /**
-     * 修改密码
-     *
+     * 修改手机号
+     * @param userId
      * @param mobile
-     * @param newpassword
      * @return
      */
-    @PostMapping(value = "/change_resetpwd")
-    @ApiOperation(value = "修改密码", tags = {"用户接口"}, notes = "修改密码")
-    public RestResponseBean changeResetpwd(@RequestParam String mobile, @RequestParam String newpassword) {
+    @PostMapping(value = "/change_mobile")
+    @ApiOperation(value = "修改手机号", tags = {"用户接口"}, notes = "修改手机号")
+    public RestResponseBean changeMobile(@RequestParam String userId,@RequestParam String mobile) {
 
-        if(StringUtils.equals(mobile,"")||StringUtils.equals(newpassword,"")){
-            return new RestResponseBean(ResultEnum.PARAMETER_MISSING.getValue(),ResultEnum.PARAMETER_MISSING.getDesc(),null);
+        if(StringUtils.isNotBlank(userId) || StringUtils.isNotBlank(mobile)){
+
+            return new RestResponseBean(ResultEnum.PARAMETER_MISSING.getValue(),ResultEnum.PARAMETER_MISSING.desc(),null);
         }
 
-        User user = userService.queryByMobile(mobile);
-        //随机得到盐
-        String salt = oConvertUtils.randomGen(8);
-        user.setSalt(salt);
-        String passwordEncode = PasswordUtil.encrypt(user.getUsername(), newpassword, salt);
-        user.setPassword(passwordEncode);
+        User user = userService.getById(userId);
+        user.setMobile(mobile);
+
         if(userService.updateById(user)){
-            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
+
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.desc(),null);
         }
 
         return new RestResponseBean(ResultEnum.ERROR.getValue(),ResultEnum.ERROR.getDesc(),null);
     }
+
+//    /**
+//     * 修改密码
+//     *
+//     * @param mobile
+//     * @param newpassword
+//     * @return
+//     */
+//    @PostMapping(value = "/change_resetpwd")
+//    @ApiOperation(value = "修改密码", tags = {"用户接口"}, notes = "修改密码")
+//    public RestResponseBean changeResetpwd(@RequestParam String mobile, @RequestParam String newpassword) {
+//
+//        if(StringUtils.equals(mobile,"")||StringUtils.equals(newpassword,"")){
+//            return new RestResponseBean(ResultEnum.PARAMETER_MISSING.getValue(),ResultEnum.PARAMETER_MISSING.getDesc(),null);
+//        }
+//
+//        User user = userService.queryByMobile(mobile);
+//        //随机得到盐
+//        String salt = oConvertUtils.randomGen(8);
+//        user.setSalt(salt);
+//        String passwordEncode = PasswordUtil.encrypt(user.getUsername(), newpassword, salt);
+//        user.setPassword(passwordEncode);
+//        if(userService.updateById(user)){
+//            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
+//        }
+//
+//        return new RestResponseBean(ResultEnum.ERROR.getValue(),ResultEnum.ERROR.getDesc(),null);
+//    }
 
     /**
      * 账户密码登录
@@ -367,7 +375,7 @@ public class RestUserController {
             obj = tokenBuild(user);
         }
 
-        return new RestResponseBean(ResultEnum.LOGIN_SUCCESS.getValue(), ResultEnum.LOGIN_SUCCESS.getDesc(), obj);
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), obj);
     }
 
     /**
@@ -618,5 +626,7 @@ public class RestUserController {
 
         return obj;
     }
+
+
 
 }

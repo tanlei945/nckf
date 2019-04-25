@@ -39,9 +39,6 @@ public class Account implements Serializable {
 	/**余额*/
 	@Excel(name = "余额", width = 15)
 	private java.lang.Double money;
-	/**0-失败 1-成功*/
-	@Excel(name = "0-失败 1-成功", width = 15)
-	private java.lang.String status;
 	/**密码盐*/
 	@Excel(name = "密码盐", width = 15)
 	private java.lang.String salt;

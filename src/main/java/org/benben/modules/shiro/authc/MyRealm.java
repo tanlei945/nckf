@@ -155,7 +155,7 @@ public class MyRealm extends AuthorizingRealm {
             sign = mobile.substring(0, mobile.indexOf("@") + 1);
             mobile = mobile.substring(mobile.indexOf("@") + 1, mobile.length());
             //查询会员信息
-            userInfo = userService.queryByUsername(mobile);
+            userInfo = userService.queryByMobile(mobile);
             password = userInfo.getPassword();
             status = userInfo.getStatus();
             number = 1;

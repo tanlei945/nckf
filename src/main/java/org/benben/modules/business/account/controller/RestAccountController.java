@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/account")
 @Slf4j
-@Api(tags = {"账户接口"})
+@Api(tags = {"账户/钱包接口"})
 public class RestAccountController {
 
    @Autowired
@@ -30,11 +30,11 @@ public class RestAccountController {
 
 
 
-    @GetMapping(value = "/queryById")
-    @ApiOperation(value = "账单/钱包详情", tags = {"账户接口"}, notes = "账单/钱包详情")
-    public RestResponseBean queryById(@RequestParam(name="id",required=true) String id) {
+    @GetMapping(value = "/query_by_id")
+    @ApiOperation(value = "账单/钱包详情", tags = {"账户/钱包接口"}, notes = "账单/钱包详情")
+    public RestResponseBean queryById(@RequestParam String userId) {
 
-        Account account = accountService.getById(id);
+        Account account = accountService.queryByUserId(userId);
 
         if(account==null) {
             return new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(),ResultEnum.QUERY_NOT_EXIST.getDesc(),null);
@@ -43,31 +43,31 @@ public class RestAccountController {
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),account);
     }
 
-    @GetMapping(value = "/is_PayPassword")
-    @ApiOperation(value = "是否设置支付密码", tags = {"账户接口"}, notes = "是否设置支付密码")
+    @GetMapping(value = "/is_pay_password")
+    @ApiOperation(value = "是否设置支付密码", tags = {"账户/钱包接口"}, notes = "是否设置支付密码")
     public RestResponseBean isPayPassword(String userId){
 
         if(accountService.isPayPassword(userId)){
-            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),"已未设置支付密码",null);
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),"未设置支付密码",null);
         }
 
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),"未设置支付密码",null);
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),"已设置支付密码",null);
     }
 
 
     @GetMapping(value = "is_withdraw_account")
-    @ApiOperation(value = "是否设置收款账户", tags = {"账户接口"}, notes = "是否设置收款账户")
+    @ApiOperation(value = "是否设置收款账户", tags = {"账户/钱包接口"}, notes = "是否设置收款账户")
     public RestResponseBean isWithdrawAccount(String userId){
 
         if(accountService.isWithdrawAccount(userId)){
-            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),"已设置收款账户",null);
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),"未设置收款账户",null);
         }
 
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),"未设置收款账户",null);
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),"已设置收款账户",null);
     }
 
-    @GetMapping(value = "/reset_PayPassword")
-    @ApiOperation(value = "重置支付密码", tags = {"账户接口"}, notes = "重置支付密码")
+    @GetMapping(value = "/reset_pay_password")
+    @ApiOperation(value = "重置支付密码", tags = {"账户/钱包接口"}, notes = "重置支付密码")
     public RestResponseBean resetPayPassword(String userId,String newPayPassword){
 
         if (accountService.resetPayPassword(userId,newPayPassword)){
@@ -77,25 +77,15 @@ public class RestAccountController {
         return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
     }
 
-   /**
-    * 充值
-    * @param account
-    * @return
-    */
    @PostMapping(value = "/recharge")
-   @ApiOperation(value = "钱包充值", tags = {"账户接口"}, notes = "钱包充值")
-   public RestResponseBean recharge(@RequestBody Account account) {
+   @ApiOperation(value = "钱包充值", tags = {"账户/钱包接口"}, notes = "钱包充值")
+   public RestResponseBean recharge(@RequestParam String userId,@RequestParam double money,@RequestParam String type) {
+       String state = "";
+       String orderNo = "";
 
-       Account accountEntity = accountService.getById(account.getId());
+       //TODO支付调用
 
-       if(accountEntity==null) {
-           return new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(),ResultEnum.QUERY_NOT_EXIST.getDesc(),null);
-       }else {
-           boolean ok = accountService.updateById(account);
-           if(ok) {
-               return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
-           }
-       }
+       accountService.recharge(userId,money,type,state,orderNo);
 
        return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
    }
@@ -107,7 +97,7 @@ public class RestAccountController {
      * @return
      */
     @PostMapping(value = "/withdraw")
-    @ApiOperation(value = "账户提现申请", tags = {"账户接口"}, notes = "账户提现申请")
+    @ApiOperation(value = "账户提现申请", tags = {"账户/钱包接口"}, notes = "账户提现申请")
     public RestResponseBean withdraw(@RequestParam String userId,@RequestParam double money) {
 
         if(accountService.withdraw(userId,money)){
