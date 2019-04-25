@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * @Description: 订单
  * @author： jeecg-boot
- * @date：   2019-04-23
+ * @date：   2019-04-25
  * @version： V1.0
  */
 public interface IOrderService extends IService<Order> {
@@ -36,7 +36,5 @@ public interface IOrderService extends IService<Order> {
 	 * 批量删除一对多
 	 */
 	public void delBatchMain (Collection<? extends Serializable> idList);
-
-	public Order selectById(String id);
 	
 }
