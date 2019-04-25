@@ -12,24 +12,24 @@
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="8">
-            <a-form-item label="操作前金额">
-              <a-input placeholder="请输入操作前金额" v-model="queryParam.beforeMoney"></a-input>
+            <a-form-item label="充值金额">
+              <a-input placeholder="请输入充值金额" v-model="queryParam.money"></a-input>
             </a-form-item>
           </a-col>
         <template v-if="toggleSearchStatus">
         <a-col :md="6" :sm="8">
-            <a-form-item label="变化金额">
-              <a-input placeholder="请输入变化金额" v-model="queryParam.changeMoney"></a-input>
+            <a-form-item label="0-未审核 1-审核未通过 2-审核已通过">
+              <a-input placeholder="请输入0-未审核 1-审核未通过 2-审核已通过" v-model="queryParam.status"></a-input>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="8">
-            <a-form-item label="操作后金额">
-              <a-input placeholder="请输入操作后金额" v-model="queryParam.afterMoney"></a-input>
+            <a-form-item label="1：支付宝 2：微信">
+              <a-input placeholder="请输入1：支付宝 2：微信" v-model="queryParam.withdrawType"></a-input>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="8">
-            <a-form-item label="标志符 + -">
-              <a-input placeholder="请输入标志符 + -" v-model="queryParam.sign"></a-input>
+            <a-form-item label="第三方订单号">
+              <a-input placeholder="请输入第三方订单号" v-model="queryParam.orderNo"></a-input>
             </a-form-item>
           </a-col>
         </template>
@@ -103,23 +103,23 @@
     <!-- table区域-end -->
 
     <!-- 表单区域 -->
-    <accountBill-modal ref="modalForm" @ok="modalFormOk"></accountBill-modal>
+    <withdraw-modal ref="modalForm" @ok="modalFormOk"></withdraw-modal>
   </a-card>
 </template>
 
 <script>
-  import AccountBillModal from './modules/AccountBillModal'
+  import WithdrawModal from './modules/WithdrawModal'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 
   export default {
-    name: "AccountBillList",
+    name: "WithdrawList",
     mixins:[JeecgListMixin],
     components: {
-      AccountBillModal
+      WithdrawModal
     },
     data () {
       return {
-        description: '账单管理页面',
+        description: '提现管理页面',
         // 表头
         columns: [
           {
@@ -138,29 +138,24 @@
             dataIndex: 'userId'
            },
 		   {
-            title: '操作前金额',
+            title: '充值金额',
             align:"center",
-            dataIndex: 'beforeMoney'
+            dataIndex: 'money'
            },
 		   {
-            title: '变化金额',
+            title: '0-未审核 1-审核未通过 2-审核已通过',
             align:"center",
-            dataIndex: 'changeMoney'
+            dataIndex: 'status'
            },
 		   {
-            title: '操作后金额',
+            title: '1：支付宝 2：微信',
             align:"center",
-            dataIndex: 'afterMoney'
+            dataIndex: 'withdrawType'
            },
 		   {
-            title: '标志符 + -',
+            title: '第三方订单号',
             align:"center",
-            dataIndex: 'sign'
-           },
-		   {
-            title: '1:充值 2：消费',
-            align:"center",
-            dataIndex: 'billType'
+            dataIndex: 'orderNo'
            },
           {
             title: '操作',
@@ -170,11 +165,11 @@
           }
         ],
 		url: {
-          list: "/accountbill/accountBill/list",
-          delete: "/accountbill/accountBill/delete",
-          deleteBatch: "/accountbill/accountBill/deleteBatch",
-          exportXlsUrl: "accountbill/accountBill/exportXls",
-          importExcelUrl: "accountbill/accountBill/importExcel",
+          list: "/withdraw/withdraw/list",
+          delete: "/withdraw/withdraw/delete",
+          deleteBatch: "/withdraw/withdraw/deleteBatch",
+          exportXlsUrl: "withdraw/withdraw/exportXls",
+          importExcelUrl: "withdraw/withdraw/importExcel",
        },
     }
   },

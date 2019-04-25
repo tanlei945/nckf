@@ -127,4 +127,7 @@ public class User implements Serializable {
 	/**邀请人*/
 	@Excel(name = "邀请人", width = 15)
 	private java.lang.String inviterId;
+	/**年龄*/
+	@Excel(name = "年龄", width = 15)
+	private java.lang.String age;
 }

@@ -82,12 +82,12 @@ public class RestAddressController {
         }else {
             boolean ok = addressService.updateById(address);
 
-            if(!ok) {
-                return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),address);
+            if(ok) {
+                return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),address);
             }
         }
 
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),address);
+        return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),address);
     }
 
     /**
@@ -105,13 +105,27 @@ public class RestAddressController {
             return new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(),ResultEnum.QUERY_NOT_EXIST.getDesc(),null);
         }else {
             boolean ok = addressService.removeById(id);
-            if(!ok) {
-                return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),address);
+            if(ok) {
+                return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),address);
             }
         }
 
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),address);
+        return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),address);
     }
+
+    @PostMapping("/edit_default_address")
+    @ApiOperation(value = "修改默认地址", tags = {"个人地址接口"}, notes = "修改默认地址")
+    public RestResponseBean editDefaultAddress(@RequestParam String userid,@RequestParam String id){
+
+        if(addressService.editDefaultAddress(userid,id)){
+
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
+        }
+
+        return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+
+    }
+
 
     @GetMapping("/queryDistance")
     @ApiOperation(value = "骑手距离", notes = "骑手距离")

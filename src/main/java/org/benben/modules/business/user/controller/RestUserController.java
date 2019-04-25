@@ -13,7 +13,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.benben.common.api.vo.RestResponseBean;
-import org.benben.common.api.vo.Result;
 import org.benben.common.constant.CommonConstant;
 import org.benben.common.menu.ResultEnum;
 import org.benben.common.system.api.ISysBaseAPI;
@@ -21,6 +20,8 @@ import org.benben.common.system.query.QueryGenerator;
 import org.benben.common.util.PasswordUtil;
 import org.benben.common.util.RedisUtil;
 import org.benben.common.util.oConvertUtils;
+import org.benben.modules.business.account.entity.Account;
+import org.benben.modules.business.account.service.IAccountService;
 import org.benben.modules.business.commen.dto.SmsDTO;
 import org.benben.modules.business.commen.service.IQqService;
 import org.benben.modules.business.commen.service.ISMSService;
@@ -30,7 +31,11 @@ import org.benben.modules.business.user.entity.User;
 import org.benben.modules.business.user.entity.UserThird;
 import org.benben.modules.business.user.service.IUserService;
 import org.benben.modules.business.user.service.IUserThirdService;
+import org.benben.modules.business.user.vo.UserStoreVo;
+import org.benben.modules.business.userstore.entity.UserStore;
+import org.benben.modules.business.userstore.service.IUserStoreService;
 import org.benben.modules.shiro.authc.util.JwtUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -40,7 +45,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 /**
- * @Title: Controller
+ * @Title: RestUserController
  * @Description: 用户
  * @author： jeecg-boot
  * @date： 2019-04-19
@@ -71,6 +76,12 @@ public class RestUserController {
 
     @Autowired
     private IQqService iQqService;
+
+    @Autowired
+    private IAccountService iAccountService;
+
+    @Autowired
+    private IUserStoreService userStoreService;
 
     @Autowired
     private RedisUtil redisUtil;
@@ -105,7 +116,7 @@ public class RestUserController {
      * @param id
      * @return
      */
-    @GetMapping(value = "/queryById")
+    @GetMapping(value = "/query_by_id")
     @ApiOperation(value = "通过id查询用户", tags = {"用户接口"}, notes = "通过id查询用户")
     public RestResponseBean queryById(@RequestParam(name="id",required=true) String id) {
 
@@ -128,13 +139,18 @@ public class RestUserController {
     @ApiOperation(value = "用户注册", tags = {"用户接口"}, notes = "用户注册")
     public RestResponseBean register(@RequestBody User user) {
 
-        try {
+        Account account = new Account();
 
+        try {
+            //保存用户信息
             String salt = oConvertUtils.randomGen(8);
             user.setSalt(salt);
             String passwordEncode = PasswordUtil.encrypt(user.getUsername(), user.getPassword(), salt);
             user.setPassword(passwordEncode);
             userService.save(user);
+            //生成钱包
+            account.setUserId(user.getId());
+            iAccountService.save(account);
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),user);
 
         } catch (Exception e) {
@@ -147,22 +163,36 @@ public class RestUserController {
     }
 
     /**
-     * 用户注册
-     * @param user
+     * 骑手注册
+     * @param userStoreVo
      * @return
      */
     @PostMapping(value = "/rider_register")
     @ApiOperation(value = "骑手注册", tags = {"用户接口"}, notes = "骑手注册")
-    public RestResponseBean riderRegister(@RequestBody User user) {
+    public RestResponseBean riderRegister(@RequestBody UserStoreVo userStoreVo) {
+
+        User user = new User();
+        UserStore userStore = new UserStore();
+        Account account = new Account();
 
         try {
 
+            BeanUtils.copyProperties(userStoreVo,user);
+            BeanUtils.copyProperties(userStoreVo,userStore);
+            user.setUsername(userStoreVo.getMobile());
+            user.setUserType("1");
             String salt = oConvertUtils.randomGen(8);
             user.setSalt(salt);
-            String passwordEncode = PasswordUtil.encrypt(user.getUsername(), user.getPassword(), salt);
+            String passwordEncode = PasswordUtil.encrypt(user.getUsername(), CommonConstant.NCKF_PWD, salt);
             user.setPassword(passwordEncode);
             userService.save(user);
-            //TODO 骑手信息表
+            // 保存骑手信息
+            userStore.setUserId(user.getId());
+            userStore.setCompleteFlag("0");
+            userStoreService.save(userStore);
+            // 生成账单
+            account.setUserId(user.getId());
+            iAccountService.save(account);
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),user);
 
         } catch (Exception e) {
@@ -191,12 +221,12 @@ public class RestUserController {
         }else {
             boolean ok = userService.updateById(user);
 
-            if(!ok) {
-                return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),user);
+            if(ok) {
+                return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),user);
             }
         }
 
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),user);
+        return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),user);
     }
 
     /**
@@ -236,33 +266,23 @@ public class RestUserController {
 
     /**
      * 修改邮箱
-     *
      * @param email
-     * @param captcha
      * @return
      */
     @PostMapping(value = "/changeEmail")
     @ApiOperation(value = "修改邮箱", tags = {"用户接口"}, notes = "修改邮箱")
-    public Result<User> changeEmail(@RequestParam String email, @RequestParam String captcha) {
-        Result<User> result = new Result<User>();
-        RestResponseBean RestResponseBean = new RestResponseBean();
+    public RestResponseBean changeEmail(@RequestParam String email) {
 
-        if (!"yanzheng".equals(captcha)) {
-            result.error500("验证码错误");
-            return result;
-        }
-        if (email == null || email == "") {
-            result.error500("邮箱不允许为空");
-            return result;
-        }
         User user = (User) SecurityUtils.getSubject().getPrincipal();
         user.setEmail(email);
+
         boolean b = userService.updateById(user);
-        if (b)
-            result.success("修改成功");
-        return result;
 
+        if(b){
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
+        }
 
+        return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
     }
 
     /**
@@ -296,7 +316,6 @@ public class RestUserController {
      * 修改密码
      *
      * @param mobile
-     * @param captcha
      * @param newpassword
      * @return
      */
@@ -352,15 +371,15 @@ public class RestUserController {
      */
     @GetMapping("/logOut")
     @ApiOperation(value = "退出", tags = {"用户接口"}, notes = "退出")
-    public Result<User> logOut() {
-        Result<User> result = new Result<User>();
+    public RestResponseBean logOut() {
+
         User user = (User) SecurityUtils.getSubject().getPrincipal();
         String token = JwtUtil.sign(CommonConstant.SIGN_MEMBER_USER + user.getUsername(), user.getPassword());
         redisUtil.del(CommonConstant.SIGN_MEMBER_USER + token);
         Subject subject = SecurityUtils.getSubject();
         subject.logout();
-        result.success("安全登出");
-        return result;
+
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
     }
 
     /**
