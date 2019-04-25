@@ -52,6 +52,8 @@ public interface CommonConstant {
 	public static String SIGN_MEMBER_USER = "memberUser@";
 
 	public static String SMS_EVENT = "login";
+
+	public static String NCKF_PWD="nckf123";
     
     /**
      *  0：一级菜单

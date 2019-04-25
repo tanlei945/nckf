@@ -29,13 +29,13 @@ public class AccountBill implements Serializable {
 	private java.lang.String userId;
 	/**操作前金额*/
 	@Excel(name = "操作前金额", width = 15)
-	private java.math.BigDecimal beforeMoney;
+	private java.lang.Double beforeMoney;
 	/**变化金额*/
 	@Excel(name = "变化金额", width = 15)
-	private java.math.BigDecimal changeMoney;
+	private java.lang.Double changeMoney;
 	/**操作后金额*/
 	@Excel(name = "操作后金额", width = 15)
-	private java.math.BigDecimal afterMpney;
+	private java.lang.Double afterMoney;
 	/**标志符 + -*/
 	@Excel(name = "标志符 + -", width = 15)
 	private java.lang.String sign;

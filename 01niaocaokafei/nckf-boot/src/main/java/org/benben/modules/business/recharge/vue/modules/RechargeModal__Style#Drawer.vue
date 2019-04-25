@@ -1,13 +1,13 @@
 <template>
-  <a-modal
-    :title="title"
-    :width="800"
-    :visible="visible"
-    :confirmLoading="confirmLoading"
-    @ok="handleOk"
-    @cancel="handleCancel"
-    cancelText="关闭">
-    
+  <a-drawer
+      :title="title"
+      :width="800"
+      placement="right"
+      :closable="false"
+      @close="close"
+      :visible="visible"
+  >
+
     <a-spin :spinning="confirmLoading">
       <a-form :form="form">
       
@@ -20,37 +20,33 @@
         <a-form-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
-          label="操作前金额">
-          <a-input-number v-decorator="[ 'beforeMoney', {}]" />
+          label="充值金额">
+          <a-input-number v-decorator="[ 'rechargeMoney', {}]" />
         </a-form-item>
         <a-form-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
-          label="变化金额">
-          <a-input-number v-decorator="[ 'changeMoney', {}]" />
+          label="0-失败 1-成功">
+          <a-input placeholder="请输入0-失败 1-成功" v-decorator="['status', {}]" />
         </a-form-item>
         <a-form-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
-          label="操作后金额">
-          <a-input-number v-decorator="[ 'afterMoney', {}]" />
+          label="1：支付宝 2：微信">
+          <a-input placeholder="请输入1：支付宝 2：微信" v-decorator="['rechargeType', {}]" />
         </a-form-item>
         <a-form-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
-          label="标志符 + -">
-          <a-input placeholder="请输入标志符 + -" v-decorator="['sign', {}]" />
-        </a-form-item>
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="1:充值 2：消费">
-          <a-input placeholder="请输入1:充值 2：消费" v-decorator="['billType', {}]" />
+          label="第三方订单号">
+          <a-input placeholder="请输入第三方订单号" v-decorator="['orderNo', {}]" />
         </a-form-item>
 		
       </a-form>
     </a-spin>
-  </a-modal>
+    <a-button type="primary" @click="handleOk">确定</a-button>
+    <a-button type="primary" @click="handleCancel">取消</a-button>
+  </a-drawer>
 </template>
 
 <script>
@@ -59,7 +55,7 @@
   import moment from "moment"
 
   export default {
-    name: "AccountBillModal",
+    name: "RechargeModal",
     data () {
       return {
         title:"操作",
@@ -79,8 +75,8 @@
         validatorRules:{
         },
         url: {
-          add: "/accountbill/accountBill/add",
-          edit: "/accountbill/accountBill/edit",
+          add: "/recharge/recharge/add",
+          edit: "/recharge/recharge/edit",
         },
       }
     },
@@ -95,7 +91,7 @@
         this.model = Object.assign({}, record);
         this.visible = true;
         this.$nextTick(() => {
-          this.form.setFieldsValue(pick(this.model,'userId','beforeMoney','changeMoney','afterMoney','sign','billType'))
+          this.form.setFieldsValue(pick(this.model,'userId','rechargeMoney','status','rechargeType','orderNo'))
 		  //时间格式化
         });
 
@@ -149,6 +145,11 @@
   }
 </script>
 
-<style scoped>
-
+<style lang="less" scoped>
+/** Button按钮间距 */
+  .ant-btn {
+    margin-left: 30px;
+    margin-bottom: 30px;
+    float: right;
+  }
 </style>

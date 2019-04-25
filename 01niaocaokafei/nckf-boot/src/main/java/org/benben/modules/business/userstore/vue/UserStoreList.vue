@@ -7,29 +7,29 @@
         <a-row :gutter="24">
 
           <a-col :md="6" :sm="8">
-            <a-form-item label="用户id">
-              <a-input placeholder="请输入用户id" v-model="queryParam.userId"></a-input>
+            <a-form-item label="骑手ID">
+              <a-input placeholder="请输入骑手ID" v-model="queryParam.userId"></a-input>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="8">
-            <a-form-item label="操作前金额">
-              <a-input placeholder="请输入操作前金额" v-model="queryParam.beforeMoney"></a-input>
+            <a-form-item label="身份证号">
+              <a-input placeholder="请输入身份证号" v-model="queryParam.idCard"></a-input>
             </a-form-item>
           </a-col>
         <template v-if="toggleSearchStatus">
         <a-col :md="6" :sm="8">
-            <a-form-item label="变化金额">
-              <a-input placeholder="请输入变化金额" v-model="queryParam.changeMoney"></a-input>
+            <a-form-item label="身份证正面照">
+              <a-input placeholder="请输入身份证正面照" v-model="queryParam.frontUrl"></a-input>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="8">
-            <a-form-item label="操作后金额">
-              <a-input placeholder="请输入操作后金额" v-model="queryParam.afterMoney"></a-input>
+            <a-form-item label="身份证反面照">
+              <a-input placeholder="请输入身份证反面照" v-model="queryParam.backUrl"></a-input>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="8">
-            <a-form-item label="标志符 + -">
-              <a-input placeholder="请输入标志符 + -" v-model="queryParam.sign"></a-input>
+            <a-form-item label="商家ID">
+              <a-input placeholder="请输入商家ID" v-model="queryParam.storeId"></a-input>
             </a-form-item>
           </a-col>
         </template>
@@ -103,23 +103,23 @@
     <!-- table区域-end -->
 
     <!-- 表单区域 -->
-    <accountBill-modal ref="modalForm" @ok="modalFormOk"></accountBill-modal>
+    <userStore-modal ref="modalForm" @ok="modalFormOk"></userStore-modal>
   </a-card>
 </template>
 
 <script>
-  import AccountBillModal from './modules/AccountBillModal'
+  import UserStoreModal from './modules/UserStoreModal'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 
   export default {
-    name: "AccountBillList",
+    name: "UserStoreList",
     mixins:[JeecgListMixin],
     components: {
-      AccountBillModal
+      UserStoreModal
     },
     data () {
       return {
-        description: '账单管理页面',
+        description: '骑手信息管理页面',
         // 表头
         columns: [
           {
@@ -133,34 +133,34 @@
             }
            },
 		   {
-            title: '用户id',
+            title: '骑手ID',
             align:"center",
             dataIndex: 'userId'
            },
 		   {
-            title: '操作前金额',
+            title: '身份证号',
             align:"center",
-            dataIndex: 'beforeMoney'
+            dataIndex: 'idCard'
            },
 		   {
-            title: '变化金额',
+            title: '身份证正面照',
             align:"center",
-            dataIndex: 'changeMoney'
+            dataIndex: 'frontUrl'
            },
 		   {
-            title: '操作后金额',
+            title: '身份证反面照',
             align:"center",
-            dataIndex: 'afterMoney'
+            dataIndex: 'backUrl'
            },
 		   {
-            title: '标志符 + -',
+            title: '商家ID',
             align:"center",
-            dataIndex: 'sign'
+            dataIndex: 'storeId'
            },
 		   {
-            title: '1:充值 2：消费',
+            title: '0:未审核  1:审核未通过 2：审核通过',
             align:"center",
-            dataIndex: 'billType'
+            dataIndex: 'completeFlag'
            },
           {
             title: '操作',
@@ -170,11 +170,11 @@
           }
         ],
 		url: {
-          list: "/accountbill/accountBill/list",
-          delete: "/accountbill/accountBill/delete",
-          deleteBatch: "/accountbill/accountBill/deleteBatch",
-          exportXlsUrl: "accountbill/accountBill/exportXls",
-          importExcelUrl: "accountbill/accountBill/importExcel",
+          list: "/userstore/userStore/list",
+          delete: "/userstore/userStore/delete",
+          deleteBatch: "/userstore/userStore/deleteBatch",
+          exportXlsUrl: "userstore/userStore/exportXls",
+          importExcelUrl: "userstore/userStore/importExcel",
        },
     }
   },

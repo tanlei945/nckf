@@ -8,40 +8,84 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 /**
  * @Description: 用户地址
  * @author： jeecg-boot
- * @date：   2019-04-23
+ * @date： 2019-04-23
  * @version： V1.0
  */
 @Service
 public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> implements IAddressService {
-  @Autowired
-  private AddressMapper addressMapper;
+    @Autowired
+    private AddressMapper addressMapper;
 
+    /**
+     * 根据userId查询所有地址
+     *
+     * @param mainId
+     * @return
+     */
+    @Override
+    public List<Address> selectByMainId(String mainId) {
+        return addressMapper.selectByMainId(mainId);
+    }
+
+
+    /**
+     * 根据userId查询默认地址
+     *
+     * @param userId
+     * @return
+     */
     @Override
     public Address queryAddress(String userId) {
         QueryWrapper<Address> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("user_id",userId);
+        queryWrapper.eq("user_id", userId);
         queryWrapper.and(wrapper -> wrapper.eq("default_flag", "1"));
         Address address = addressMapper.selectOne(queryWrapper);
 
         return address;
     }
 
+    /**
+     * 修改默认地址
+     * @param userId 用户ID
+     * @param id 地址ID
+     * @return
+     */
     @Override
-    public String queryDistance(Double lng1, Double lat1,Double lng2, Double lat2) {
+    @Transactional
+    public boolean editDefaultAddress(String userId, String id) {
+
+        Address beforeAddress = this.queryAddress(userId);
+        Address afterAddress = addressMapper.selectById(id);
+
+        if(beforeAddress == null || afterAddress == null){
+            return false;
+        }
+
+        beforeAddress.setDefaultFlag("0");
+        afterAddress.setDefaultFlag("1");
+        addressMapper.updateById(beforeAddress);
+        addressMapper.updateById(afterAddress);
+
+        return true;
+    }
+
+    @Override
+    public String queryDistance(Double lng1, Double lat1, Double lng2, Double lat2) {
         double radLat1 = rad(lat1);
         double radLat2 = rad(lat2);
         double a = radLat1 - radLat2;
         double b = rad(lng1) - rad(lng2);
         double s = 2 * Math.asin(
                 Math.sqrt(
-                        Math.pow(Math.sin(a/2),2)
-                                + Math.cos(radLat1)*Math.cos(radLat2)*Math.pow(Math.sin(b/2),2)
+                        Math.pow(Math.sin(a / 2), 2)
+                                + Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(b / 2), 2)
                 )
         );
         s = s * 6378137;
@@ -50,12 +94,7 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
         return distance;
     }
 
-    @Override
-    public List<Address> selectByMainId(String mainId) {
-        return addressMapper.selectByMainId(mainId);
-    }
-
-    private  double rad(double d){
+    private double rad(double d) {
         return d * Math.PI / 180.0;
     }
 }

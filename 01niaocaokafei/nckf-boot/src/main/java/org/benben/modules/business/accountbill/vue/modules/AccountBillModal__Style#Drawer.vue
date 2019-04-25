@@ -33,7 +33,7 @@
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           label="操作后金额">
-          <a-input-number v-decorator="[ 'afterMpney', {}]" />
+          <a-input-number v-decorator="[ 'afterMoney', {}]" />
         </a-form-item>
         <a-form-item
           :labelCol="labelCol"
@@ -97,7 +97,7 @@
         this.model = Object.assign({}, record);
         this.visible = true;
         this.$nextTick(() => {
-          this.form.setFieldsValue(pick(this.model,'userId','beforeMoney','changeMoney','afterMpney','sign','billType'))
+          this.form.setFieldsValue(pick(this.model,'userId','beforeMoney','changeMoney','afterMoney','sign','billType'))
 		  //时间格式化
         });
 

@@ -1,36 +1,16 @@
 package org.benben.modules.business.account.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.benben.common.api.vo.Result;
-import org.benben.common.system.query.QueryGenerator;
-import org.benben.common.util.oConvertUtils;
+import org.benben.common.api.vo.RestResponseBean;
+import org.benben.common.menu.ResultEnum;
 import org.benben.modules.business.account.entity.Account;
 import org.benben.modules.business.account.service.IAccountService;
-import org.jeecgframework.poi.excel.ExcelImportUtil;
-import org.jeecgframework.poi.excel.def.NormalExcelConstants;
-import org.jeecgframework.poi.excel.entity.ExportParams;
-import org.jeecgframework.poi.excel.entity.ImportParams;
-import org.jeecgframework.poi.excel.view.JeecgEntityExcelView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+
 
 /**
 * @Title: Controller
@@ -42,53 +22,99 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/account")
 @Slf4j
-@Api(tags = {"钱包接口"})
+@Api(tags = {"账户接口"})
 public class RestAccountController {
 
    @Autowired
    private IAccountService accountService;
+
+
+
+    @GetMapping(value = "/queryById")
+    @ApiOperation(value = "账单/钱包详情", tags = {"账户接口"}, notes = "账单/钱包详情")
+    public RestResponseBean queryById(@RequestParam(name="id",required=true) String id) {
+
+        Account account = accountService.getById(id);
+
+        if(account==null) {
+            return new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(),ResultEnum.QUERY_NOT_EXIST.getDesc(),null);
+        }
+
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),account);
+    }
+
+    @GetMapping(value = "/is_PayPassword")
+    @ApiOperation(value = "是否设置支付密码", tags = {"账户接口"}, notes = "是否设置支付密码")
+    public RestResponseBean isPayPassword(String userId){
+
+        if(accountService.isPayPassword(userId)){
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),"已未设置支付密码",null);
+        }
+
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),"未设置支付密码",null);
+    }
+
+
+    @GetMapping(value = "is_withdraw_account")
+    @ApiOperation(value = "是否设置收款账户", tags = {"账户接口"}, notes = "是否设置收款账户")
+    public RestResponseBean isWithdrawAccount(String userId){
+
+        if(accountService.isWithdrawAccount(userId)){
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),"已设置收款账户",null);
+        }
+
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),"未设置收款账户",null);
+    }
+
+    @GetMapping(value = "/reset_PayPassword")
+    @ApiOperation(value = "重置支付密码", tags = {"账户接口"}, notes = "重置支付密码")
+    public RestResponseBean resetPayPassword(String userId,String newPayPassword){
+
+        if (accountService.resetPayPassword(userId,newPayPassword)){
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
+        }
+
+        return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+    }
 
    /**
     * 充值
     * @param account
     * @return
     */
-   @PostMapping(value = "/edit")
-   @ApiOperation(value = "钱包充值", tags = {"钱包接口"}, notes = "钱包充值")
-   public Result<Account> edit(@RequestBody Account account) {
-       Result<Account> result = new Result<Account>();
+   @PostMapping(value = "/recharge")
+   @ApiOperation(value = "钱包充值", tags = {"账户接口"}, notes = "钱包充值")
+   public RestResponseBean recharge(@RequestBody Account account) {
+
        Account accountEntity = accountService.getById(account.getId());
+
        if(accountEntity==null) {
-           result.error500("未找到对应实体");
+           return new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(),ResultEnum.QUERY_NOT_EXIST.getDesc(),null);
        }else {
            boolean ok = accountService.updateById(account);
-           //TODO 返回false说明什么？
            if(ok) {
-               result.success("修改成功!");
+               return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
            }
        }
 
-       return result;
+       return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
    }
 
-   /**
-    * 通过id查询
-    * @param id
-    * @return
-    */
-   @GetMapping(value = "/queryById")
-   @ApiOperation(value = "查看钱包", tags = {"钱包接口"}, notes = "查看钱包")
-   public Result<Account> queryById(@RequestParam(name="id",required=true) String id) {
-       Result<Account> result = new Result<Account>();
-       Account account = accountService.getById(id);
-       if(account==null) {
-           result.error500("未找到对应实体");
-       }else {
-           result.setResult(account);
-           result.setSuccess(true);
-       }
-       return result;
-   }
+    /**
+     * 账户提现申请
+     * @param userId
+     * @param money
+     * @return
+     */
+    @PostMapping(value = "/withdraw")
+    @ApiOperation(value = "账户提现申请", tags = {"账户接口"}, notes = "账户提现申请")
+    public RestResponseBean withdraw(@RequestParam String userId,@RequestParam double money) {
 
+        if(accountService.withdraw(userId,money)){
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
+        }
+
+        return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+    }
 
 }

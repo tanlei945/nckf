@@ -1,56 +1,58 @@
 <template>
-  <a-modal
-    :title="title"
-    :width="800"
-    :visible="visible"
-    :confirmLoading="confirmLoading"
-    @ok="handleOk"
-    @cancel="handleCancel"
-    cancelText="关闭">
-    
+  <a-drawer
+      :title="title"
+      :width="800"
+      placement="right"
+      :closable="false"
+      @close="close"
+      :visible="visible"
+  >
+
     <a-spin :spinning="confirmLoading">
       <a-form :form="form">
       
         <a-form-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
-          label="用户id">
-          <a-input placeholder="请输入用户id" v-decorator="['userId', {}]" />
+          label="骑手ID">
+          <a-input placeholder="请输入骑手ID" v-decorator="['userId', {}]" />
         </a-form-item>
         <a-form-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
-          label="操作前金额">
-          <a-input-number v-decorator="[ 'beforeMoney', {}]" />
+          label="身份证号">
+          <a-input placeholder="请输入身份证号" v-decorator="['idCard', {}]" />
         </a-form-item>
         <a-form-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
-          label="变化金额">
-          <a-input-number v-decorator="[ 'changeMoney', {}]" />
+          label="身份证正面照">
+          <a-input placeholder="请输入身份证正面照" v-decorator="['frontUrl', {}]" />
         </a-form-item>
         <a-form-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
-          label="操作后金额">
-          <a-input-number v-decorator="[ 'afterMoney', {}]" />
+          label="身份证反面照">
+          <a-input placeholder="请输入身份证反面照" v-decorator="['backUrl', {}]" />
         </a-form-item>
         <a-form-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
-          label="标志符 + -">
-          <a-input placeholder="请输入标志符 + -" v-decorator="['sign', {}]" />
+          label="商家ID">
+          <a-input placeholder="请输入商家ID" v-decorator="['storeId', {}]" />
         </a-form-item>
         <a-form-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
-          label="1:充值 2：消费">
-          <a-input placeholder="请输入1:充值 2：消费" v-decorator="['billType', {}]" />
+          label="0:未审核  1:审核未通过 2：审核通过">
+          <a-input placeholder="请输入0:未审核  1:审核未通过 2：审核通过" v-decorator="['completeFlag', {}]" />
         </a-form-item>
 		
       </a-form>
     </a-spin>
-  </a-modal>
+    <a-button type="primary" @click="handleOk">确定</a-button>
+    <a-button type="primary" @click="handleCancel">取消</a-button>
+  </a-drawer>
 </template>
 
 <script>
@@ -59,7 +61,7 @@
   import moment from "moment"
 
   export default {
-    name: "AccountBillModal",
+    name: "UserStoreModal",
     data () {
       return {
         title:"操作",
@@ -79,8 +81,8 @@
         validatorRules:{
         },
         url: {
-          add: "/accountbill/accountBill/add",
-          edit: "/accountbill/accountBill/edit",
+          add: "/userstore/userStore/add",
+          edit: "/userstore/userStore/edit",
         },
       }
     },
@@ -95,7 +97,7 @@
         this.model = Object.assign({}, record);
         this.visible = true;
         this.$nextTick(() => {
-          this.form.setFieldsValue(pick(this.model,'userId','beforeMoney','changeMoney','afterMoney','sign','billType'))
+          this.form.setFieldsValue(pick(this.model,'userId','idCard','frontUrl','backUrl','storeId','completeFlag'))
 		  //时间格式化
         });
 
@@ -149,6 +151,11 @@
   }
 </script>
 
-<style scoped>
-
+<style lang="less" scoped>
+/** Button按钮间距 */
+  .ant-btn {
+    margin-left: 30px;
+    margin-bottom: 30px;
+    float: right;
+  }
 </style>

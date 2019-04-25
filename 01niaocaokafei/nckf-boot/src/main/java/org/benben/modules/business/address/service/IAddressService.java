@@ -19,5 +19,5 @@ public interface IAddressService extends IService<Address> {
 
     public List<Address> selectByMainId(String mainId);
 
-
+    public boolean editDefaultAddress(String userId,String id);
 }
