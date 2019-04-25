@@ -12,7 +12,7 @@
     </resultMap>
 
     <insert id="insert">
-        insert into bb_order_nopay (id,status,create_by,create_time,update_by,update_time) values(#{id},#{status},#{createBy},#{createBy},#{updateBy},#{updateTime});
+        insert into bb_order_nopay (id,status,create_by,create_time,update_by,update_time) values(#{id},#{status},#{createBy},#{createTime},#{updateBy},#{updateTime});
     </insert>
 
 

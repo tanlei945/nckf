@@ -1,6 +1,5 @@
 package org.benben.modules.business.invoice.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -9,28 +8,12 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.benben.common.api.vo.Result;
 import org.benben.common.system.query.QueryGenerator;
-import org.benben.common.util.oConvertUtils;
 import org.benben.modules.business.invoice.entity.InvoiceTitle;
 import org.benben.modules.business.invoice.service.IInvoiceTitleService;
-import org.jeecgframework.poi.excel.ExcelImportUtil;
-import org.jeecgframework.poi.excel.def.NormalExcelConstants;
-import org.jeecgframework.poi.excel.entity.ExportParams;
-import org.jeecgframework.poi.excel.entity.ImportParams;
-import org.jeecgframework.poi.excel.view.JeecgEntityExcelView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 /**
 * @Title: Controller
@@ -40,9 +23,9 @@ import java.util.Map;
 * @version： V1.0
 */
 @RestController
-@RequestMapping("/invoice_title")
+@RequestMapping("/api/invoice/title")
 @Slf4j
-@Api("{发票抬头接口}")
+@Api(tags = {"发票抬头接口"})
 public class RestInvoiceTitleController {
    @Autowired
    private IInvoiceTitleService invoiceTitleService;
@@ -56,7 +39,7 @@ public class RestInvoiceTitleController {
     * @return
     */
    @GetMapping(value = "/list")
-   @ApiOperation(value = "用户发票抬头（多条件）查询接口", tags = "{发票抬头接口}", notes = "用户发票抬头（多条件）查询接口")
+   @ApiOperation(value = "用户发票抬头（多条件）查询接口", tags = {"发票抬头接口"}, notes = "用户发票抬头（多条件）查询接口")
    public Result<IPage<InvoiceTitle>> queryPageList(InvoiceTitle invoiceTitle,
                                      @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                      @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
@@ -76,7 +59,7 @@ public class RestInvoiceTitleController {
     * @return
     */
    @PostMapping(value = "/add")
-   @ApiOperation(value = "用户发票头提交接口", tags = "{发票抬头接口}", notes = "用户发票头提交接口")
+   @ApiOperation(value = "用户发票头提交接口", tags = {"发票抬头接口"}, notes = "用户发票头提交接口")
    public Result<InvoiceTitle> add(InvoiceTitle invoiceTitle) {
        Result<InvoiceTitle> result = new Result<InvoiceTitle>();
        try {
@@ -95,8 +78,8 @@ public class RestInvoiceTitleController {
     * @param invoiceTitle
     * @return
     */
-   @PutMapping(value = "/edit")
-   @ApiOperation(value = "用户发票头编辑接口", tags = "{发票抬头接口}", notes = "用户发票头编辑接口")
+   @PostMapping(value = "/edit")
+   @ApiOperation(value = "用户发票头编辑接口", tags = {"发票抬头接口"}, notes = "用户发票头编辑接口")
    public Result<InvoiceTitle> edit(@RequestBody InvoiceTitle invoiceTitle) {
        Result<InvoiceTitle> result = new Result<InvoiceTitle>();
        InvoiceTitle invoiceTitleEntity = invoiceTitleService.getById(invoiceTitle.getId());
@@ -118,8 +101,8 @@ public class RestInvoiceTitleController {
     * @param id
     * @return
     */
-   @DeleteMapping(value = "/delete")
-   @ApiOperation(value = "用户发票头根据id删除接口", tags = "{发票抬头接口}", notes = "用户发票头根据id删除接口")
+   @PostMapping(value = "/delete")
+   @ApiOperation(value = "用户发票头根据id删除接口", tags = {"发票抬头接口"}, notes = "用户发票头根据id删除接口")
    public Result<InvoiceTitle> delete(@RequestParam(name="id",required=true) String id) {
        Result<InvoiceTitle> result = new Result<InvoiceTitle>();
        InvoiceTitle invoiceTitle = invoiceTitleService.getById(id);
@@ -131,7 +114,6 @@ public class RestInvoiceTitleController {
                result.success("删除成功!");
            }
        }
-
        return result;
    }
 }

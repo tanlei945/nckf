@@ -1,6 +1,5 @@
 package org.benben.modules.business.invoice.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -9,28 +8,16 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.benben.common.api.vo.Result;
 import org.benben.common.system.query.QueryGenerator;
-import org.benben.common.util.oConvertUtils;
 import org.benben.modules.business.invoice.entity.Invoice;
 import org.benben.modules.business.invoice.service.IInvoiceService;
 import org.benben.modules.business.order.entity.Order;
 import org.benben.modules.business.order.service.IOrderService;
-import org.jeecgframework.poi.excel.ExcelImportUtil;
-import org.jeecgframework.poi.excel.def.NormalExcelConstants;
-import org.jeecgframework.poi.excel.entity.ExportParams;
-import org.jeecgframework.poi.excel.entity.ImportParams;
-import org.jeecgframework.poi.excel.view.JeecgEntityExcelView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
 /**
 * @Title: Controller
@@ -40,9 +27,9 @@ import java.util.*;
 * @version： V1.0
 */
 @RestController
-@RequestMapping("/invoice")
+@RequestMapping("/api/invoice")
 @Slf4j
-@Api("{发票接口}")
+@Api(tags = {"发票接口"})
 public class RestInvoiceController {
    @Autowired
    private IInvoiceService invoiceService;
@@ -58,7 +45,7 @@ public class RestInvoiceController {
     * @return
     */
    @GetMapping(value = "/list")
-   @ApiOperation(value = "用户发票查询接口", tags = "{发票接口}", notes = "用户发票查询接口")
+   @ApiOperation(value = "用户发票查询接口", tags = {"发票接口"}, notes = "用户发票查询接口")
    public Result<IPage<Invoice>> queryPageList(Invoice invoice,
                                      @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                      @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
@@ -78,12 +65,13 @@ public class RestInvoiceController {
     * @return
     */
    @PostMapping(value = "/add")
-   @ApiOperation(value = "用户发票提交接口", tags = "{发票接口}", notes = "用户发票提交接口")
+   @ApiOperation(value = "用户发票提交接口", tags = {"发票接口"}, notes = "用户发票提交接口")
    public Result<Invoice> add(Invoice invoice,@RequestParam(value = "orderIdList")List<String> orderIdList) {
        //从数据库中获取用户所需的实际开票金额
        double sum = 0;
+       QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
        for (String s : orderIdList) {
-           Order order = orderService.selectById(s);
+           Order order = orderService.getById(s);
            sum += order.getOrderMoney();
        }
 
@@ -94,11 +82,11 @@ public class RestInvoiceController {
                invoiceService.save(invoice);
 
                for (String s : orderIdList) {
-                   Order order = orderService.selectById(s);
-                   order.setInvoiceFlag(1);
-                   QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
-                   queryWrapper.eq("id",s);
-                   orderService.update(order,queryWrapper);
+                   Order order = orderService.getById(s);
+                   order.setInvoiceFlag("1");
+                   QueryWrapper<Order> queryWrapper1 = new QueryWrapper<>();
+                   queryWrapper1.eq("id",s);
+                   orderService.update(order,queryWrapper1);
                }
 
                result.success("添加成功！");
@@ -119,8 +107,8 @@ public class RestInvoiceController {
     * @param invoice
     * @return
     */
-   @PutMapping(value = "/edit")
-   @ApiOperation(value = "用户发票编辑接口", tags = "{发票接口}", notes = "用户发票编辑接口")
+   @PostMapping(value = "/edit")
+   @ApiOperation(value = "用户发票编辑接口", tags = {"发票接口"}, notes = "用户发票编辑接口")
    public Result<Invoice> edit(Invoice invoice) {
        Result<Invoice> result = new Result<Invoice>();
        Invoice invoiceEntity = invoiceService.getById(invoice.getId());
@@ -130,7 +118,7 @@ public class RestInvoiceController {
            boolean ok = invoiceService.updateById(invoice);
            //TODO 返回false说明什么？
            if(ok) {
-               result.success("修改成功!");
+               result.success("订单取消成功!");
            }
        }
 
@@ -193,73 +181,5 @@ public class RestInvoiceController {
        return result;
    }
 
- /**
-     * 导出excel
-  *
-  * @param request
-  * @param response
-  */
- @RequestMapping(value = "/exportXls")
- public ModelAndView exportXls(HttpServletRequest request, HttpServletResponse response) {
-     // Step.1 组装查询条件
-     QueryWrapper<Invoice> queryWrapper = null;
-     try {
-         String paramsStr = request.getParameter("paramsStr");
-         if (oConvertUtils.isNotEmpty(paramsStr)) {
-             String deString = URLDecoder.decode(paramsStr, "UTF-8");
-             Invoice invoice = JSON.parseObject(deString, Invoice.class);
-             queryWrapper = QueryGenerator.initQueryWrapper(invoice, request.getParameterMap());
-         }
-     } catch (UnsupportedEncodingException e) {
-         e.printStackTrace();
-     }
-
-     //Step.2 AutoPoi 导出Excel
-     ModelAndView mv = new ModelAndView(new JeecgEntityExcelView());
-     List<Invoice> pageList = invoiceService.list(queryWrapper);
-     //导出文件名称
-     mv.addObject(NormalExcelConstants.FILE_NAME, "用户发票列表");
-     mv.addObject(NormalExcelConstants.CLASS, Invoice.class);
-     mv.addObject(NormalExcelConstants.PARAMS, new ExportParams("用户发票列表数据", "导出人:Jeecg", "导出信息"));
-     mv.addObject(NormalExcelConstants.DATA_LIST, pageList);
-     return mv;
- }
-
- /**
-     * 通过excel导入数据
-  *
-  * @param request
-  * @param response
-  * @return
-  */
- @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
- public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
-     MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-     Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
-     for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {
-         MultipartFile file = entity.getValue();// 获取上传文件对象
-         ImportParams params = new ImportParams();
-         params.setTitleRows(2);
-         params.setHeadRows(1);
-         params.setNeedSave(true);
-         try {
-             List<Invoice> listInvoices = ExcelImportUtil.importExcel(file.getInputStream(), Invoice.class, params);
-             for (Invoice invoiceExcel : listInvoices) {
-                 invoiceService.save(invoiceExcel);
-             }
-             return Result.ok("文件导入成功！数据行数：" + listInvoices.size());
-         } catch (Exception e) {
-             log.error(e.getMessage());
-             return Result.error("文件导入失败！");
-         } finally {
-             try {
-                 file.getInputStream().close();
-             } catch (IOException e) {
-                 e.printStackTrace();
-             }
-         }
-     }
-     return Result.ok("文件导入失败！");
- }
 
 }
