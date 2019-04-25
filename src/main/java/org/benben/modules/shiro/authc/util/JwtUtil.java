@@ -79,6 +79,36 @@ public class JwtUtil {
 
 	}
 
+
+    /**
+     * 获得token中的信息无需secret解密也能获得
+     *
+     * @return token中包含的用户名
+     */
+    public static String getMobile(String token) {
+        try {
+            DecodedJWT jwt = JWT.decode(token);
+            return jwt.getClaim("mobile").asString();
+        } catch (JWTDecodeException e) {
+            return null;
+        }
+    }
+
+    /**
+     * 生成签名,5min后过期
+     *
+     * @param mobile 手机号
+     * @param secret   用户的密码
+     * @return 加密的token
+     */
+    public static String signUser(String mobile, String secret) {
+        Date date = new Date(System.currentTimeMillis() + EXPIRE_TIME);
+        Algorithm algorithm = Algorithm.HMAC256(secret);
+        // 附带mobile信息
+        return JWT.create().withClaim("mobile", mobile).withExpiresAt(date).sign(algorithm);
+
+    }
+
 	/**
 	 * 根据request中的token获取用户账号
 	 * 

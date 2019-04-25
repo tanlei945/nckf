@@ -145,7 +145,7 @@ public class RestUserController {
             //保存用户信息
             String salt = oConvertUtils.randomGen(8);
             user.setSalt(salt);
-            String passwordEncode = PasswordUtil.encrypt(user.getUsername(), user.getPassword(), salt);
+            String passwordEncode = PasswordUtil.encrypt(user.getMobile(), user.getPassword(), salt);
             user.setPassword(passwordEncode);
             userService.save(user);
             //生成钱包
@@ -183,7 +183,7 @@ public class RestUserController {
             user.setUserType("1");
             String salt = oConvertUtils.randomGen(8);
             user.setSalt(salt);
-            String passwordEncode = PasswordUtil.encrypt(user.getUsername(), CommonConstant.NCKF_PWD, salt);
+            String passwordEncode = PasswordUtil.encrypt(user.getMobile(), CommonConstant.NCKF_PWD, salt);
             user.setPassword(passwordEncode);
             userService.save(user);
             // 保存骑手信息
@@ -340,19 +340,25 @@ public class RestUserController {
         return new RestResponseBean(ResultEnum.ERROR.getValue(),ResultEnum.ERROR.getDesc(),null);
     }
 
+    /**
+     * 账户密码登录
+     * @param mobile
+     * @param password
+     * @return
+     */
     @PostMapping(value = "/login")
-    @ApiOperation(value = "用户登录接口", tags = {"用户接口"}, notes = "用户登录接口")
-    public RestResponseBean login(@RequestParam("username") String username, @RequestParam("password") String password) {
+    @ApiOperation(value = "账户密码登录", tags = {"用户接口"}, notes = "账户密码登录")
+    public RestResponseBean login(@RequestParam String mobile, @RequestParam String password) {
 
         JSONObject obj = new JSONObject();
-        User user = userService.queryByUsername(username);
+        User user = userService.queryByMobile(mobile);
 
         if (user == null) {
-            sysBaseAPI.addLog("登录失败，用户名:" + username + "不存在！", CommonConstant.LOG_TYPE_1, null);
+            sysBaseAPI.addLog("登录失败，用户名:" + mobile + "不存在！", CommonConstant.LOG_TYPE_1, null);
             return new RestResponseBean(ResultEnum.USER_NOT_EXIST.getValue(), ResultEnum.USER_NOT_EXIST.getDesc(), null);
         } else {
             //密码验证
-            String userpassword = PasswordUtil.encrypt(username, password, user.getSalt());
+            String userpassword = PasswordUtil.encrypt(mobile, password, user.getSalt());
             String syspassword = user.getPassword();
             if (!syspassword.equals(userpassword)) {
                 return new RestResponseBean(ResultEnum.USER_PWD_ERROR.getValue(), ResultEnum.USER_PWD_ERROR.getDesc(), null);
@@ -600,7 +606,7 @@ public class RestUserController {
 
         JSONObject obj = new JSONObject();
         //生成token
-        String token = JwtUtil.sign(CommonConstant.SIGN_MEMBER_USER + user.getUsername(), user.getPassword());
+        String token = JwtUtil.signUser(CommonConstant.SIGN_MEMBER_USER + user.getMobile(), user.getPassword());
         redisUtil.set(CommonConstant.PREFIX_USER_TOKEN + token, token);
         //设置超时时间
         redisUtil.expire(CommonConstant.PREFIX_USER_TOKEN + token, JwtUtil.EXPIRE_TIME / 1000);
@@ -608,7 +614,7 @@ public class RestUserController {
         obj.put("token", token);
         obj.put("user", user);
 
-        sysBaseAPI.addLog("用户名: " + user.getUsername() + ",登录成功！", CommonConstant.LOG_TYPE_1, null);
+        sysBaseAPI.addLog("手机号: " + user.getMobile() + ",登录成功！", CommonConstant.LOG_TYPE_1, null);
 
         return obj;
     }
