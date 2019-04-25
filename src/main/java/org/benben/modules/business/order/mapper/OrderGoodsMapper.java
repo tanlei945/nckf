@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 /**
  * @Description: 订单详情
  * @author： jeecg-boot
- * @date：   2019-04-23
+ * @date：   2019-04-25
  * @version： V1.0
  */
 public interface OrderGoodsMapper extends BaseMapper<OrderGoods> {

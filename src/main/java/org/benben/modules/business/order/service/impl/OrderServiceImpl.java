@@ -1,7 +1,5 @@
 package org.benben.modules.business.order.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.benben.modules.business.order.entity.Order;
 import org.benben.modules.business.order.entity.OrderGoods;
 import org.benben.modules.business.order.mapper.OrderGoodsMapper;
@@ -18,7 +16,7 @@ import java.util.Collection;
 /**
  * @Description: 订单
  * @author： jeecg-boot
- * @date：   2019-04-23
+ * @date：   2019-04-25
  * @version： V1.0
  */
 @Service
@@ -71,12 +69,5 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 			orderGoodsMapper.deleteByMainId(id.toString());
 		}
 	}
-
-	@Override
-	public Order selectById(String id) {
-		QueryWrapper<Order> wrapper = new QueryWrapper<>();
-		wrapper.eq("id",id);
-		Order order = orderMapper.selectOne(wrapper);
-		return order;
-	}
+	
 }

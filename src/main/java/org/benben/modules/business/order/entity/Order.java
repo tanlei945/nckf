@@ -1,18 +1,18 @@
 package org.benben.modules.business.order.entity;
 
-import java.io.Serializable;
-import java.util.Date;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
+
+import java.io.Serializable;
 
 /**
  * @Description: 订单
  * @author： jeecg-boot
- * @date：   2019-04-23
+ * @date：   2019-04-25
  * @version： V1.0
  */
 @Data
@@ -38,7 +38,7 @@ public class Order implements Serializable {
 	/**订单总金额*/
 	private java.lang.Double orderMoney;
 	/**订单类型(0:送餐  1：店内用餐)*/
-	private java.lang.Object orderType;
+	private java.lang.String orderType;
 	/**送餐地址*/
 	private java.lang.String userAddress;
 	/**用户电话*/
@@ -48,7 +48,7 @@ public class Order implements Serializable {
 	/**用户优惠券id*/
 	private java.lang.String userCouponsId;
 	/**是否需要发票(0:不需要 1:需要)*/
-	private java.lang.Object invoiceFlag;
+	private java.lang.String invoiceFlag;
 	/**发票id*/
 	private java.lang.String invoiceId;
 	/**订单来源(0:微信1:安卓app 2:苹果app 3:)*/
@@ -69,7 +69,7 @@ public class Order implements Serializable {
 	private java.lang.Double createMinMoney;
 	/**配送费*/
 	private java.lang.Double deliveryMoney;
-	/**订单状态：0全部；1待付款；2待发货；3待收货；4待评价；5已完成（已评价）；6售后处理中（退款&退货）；7售后已完成（退款&退货）；8已取消*/
+	/**订单状态：-1已取消 0全部；1待付款；2待发货；3待收货；4待评价；5已完成（已评价）；6售后处理中（退款&退货）；7售后已完成（退款&退货）；8已取消*/
 	private java.lang.String status;
 	/**创建者*/
 	private java.lang.String createBy;
