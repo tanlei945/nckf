@@ -4,10 +4,16 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.benben.modules.business.cart.entity.Cart;
 import org.benben.modules.business.cart.mapper.CartMapper;
 import org.benben.modules.business.cart.service.ICartService;
+import org.benben.modules.business.cart.vo.CartVo;
+import org.benben.modules.business.goods.entity.Goods;
+import org.benben.modules.business.goods.service.IGoodsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Description: 购物车
@@ -20,6 +26,9 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
     @Autowired
     private CartMapper cartMapper;
 
+    @Autowired
+    private IGoodsService goodsService;
+
 
     @Override
     public Cart queryByGoodsId(Cart cart) {
@@ -30,5 +39,20 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
         Cart cartResult = cartMapper.selectOne(Cart);
 
         return cartResult;
+    }
+
+    @Override
+    public List<CartVo> getCartVo(List<Cart> carts) {
+        ArrayList<CartVo> cartVos = new ArrayList<>();
+
+        for(Cart cart:carts) {
+            QueryWrapper<Goods> goodsQueryWrapper = new QueryWrapper<>();
+            goodsQueryWrapper.eq("id", cart.getGoodsId());
+            Goods goods = goodsService.getOne(goodsQueryWrapper);
+            CartVo cartVo = new CartVo(cart,goods.getPrice() * cart.getGoodsNum());
+            cartVos.add(cartVo);
+        }
+
+        return cartVos;
     }
 }
