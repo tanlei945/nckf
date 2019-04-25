@@ -1,16 +1,14 @@
 package org.benben.modules.quartz.entity;
 
-import java.io.Serializable;
-
-import org.jeecgframework.poi.excel.annotation.Excel;
-import org.springframework.format.annotation.DateTimeFormat;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
-
 import lombok.Data;
+import org.jeecgframework.poi.excel.annotation.Excel;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.io.Serializable;
 
 /**
  * @Description: 定时任务在线管理
@@ -55,4 +53,5 @@ public class QuartzJob implements Serializable {
 	/**状态 0正常 -1停止*/
 	@Excel(name="状态",width=15)
 	private java.lang.Integer status;
+
 }

@@ -62,7 +62,7 @@ public class QuartzJobController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
-	@ApiOperation(value = "查询任务接口", tags = {"定时任务接口"}, notes = "查询任务接口")
+	//@ApiOperation(value = "查询任务接口", tags = {"定时任务接口"}, notes = "查询任务接口")
 	public Result<IPage<QuartzJob>> queryPageList(QuartzJob quartzJob, @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
                                                   @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest req) {
 		Result<IPage<QuartzJob>> result = new Result<IPage<QuartzJob>>();
@@ -81,7 +81,7 @@ public class QuartzJobController {
 	 * @return
 	 */
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	@ApiOperation(value = "增加任务接口", tags = {"定时任务接口"}, notes = "增加任务接口")
+	//@ApiOperation(value = "增加任务接口", tags = {"定时任务接口"}, notes = "增加任务接口")
 	public Result<?> add(@RequestBody QuartzJob quartzJob) {
 		Result<QuartzJob> result = new Result<QuartzJob>();
 
@@ -135,7 +135,7 @@ public class QuartzJobController {
 	 * @param id
 	 * @return
 	 */
-	@RequestMapping(value = "/delete", method = RequestMethod.DELETE)
+	@PostMapping(value = "/delete")
 	public Result<QuartzJob> delete(@RequestParam(name = "id", required = true) String id) {
 		Result<QuartzJob> result = new Result<QuartzJob>();
 		QuartzJob quartzJob = quartzJobService.getById(id);
@@ -242,7 +242,6 @@ public class QuartzJobController {
 	 * @param parameter
 	 */
 	private void schedulerAdd(String jobClassName, String cronExpression, String parameter) {
-
 		try {
 			// 启动调度器
 			scheduler.start();
