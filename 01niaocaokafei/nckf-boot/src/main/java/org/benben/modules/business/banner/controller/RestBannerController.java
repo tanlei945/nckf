@@ -39,7 +39,7 @@ public class RestBannerController {
      * @return
      */
     @GetMapping(value = "/query_image_list")
-    @ApiOperation(value = "轮播图", notes = "轮播图")
+    @ApiOperation(value = "轮播图", notes = "轮播图",tags = "轮播图接口")
     public RestResponseBean queryImageList(Banner banner,HttpServletRequest req) {
         QueryWrapper<Banner> queryWrapper = QueryGenerator.initQueryWrapper(banner, req.getParameterMap());
         List<String> imageList = bannerService.queryImageList(queryWrapper);

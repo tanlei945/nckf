@@ -36,7 +36,7 @@ public class RestUserCouponsController {
      * @return
      */
     @GetMapping(value = "/list")
-    @ApiOperation(value = "个人优惠券查询", notes = "个人优惠券查询")
+    @ApiOperation(value = "个人优惠券查询", notes = "个人优惠券查询",tags = "用户优惠券接口")
     public RestResponseBean queryPageList(UserCoupons userCoupons,
                                                     @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                                     @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,

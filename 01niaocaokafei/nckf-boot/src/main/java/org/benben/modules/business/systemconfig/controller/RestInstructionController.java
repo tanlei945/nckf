@@ -23,14 +23,14 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/api/rechargeConfig")
 @Slf4j
-@Api(tags = "充值说明接口")
+@Api(tags = "充值说明")
 public class RestInstructionController {
 
     @Autowired
     private ISystemConfigService systemConfigService;
 
     @GetMapping(value = "/recharge_instruction")
-    @ApiOperation(value = "充值说明查询", notes = "充值说明查询")
+    @ApiOperation(value = "充值说明查询", notes = "充值说明查询",tags = "充值说明")
     public RestResponseBean queryDictionary(SystemConfig systemConfig,
                                                      @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                                      @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,

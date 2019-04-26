@@ -37,7 +37,7 @@ public class RestMessageController {
      * @return
      */
     @GetMapping(value = "/list")
-    @ApiOperation(value = "消息详情列表", notes = "消息详情列表")
+    @ApiOperation(value = "消息详情列表", notes = "消息详情列表",tags = "消息接口")
     public RestResponseBean queryPageList(Message message,
                                                 @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                                 @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
@@ -58,7 +58,7 @@ public class RestMessageController {
      * @return
      */
     @GetMapping(value = "/query_by_id")
-    @ApiOperation(value = "通过id查询消息详情", notes = "通过id查询消息详情")
+    @ApiOperation(value = "通过id查询消息详情", notes = "通过id查询消息详情",tags = "消息接口")
     public RestResponseBean queryById(@RequestParam(name="id",required=true) String id) {
         Message message = messageService.getById(id);
         if(message==null) {
