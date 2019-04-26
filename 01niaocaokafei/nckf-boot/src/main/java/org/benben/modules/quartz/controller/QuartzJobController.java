@@ -4,8 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.benben.common.api.vo.Result;
 import org.benben.common.constant.CommonConstant;
@@ -45,7 +43,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/sys/quartzJob")
 @Slf4j
-@Api(tags = {"定时任务接口"})
+//@Api(tags = {"定时任务接口"})
 public class QuartzJobController {
 	@Autowired
 	private IQuartzJobService quartzJobService;
@@ -181,7 +179,7 @@ public class QuartzJobController {
 	 * @return
 	 */
 	@RequestMapping(value = "/pause", method = RequestMethod.POST)
-	@ApiOperation(value = "暂停任务接口", tags = {"定时任务接口"}, notes = "暂停任务接口")
+//	@ApiOperation(value = "暂停任务接口", tags = {"定时任务接口"}, notes = "暂停任务接口")
 //	@ApiOperation(value = "暂停定时任务")
 	public Result<Object> pauseJob(@RequestBody QuartzJob job) {
 
@@ -202,7 +200,7 @@ public class QuartzJobController {
 	 * @return
 	 */
 	@RequestMapping(value = "/resume", method = RequestMethod.POST)
-	@ApiOperation(value = "恢复任务接口", tags = {"定时任务接口"}, notes = "恢复任务接口")
+//	@ApiOperation(value = "恢复任务接口", tags = {"定时任务接口"}, notes = "恢复任务接口")
 //	@ApiOperation(value = "恢复定时任务")
 	public Result<Object> resumeJob(@RequestBody QuartzJob job) {
 		try {
