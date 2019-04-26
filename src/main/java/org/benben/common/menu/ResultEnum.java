@@ -18,10 +18,12 @@ public enum ResultEnum {
     LOGIN_SUCCESS(301,"登陆成功"),
     LOGIN_FAIL(302,"登录失败"),
     USER_PWD_ERROR(303,"用户名或密码错误"),
-    USER_EXIST(301, "用户已存在"),
-    USER_NOT_EXIST(302, "用户不存在"),
-    INVALID_PASSWORD(303, "密码错误"),
-    MISS_PASSWORD(304, "密码不能为空"),
+    USER_EXIST(304, "用户已存在"),
+    USER_NOT_EXIST(305, "用户不存在"),
+//    PASSWORD_ERROR(306,"密码错误"),
+//    PASSWORD_RIGHT(307,"密码正确"),
+    MOBILE_NOT_EXIST(308,"手机不存在"),
+    MOBILE_EXIST(309,"手机已存在"),
     /**
      * 权限不足 返回code 值范围
      */
@@ -90,7 +92,7 @@ public enum ResultEnum {
     /**
      * 身份证验证
      */
-    NOT_SCUUESS1(201, "身份证或姓名手机号与卡号不符")
+    NOT_SCUUESS1(201, "身份证或姓名手机号与卡号不符"),
 //    NOT_SCUUESS2(202,"无法验证"),
 //    NOT_SCUUESS3(203,"份证号调用次数达到上限,请12小时后在请求"),
 //    NOT_SCUUESS4(204,"姓名错误"),
@@ -99,6 +101,11 @@ public enum ResultEnum {
 //    NOT_SCUUESS7(207,"电话号码错误"),
 //    NOT_SCUUESS8(208,"银行卡重复添加"),
 
+    /**
+     * 支付相关
+     */
+    PAY_PASSWORD_ERROR(501,"支付密码错误"),
+    PAY_PASSWORD_RIGHT(502,"支付密码正确"),
 
     ;
 

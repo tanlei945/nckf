@@ -5,8 +5,11 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.menu.ResultEnum;
+import org.benben.common.util.PasswordUtil;
 import org.benben.modules.business.account.entity.Account;
 import org.benben.modules.business.account.service.IAccountService;
+import org.benben.modules.business.user.entity.User;
+import org.benben.modules.business.user.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +30,9 @@ public class RestAccountController {
 
    @Autowired
    private IAccountService accountService;
+
+   @Autowired
+   private IUserService userService;
 
 
 
@@ -65,6 +71,26 @@ public class RestAccountController {
 
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),"已设置收款账户",null);
     }
+
+    @GetMapping("/check_pay_password")
+    @ApiOperation(value = "支付密码是否正确",tags = {"账户/钱包接口"},notes = "支付密码是否正确")
+    public RestResponseBean checkPayPassword(String userId,String payPassword){
+
+        User user = userService.getById(userId);
+        Account account = accountService.queryByUserId(userId);
+
+        if(user == null || account == null){
+            return new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(),ResultEnum.QUERY_NOT_EXIST.getDesc(),null);
+        }
+
+        String userpassword = PasswordUtil.encrypt(user.getMobile(), payPassword, account.getSalt());
+        if (!account.getPayPassword().equals(userpassword)) {
+            return new RestResponseBean(ResultEnum.PAY_PASSWORD_ERROR.getValue(), ResultEnum.PAY_PASSWORD_ERROR.getDesc(), null);
+        }
+
+        return new RestResponseBean(ResultEnum.PAY_PASSWORD_RIGHT.getValue(), ResultEnum.PAY_PASSWORD_RIGHT.getDesc(), null);
+    }
+
 
     @GetMapping(value = "/reset_pay_password")
     @ApiOperation(value = "重置支付密码", tags = {"账户/钱包接口"}, notes = "重置支付密码")
