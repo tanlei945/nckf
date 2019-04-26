@@ -13,9 +13,7 @@ import org.benben.modules.business.order.entity.OrderGoods;
 import org.benben.modules.business.order.service.IOrderGoodsService;
 import org.benben.modules.business.order.service.IOrderNoPayService;
 import org.benben.modules.business.order.service.IOrderService;
-import org.benben.modules.business.order.vo.OrderNoPay;
 import org.benben.modules.business.order.vo.OrderPage;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -69,17 +67,7 @@ public class RestOrderController {
    @GetMapping(value = "/queryByOrderId")
    @ApiOperation(value = "用户根据订单号查询订单接口", tags = {"订单接口"}, notes = "用户根据订单号查询订单接口")
    public Result<Order> queryByOrderID(@RequestParam(name="orderId",required=true) String orderId) {
-       Result<Order> result = new Result<Order>();
-       QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
-       queryWrapper.eq("order_id",orderId);
-       Order order = orderService.getOne(queryWrapper);
-       if(order==null) {
-           result.error500("未找到对应实体");
-       }else {
-           result.setResult(order);
-           result.setSuccess(true);
-       }
-       return result;
+       return orderService.queryByOrderID(orderId);
    }
 
    /**
@@ -91,46 +79,7 @@ public class RestOrderController {
    @PostMapping(value = "/add")
    @ApiOperation(value = "用户新增订单接口", tags = {"订单接口"}, notes = "用户新增订单接口")
    public Result<Order> add(@RequestBody OrderPage orderPage) {
-       //app传过来的订单金额需要与数据库中实际的商品金额做判断
-       double appMoney = orderPage.getGoodsMoney();
-       List<OrderGoods> orderGoodsList = orderPage.getOrderGoodsList();
-       int sum=0;
-       Result<Order> result = new Result<Order>();
-       for (OrderGoods orderGoods : orderGoodsList) {
-           sum += orderGoods.getGoodsCount()*orderGoods.getPerPrice();
-       }
-       if(sum==appMoney){
-           OrderNoPay orderNoPay = new OrderNoPay();
-           orderNoPay.setId(orderPage.getId());
-           orderNoPay.setStatus(orderPage.getStatus());
-           orderNoPay.setCreateBy(orderPage.getCreateBy());
-           orderNoPay.setCreateTime(orderPage.getCreateTime());
-           orderNoPay.setUpdateBy(orderPage.getUpdateBy());
-           orderNoPay.setCreateTime(orderPage.getCreateTime());
-           orderNoPayService.insert(orderNoPay);
-
-           //订单id---->时间戳+用户id
-           //orderPage.setOrderId(System.currentTimeMillis()+orderPage.getUserId());
-           try {
-               Order order = new Order();
-               BeanUtils.copyProperties(orderPage, order);
-
-               //订单中间表中插入一条数据
-               orderNoPayService.insert(orderNoPay);
-
-               orderService.saveMain(order, orderPage.getOrderGoodsList());
-
-               result.success("添加成功！");
-           } catch (Exception e) {
-               e.printStackTrace();
-               log.info(e.getMessage());
-               result.error500("操作失败");
-           }
-           return result;
-       }
-        result.error500("订单金额异常");
-       return result;
-
+        return orderService.add(orderPage);
    }
 
    /**
@@ -142,15 +91,7 @@ public class RestOrderController {
    @ApiOperation(value = "修改订单接口", tags = {"订单接口"}, notes = "修改取消订单接口")
    @PostMapping(value = "/cancle")
    public Result<Order> edit(@RequestBody Order order) {
-       Result<Order> result = new Result<Order>();
-       if(order==null) {
-           result.error500("未找到对应实体");
-       }else {
-           boolean ok = orderService.updateById(order);
-           orderNoPayService.removeById(order.getId());
-           result.success("取消订单成功!");
-       }
-       return result;
+       return orderService.edit(order);
    }
    /**
      * 通过id查询
