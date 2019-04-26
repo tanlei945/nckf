@@ -60,7 +60,7 @@ public class RestInvoiceTitleController {
     */
    @PostMapping(value = "/add")
    @ApiOperation(value = "用户发票头提交接口", tags = {"发票抬头接口"}, notes = "用户发票头提交接口")
-   public Result<InvoiceTitle> add(InvoiceTitle invoiceTitle) {
+   public Result<InvoiceTitle> add(@RequestBody InvoiceTitle invoiceTitle) {
        Result<InvoiceTitle> result = new Result<InvoiceTitle>();
        try {
            invoiceTitleService.save(invoiceTitle);
