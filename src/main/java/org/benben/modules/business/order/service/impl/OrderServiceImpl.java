@@ -87,7 +87,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 	}
 
 	@Override
-	public Result<Order> queryByOrderID(String orderId) {
+	public Result<Order> queryByOrderId(String orderId) {
 		Result<Order> result = new Result<Order>();
 		QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
 		queryWrapper.eq("order_id",orderId);
@@ -104,7 +104,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 	@Override
 	public Result<Order> add(OrderPage orderPage) {
 		//app传过来的订单金额需要与数据库中实际的商品金额做判断
-		double appMoney = orderPage.getGoodsMoney();
+		double appMoney = orderPage.getOrderMoney();
 		List<OrderGoods> orderGoodsList = orderPage.getOrderGoodsList();
 		int sum=0;
 		Result<Order> result = new Result<Order>();
@@ -149,11 +149,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 	}
 
 	@Override
-	public Result<Order> edit(Order order) {
+	public Result<Order> cancel(String id) {
 		Result<Order> result = new Result<Order>();
+		Order order = orderMapper.selectById(id);
 		if(order==null) {
 			result.error500("未找到对应实体");
 		}else {
+			//设置订单状态为取消状态
+			order.setStatus("9");
 			boolean ok = orderService.updateById(order);
 			boolean flag = orderNoPayService.removeById(order.getId());
 			if(ok && flag){
@@ -163,5 +166,15 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 			}
 		}
 		return result;
+	}
+
+	@Override
+	public boolean edit(String id) {
+		Result<Order> result = new Result<Order>();
+		Order order = new Order();
+		order.setId(id);
+		order.setStatus("3");
+		int i = orderMapper.updateById(order);
+		return 1==i?true:false;
 	}
 }
