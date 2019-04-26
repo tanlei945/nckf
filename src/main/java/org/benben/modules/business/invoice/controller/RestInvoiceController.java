@@ -66,7 +66,7 @@ public class RestInvoiceController {
     */
    @PostMapping(value = "/add")
    @ApiOperation(value = "用户发票提交接口", tags = {"发票接口"}, notes = "用户发票提交接口")
-   public Result<Invoice> add(Invoice invoice,@RequestParam(value = "orderIdList")List<String> orderIdList) {
+   public Result<Invoice> add(@RequestBody Invoice invoice,@RequestParam(value = "orderIdList")List<String> orderIdList) {
        //从数据库中获取用户所需的实际开票金额
        double sum = 0;
        QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
