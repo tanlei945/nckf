@@ -91,35 +91,46 @@ public class RestOrderController {
    @PostMapping(value = "/add")
    @ApiOperation(value = "用户新增订单接口", tags = {"订单接口"}, notes = "用户新增订单接口")
    public Result<Order> add(@RequestBody OrderPage orderPage) {
-       OrderNoPay orderNoPay = new OrderNoPay();
-       orderNoPay.setId(orderPage.getId());
-       orderNoPay.setStatus(orderPage.getStatus());
-       orderNoPay.setCreateBy(orderPage.getCreateBy());
-       orderNoPay.setCreateTime(orderPage.getCreateTime());
-       orderNoPay.setUpdateBy(orderPage.getUpdateBy());
-       orderNoPay.setCreateTime(orderPage.getCreateTime());
-       orderNoPayService.insert(orderNoPay);
-
-
+       //app传过来的订单金额需要与数据库中实际的商品金额做判断
+       double appMoney = orderPage.getGoodsMoney();
+       List<OrderGoods> orderGoodsList = orderPage.getOrderGoodsList();
+       int sum=0;
        Result<Order> result = new Result<Order>();
-       //订单id---->时间戳+用户id
-       //orderPage.setOrderId(System.currentTimeMillis()+orderPage.getUserId());
-       try {
-           Order order = new Order();
-           BeanUtils.copyProperties(orderPage, order);
-
-           //订单中间表中插入一条数据
+       for (OrderGoods orderGoods : orderGoodsList) {
+           sum += orderGoods.getGoodsCount()*orderGoods.getPerPrice();
+       }
+       if(sum==appMoney){
+           OrderNoPay orderNoPay = new OrderNoPay();
+           orderNoPay.setId(orderPage.getId());
+           orderNoPay.setStatus(orderPage.getStatus());
+           orderNoPay.setCreateBy(orderPage.getCreateBy());
+           orderNoPay.setCreateTime(orderPage.getCreateTime());
+           orderNoPay.setUpdateBy(orderPage.getUpdateBy());
+           orderNoPay.setCreateTime(orderPage.getCreateTime());
            orderNoPayService.insert(orderNoPay);
 
-           orderService.saveMain(order, orderPage.getOrderGoodsList());
+           //订单id---->时间戳+用户id
+           //orderPage.setOrderId(System.currentTimeMillis()+orderPage.getUserId());
+           try {
+               Order order = new Order();
+               BeanUtils.copyProperties(orderPage, order);
 
-           result.success("添加成功！");
-       } catch (Exception e) {
-           e.printStackTrace();
-           log.info(e.getMessage());
-           result.error500("操作失败");
+               //订单中间表中插入一条数据
+               orderNoPayService.insert(orderNoPay);
+
+               orderService.saveMain(order, orderPage.getOrderGoodsList());
+
+               result.success("添加成功！");
+           } catch (Exception e) {
+               e.printStackTrace();
+               log.info(e.getMessage());
+               result.error500("操作失败");
+           }
+           return result;
        }
+        result.error500("订单金额异常");
        return result;
+
    }
 
    /**
@@ -141,7 +152,6 @@ public class RestOrderController {
        }
        return result;
    }
-
    /**
      * 通过id查询
     * @param id
@@ -160,7 +170,6 @@ public class RestOrderController {
        }
        return result;
    }
-
    /**
      * 通过id查询
     * @param id
@@ -175,7 +184,4 @@ public class RestOrderController {
        result.setSuccess(true);
        return result;
    }
-
-
-
 }
