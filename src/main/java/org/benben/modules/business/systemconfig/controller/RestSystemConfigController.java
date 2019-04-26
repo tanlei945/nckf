@@ -26,7 +26,7 @@ public class RestSystemConfigController {
 
 
     @GetMapping(value = "/query_by_time")
-    @ApiOperation(value = "首页文字", notes = "首页文字")
+    @ApiOperation(value = "首页文字", notes = "首页文字",tags = "首页文字接口")
     public RestResponseBean queryByTime()  {
         Date date =new Date();
         //得到当前时间

@@ -38,7 +38,7 @@ public class RestCouponsController {
      * @return
      */
     @GetMapping(value = "/list")
-    @ApiOperation(value = "优惠券", notes = "优惠券")
+    @ApiOperation(value = "优惠券", notes = "优惠券",tags = "优惠券接口")
     public RestResponseBean queryPageList(Coupons coupons,
                                                 @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                                 @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
@@ -59,7 +59,7 @@ public class RestCouponsController {
      * @return
      */
     @GetMapping(value = "/queryById")
-    @ApiOperation(value = "通过id查询优惠券", notes = "通过id查询优惠券")
+    @ApiOperation(value = "通过id查询优惠券", notes = "通过id查询优惠券",tags = "优惠券接口")
     public RestResponseBean queryById(@RequestParam(name="id",required=true) String couponsId) {
 
         QueryWrapper<Coupons> couponsQueryWrapper = new QueryWrapper<>();
