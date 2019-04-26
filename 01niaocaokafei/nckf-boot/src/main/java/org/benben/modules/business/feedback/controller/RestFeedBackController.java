@@ -12,6 +12,8 @@ import org.benben.common.system.query.QueryGenerator;
 import org.benben.common.util.aliyun.OSSClientUtils;
 import org.benben.modules.business.feedback.entity.FeedBack;
 import org.benben.modules.business.feedback.service.IFeedBackService;
+import org.benben.modules.business.order.entity.Order;
+import org.benben.modules.business.order.service.IOrderService;
 import org.benben.modules.business.user.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +36,8 @@ import java.util.Date;
 public class RestFeedBackController {
    @Autowired
    private IFeedBackService feedBackService;
+   @Autowired
+   private IOrderService orderService;
 
    /**
      * 分页列表查询
@@ -65,8 +69,8 @@ public class RestFeedBackController {
     * @return
     */
    @PostMapping(value = "/add")
-   @ApiOperation(value = "用户反馈添加接口", tags = {"用户反馈接口"}, notes = "用户反馈添加接口")
-   public Result<FeedBack> add(@RequestBody FeedBack feedBack,@RequestParam(value = "file") MultipartFile[] files) {
+   @ApiOperation(value = "用户反馈添加接口(del_flag：0已删除 1未删除)", tags = {"用户反馈接口"}, notes = "用户反馈添加接口(del_flag：0已删除 1未删除)")
+   public Result<FeedBack> add(@RequestParam(name="orderId",required=true,value = "订单的id")String orderId,FeedBack feedBack,@RequestParam(value = "file") MultipartFile[] files) {
 
        log.info("本次上传的文件的数量为-------->"+files.length);
 
@@ -82,6 +86,10 @@ public class RestFeedBackController {
            feedBack.setCreateTime(new Date());
            feedBack.setDelFlag("1");
            feedBackService.save(feedBack);
+           Order order = new Order();
+           order.setId(orderId);
+           order.setStatus("4");
+           orderService.updateById(order);
            result.success("添加成功！");
        } catch (Exception e) {
            e.printStackTrace();
@@ -90,6 +98,4 @@ public class RestFeedBackController {
        }
        return result;
    }
-
-
 }
