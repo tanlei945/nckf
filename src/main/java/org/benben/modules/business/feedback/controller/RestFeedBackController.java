@@ -66,7 +66,7 @@ public class RestFeedBackController {
     */
    @PostMapping(value = "/add")
    @ApiOperation(value = "用户反馈添加接口", tags = {"用户反馈接口"}, notes = "用户反馈添加接口")
-   public Result<FeedBack> add(FeedBack feedBack,@RequestParam(value = "file") MultipartFile[] files) {
+   public Result<FeedBack> add(@RequestBody FeedBack feedBack,@RequestParam(value = "file") MultipartFile[] files) {
 
        log.info("本次上传的文件的数量为-------->"+files.length);
 
