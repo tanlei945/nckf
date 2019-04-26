@@ -187,6 +187,7 @@ public class QuartzJobController {
 
 		try {
 			scheduler.pauseJob(JobKey.jobKey(job.getJobClassName().trim()));
+			schedulerDelete("org.benben.modules.quartz.job.SampleParamJob");
 		} catch (SchedulerException e) {
 			throw new JeecgBootException("暂停定时任务失败");
 		}
@@ -211,7 +212,7 @@ public class QuartzJobController {
 		}
 		job.setStatus(CommonConstant.STATUS_NORMAL);
 		quartzJobService.updateById(job);
-		//schedulerAdd("org.benben.modules.quartz.job.SampleParamJob","0/1 * * * * ?","scott");
+		schedulerAdd("org.benben.modules.quartz.job.SampleParamJob","0 */1 * * * ?","scott");
 		return Result.ok("恢复定时任务成功");
 	}
 
@@ -270,7 +271,6 @@ public class QuartzJobController {
 	 * @param jobClassName
 	 */
 	private void schedulerDelete(String jobClassName) {
-
 		try {
 			scheduler.pauseTrigger(TriggerKey.triggerKey(jobClassName));
 			scheduler.unscheduleJob(TriggerKey.triggerKey(jobClassName));
