@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/api/ems")
 @Api(tags = {"邮箱验证码接口"})
-public class EmailController {
+public class RestEmailController {
 
     @Autowired
     private IEmailServe emailServe;

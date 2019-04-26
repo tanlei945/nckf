@@ -4,6 +4,8 @@ package org.benben.modules.business.account.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.apache.commons.lang.StringUtils;
 import org.benben.common.util.DoubleUtil;
+import org.benben.common.util.PasswordUtil;
+import org.benben.common.util.oConvertUtils;
 import org.benben.modules.business.account.entity.Account;
 import org.benben.modules.business.account.mapper.AccountMapper;
 import org.benben.modules.business.account.service.IAccountService;
@@ -11,6 +13,8 @@ import org.benben.modules.business.accountbill.entity.AccountBill;
 import org.benben.modules.business.accountbill.mapper.AccountBillMapper;
 import org.benben.modules.business.recharge.entity.Recharge;
 import org.benben.modules.business.recharge.mapper.RechargeMapper;
+import org.benben.modules.business.user.entity.User;
+import org.benben.modules.business.user.mapper.UserMapper;
 import org.benben.modules.business.withdraw.entity.Withdraw;
 import org.benben.modules.business.withdraw.mapper.WithdrawMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +40,8 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
     private RechargeMapper rechargeMapper;
     @Autowired
     private WithdrawMapper withdrawMapper;
+    @Autowired
+    private UserMapper userMapper;
 
 
     /**
@@ -89,7 +95,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
     }
 
     /**
-     * 重置密码
+     * 重置支付密码
      * @param userId
      * @return
      */
@@ -97,6 +103,16 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
     public boolean resetPayPassword(String userId,String payPassword) {
 
         Account account = this.queryByUserId(userId);
+        User user = userMapper.selectById(userId);
+
+        if(account == null || user == null){
+            return false;
+        }
+
+        String salt = oConvertUtils.randomGen(8);
+        account.setSalt(salt);
+        String passwordEncode = PasswordUtil.encrypt(user.getMobile(), payPassword, salt);
+        account.setPayPassword(passwordEncode);
         account.setPayPassword(payPassword);
         int result = accountMapper.updateById(account);
 

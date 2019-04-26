@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/token/")
 @Api(tags = {"token接口"})
-public class TokenController {
+public class RestTokenController {
     @Autowired
     private ITokenService tokenService;
 

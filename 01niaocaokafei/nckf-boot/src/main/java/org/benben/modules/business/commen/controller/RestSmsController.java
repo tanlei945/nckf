@@ -29,7 +29,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/api/sms/")
 @Api(tags = {"短信接口"})
-public class SmsController {
+public class RestSmsController {
 
     @Autowired
     private RedisUtil redisUtil;
@@ -63,7 +63,7 @@ public class SmsController {
     }
 
     @PostMapping(value = "/ali_send")
-    @ApiOperation(value = "使用阿里云发送验证码 ",tags = {"短信接口"},notes = "使用阿里云发送验证码 ")
+//    @ApiOperation(value = "使用阿里云发送验证码 ",tags = {"短信接口"},notes = "使用阿里云发送验证码 ")
     public RestResponseBean aliSend(@RequestParam String mobile,@RequestParam String event) {
 
         if (StringUtils.isBlank(mobile)|| StringUtils.isBlank(event)) {
@@ -84,7 +84,7 @@ public class SmsController {
     }
 
     @PostMapping(value = "/tencent_send")
-    @ApiOperation(value = "使用腾讯云发送验证码 ",tags = {"短信接口"},notes = "使用腾讯云发送验证码 ")
+//    @ApiOperation(value = "使用腾讯云发送验证码 ",tags = {"短信接口"},notes = "使用腾讯云发送验证码 ")
     public RestResponseBean tencentSend(@RequestParam String mobile,@RequestParam String event) {
 
         if (StringUtils.isBlank(mobile)|| StringUtils.isBlank(event)) {
@@ -158,7 +158,7 @@ public class SmsController {
 
 
     @PostMapping(value = "/test_send")
-    @ApiOperation(value = "测试发送验证码 ", tags = {"短信接口"},notes = "测试发送验证码 ")
+    @ApiOperation(value = "测试发送验证码", tags = {"短信接口"},notes = "测试发送验证码")
     public RestResponseBean test_send(@RequestParam String mobile, @RequestParam String event) {
 
         if (StringUtils.isBlank(mobile) || StringUtils.isBlank(event)) {
