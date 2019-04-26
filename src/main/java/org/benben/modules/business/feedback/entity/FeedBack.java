@@ -1,14 +1,15 @@
 package org.benben.modules.business.feedback.entity;
 
-import java.io.Serializable;
-import java.util.Date;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import org.springframework.format.annotation.DateTimeFormat;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 import org.jeecgframework.poi.excel.annotation.Excel;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.io.Serializable;
 
 /**
  * @Description: 用户反馈表
@@ -34,7 +35,8 @@ public class FeedBack implements Serializable {
 	@Excel(name = "0：用户 1：骑手", width = 15)
 	private java.lang.String type;
 	/**删除状态  0/正常,1/已删除*/
-	@Excel(name = "删除状态  0/正常,1/已删除", width = 15)
+	@Excel(name = "删除状态  0已删除 1已删除", width = 15)
+	@ApiModelProperty(value = "删除状态  0已删除 1已删除",example = "1",required = true)
 	private java.lang.String delFlag;
 	/**用户上传图片*/
 	@Excel(name = "用户上传图片", width = 15)
