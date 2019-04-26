@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
 * @Title: Controller
@@ -31,10 +32,11 @@ import java.util.List;
 @Slf4j
 @Api(tags = {"发票接口"})
 public class RestInvoiceController {
-   @Autowired
-   private IInvoiceService invoiceService;
+    @Autowired
+    private IInvoiceService invoiceService;
     @Autowired
     private IOrderService orderService;
+
 
    /**
      * 分页列表查询
@@ -66,38 +68,46 @@ public class RestInvoiceController {
     */
    @PostMapping(value = "/add")
    @ApiOperation(value = "用户发票提交接口", tags = {"发票接口"}, notes = "用户发票提交接口")
-   public Result<Invoice> add(@RequestBody Invoice invoice,@RequestParam(value = "orderIdList")List<String> orderIdList) {
+   public Result<Invoice> add( Invoice invoice,@RequestParam(value = "orderIdList")List<String> orderIdList) {
        //从数据库中获取用户所需的实际开票金额
        double sum = 0;
        QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
        for (String s : orderIdList) {
            Order order = orderService.getById(s);
-           sum += order.getOrderMoney();
+           if(order.getOrderMoney()!=0){
+               sum += order.getOrderMoney();
+           }
        }
 
        Result<Invoice> result = new Result<Invoice>();
        //判断用户提交的开票金额是否和数据库中存的实际开票金额相等
-       if(invoice.getInvoiceMoney( )== sum){
-           try {
-               invoiceService.save(invoice);
-
-               for (String s : orderIdList) {
-                   Order order = orderService.getById(s);
-                   order.setInvoiceFlag("1");
-                   QueryWrapper<Order> queryWrapper1 = new QueryWrapper<>();
-                   queryWrapper1.eq("id",s);
-                   orderService.update(order,queryWrapper1);
+       if(invoice!=null){
+           if(invoice.getInvoiceMoney( ) == sum){
+               try {
+                   invoiceService.save(invoice);
+                   for (String s : orderIdList) {
+                       Order order = orderService.getById(s);
+                       order.setInvoiceFlag("1");
+                       QueryWrapper<Order> queryWrapper1 = new QueryWrapper<>();
+                       queryWrapper.eq("id",s);
+                       orderService.update(order,queryWrapper1);
+                   }
+                   result.success("添加成功！");
+                   Map<String,String> map = orderService.invoiceOk(orderIdList);
+                   String change_flag = map.get("change_flag");
+                   log.info(change_flag);
+               } catch (Exception e) {
+                   e.printStackTrace();
+                   log.info(e.getMessage());
+                   result.error500("操作失败！");
                }
-
-               result.success("添加成功！");
-           } catch (Exception e) {
-               e.printStackTrace();
-               log.info(e.getMessage());
-               result.error500("操作失败！");
+           }else{
+               result.error500("开票金额异常！");
            }
        }else{
-           result.error500("开票金额异常！");
+           result.error500("参数异常！");
        }
+
 
        return result;
    }
