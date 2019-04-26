@@ -6,7 +6,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.api.vo.Result;
+import org.benben.common.menu.ResultEnum;
 import org.benben.common.system.query.QueryGenerator;
 import org.benben.modules.business.order.entity.Order;
 import org.benben.modules.business.order.entity.OrderGoods;
@@ -50,7 +52,7 @@ public class RestOrderController {
     * @return
     */
    @PostMapping(value = "/list")
-   @ApiOperation(value = "订单多（单）条件查询接口 status:9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价", tags = {"订单接口"}, notes = "订单多（单）条件查询接口 status:9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价")
+   @ApiOperation(value = "订单多（单）条件查询接口 status:9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价 4已评价", tags = {"订单接口"}, notes = "订单多（单）条件查询接口 status:9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价 4已评价")
    public Result<IPage<Order>> queryPageList(@RequestBody Order order,
                                      @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                      @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
@@ -61,7 +63,6 @@ public class RestOrderController {
            queryWrapper.eq("status","1").or().eq("status","2").or().eq("status","3");
            Page<Order> page = new Page<Order>(pageNo, pageSize);
            IPage<Order> orderIPage = orderService.page(page, queryWrapper);
-           List<Order> orderList = orderService.list(queryWrapper);
            result.setSuccess(true);
            result.setResult(orderIPage);
            return result;
@@ -76,11 +77,18 @@ public class RestOrderController {
        }
 
    }
-
-
-
-
-
+   @PostMapping(value = "/rider/nopay_order")
+   @ApiOperation(value = "骑手查询订单接口", tags = {"订单接口"}, notes = "骑手查询订单接口")
+   public RestResponseBean queryRiderOrder(@RequestParam(name = "riderId",required = true) String riderId,
+                                           @RequestParam(name = "storeId",required = true) String storeId){
+       QueryWrapper<Order> wrapper = new QueryWrapper<>();
+       wrapper.eq("store_id",storeId).eq("status","2").or().eq("rider_id","").or().eq("rider_id",null);
+       List<Order> list = orderService.list(wrapper);
+       for (Order order : list) {
+           order.setRiderId(riderId);
+       }
+       return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),list);
+   }
 
    @GetMapping(value = "/query_by_orderId")
    @ApiOperation(value = "用户根据订单号查询订单接口", tags = {"订单接口"}, notes = "用户根据订单号查询订单接口")
@@ -111,13 +119,6 @@ public class RestOrderController {
    public Result<Order> cancel(@RequestParam(name="id",required=true) String id) {
        return orderService.cancel(id);
    }
-
-
-    /*@ApiOperation(value = "支付完成修改订单状态接口", tags = {"订单接口"}, notes = "支付完成修改订单状态接口")
-    @PostMapping(value = "/edit")
-    public Result<Order> edit(@RequestParam(name="orderId",required=true) String orderId) {
-        return orderService.edit(orderId);
-    }*/
 
 
    /**
