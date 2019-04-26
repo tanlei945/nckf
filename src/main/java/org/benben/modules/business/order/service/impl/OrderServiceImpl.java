@@ -20,7 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description: 订单
@@ -112,37 +114,33 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 			sum += orderGoods.getGoodsCount()*orderGoods.getPerPrice();
 		}
 		if(sum==appMoney){
+			//订单id---->时间戳+用户id
+			String orderId = System.currentTimeMillis()+orderPage.getUserId();
+			orderPage.setOrderId(orderId);
+			Order order = new Order();
+			try {
+				BeanUtils.copyProperties(orderPage, order);
+				orderService.saveMain(order, orderPage.getOrderGoodsList());
+				result.success("订单表数据添加成功");
+			} catch (Exception e) {
+				e.printStackTrace();
+				log.info(e.getMessage());
+				result.error500("操作失败");
+			}
+			QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
+			queryWrapper.eq("order_id",orderId);
+			order = orderService.getOne(queryWrapper);
+
 			OrderNoPay orderNoPay = new OrderNoPay();
-			orderNoPay.setId(orderPage.getId());
+			orderNoPay.setId(order.getId());
 			orderNoPay.setStatus(orderPage.getStatus());
 			orderNoPay.setCreateBy(orderPage.getCreateBy());
 			orderNoPay.setCreateTime(orderPage.getCreateTime());
 			orderNoPay.setUpdateBy(orderPage.getUpdateBy());
 			orderNoPay.setCreateTime(orderPage.getCreateTime());
-			boolean flag = orderNoPayService.insert(orderNoPay);
+			orderNoPayService.insert(orderNoPay);
 
-			if(flag){
-				//订单id---->时间戳+用户id
-				//orderPage.setOrderId(System.currentTimeMillis()+orderPage.getUserId());
-				try {
-					Order order = new Order();
-					BeanUtils.copyProperties(orderPage, order);
-
-					//订单中间表中插入一条数据
-					orderNoPayService.insert(orderNoPay);
-
-					orderService.saveMain(order, orderPage.getOrderGoodsList());
-
-					result.success("添加成功！");
-				} catch (Exception e) {
-					e.printStackTrace();
-					log.info(e.getMessage());
-					result.error500("操作失败");
-				}
-				return result;
-			}else{
-				result.error500("订单临时表数据插入失败");
-			}
+		}else{
 			result.error500("订单金额异常");
 		}
 		return result;
@@ -177,5 +175,31 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 		int i = orderMapper.updateById(order);
 		return 1==i?true:false;
 	}
+	//骑手送完单修改订单状态
+	public boolean change(String id) {
+		Order order = new Order();
+		order.setId(id);
+		order.setStatus("3");
+		int i = orderMapper.updateById(order);
+		return 1==i?true:false;
+	}
+	//
 
+	//用户开发票后修改订单状态
+	public Map invoiceOk(List<String> orderIdList){
+		Order order = new Order();
+		order.setInvoiceFlag("1");
+		Map<String,String> map = new HashMap<>();
+		try{
+			for (String id : orderIdList) {
+				order.setId(id);
+				orderService.updateById(order);
+			}
+			map.put("change_flag","更改成功");
+		}catch(Exception e){
+			log.info(e.getMessage());
+			map.put("change_flag","更改失败");
+		}
+		return map;
+	}
 }

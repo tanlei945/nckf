@@ -9,6 +9,7 @@ import org.benben.modules.business.order.vo.OrderPage;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description: 订单
@@ -52,5 +53,8 @@ public interface IOrderService extends IService<Order> {
 
 	//支付完成修改订单状态
 	public boolean edit(String id);
+
+	//开发票后修改订单状态
+	public Map invoiceOk(List<String> orderIdList);
 
 }
