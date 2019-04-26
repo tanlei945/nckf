@@ -5,7 +5,6 @@ import org.benben.common.api.vo.Result;
 import org.benben.modules.business.order.entity.Order;
 import org.benben.modules.business.order.entity.OrderGoods;
 import org.benben.modules.business.order.vo.OrderPage;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -43,12 +42,15 @@ public interface IOrderService extends IService<Order> {
 
 
 	//根据订单id查询订单
-	public Result<Order> queryByOrderID( String orderId);
+	public Result<Order> queryByOrderId( String orderId);
 
 	//用户新增订单
-	public Result<Order> add(@RequestBody OrderPage orderPage);
+	public Result<Order> add(OrderPage orderPage);
 
-	//修改订单接口
-	public Result<Order> edit(@RequestBody Order order);
+	//取消订单
+	public Result<Order> cancel(String id);
+
+	//支付完成修改订单状态
+	public boolean edit(String id);
 
 }

@@ -1,14 +1,14 @@
 package org.benben.modules.business.order.entity;
 
-import java.io.Serializable;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import org.springframework.format.annotation.DateTimeFormat;
+import lombok.Data;
 import org.jeecgframework.poi.excel.annotation.Excel;
-import java.util.Date;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.io.Serializable;
 
 /**
  * @Description: 订单详情
@@ -31,13 +31,11 @@ public class OrderGoods implements Serializable {
     @Excel(name = "商品id", width = 15)
 	private java.lang.String goodsId;
 	/**orderId*/
+	@Excel(name = "订单id", width = 15)
 	private java.lang.String orderId;
 	/**门店id*/
     @Excel(name = "门店id", width = 15)
 	private java.lang.String storeId;
-	/**订单状态：0全部；1待付款；2待发货；3待收货；4待评价；5已完成（已评价）；6售后处理中（退款&退货）；7售后已完成（退款&退货）；8已取消*/
-    @Excel(name = "订单状态：0全部；1待付款；2待发货；3待收货；4待评价；5已完成（已评价）；6售后处理中（退款&退货）；7售后已完成（退款&退货）；8已取消", width = 15)
-	private java.lang.String status;
 	/**商品数量*/
     @Excel(name = "商品数量", width = 15)
 	private java.lang.Integer goodsCount;

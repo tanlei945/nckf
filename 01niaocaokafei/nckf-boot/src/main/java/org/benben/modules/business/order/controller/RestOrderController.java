@@ -50,24 +50,42 @@ public class RestOrderController {
     * @return
     */
    @PostMapping(value = "/list")
-   @ApiOperation(value = "订单多条件查询接口 status:9:已取消 0:全部 1待付款 2收货中 3待评价 9未支付", tags = {"订单接口"}, notes = "订单多条件查询接口 status:9:已取消 0:全部 1待付款 2收货中 3待评价 9未支付")
-   public Result<IPage<Order>> queryPageList(Order order,
+   @ApiOperation(value = "订单多（单）条件查询接口 status:9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价", tags = {"订单接口"}, notes = "订单多（单）条件查询接口 status:9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价")
+   public Result<IPage<Order>> queryPageList(@RequestBody Order order,
                                      @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                      @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
                                      HttpServletRequest req) {
-       Result<IPage<Order>> result = new Result<IPage<Order>>();
-       QueryWrapper<Order> queryWrapper = QueryGenerator.initQueryWrapper(order, req.getParameterMap());
-       Page<Order> page = new Page<Order>(pageNo, pageSize);
-       IPage<Order> pageList = orderService.page(page, queryWrapper);
-       result.setSuccess(true);
-       result.setResult(pageList);
-       return result;
+       if("0".equals(order.getStatus())){
+           Result<IPage<Order>> result = new Result<IPage<Order>>();
+           QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
+           queryWrapper.eq("status","1").or().eq("status","2").or().eq("status","3");
+           Page<Order> page = new Page<Order>(pageNo, pageSize);
+           IPage<Order> orderIPage = orderService.page(page, queryWrapper);
+           List<Order> orderList = orderService.list(queryWrapper);
+           result.setSuccess(true);
+           result.setResult(orderIPage);
+           return result;
+       }else{
+           Result<IPage<Order>> result = new Result<IPage<Order>>();
+           QueryWrapper<Order> queryWrapper = QueryGenerator.initQueryWrapper(order, req.getParameterMap());
+           Page<Order> page = new Page<Order>(pageNo, pageSize);
+           IPage<Order> pageList = orderService.page(page, queryWrapper);
+           result.setSuccess(true);
+           result.setResult(pageList);
+           return result;
+       }
+
    }
 
-   @GetMapping(value = "/queryByOrderId")
+
+
+
+
+
+   @GetMapping(value = "/query_by_orderId")
    @ApiOperation(value = "用户根据订单号查询订单接口", tags = {"订单接口"}, notes = "用户根据订单号查询订单接口")
-   public Result<Order> queryByOrderID(@RequestParam(name="orderId",required=true) String orderId) {
-       return orderService.queryByOrderID(orderId);
+   public Result<Order> queryByOrderId(@RequestParam(name="orderId",required=true) String orderId) {
+       return orderService.queryByOrderId(orderId);
    }
 
    /**
@@ -88,17 +106,26 @@ public class RestOrderController {
     * @return
     */
 
-   @ApiOperation(value = "修改订单接口", tags = {"订单接口"}, notes = "修改取消订单接口")
-   @PostMapping(value = "/cancle")
-   public Result<Order> edit(@RequestBody Order order) {
-       return orderService.edit(order);
+   @ApiOperation(value = "取消订单接口", tags = {"订单接口"}, notes = "取消订单接口")
+   @PostMapping(value = "/cancel")
+   public Result<Order> cancel(@RequestParam(name="id",required=true) String id) {
+       return orderService.cancel(id);
    }
+
+
+    /*@ApiOperation(value = "支付完成修改订单状态接口", tags = {"订单接口"}, notes = "支付完成修改订单状态接口")
+    @PostMapping(value = "/edit")
+    public Result<Order> edit(@RequestParam(name="orderId",required=true) String orderId) {
+        return orderService.edit(orderId);
+    }*/
+
+
    /**
      * 通过id查询
     * @param id
     * @return
     */
-   @GetMapping(value = "/queryById")
+   @GetMapping(value = "/query_by_id")
    @ApiOperation(value = "用户查询订单（不包括商品详情）接口", tags = {"订单接口"}, notes = "用户查询订单（不包括商品详情）接口")
    public Result<Order> queryById(@RequestParam(name="id",required=true) String id) {
        Result<Order> result = new Result<Order>();
@@ -116,7 +143,7 @@ public class RestOrderController {
     * @param id
     * @return
     */
-   @GetMapping(value = "/queryOrderGoodsByMainId")
+   @GetMapping(value = "/query_order_goods_by_mainId")
    @ApiOperation(value = "用户查询订单（包括商品详情）接口", tags = {"订单接口"}, notes = "用户查询订单（包括商品详情）接口")
    public Result<List<OrderGoods>> queryOrderGoodsListByMainId(String id) {
        Result<List<OrderGoods>> result = new Result<List<OrderGoods>>();

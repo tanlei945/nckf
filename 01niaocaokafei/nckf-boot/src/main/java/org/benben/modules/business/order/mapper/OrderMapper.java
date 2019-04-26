@@ -1,10 +1,7 @@
 package org.benben.modules.business.order.mapper;
 
-import java.util.List;
-
-import org.apache.ibatis.annotations.Param;
-import org.benben.modules.business.order.entity.Order;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.benben.modules.business.order.entity.Order;
 
 /**
  * @Description: 订单
@@ -13,5 +10,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @version： V1.0
  */
 public interface OrderMapper extends BaseMapper<Order> {
-
+    int edit(String id);
 }
