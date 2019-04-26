@@ -143,8 +143,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 			}else{
 				result.error500("订单临时表数据插入失败");
 			}
+			result.error500("订单金额异常");
 		}
-		result.error500("订单金额异常");
 		return result;
 	}
 
@@ -168,13 +168,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 		return result;
 	}
 
+	//支付完成修改订单状态
 	@Override
 	public boolean edit(String id) {
-		Result<Order> result = new Result<Order>();
 		Order order = new Order();
 		order.setId(id);
 		order.setStatus("3");
 		int i = orderMapper.updateById(order);
 		return 1==i?true:false;
 	}
+
 }
