@@ -1,8 +1,12 @@
 package org.benben.modules.business.order.service;
 
-import org.benben.modules.business.order.entity.OrderGoods;
-import org.benben.modules.business.order.entity.Order;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.benben.common.api.vo.Result;
+import org.benben.modules.business.order.entity.Order;
+import org.benben.modules.business.order.entity.OrderGoods;
+import org.benben.modules.business.order.vo.OrderPage;
+import org.springframework.web.bind.annotation.RequestBody;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
@@ -36,5 +40,15 @@ public interface IOrderService extends IService<Order> {
 	 * 批量删除一对多
 	 */
 	public void delBatchMain (Collection<? extends Serializable> idList);
-	
+
+
+	//根据订单id查询订单
+	public Result<Order> queryByOrderID( String orderId);
+
+	//用户新增订单
+	public Result<Order> add(@RequestBody OrderPage orderPage);
+
+	//修改订单接口
+	public Result<Order> edit(@RequestBody Order order);
+
 }
