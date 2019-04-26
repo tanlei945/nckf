@@ -12,8 +12,8 @@ import java.util.List;
  */
 public interface IOrderNoPayService{
 
-	void insert(OrderNoPay orderNoPay);
+	boolean insert(OrderNoPay orderNoPay);
 	List<OrderNoPay> selectAll();
-	void removeById(String id);
+	boolean removeById(String id);
 
 }

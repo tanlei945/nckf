@@ -119,26 +119,30 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 			orderNoPay.setCreateTime(orderPage.getCreateTime());
 			orderNoPay.setUpdateBy(orderPage.getUpdateBy());
 			orderNoPay.setCreateTime(orderPage.getCreateTime());
-			orderNoPayService.insert(orderNoPay);
+			boolean flag = orderNoPayService.insert(orderNoPay);
 
-			//订单id---->时间戳+用户id
-			//orderPage.setOrderId(System.currentTimeMillis()+orderPage.getUserId());
-			try {
-				Order order = new Order();
-				BeanUtils.copyProperties(orderPage, order);
+			if(flag){
+				//订单id---->时间戳+用户id
+				//orderPage.setOrderId(System.currentTimeMillis()+orderPage.getUserId());
+				try {
+					Order order = new Order();
+					BeanUtils.copyProperties(orderPage, order);
 
-				//订单中间表中插入一条数据
-				orderNoPayService.insert(orderNoPay);
+					//订单中间表中插入一条数据
+					orderNoPayService.insert(orderNoPay);
 
-				orderService.saveMain(order, orderPage.getOrderGoodsList());
+					orderService.saveMain(order, orderPage.getOrderGoodsList());
 
-				result.success("添加成功！");
-			} catch (Exception e) {
-				e.printStackTrace();
-				log.info(e.getMessage());
-				result.error500("操作失败");
+					result.success("添加成功！");
+				} catch (Exception e) {
+					e.printStackTrace();
+					log.info(e.getMessage());
+					result.error500("操作失败");
+				}
+				return result;
+			}else{
+				result.error500("订单临时表数据插入失败");
 			}
-			return result;
 		}
 		result.error500("订单金额异常");
 		return result;
@@ -151,8 +155,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 			result.error500("未找到对应实体");
 		}else {
 			boolean ok = orderService.updateById(order);
-			orderNoPayService.removeById(order.getId());
-			result.success("取消订单成功!");
+			boolean flag = orderNoPayService.removeById(order.getId());
+			if(ok && flag){
+				result.success("取消订单成功!");
+			}else{
+				result.error500("订单取消异常");
+			}
 		}
 		return result;
 	}
