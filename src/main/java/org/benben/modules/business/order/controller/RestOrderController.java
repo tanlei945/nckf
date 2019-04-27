@@ -78,17 +78,25 @@ public class RestOrderController {
 
    }
    @PostMapping(value = "/rider/nopay_order")
-   @ApiOperation(value = "骑手查询订单接口", tags = {"订单接口"}, notes = "骑手查询订单接口")
-   public RestResponseBean queryRiderOrder(@RequestParam(name = "riderId",required = true) String riderId,
-                                           @RequestParam(name = "storeId",required = true) String storeId){
-       QueryWrapper<Order> wrapper = new QueryWrapper<>();
-       wrapper.eq("store_id",storeId).eq("status","2").or().eq("rider_id","").or().eq("rider_id",null);
-       List<Order> list = orderService.list(wrapper);
-       for (Order order : list) {
-           order.setRiderId(riderId);
-       }
-       return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),list);
-   }
+    @ApiOperation(value = "骑手查询可接订单接口", tags = {"订单接口"}, notes = "骑手查询可接订单接口")
+    public RestResponseBean queryRiderOrder(@RequestParam(name = "riderId",required = true) String riderId,
+                                            @RequestParam(name = "storeId",required = true) String storeId){
+        QueryWrapper<Order> wrapper = new QueryWrapper<>();
+        wrapper.eq("store_id",storeId).eq("status","2").eq("rider_id","");
+        List<Order> list = orderService.list(wrapper);
+
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),list);
+    }
+
+
+    @PostMapping(value = "/rider/receive_order")
+    @ApiOperation(value = "骑手接单接口", tags = {"订单接口"}, notes = "骑手接单接口")
+    public RestResponseBean riderOrder(@RequestParam(name = "riderId",required = true) String riderId,
+                                       @RequestParam(name = "orderId",required = true) String orderId){
+      return orderService.riderOrder(riderId,orderId);
+    }
+
+
 
    @GetMapping(value = "/query_by_orderId")
    @ApiOperation(value = "用户根据订单号查询订单接口", tags = {"订单接口"}, notes = "用户根据订单号查询订单接口")
@@ -104,8 +112,12 @@ public class RestOrderController {
 
    @PostMapping(value = "/add")
    @ApiOperation(value = "用户新增订单接口", tags = {"订单接口"}, notes = "用户新增订单接口")
-   public Result<Order> add(@RequestBody OrderPage orderPage) {
-        return orderService.add(orderPage);
+   public RestResponseBean add(@RequestBody OrderPage orderPage) {
+       Order order = orderService.add(orderPage);
+       if(order!=null){
+           return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),order);
+       }
+       return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
    }
 
    /**

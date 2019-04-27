@@ -3,7 +3,9 @@ package org.benben.modules.business.order.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.api.vo.Result;
+import org.benben.common.menu.ResultEnum;
 import org.benben.modules.business.order.entity.Order;
 import org.benben.modules.business.order.entity.OrderGoods;
 import org.benben.modules.business.order.mapper.OrderGoodsMapper;
@@ -19,10 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Description: 订单
@@ -104,7 +103,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 	}
 
 	@Override
-	public Result<Order> add(OrderPage orderPage) {
+	public Order add(OrderPage orderPage) {
 		//app传过来的订单金额需要与数据库中实际的商品金额做判断
 		double appMoney = orderPage.getOrderMoney();
 		List<OrderGoods> orderGoodsList = orderPage.getOrderGoodsList();
@@ -113,19 +112,16 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 		for (OrderGoods orderGoods : orderGoodsList) {
 			sum += orderGoods.getGoodsCount()*orderGoods.getPerPrice();
 		}
+		Order order = new Order();
 		if(sum==appMoney){
 			//订单id---->时间戳+用户id
 			String orderId = System.currentTimeMillis()+orderPage.getUserId();
 			orderPage.setOrderId(orderId);
-			Order order = new Order();
 			try {
 				BeanUtils.copyProperties(orderPage, order);
 				orderService.saveMain(order, orderPage.getOrderGoodsList());
-				result.success("订单表数据添加成功");
 			} catch (Exception e) {
-				e.printStackTrace();
 				log.info(e.getMessage());
-				result.error500("操作失败");
 			}
 			QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
 			queryWrapper.eq("order_id",orderId);
@@ -139,11 +135,17 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 			orderNoPay.setUpdateBy(orderPage.getUpdateBy());
 			orderNoPay.setCreateTime(orderPage.getCreateTime());
 			orderNoPayService.insert(orderNoPay);
-
-		}else{
-			result.error500("订单金额异常");
+			//根据orderId查询Order
+			QueryWrapper<Order> wrapper = new QueryWrapper<>();
+			wrapper.eq("order_id",orderId);
+			order = orderService.getOne(wrapper);
+			if(order != null){
+				return order;
+			}
+			return null;
 		}
-		return result;
+		return null;
+
 	}
 
 	@Override
@@ -201,5 +203,24 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 			map.put("change_flag","更改失败");
 		}
 		return map;
+	}
+
+	@Override
+	@Transactional
+	//骑手接单
+	public RestResponseBean riderOrder(String riderId, String orderId) {
+		/* QueryWrapper<Order> wrapper = new QueryWrapper<>();
+        wrapper.eq("order_id",orderId);*/
+		Order order = orderService.getById(orderId);
+		if(order!=null){
+			order.setRiderId(riderId);
+			order.setUpdateTime(new Date());
+			if(orderService.updateById(order)){
+				return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),order);
+			}else{
+				return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.ERROR.getDesc(),null);
+			}
+		}
+		return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.ERROR.getDesc(),null);
 	}
 }

@@ -1,6 +1,7 @@
 package org.benben.modules.business.order.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.api.vo.Result;
 import org.benben.modules.business.order.entity.Order;
 import org.benben.modules.business.order.entity.OrderGoods;
@@ -46,7 +47,7 @@ public interface IOrderService extends IService<Order> {
 	public Result<Order> queryByOrderId( String orderId);
 
 	//用户新增订单
-	public Result<Order> add(OrderPage orderPage);
+	public Order add(OrderPage orderPage);
 
 	//取消订单
 	public Result<Order> cancel(String id);
@@ -56,5 +57,8 @@ public interface IOrderService extends IService<Order> {
 
 	//开发票后修改订单状态
 	public Map invoiceOk(List<String> orderIdList);
+
+	//骑手接单
+	public RestResponseBean riderOrder(String riderId, String orderId);
 
 }
