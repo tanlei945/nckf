@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
+import org.benben.common.XXPay.service.XXPayService;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.menu.ResultEnum;
 import org.benben.common.system.query.QueryGenerator;
@@ -30,6 +32,8 @@ import javax.servlet.http.HttpServletRequest;
 public class RestRechargeController {
     @Autowired
     private IRechargeService rechargeService;
+    @Autowired
+    private XXPayService xxPayService;
 
     /**
      * 充值记录
@@ -71,7 +75,7 @@ public class RestRechargeController {
             return new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(), ResultEnum.QUERY_NOT_EXIST.getDesc(), null);
         }
 
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), recharge);
     }
 
 
@@ -79,9 +83,18 @@ public class RestRechargeController {
     @ApiOperation(value = "钱包充值", tags = {"账户/钱包接口"}, notes = "钱包充值")
     public RestResponseBean recharge(@RequestParam String userId,@RequestParam double money,@RequestParam String type) {
 
-        rechargeService.recharge(userId,money,type);
+        Recharge recharge = rechargeService.recharge(userId,money,type);
 
-        return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+        if(recharge == null){
+            return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+        }
+        //TODO 调用支付宝统一下单接口
+        if(StringUtils.equals(type,"1")){
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),xxPayService.getAliPayOrderStr(recharge.getId(),recharge.getRechargeMoney(),"recharge","鸟巢咖啡充值"));
+        }
+        //TODO 调用微信下单接口
+
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),xxPayService.getWxParOederStr(recharge.getId(),recharge.getRechargeMoney(),"recharge","鸟巢咖啡充值"));
     }
 
 

@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.menu.ResultEnum;
 import org.benben.common.system.query.QueryGenerator;
+import org.benben.modules.business.account.entity.Account;
 import org.benben.modules.business.account.service.IAccountService;
 import org.benben.modules.business.withdraw.entity.Withdraw;
 import org.benben.modules.business.withdraw.service.IWithdrawService;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 
 /**
  * @Title: RestWithdrawController
@@ -85,7 +87,17 @@ public class RestWithdrawController {
      */
     @PostMapping(value = "/withdraw_apply")
     @ApiOperation(value = "账户提现申请", tags = {"提现接口"}, notes = "账户提现申请")
-    public RestResponseBean withdrawApply(@RequestParam String userId,@RequestParam double money) {
+    public RestResponseBean withdrawApply(@RequestParam String userId,@RequestParam Double money) {
+
+        Account account = accountService.queryByUserId(userId);
+
+        if(account == null){
+            return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+        }
+
+        if(new BigDecimal(account.getMoney()).compareTo(new BigDecimal(money)) < 0){
+            return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),"提现金额不足",null);
+        }
 
         if(withdrawService.withdrawApply(userId,money)){
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
