@@ -112,28 +112,11 @@ public class WeiXinPayController {
             return "success";
         }
     }
-    @GetMapping(value = "wxpay")
-    //###注意：需要根据自己业务需要实现Result类###
-    public Result pay(Order order) {
-        try {
-            WxPayUnifiedOrderRequest orderRequest = new WxPayUnifiedOrderRequest();
-            orderRequest.setBody("鸟巢咖啡");
-            orderRequest.setOutTradeNo(order.getOrderId());
-            orderRequest.setTotalFee(BaseWxPayRequest.yuanToFen(order.getOrderMoney().toString()));
-            orderRequest.setTimeStart("yyyyMMddHHmmss");
-            orderRequest.setTimeExpire("yyyyMMddHHmmss");
-            return Result.ok(wxPayService.createOrder(orderRequest));
-        } catch (Exception e) {
-          //  log.error("微信支付失败！订单号：{},原因:{}", orderNo, e.getMessage());
-            e.printStackTrace();
-            return Result.error("支付失败，请稍后重试！");
-        }
-    }
+
     @Autowired
     WxPayService wxPayService;
-    @GetMapping("/wx")
+    @GetMapping("/wxnotify")
     public String payNotify(HttpServletRequest request, HttpServletResponse response) {
-        WxPayConfig payConfig = new WxPayConfig();
         try {
             String xmlResult = IOUtils.toString(request.getInputStream(), request.getCharacterEncoding());
             WxPayOrderNotifyResult result = wxPayService.parseOrderNotifyResult(xmlResult);
