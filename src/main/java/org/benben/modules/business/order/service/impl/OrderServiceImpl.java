@@ -88,18 +88,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 	}
 
 	@Override
-	public Result<Order> queryByOrderId(String orderId) {
-		Result<Order> result = new Result<Order>();
+	public Order queryByOrderId(String orderId) {
 		QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
 		queryWrapper.eq("order_id",orderId);
 		Order order = orderService.getOne(queryWrapper);
-		if(order==null) {
-			result.error500("未找到对应实体");
-		}else {
-			result.setResult(order);
-			result.setSuccess(true);
-		}
-		return result;
+		return order;
 	}
 
 
