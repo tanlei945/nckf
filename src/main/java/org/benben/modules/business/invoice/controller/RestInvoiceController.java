@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 /**
 * @Title: Controller
@@ -93,9 +92,7 @@ public class RestInvoiceController {
                        orderService.update(order,queryWrapper1);
                    }
                    result.success("添加成功！");
-                   Map<String,String> map = orderService.invoiceOk(orderIdList);
-                   String change_flag = map.get("change_flag");
-                   log.info(change_flag);
+                   orderService.invoiceOk(orderIdList);
                } catch (Exception e) {
                    e.printStackTrace();
                    log.info(e.getMessage());
