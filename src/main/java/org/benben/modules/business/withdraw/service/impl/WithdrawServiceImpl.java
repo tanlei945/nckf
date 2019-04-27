@@ -41,7 +41,7 @@ public class WithdrawServiceImpl extends ServiceImpl<WithdrawMapper, Withdraw> i
         Withdraw withdraw = new Withdraw();
         //钱包操作
         double before = account.getMoney();
-        double after = DoubleUtil.sub(money,before);
+        double after = DoubleUtil.sub(before,money);
         account.setMoney(after);
         int resultAccount = accountMapper.updateById(account);
         withdraw.setUserId(userId);
