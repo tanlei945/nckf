@@ -11,4 +11,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IWithdrawService extends IService<Withdraw> {
 
+    public boolean withdrawApply(String userId, double money);
+
 }

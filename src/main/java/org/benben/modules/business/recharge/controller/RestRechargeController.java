@@ -75,4 +75,14 @@ public class RestRechargeController {
     }
 
 
+    @PostMapping(value = "/recharge")
+    @ApiOperation(value = "钱包充值", tags = {"账户/钱包接口"}, notes = "钱包充值")
+    public RestResponseBean recharge(@RequestParam String userId,@RequestParam double money,@RequestParam String type) {
+
+        rechargeService.recharge(userId,money,type);
+
+        return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+    }
+
+
 }

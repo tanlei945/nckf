@@ -11,4 +11,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IRechargeService extends IService<Recharge> {
 
+    public String recharge(String userId, double money,String type);
+
+    public boolean rechargeReturn(String rechargeId,String orderNo);
+
+    public int rechargeFail(String rechargeId);
+
 }
