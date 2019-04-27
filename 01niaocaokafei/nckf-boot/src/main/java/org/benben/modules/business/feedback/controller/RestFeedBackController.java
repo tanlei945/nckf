@@ -70,7 +70,7 @@ public class RestFeedBackController {
     */
    @PostMapping(value = "/add")
    @ApiOperation(value = "用户反馈添加接口(del_flag：0已删除 1未删除)", tags = {"用户反馈接口"}, notes = "用户反馈添加接口(del_flag：0已删除 1未删除)")
-   public Result<FeedBack> add(@RequestParam(name="orderId",required=true,value = "订单的id")String orderId,FeedBack feedBack,@RequestParam(value = "file") MultipartFile[] files) {
+   public Result<FeedBack> add(@RequestParam(name="orderId",required=true)String orderId,FeedBack feedBack,@RequestParam(name = "file") MultipartFile[] files) {
 
        log.info("本次上传的文件的数量为-------->"+files.length);
 
