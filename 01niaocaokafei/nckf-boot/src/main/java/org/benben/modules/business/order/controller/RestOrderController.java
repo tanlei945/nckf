@@ -1,15 +1,12 @@
 package org.benben.modules.business.order.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.api.vo.Result;
 import org.benben.common.menu.ResultEnum;
-import org.benben.common.system.query.QueryGenerator;
 import org.benben.modules.business.order.entity.Order;
 import org.benben.modules.business.order.entity.OrderGoods;
 import org.benben.modules.business.order.service.IOrderGoodsService;
@@ -19,7 +16,6 @@ import org.benben.modules.business.order.vo.OrderPage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -46,38 +42,19 @@ public class RestOrderController {
    /**
      * 分页列表查询
     * @param order
-    * @param pageNo
-    * @param pageSize
-    * @param req
     * @return
     */
    @PostMapping(value = "/list")
    @ApiOperation(value = "订单多（单）条件查询接口 status:9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价 4已评价", tags = {"订单接口"}, notes = "订单多（单）条件查询接口 status:9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价 4已评价")
-   public Result<IPage<Order>> queryPageList(@RequestBody Order order,
-                                     @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-                                     @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
-                                     HttpServletRequest req) {
-       if("0".equals(order.getStatus())){
-           Result<IPage<Order>> result = new Result<IPage<Order>>();
-           QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
-           queryWrapper.eq("status","1").or().eq("status","2").or().eq("status","3");
-           Page<Order> page = new Page<Order>(pageNo, pageSize);
-           IPage<Order> orderIPage = orderService.page(page, queryWrapper);
-           result.setSuccess(true);
-           result.setResult(orderIPage);
-           return result;
-       }else{
-           Result<IPage<Order>> result = new Result<IPage<Order>>();
-           QueryWrapper<Order> queryWrapper = QueryGenerator.initQueryWrapper(order, req.getParameterMap());
-           Page<Order> page = new Page<Order>(pageNo, pageSize);
-           IPage<Order> pageList = orderService.page(page, queryWrapper);
-           result.setSuccess(true);
-           result.setResult(pageList);
-           return result;
+   public RestResponseBean queryList(@RequestBody Order order) {
+       List<OrderPage> orderPageList = orderService.queryList(order);
+       if(orderPageList != null){
+           return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),orderPageList);
        }
+       return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
 
    }
-   @PostMapping(value = "/rider/nopay_order")
+    @PostMapping(value = "/rider/nopay_order")
     @ApiOperation(value = "骑手查询可接订单接口", tags = {"订单接口"}, notes = "骑手查询可接订单接口")
     public RestResponseBean queryRiderOrder(@RequestParam(name = "riderId",required = true) String riderId,
                                             @RequestParam(name = "storeId",required = true) String storeId){
@@ -126,10 +103,14 @@ public class RestOrderController {
     * @return
     */
 
-   @ApiOperation(value = "取消订单接口", tags = {"订单接口"}, notes = "取消订单接口")
+   @ApiOperation(value = "取消订单接口 参数：订单id", tags = {"订单接口"}, notes = "取消订单接口 参数：订单id")
    @PostMapping(value = "/cancel")
-   public Result<Order> cancel(@RequestParam(name="id",required=true) String id) {
-       return orderService.cancel(id);
+   public RestResponseBean cancel(@RequestParam(name="id",required=true) String id) {
+       boolean flag = orderService.cancel(id);
+       if(flag){
+           return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
+       }
+       return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
    }
 
 
@@ -140,16 +121,12 @@ public class RestOrderController {
     */
    @GetMapping(value = "/query_by_id")
    @ApiOperation(value = "用户查询订单（不包括商品详情）接口", tags = {"订单接口"}, notes = "用户查询订单（不包括商品详情）接口")
-   public Result<Order> queryById(@RequestParam(name="id",required=true) String id) {
-       Result<Order> result = new Result<Order>();
+   public RestResponseBean queryById(@RequestParam(name="id",required=true) String id) {
        Order order = orderService.getById(id);
-       if(order==null) {
-           result.error500("未找到对应实体");
-       }else {
-           result.setResult(order);
-           result.setSuccess(true);
+       if(order!=null) {
+           return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
        }
-       return result;
+       return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
    }
    /**
      * 通过id查询
@@ -157,12 +134,15 @@ public class RestOrderController {
     * @return
     */
    @GetMapping(value = "/query_order_goods_by_mainId")
-   @ApiOperation(value = "用户查询订单（包括商品详情）接口", tags = {"订单接口"}, notes = "用户查询订单（包括商品详情）接口")
-   public Result<List<OrderGoods>> queryOrderGoodsListByMainId(String id) {
-       Result<List<OrderGoods>> result = new Result<List<OrderGoods>>();
+   @ApiOperation(value = "用户查询单个订单（包括商品详情）接口", tags = {"订单接口"}, notes = "用户查询订单个（包括商品详情）接口")
+   public RestResponseBean queryOrderGoodsListByMainId(@RequestParam(name="id",required=true)String id) {
+
        List<OrderGoods> orderGoodsList = orderGoodsService.selectByMainId(id);
-       result.setResult(orderGoodsList);
-       result.setSuccess(true);
-       return result;
+       if(orderGoodsList!=null){
+           return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),orderGoodsList);
+       }
+       return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+
+
    }
 }

@@ -10,7 +10,6 @@ import org.benben.modules.business.order.vo.OrderPage;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Description: 订单
@@ -42,6 +41,9 @@ public interface IOrderService extends IService<Order> {
 	 */
 	public void delBatchMain (Collection<? extends Serializable> idList);
 
+	//根据不同状态查询订单信息
+	public List<OrderPage> queryList(Order order);
+
 
 	//根据订单id查询订单
 	public Result<Order> queryByOrderId( String orderId);
@@ -50,13 +52,13 @@ public interface IOrderService extends IService<Order> {
 	public Order add(OrderPage orderPage);
 
 	//取消订单
-	public Result<Order> cancel(String id);
+	public boolean cancel(String id);
 
 	//支付完成修改订单状态
-	public boolean edit(String id);
+	public boolean edit(String id,String tradeNo);
 
 	//开发票后修改订单状态
-	public Map invoiceOk(List<String> orderIdList);
+	public boolean invoiceOk(List<String> orderIdList);
 
 	//骑手接单
 	public RestResponseBean riderOrder(String riderId, String orderId);
