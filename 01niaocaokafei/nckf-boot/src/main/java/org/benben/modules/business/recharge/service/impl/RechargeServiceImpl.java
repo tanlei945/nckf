@@ -44,7 +44,7 @@ public class RechargeServiceImpl extends ServiceImpl<RechargeMapper, Recharge> i
      */
     @Override
     @Transactional
-    public String recharge(String userId, double money, String type) {
+    public Recharge recharge(String userId, double money, String type) {
 
         Recharge recharge = new Recharge();
 
@@ -54,13 +54,8 @@ public class RechargeServiceImpl extends ServiceImpl<RechargeMapper, Recharge> i
         recharge.setStatus("2");
         recharge.setRechargeType(type);
         rechargeMapper.insert(recharge);
-        //TODO 调用支付宝统一下单接口
-        if(StringUtils.equals(type,"1")){
 
-            return "";
-        }
-        //TODO 调用微信下单接口
-        return "";
+        return recharge;
     }
 
     /**
