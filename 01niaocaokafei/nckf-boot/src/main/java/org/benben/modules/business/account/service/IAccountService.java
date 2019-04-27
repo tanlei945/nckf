@@ -19,8 +19,4 @@ public interface IAccountService extends IService<Account> {
 
     public Account queryByUserId(String userId);
 
-    public boolean recharge(String userId, double money,String type, String state, String orderNo);
-
-    public boolean withdraw(String userId, double money);
-
 }

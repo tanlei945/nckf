@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.menu.ResultEnum;
 import org.benben.common.system.query.QueryGenerator;
+import org.benben.modules.business.account.service.IAccountService;
 import org.benben.modules.business.withdraw.entity.Withdraw;
 import org.benben.modules.business.withdraw.service.IWithdrawService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,8 @@ import javax.servlet.http.HttpServletRequest;
 public class RestWithdrawController {
     @Autowired
     private IWithdrawService withdrawService;
+    @Autowired
+    private IAccountService accountService;
 
     /**
      * 提现记录
@@ -72,6 +75,23 @@ public class RestWithdrawController {
         }
 
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), withdraw);
+    }
+
+    /**
+     * 账户提现申请
+     * @param userId
+     * @param money
+     * @return
+     */
+    @PostMapping(value = "/withdraw_apply")
+    @ApiOperation(value = "账户提现申请", tags = {"提现接口"}, notes = "账户提现申请")
+    public RestResponseBean withdrawApply(@RequestParam String userId,@RequestParam double money) {
+
+        if(withdrawService.withdrawApply(userId,money)){
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
+        }
+
+        return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
     }
 
 

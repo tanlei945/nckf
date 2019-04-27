@@ -103,34 +103,5 @@ public class RestAccountController {
         return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
     }
 
-   @PostMapping(value = "/recharge")
-   @ApiOperation(value = "钱包充值", tags = {"账户/钱包接口"}, notes = "钱包充值")
-   public RestResponseBean recharge(@RequestParam String userId,@RequestParam double money,@RequestParam String type) {
-       String state = "";
-       String orderNo = "";
-
-       //TODO支付调用
-
-       accountService.recharge(userId,money,type,state,orderNo);
-
-       return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
-   }
-
-    /**
-     * 账户提现申请
-     * @param userId
-     * @param money
-     * @return
-     */
-    @PostMapping(value = "/withdraw")
-    @ApiOperation(value = "账户提现申请", tags = {"账户/钱包接口"}, notes = "账户提现申请")
-    public RestResponseBean withdraw(@RequestParam String userId,@RequestParam double money) {
-
-        if(accountService.withdraw(userId,money)){
-            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
-        }
-
-        return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
-    }
 
 }

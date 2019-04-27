@@ -12,4 +12,5 @@ filterlist:
   - /api/user/rider_register
   - /api/user/login
   - /api/user/forget_password
+  - /api/user/is_exist_mobile
   - /api/sms/**
