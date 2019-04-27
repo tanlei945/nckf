@@ -2,7 +2,7 @@ package org.benben.common.XXPay.controller;
 
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.extern.slf4j.Slf4j;
-import org.benben.common.XXPay.service.impl.AlipayServiceImpl;
+import org.benben.common.XXPay.service.impl.XXPayServiceImpl;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.api.vo.Result;
 import org.benben.common.menu.ResultEnum;
@@ -25,7 +25,7 @@ import java.util.Map;
 @RestController("/benben_pay")
 public class AliPayController {
     @Autowired
-    private AlipayServiceImpl alipayServiceImpl;
+    private XXPayServiceImpl alipayServiceImpl;
 
     /**
      * 支付宝支付成功后.异步请求该接口
@@ -54,7 +54,7 @@ public class AliPayController {
             conversionParams.put(key, valueStr);
         }
         log.info("==================返回参数集合："+conversionParams);
-        String status=alipayServiceImpl.notify(conversionParams);
+        String status=alipayServiceImpl.AliNotify(conversionParams);
         result.setResult(status);
         return result;
     }
@@ -64,14 +64,14 @@ public class AliPayController {
        return alipayServiceImpl.getAliPayOrderStr(orderPage,product_code);
     }*/
 
-    /**
+/*    *//**
      * 支付宝支付成功后.通知页面
      *@author
      *@date 2017年11月2日
      *@param request
      *@return
      *@throws UnsupportedEncodingException
-     */
+     *//*
     @RequestMapping(value="/return_url",method={RequestMethod.POST,RequestMethod.GET})
     public RestResponseBean returnUrl(@RequestParam("orderId") String orderId, HttpServletRequest request, Model model) {
         System.err.println("。。。。。。 同步通知 。。。。。。");
@@ -83,5 +83,5 @@ public class AliPayController {
             return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), "fail");
 
         }
-    }
+    }*/
 }
