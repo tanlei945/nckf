@@ -89,6 +89,12 @@ public class RestWithdrawController {
     @ApiOperation(value = "账户提现申请", tags = {"提现接口"}, notes = "账户提现申请")
     public RestResponseBean withdrawApply(@RequestParam String userId,@RequestParam Double money) {
 
+        BigDecimal bigDecimal = new BigDecimal(1.00);
+
+        if(new BigDecimal(money).compareTo(bigDecimal) < 0){
+            return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),"提现金额不足1元",null);
+        }
+
         Account account = accountService.queryByUserId(userId);
 
         if(account == null){
@@ -96,7 +102,7 @@ public class RestWithdrawController {
         }
 
         if(new BigDecimal(account.getMoney()).compareTo(new BigDecimal(money)) < 0){
-            return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),"提现金额不足",null);
+            return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),"余额不足",null);
         }
 
         if(withdrawService.withdrawApply(userId,money)){

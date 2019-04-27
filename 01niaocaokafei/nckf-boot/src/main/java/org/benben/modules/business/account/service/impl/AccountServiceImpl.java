@@ -65,7 +65,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
 
         Account account = this.queryByUserId(userId);
 
-        if(StringUtils.equals(account.getPayPassword(),"")){
+        if(StringUtils.isBlank(account.getPayPassword())){
             return false;
         }
 
@@ -82,7 +82,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
 
         Account account = this.queryByUserId(userId);
 
-        if(StringUtils.isNotBlank(account.getPayPassword())){
+        if(StringUtils.isBlank(account.getAccountNo())){
             return false;
         }
 
@@ -108,7 +108,6 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
         account.setSalt(salt);
         String passwordEncode = PasswordUtil.encrypt(user.getMobile(), payPassword, salt);
         account.setPayPassword(passwordEncode);
-        account.setPayPassword(payPassword);
         int result = accountMapper.updateById(account);
 
         if(result == 0){
