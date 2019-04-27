@@ -71,7 +71,7 @@ public class RestOrderController {
                                        @RequestParam(name = "orderId",required = true) String orderId){
        boolean flag = orderService.riderOrder(riderId,orderId);
         if(flag){
-            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),order);
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
         }
         return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
     }
