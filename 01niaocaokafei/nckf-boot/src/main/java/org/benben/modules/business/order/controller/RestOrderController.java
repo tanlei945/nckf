@@ -5,7 +5,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.benben.common.api.vo.RestResponseBean;
-import org.benben.common.api.vo.Result;
 import org.benben.common.menu.ResultEnum;
 import org.benben.modules.business.order.entity.Order;
 import org.benben.modules.business.order.entity.OrderGoods;
@@ -77,8 +76,12 @@ public class RestOrderController {
 
    @GetMapping(value = "/query_by_orderId")
    @ApiOperation(value = "用户根据订单号查询订单接口", tags = {"订单接口"}, notes = "用户根据订单号查询订单接口")
-   public Result<Order> queryByOrderId(@RequestParam(name="orderId",required=true) String orderId) {
-       return orderService.queryByOrderId(orderId);
+   public RestResponseBean queryByOrderId(@RequestParam(name="orderId",required=true) String orderId) {
+       Order order = orderService.queryByOrderId(orderId);
+       if(order!=null){
+           return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),order);
+       }
+       return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
    }
 
    /**
