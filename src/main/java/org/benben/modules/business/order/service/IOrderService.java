@@ -1,7 +1,6 @@
 package org.benben.modules.business.order.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.benben.common.api.vo.RestResponseBean;
 import org.benben.modules.business.order.entity.Order;
 import org.benben.modules.business.order.entity.OrderGoods;
 import org.benben.modules.business.order.vo.OrderPage;
@@ -60,6 +59,6 @@ public interface IOrderService extends IService<Order> {
 	public boolean invoiceOk(List<String> orderIdList);
 
 	//骑手接单
-	public RestResponseBean riderOrder(String riderId, String orderId);
+	public boolean riderOrder(String riderId, String orderId);
 
 }
