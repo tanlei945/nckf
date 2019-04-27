@@ -69,7 +69,11 @@ public class RestOrderController {
     @ApiOperation(value = "骑手接单接口", tags = {"订单接口"}, notes = "骑手接单接口")
     public RestResponseBean riderOrder(@RequestParam(name = "riderId",required = true) String riderId,
                                        @RequestParam(name = "orderId",required = true) String orderId){
-      return orderService.riderOrder(riderId,orderId);
+       boolean flag = orderService.riderOrder(riderId,orderId);
+        if(flag){
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),order);
+        }
+        return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
     }
 
 

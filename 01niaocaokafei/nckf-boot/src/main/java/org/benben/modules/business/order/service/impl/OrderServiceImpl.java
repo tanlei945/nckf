@@ -3,9 +3,8 @@ package org.benben.modules.business.order.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
-import org.benben.common.api.vo.RestResponseBean;
+import org.apache.commons.lang.StringUtils;
 import org.benben.common.api.vo.Result;
-import org.benben.common.menu.ResultEnum;
 import org.benben.modules.business.order.entity.Order;
 import org.benben.modules.business.order.entity.OrderGoods;
 import org.benben.modules.business.order.mapper.OrderGoodsMapper;
@@ -134,7 +133,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
 	@Override
 	public Order add(OrderPage orderPage) {
-		//app传过来的订单金额需要与数据库中实际的商品金额做判断
+		//app端传过来的订单金额需要与数据库中实际的商品金额做判断
 		double appMoney = orderPage.getOrderMoney();
 		List<OrderGoods> orderGoodsList = orderPage.getOrderGoodsList();
 		int sum=0;
@@ -240,19 +239,17 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 	@Override
 	@Transactional
 	//骑手接单
-	public RestResponseBean riderOrder(String riderId, String orderId) {
-		/* QueryWrapper<Order> wrapper = new QueryWrapper<>();
-        wrapper.eq("order_id",orderId);*/
+	public synchronized boolean riderOrder(String riderId, String orderId) {
 		Order order = orderService.getById(orderId);
-		if(order!=null){
+		if(order!=null&& StringUtils.isBlank(order.getOrderId())){
 			order.setRiderId(riderId);
 			order.setUpdateTime(new Date());
 			if(orderService.updateById(order)){
-				return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),order);
+				return true;
 			}else{
-				return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.ERROR.getDesc(),null);
+				return false;
 			}
 		}
-		return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.ERROR.getDesc(),null);
+		return false;
 	}
 }
