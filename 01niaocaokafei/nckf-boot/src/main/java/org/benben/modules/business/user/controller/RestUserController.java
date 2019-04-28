@@ -8,6 +8,8 @@ import com.qq.connect.QQConnectException;
 import com.qq.connect.oauth.Oauth;
 import com.sun.org.apache.regexp.internal.RE;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -381,29 +383,94 @@ public class RestUserController {
         return new RestResponseBean(ResultEnum.LOGIN_SUCCESS.getValue(), ResultEnum.LOGIN_SUCCESS.getDesc(), tokenBuild(user));
     }
 
-
+//    /**
+//     * 三方登录(后端调起授权)
+//     * @param platform
+//     * @param mobile
+//     */
+//    @GetMapping(value = "/third")
+//    @ApiOperation(value = "三方登录", tags = {"用户接口"}, notes = "三方登录")
+//    public void third(@RequestParam String platform,@RequestParam String mobile,HttpServletResponse response){
+//
+//        switch (platform){
+//            case "1":
+//                iQqService.login(mobile,response);
+//                break;
+//            case "2":
+//                iWxService.wxLogin(mobile, response);
+//                break;
+//            default:
+//                iWbService.login(mobile, response);
+//                break;
+//        }
+//
+//    }
 
     /**
-     * qq登录
-     *
-     * @param response
-     * @throws QQConnectException
+     * 三方登录(后端调起授权)
+     * @param platform
+     * @param mobile
      */
-    @PostMapping(value = "/qq_login")
-    @ApiOperation(value = "qq登录", tags = {"用户接口"}, notes = "qq登录")
-    public void qqlogin(HttpServletRequest request,HttpServletResponse response) {
+    @GetMapping(value = "/third")
+    @ApiOperation(value = "三方登录", tags = {"用户接口"}, notes = "三方登录")
+    public void third(@RequestParam String platform,@RequestParam String mobile,HttpServletResponse response){
 
-        String mobile = request.getParameter("mobile");
-
-        try {
-            //生成授权连接
-            response.setContentType("text/html;charset=utf-8");
-            response.sendRedirect((new Oauth().getAuthorizeURL(mobile)));
-        } catch (Exception e) {
-            e.printStackTrace();
+        switch (platform){
+            case "1":
+                iQqService.login(mobile,response);
+                break;
+            case "2":
+                iWxService.wxLogin(mobile, response);
+                break;
+            default:
+                iWbService.login(mobile, response);
+                break;
         }
 
     }
+
+//    /**
+//     * 三方登录(IP端发起授权)
+//     * @param platform 登录平台类型c
+//     * @param code 回执码
+//     * @return
+//     */
+//    @GetMapping(value = "/ip_third")
+//    @ApiImplicitParams(value = {
+//            @ApiImplicitParam(name = "platform", value = "登录平台类型", required = true, paramType = "query", dataType = "String"),
+//            @ApiImplicitParam(name = "code", value = "回执码", required = true, paramType = "query", dataType = "String"),
+//    })
+//    @ApiOperation(value = "手机验证码登录", tags = {"用户接口"}, notes = "手机验证码登录")
+//    public RestResponseBean third(HttpServletRequest request) {
+//
+//        String mobile = "";
+//        String openid = "";
+//        String platform = request.getParameter("platform");
+//
+//        User user = (User) SecurityUtils.getSubject().getPrincipal();
+//        if(user != null){
+//            mobile = user.getMobile();
+//        }
+//
+//        switch (platform){
+//            case "0":
+//                //获取回调
+//                openid = iQqService.backCallBack(request);
+//                break;
+//            case "1":
+//                //获取回调
+//                openid = iWxService.callBack(request);
+//                break;
+//            case "2":
+//                //获取回调
+//                openid = iWbService.callBack(request);
+//                break;
+//            default:
+//                return new RestResponseBean(ResultEnum.PARAMETER_MISSING.getValue(),ResultEnum.PARAMETER_MISSING.getDesc(),null);
+//        }
+//
+//        return publicCallBack(openid,mobile,platform);
+//    }
 
 
     /**
@@ -415,24 +482,12 @@ public class RestUserController {
     public RestResponseBean qqLoginCallback(HttpServletRequest request) {
 
         //获取回调
-        String openid = iQqService.callBack(request);
+        String openid = iQqService.backCallBack(request);
         String mobile = request.getParameter("state");
 
         return publicCallBack(openid,mobile,"0");
     }
 
-    /**
-     * 微信登录
-     *
-     * @return
-     */
-    @PostMapping(value = "/wx_login")
-    @ApiOperation(value = "微信登录", tags = {"用户接口"}, notes = "微信登录")
-    public void wxLogin(HttpServletResponse response, HttpServletRequest request) {
-
-        iWxService.wxLogin(response, request);
-
-    }
 
     /**
      * 微信回调
@@ -450,18 +505,6 @@ public class RestUserController {
         return publicCallBack(openid,mobile,"1");
     }
 
-    /**
-     * 微博登录
-     *
-     * @return
-     */
-    @PostMapping(value = "/wb_login")
-    @ApiOperation(value = "微博登录", tags = {"用户接口"}, notes = "微博登录")
-    public void wbLogin(HttpServletResponse response, HttpServletRequest request) {
-
-        iWbService.login(response,request);
-
-    }
 
     /**
      * 微博回调
@@ -493,23 +536,6 @@ public class RestUserController {
 
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
     }
-
-//    @GetMapping(value = "/check_password")
-//    @ApiOperation(value = "密码是否正确",tags = {"用户接口"},notes = "密码是否正确")
-//    public RestResponseBean checkPassword(String userId, String password){
-//
-//        User user = userService.getById(userId);
-//        if (user == null){
-//            return new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(),ResultEnum.QUERY_NOT_EXIST.getDesc(),null);
-//        }
-//
-//        password = PasswordUtil.encrypt(user.getMobile(), password, user.getSalt());
-//        if (!user.getPassword().equals(password)) {
-//            return new RestResponseBean(ResultEnum.PASSWORD_ERROR.getValue(), ResultEnum.PASSWORD_ERROR.getDesc(), null);
-//        }
-//
-//        return new RestResponseBean(ResultEnum.PASSWORD_RIGHT.getValue(), ResultEnum.PASSWORD_RIGHT.getDesc(), null);
-//    }
 
     @GetMapping(value = "is_exist_mobile")
     @ApiOperation(value = "手机号是否已被注册",tags = {"用户接口"},notes = "手机号是否已被注册")
