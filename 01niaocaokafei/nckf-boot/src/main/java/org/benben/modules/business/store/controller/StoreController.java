@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.ibatis.jdbc.Null;
 import org.benben.common.api.vo.RestResponseBean;
@@ -246,7 +248,11 @@ public class StoreController {
 
   @RequestMapping(value = "/query_By_Distance",method = RequestMethod.GET)
   @ApiOperation("查询用户离店铺距离")
-	public RestResponseBean queryByDistance(double lng, double lat){
+  @ApiImplicitParams({
+		  @ApiImplicitParam(name="lng",value="用户所在经度",dataType = "double",required = true),
+		  @ApiImplicitParam(name="lat",value="用户所在纬度",dataType = "double",required = true)
+  })
+	public RestResponseBean queryByDistance(@RequestParam(name="lng")double lng, @RequestParam(name="lat")double lat){
 	  List<Store> storeList = null;
 	  try {
 	  		storeList = storeService.queryByDistance(lng, lat);
@@ -260,7 +266,13 @@ public class StoreController {
 
 	 @RequestMapping(value = "/queryScope_By_id",method = RequestMethod.GET)
 	 @ApiOperation("查询收货地址距离是否超过限制")
-	 public RestResponseBean queryScopeById(String storeId, double lng, double lat){
+	 @ApiImplicitParams({
+			 @ApiImplicitParam(name="storeId",value="商家id",dataType = "String",required = true),
+			 @ApiImplicitParam(name="lng",value="收货地址经度",dataType = "double",required = true),
+			 @ApiImplicitParam(name="lat",value="收货地址纬度",dataType = "double",required = true)
+	 })
+	 public RestResponseBean queryScopeById(@RequestParam(name="storeId")String storeId, @RequestParam(name="lng")
+			 double lng,@RequestParam(name="lat") double lat){
 		 Boolean aBoolean = null;
 		 try {
 			 aBoolean = storeService.queryScopeById(storeId,lng,lat);

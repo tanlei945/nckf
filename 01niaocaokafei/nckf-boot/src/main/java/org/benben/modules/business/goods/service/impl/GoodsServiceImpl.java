@@ -42,4 +42,9 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         });
         return  hashMap;
     }
+
+    @Override
+    public List<SpecDict> queryallspec() {
+        return GoodsMapper.queryallspec();
+    }
 }

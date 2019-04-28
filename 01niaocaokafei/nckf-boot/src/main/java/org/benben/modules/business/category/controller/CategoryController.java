@@ -237,8 +237,8 @@ public class CategoryController {
       }
       return Result.ok("文件导入失败！");
   }
-	@ApiOperation("查询0级菜单")
-	@RequestMapping("/get_category")
+	@ApiOperation("查询商品种类")
+	@GetMapping("/get_category")
 	 public RestResponseBean getCategory(){
 		try {
 			List<Category> category = categoryService.getCategory();
@@ -250,8 +250,8 @@ public class CategoryController {
 	}
 
 
-	 @ApiOperation("查询多级菜单")
-	 @RequestMapping("/find_category_byParentId")
+/*	 @ApiOperation("查询多级菜单")
+	 @GetMapping("/find_category_byParentId")
 	 public RestResponseBean findMenuByParentId(String parentid){
 		 try {
 			 List<Category> menuByParentId = categoryService.findMenuByParentId(parentid);
@@ -261,7 +261,7 @@ public class CategoryController {
 			 return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
 		 }
 	 }
-/*	 @ApiOperation("查询菜单树")
+	 @ApiOperation("查询菜单树")
 	 @RequestMapping("/findtree")
 	 public Result<List<CategoryTreeModel>> queryTreeList() {
 		 List<CategoryTreeModel> list = null;
