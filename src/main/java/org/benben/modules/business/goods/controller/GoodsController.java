@@ -1,42 +1,42 @@
 package org.benben.modules.business.goods.controller;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.api.vo.Result;
 import org.benben.common.menu.ResultEnum;
 import org.benben.common.system.query.QueryGenerator;
 import org.benben.common.util.oConvertUtils;
 import org.benben.modules.business.goods.entity.Goods;
+import org.benben.modules.business.goods.entity.SpecDict;
 import org.benben.modules.business.goods.service.IGoodsService;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import lombok.extern.slf4j.Slf4j;
-
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
 import org.jeecgframework.poi.excel.entity.ImportParams;
 import org.jeecgframework.poi.excel.view.JeecgEntityExcelView;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
-import com.alibaba.fastjson.JSON;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
  /**
  * @Title: Controller
@@ -80,8 +80,6 @@ public class GoodsController {
 	 * @param goods
 	 * @return
 	 */
-	@RequestMapping("/add")
-	@ApiOperation("添加商品")
 	@PostMapping(value = "/add")
 	public Result<Goods> add(@RequestBody Goods goods) {
 		Result<Goods> result = new Result<Goods>();
@@ -244,9 +242,15 @@ public class GoodsController {
   }
 
 
-  @RequestMapping("query_goods_byCotegory")
+  @GetMapping("query_goods_byCotegory")
   @ApiOperation("根据门店id查所属商品")
-  public RestResponseBean queryByCotegory(String categoryType,String belongId){
+  @ApiImplicitParams({
+		  @ApiImplicitParam(name="goodId",value="所属商家id",dataType = "String",required = true),
+		  @ApiImplicitParam(name="categoryType",value="商品类别",dataType = "String",required = true)
+  })
+  public RestResponseBean queryByCotegory(@RequestParam(name="categoryType")String categoryType,
+										  @RequestParam(name="belongId")String belongId)
+  {
 	  try {
 		  List<Goods> goods = goodsService.queryByCotegory(categoryType, belongId);
 		  return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), goods);
@@ -256,17 +260,30 @@ public class GoodsController {
 
 	  }
   }
-	 @RequestMapping("query_goods_spec")
+	 @GetMapping("query_goods_spec")
 	 @ApiOperation("根据商品id查商品规格")
-	public RestResponseBean querySpec(String goodId){
+	 @ApiImplicitParams({@ApiImplicitParam(name="goodId",value="商品id",dataType = "String",required = true)
+	 })
+	public RestResponseBean querySpec(@RequestParam(name="goodId")String goodId){
 		HashMap<String, List<String>> stringListMap = new HashMap<>();
 		try {
 			stringListMap = goodsService.querySpec(goodId);
 			return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), stringListMap);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), stringListMap);
+			return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
 		}
 
+	 }
+	 @GetMapping("query_all_spec")
+	 @ApiOperation("根据所有商品规格")
+	 public RestResponseBean queryallspec(){
+		 try {
+			 List<SpecDict> queryallspec = goodsService.queryallspec();
+			 return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), queryallspec);
+		 } catch (Exception e) {
+			 e.printStackTrace();
+			 return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
+		 }
 	 }
 }
