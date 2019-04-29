@@ -1,8 +1,7 @@
 package org.benben.modules.business.invoice.service;
 
-import org.benben.modules.business.invoice.entity.Invoice;
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.benben.modules.business.order.entity.Order;
+import org.benben.modules.business.invoice.entity.Invoice;
 
 /**
  * @Description: 用户发票
@@ -11,4 +10,5 @@ import org.benben.modules.business.order.entity.Order;
  * @version： V1.0
  */
 public interface IInvoiceService extends IService<Invoice> {
+
 }
