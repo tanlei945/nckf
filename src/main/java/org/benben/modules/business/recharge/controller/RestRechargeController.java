@@ -90,11 +90,11 @@ public class RestRechargeController {
         }
         //TODO 调用支付宝统一下单接口
         if(StringUtils.equals(type,"1")){
-            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),xxPayService.getAliPayOrderStr(recharge.getId(),recharge.getRechargeMoney().toString(),"recharge","鸟巢咖啡充值"));
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),xxPayService.getAliPayOrderStr(recharge.getId(),recharge.getRechargeMoney(),"recharge","鸟巢咖啡充值"));
         }
         //TODO 调用微信下单接口
 
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),xxPayService.getWxParOederStr(recharge.getId(),recharge.getRechargeMoney().toString(),"recharge","鸟巢咖啡充值"));
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),xxPayService.getWxParOederStr(recharge.getId(),recharge.getRechargeMoney(),"recharge","鸟巢咖啡充值"));
     }
 
 

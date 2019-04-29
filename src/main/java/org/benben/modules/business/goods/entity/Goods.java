@@ -1,12 +1,15 @@
 package org.benben.modules.business.goods.entity;
 
 import java.io.Serializable;
-import java.util.Date;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
+import org.benben.common.aspect.annotation.Dict;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.jeecgframework.poi.excel.annotation.Excel;
 
@@ -18,6 +21,8 @@ import org.jeecgframework.poi.excel.annotation.Excel;
  */
 @Data
 @TableName("bb_goods")
+@EqualsAndHashCode(callSuper = false)
+@Accessors(chain = true)
 public class Goods implements Serializable {
     private static final long serialVersionUID = 1L;
     
@@ -43,7 +48,9 @@ public class Goods implements Serializable {
 	@Excel(name = "图片路径", width = 15)
 	private java.lang.String imgUrl;
 	/**商品状态,0正常1下架*/
-	@Excel(name = "商品状态,0正常1下架", width = 15)
+
+	@Excel(name = "商品状态,0正常1下架", width = 15,dicCode = "user_status")
+	@Dict(dicCode = "user_status")
 	private java.lang.String status;
 	/**类别编号*/
 	@Excel(name = "类别编号", width = 15)
@@ -67,4 +74,6 @@ public class Goods implements Serializable {
 	/**所属商家*/
 	@Excel(name = "所属商家", width = 15)
 	private java.lang.String belongId;
+
+	//private List<SpecDict> SpecDicts;
 }
