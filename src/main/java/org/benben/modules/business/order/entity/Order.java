@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -17,6 +19,7 @@ import java.io.Serializable;
  */
 @Data
 @TableName("bb_order")
+@ApiModel(value = "订单实体" ,description="这是订单实体")
 public class Order implements Serializable {
     private static final long serialVersionUID = 1L;
     
@@ -36,10 +39,13 @@ public class Order implements Serializable {
 	/**商品总金额*/
 	private java.lang.Double goodsMoney;
 	/**订单总金额*/
+	@ApiModelProperty(name = "money",value = "订单金额",required = true,example = "100.5")
 	private java.lang.Double orderMoney;
 	/**订单类型(0:送餐  1：店内用餐)*/
+	@ApiModelProperty(value = "订单类型(0:送餐  1：店内用餐)")
 	private java.lang.String orderType;
 	/**送餐地址*/
+	@ApiModelProperty(hidden = true)
 	private java.lang.String userAddress;
 	/**用户电话*/
 	private java.lang.String usedPhone;
