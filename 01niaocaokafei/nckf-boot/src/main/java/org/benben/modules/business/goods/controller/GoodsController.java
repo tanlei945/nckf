@@ -62,6 +62,7 @@ public class GoodsController {
 	 * @return
 	 */
 	@GetMapping(value = "/list")
+	@ApiOperation("list")
 	public Result<IPage<Goods>> queryPageList(Goods goods,
 									  @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
 									  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
