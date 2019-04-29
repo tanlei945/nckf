@@ -1,19 +1,17 @@
 package org.benben.modules.business.invoice.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.api.vo.Result;
-import org.benben.common.system.query.QueryGenerator;
+import org.benben.common.menu.ResultEnum;
 import org.benben.modules.business.invoice.entity.InvoiceTitle;
 import org.benben.modules.business.invoice.service.IInvoiceTitleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
 * @Title: Controller
@@ -32,25 +30,21 @@ public class RestInvoiceTitleController {
 
    /**
      * 分页列表查询
-    * @param invoiceTitle
-    * @param pageNo
-    * @param pageSize
-    * @param req
+    * @param userId
     * @return
     */
    @GetMapping(value = "/list")
-   @ApiOperation(value = "用户发票抬头（多条件）查询接口", tags = {"发票抬头接口"}, notes = "用户发票抬头（多条件）查询接口")
-   public Result<IPage<InvoiceTitle>> queryPageList(InvoiceTitle invoiceTitle,
-                                     @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-                                     @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
-                                     HttpServletRequest req) {
-       Result<IPage<InvoiceTitle>> result = new Result<IPage<InvoiceTitle>>();
-       QueryWrapper<InvoiceTitle> queryWrapper = QueryGenerator.initQueryWrapper(invoiceTitle, req.getParameterMap());
-       Page<InvoiceTitle> page = new Page<InvoiceTitle>(pageNo, pageSize);
-       IPage<InvoiceTitle> pageList = invoiceTitleService.page(page, queryWrapper);
-       result.setSuccess(true);
-       result.setResult(pageList);
-       return result;
+   @ApiOperation(value = "用户发票抬头查询接口", tags = {"发票抬头接口"}, notes = "用户发票抬头查询接口")
+   @ApiImplicitParam(name = "userId", value = "用户id")
+   public RestResponseBean queryList(@RequestParam(name = "userId",required = true) String userId) {
+       QueryWrapper<InvoiceTitle> queryWrapper = new QueryWrapper<>();
+       queryWrapper.eq("user_id", userId);
+       InvoiceTitle invoiceTitle = invoiceTitleService.getOne(queryWrapper);
+       if(invoiceTitle != null){
+           return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),invoiceTitle);
+       }
+       return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+
    }
 
    /**
@@ -60,40 +54,32 @@ public class RestInvoiceTitleController {
     */
    @PostMapping(value = "/add")
    @ApiOperation(value = "用户发票头提交接口", tags = {"发票抬头接口"}, notes = "用户发票头提交接口")
-   public Result<InvoiceTitle> add(@RequestBody InvoiceTitle invoiceTitle) {
-       Result<InvoiceTitle> result = new Result<InvoiceTitle>();
-       try {
-           invoiceTitleService.save(invoiceTitle);
-           result.success("添加成功！");
-       } catch (Exception e) {
-           e.printStackTrace();
-           log.info(e.getMessage());
-           result.error500("操作失败");
-       }
-       return result;
-   }
-
-   /**
-     *  编辑
-    * @param invoiceTitle
-    * @return
-    */
-   @PostMapping(value = "/edit")
-   @ApiOperation(value = "用户发票头编辑接口", tags = {"发票抬头接口"}, notes = "用户发票头编辑接口")
-   public Result<InvoiceTitle> edit(@RequestBody InvoiceTitle invoiceTitle) {
-       Result<InvoiceTitle> result = new Result<InvoiceTitle>();
-       InvoiceTitle invoiceTitleEntity = invoiceTitleService.getById(invoiceTitle.getId());
-       if(invoiceTitleEntity==null) {
-           result.error500("未找到对应实体");
-       }else {
-           boolean ok = invoiceTitleService.updateById(invoiceTitle);
-           //TODO 返回false说明什么？
-           if(ok) {
-               result.success("修改成功!");
+   @ApiImplicitParam(name = "invoiceTitle", value = "发票头实体")
+   public RestResponseBean add(@RequestBody InvoiceTitle invoiceTitle) {
+       if(invoiceTitle.getUserId() == null && invoiceTitle.getUserId()==""){
+           return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+       }else{
+           QueryWrapper<InvoiceTitle> queryWrapper = new QueryWrapper<>();
+           queryWrapper.eq("user_id", invoiceTitle.getUserId());
+           InvoiceTitle invoiceTitlebyDB = invoiceTitleService.getOne(queryWrapper);
+           if(invoiceTitlebyDB == null){
+               boolean flag = invoiceTitleService.save(invoiceTitle);
+               if(flag){
+                   return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
+               }else{
+                   return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+               }
+           }else{
+               QueryWrapper<InvoiceTitle> wrapper = new QueryWrapper<>();
+               wrapper.eq("user_id", invoiceTitle.getUserId());
+               boolean flag = invoiceTitleService.update(invoiceTitle,wrapper);
+               if(flag){
+                   return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
+               }else{
+                   return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+               }
            }
        }
-
-       return result;
    }
 
    /**
@@ -103,17 +89,18 @@ public class RestInvoiceTitleController {
     */
    @PostMapping(value = "/delete")
    @ApiOperation(value = "用户发票头根据id删除接口", tags = {"发票抬头接口"}, notes = "用户发票头根据id删除接口")
-   public Result<InvoiceTitle> delete(@RequestParam(name="id",required=true) String id) {
+   @ApiImplicitParam(name = "id", value = "发票头id",required = true )
+   public RestResponseBean delete(@RequestParam(name="id",required=true) String id) {
        Result<InvoiceTitle> result = new Result<InvoiceTitle>();
        InvoiceTitle invoiceTitle = invoiceTitleService.getById(id);
        if(invoiceTitle==null) {
-           result.error500("未找到对应实体");
+           return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
        }else {
            boolean ok = invoiceTitleService.removeById(id);
            if(ok) {
-               result.success("删除成功!");
+               return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
            }
+           return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
        }
-       return result;
    }
 }

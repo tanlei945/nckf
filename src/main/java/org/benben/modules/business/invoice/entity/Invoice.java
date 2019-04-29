@@ -21,7 +21,7 @@ import java.io.Serializable;
 @Data
 @TableName("user_invoice")
 @ApiModel(value = "发票实体" )
-public class Invoice implements Serializable {
+public class Invoice<T> implements Serializable {
     private static final long serialVersionUID = 1L;
     
 	/**主键id*/
@@ -33,9 +33,15 @@ public class Invoice implements Serializable {
 	/**纳税人名称*/
 	@Excel(name = "纳税人名称", width = 15)
 	private java.lang.String invoiceTitileId;
+
+
+
 	/**发票类型（个人:0  公司:1）*/
 	@Excel(name = "发票类型（个人:0  公司:1）", width = 15)
-	@ApiModelProperty(value = "发票类型（个人:0  公司:1）")
+	@ApiModelProperty(value = "发票类型:个人:0  公司:1")
+
+
+
 	private java.lang.String invoiceType;
 	/**开票金额*/
 	@Excel(name = "开票金额", width = 15)
@@ -55,7 +61,7 @@ public class Invoice implements Serializable {
 
 	/**0：不是纸质发票 1：是*/
 	@Excel(name = "0：不是纸质发票 1：是", width = 15)
-	@ApiModelProperty(value = "是否为纸质发票 0：不是纸质发票 1：是",example = "1",required = true)
+	@ApiModelProperty(value = "是否为纸质发票 0：不是纸质发票 1：是",example = "1")
 	private java.lang.String paperFlag;
 
 
