@@ -6,8 +6,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.jeecgframework.poi.excel.annotation.Excel;
 
-@ApiModel(value = "userStore对象",description = "骑手信息对象")
 @Data
+@ApiModel(value = "骑手VO",description = "骑手数据传输对象")
 public class UserStoreVo {
 
     /**真实姓名*/

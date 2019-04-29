@@ -12,7 +12,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.benben.common.api.vo.RestResponseBean;
@@ -97,6 +97,7 @@ public class RestUserController {
      */
     @GetMapping(value = "/query_by_id")
     @ApiOperation(value = "通过id查询用户", tags = {"用户接口"}, notes = "通过id查询用户")
+    @ApiImplicitParam(name = "id",value = "用户密码",dataType = "String",defaultValue = "1",required = true)
     public RestResponseBean queryById(@RequestParam(name="id",required=true) String id) {
 
         User user = userService.getById(id);
@@ -117,6 +118,10 @@ public class RestUserController {
      */
     @PostMapping(value = "/user_register")
     @ApiOperation(value = "用户注册", tags = {"用户接口"}, notes = "用户注册")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "mobile",value = "用户手机号",dataType = "String",defaultValue = "1",required = true),
+            @ApiImplicitParam(name = "password",value = "用户密码",dataType = "String",defaultValue = "1",required = true)
+    })
     public RestResponseBean register(@RequestParam String mobile, @RequestParam String password) {
 
         User user = new User();
@@ -225,6 +230,10 @@ public class RestUserController {
 
     @PostMapping(value = "/change_avatar")
     @ApiOperation(value = "修改头像", tags = {"用户接口"}, notes = "修改头像")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId",value = "用户的ID",dataType = "String",defaultValue = "1",required = true),
+            @ApiImplicitParam(name = "file",value = "待上传图片",dataType = "MultipartFile",required = true)
+    })
     public RestResponseBean changeAvatar(@RequestParam String userId,@RequestParam(value = "file") MultipartFile file){
 
         if(StringUtils.isBlank(userId) || StringUtils.isBlank(file.getOriginalFilename())){
@@ -250,6 +259,10 @@ public class RestUserController {
 
     @PostMapping(value = "/change_username")
     @ApiOperation(value = "修改用户名", tags = {"用户接口"}, notes = "修改用户名")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId",value = "用户的ID",dataType = "String",defaultValue = "1",required = true),
+            @ApiImplicitParam(name = "username",value = "用户名",dataType = "String",defaultValue = "1",required = true)
+    })
     public RestResponseBean changeUsername(@RequestParam String userId,@RequestParam String username){
 
         if(StringUtils.isBlank(userId) || StringUtils.isBlank(username)){
@@ -278,6 +291,11 @@ public class RestUserController {
      */
     @PostMapping(value = "/change_mobile")
     @ApiOperation(value = "修改手机号", tags = {"用户接口"}, notes = "修改手机号")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId",value = "用户的ID",dataType = "String",defaultValue = "1",required = true),
+            @ApiImplicitParam(name = "mobile",value = "用户手机号",dataType = "String",defaultValue = "1",required = true),
+            @ApiImplicitParam(name = "password",value = "用户密码",dataType = "String",defaultValue = "1",required = true)
+    })
     public RestResponseBean changeMobile(@RequestParam String userId,@RequestParam String mobile,@RequestParam String password) {
 
         if(StringUtils.isBlank(userId) || StringUtils.isBlank(mobile)){
@@ -312,6 +330,10 @@ public class RestUserController {
      */
     @PostMapping(value = "/login")
     @ApiOperation(value = "账户密码登录", tags = {"用户接口"}, notes = "账户密码登录")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "mobile",value = "用户手机号",dataType = "String",defaultValue = "1",required = true),
+            @ApiImplicitParam(name = "password",value = "用户密码",dataType = "String",defaultValue = "1",required = true)
+    })
     public RestResponseBean login(@RequestParam String mobile, @RequestParam String password) {
 
         JSONObject obj = new JSONObject();
@@ -361,9 +383,13 @@ public class RestUserController {
      */
     @PostMapping(value = "/mobile_login")
     @ApiOperation(value = "手机验证码登录", tags = {"用户接口"}, notes = "手机验证码登录")
-    public RestResponseBean mobilelogin(@Valid SmsDTO smsDTO, BindingResult bindingResult) {
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "mobile",value = "用户手机号",dataType = "String",defaultValue = "1",required = true),
+            @ApiImplicitParam(name = "password",value = "用户密码",dataType = "String",defaultValue = "1",required = true)
+    })
+    public RestResponseBean mobilelogin(@RequestBody @Valid SmsDTO smsDTO, BindingResult bindingResult) {
 
-        if (bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors() && StringUtils.isBlank(smsDTO.getCaptcha())) {
             return new RestResponseBean(ResultEnum.PARAMETER_MISSING.getValue(), ResultEnum.PARAMETER_MISSING.getDesc(), null);
         }
 
@@ -413,6 +439,10 @@ public class RestUserController {
      */
     @GetMapping(value = "/third")
     @ApiOperation(value = "三方登录", tags = {"用户接口"}, notes = "三方登录")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "platform",value = "平台类型('1':QQ,'2':微信,'3':微博)",dataType = "String",defaultValue = "1",required = true),
+            @ApiImplicitParam(name = "mobile",value = "用户密码",dataType = "String",defaultValue = "1",required = true)
+    })
     public void third(@RequestParam String platform,@RequestParam String mobile,HttpServletResponse response){
 
         switch (platform){
@@ -524,6 +554,10 @@ public class RestUserController {
 
     @PostMapping(value = "/forget_password")
     @ApiOperation(value = "忘记密码/修改密码", tags = {"用户接口"}, notes = "忘记密码/修改密码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "mobile",value = "用户手机号",dataType = "String",defaultValue = "1",required = true),
+            @ApiImplicitParam(name = "password",value = "用户密码",dataType = "String",defaultValue = "1",required = true)
+    })
     public RestResponseBean forgetPassword(@RequestParam String mobile,@RequestParam String password){
 
         if(StringUtils.equals(mobile,"")||StringUtils.equals(password,"")){
@@ -539,6 +573,7 @@ public class RestUserController {
 
     @GetMapping(value = "is_exist_mobile")
     @ApiOperation(value = "手机号是否已被注册",tags = {"用户接口"},notes = "手机号是否已被注册")
+    @ApiImplicitParam(name = "mobile",value = "用户手机号",dataType = "String",defaultValue = "1",required = true)
     public RestResponseBean isExistMobile(String mobile){
 
         User user = userService.queryByMobile(mobile);

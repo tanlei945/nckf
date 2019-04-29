@@ -2,6 +2,8 @@ package org.benben.modules.business.commen.controller;
 
 import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -40,6 +42,10 @@ public class RestSmsController {
 
     @PostMapping(value = "/third_send")
     @ApiOperation(value = "发送验证码 ",tags = {"短信接口"},notes = "发送验证码 ")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "mobile",value = "手机号",dataType = "String",required = true),
+            @ApiImplicitParam(name = "event",value = "事件",dataType = "String",defaultValue = "register",required = true)
+    })
     public RestResponseBean third_send(@RequestParam String mobile,@RequestParam String event) {
 
         if (StringUtils.isBlank(mobile)|| StringUtils.isBlank(event)) {
