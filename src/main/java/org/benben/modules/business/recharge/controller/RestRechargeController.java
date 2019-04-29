@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -67,6 +69,7 @@ public class RestRechargeController {
      */
     @GetMapping(value = "/queryById")
     @ApiOperation(value = "充值详细", tags = {"充值接口"}, notes = "充值详细")
+    @ApiImplicitParam(name = "id",value = "充值的ID",dataType = "String",defaultValue = "1",required = true)
     public RestResponseBean queryById(@RequestParam(name = "id", required = true) String id) {
 
         Recharge recharge = rechargeService.getById(id);
@@ -81,6 +84,11 @@ public class RestRechargeController {
 
     @PostMapping(value = "/recharge")
     @ApiOperation(value = "钱包充值", tags = {"账户/钱包接口"}, notes = "钱包充值")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId",value = "用户的ID",dataType = "String",defaultValue = "1",required = true),
+            @ApiImplicitParam(name = "money",value = "充值金额",dataType = "double",defaultValue = "1.00",required = true),
+            @ApiImplicitParam(name = "type",value = "充值方式1：支付宝 2：微信",dataType = "String",required = true)
+    })
     public RestResponseBean recharge(@RequestParam String userId,@RequestParam double money,@RequestParam String type) {
 
         Recharge recharge = rechargeService.recharge(userId,money,type);

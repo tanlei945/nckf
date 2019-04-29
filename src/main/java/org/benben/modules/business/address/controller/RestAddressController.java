@@ -4,6 +4,8 @@ import io.swagger.annotations.Api;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.benben.common.api.vo.RestResponseBean;
@@ -19,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/api/address")
 @Slf4j
-@Api(tags = {"个人地址接口"})
+@Api(tags = {"用户地址接口"})
 public class RestAddressController {
     @Autowired
     private IAddressService addressService;
@@ -52,7 +54,7 @@ public class RestAddressController {
      * @return
      */
     @PostMapping(value = "/add")
-    @ApiOperation(value = "添加地址", tags = {"个人地址接口"}, notes = "添加地址")
+    @ApiOperation(value = "添加地址", tags = {"用户地址接口"}, notes = "添加地址")
     public RestResponseBean add(@RequestBody Address address) {
 
         try {
@@ -72,7 +74,7 @@ public class RestAddressController {
      * @return
      */
     @PostMapping(value = "/edit")
-    @ApiOperation(value = "编辑地址", tags = {"个人地址接口"}, notes = "编辑地址")
+    @ApiOperation(value = "编辑地址", tags = {"用户地址接口"}, notes = "编辑地址")
     public RestResponseBean edit(@RequestBody Address address) {
 
         Address addressEntity = addressService.getById(address.getId());
@@ -96,7 +98,8 @@ public class RestAddressController {
      * @return
      */
     @PostMapping(value = "/delete")
-    @ApiOperation(value = "删除地址", tags = {"个人地址接口"}, notes = "删除地址")
+    @ApiOperation(value = "删除地址", tags = {"用户地址接口"}, notes = "删除地址")
+    @ApiImplicitParam(name = "id", value = "地址ID", required = true, dataType = "String")
     public RestResponseBean delete(@RequestParam(name="id",required=true) String id) {
 
         Address address = addressService.getById(id);
@@ -114,10 +117,14 @@ public class RestAddressController {
     }
 
     @PostMapping("/edit_default_address")
-    @ApiOperation(value = "修改默认地址", tags = {"个人地址接口"}, notes = "修改默认地址")
-    public RestResponseBean editDefaultAddress(@RequestParam String userid,@RequestParam String id){
+    @ApiOperation(value = "修改默认地址", tags = {"用户地址接口"}, notes = "修改默认地址")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId",value = "用户的ID",dataType = "String",defaultValue = "1",required = true),
+            @ApiImplicitParam(name = "id",value = "地址的ID",dataType = "String",required = true)
+    })
+    public RestResponseBean editDefaultAddress(@RequestParam String userId,@RequestParam String id){
 
-        if(addressService.editDefaultAddress(userid,id)){
+        if(addressService.editDefaultAddress(userId,id)){
 
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
         }
@@ -128,7 +135,7 @@ public class RestAddressController {
 
 
     @GetMapping("/queryDistance")
-    @ApiOperation(value = "骑手距离",tags="个人地址接口",notes = "骑手距离")
+    @ApiOperation(value = "骑手距离",tags="用户地址接口",notes = "骑手距离")
     public RestResponseBean queryDistance(@RequestParam String lng, @RequestParam String lat, @RequestParam String userId){
         //获取默认的地址信息
         Address address = addressService.queryAddress(userId);

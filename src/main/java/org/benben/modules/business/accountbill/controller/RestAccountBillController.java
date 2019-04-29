@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.benben.common.api.vo.RestResponseBean;
@@ -61,6 +62,7 @@ public class RestAccountBillController {
     */
    @GetMapping(value = "/query_by_id")
    @ApiOperation(value = "账单详情", tags = {"账单接口"}, notes = "账单详情")
+   @ApiImplicitParam(name = "id",value = "账单的ID",dataType = "String",required = true)
    public RestResponseBean queryById(@RequestParam(name="id",required=true) String id) {
 
        AccountBill accountBill = accountBillService.getById(id);
