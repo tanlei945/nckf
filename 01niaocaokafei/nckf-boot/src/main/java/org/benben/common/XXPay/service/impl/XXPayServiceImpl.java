@@ -16,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.benben.common.XXPay.entity.ConversionParams;
 import org.benben.common.XXPay.service.XXPayService;
-import org.benben.common.api.vo.Result;
 import org.benben.config.AlipayConfig;
 import org.benben.modules.business.order.entity.Order;
 import org.benben.modules.business.order.service.impl.OrderServiceImpl;
@@ -34,8 +33,6 @@ public class XXPayServiceImpl implements XXPayService{
 
     @Autowired
     private OrderServiceImpl orderService;
-    @Autowired
-    private AlipayConfig alipayConfig;
     @Autowired
     WxPayService wxPayService;
     @Autowired
@@ -105,7 +102,7 @@ public class XXPayServiceImpl implements XXPayService{
 
   //  @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public String getAliPayOrderStr(String orderId ,String orderMoney, String orderName, String body) {
+    public String getAliPayOrderStr(String orderId ,Double orderMoney, String orderName, String body) {
         //最终返回加签之后的，app需要传给支付宝app的订单信息字符串
         String orderString = "";
         try {
@@ -125,7 +122,7 @@ public class XXPayServiceImpl implements XXPayService{
                 model.setSubject(orderName);                  //商品名称
                 model.setOutTradeNo(orderId);          //商户订单号(自动生成)
                 model.setTimeoutExpress("15m");     //交易超时时间
-                model.setTotalAmount(orderMoney);         //支付金额
+                model.setTotalAmount(orderMoney.toString());         //支付金额
                 model.setProductCode("QUICK_MSECURITY_PAY");         //销售产品码
                 ali_request.setBizModel(model);
                 log.info("====================异步通知的地址为：" + AlipayConfig.notify_url);
@@ -144,13 +141,14 @@ public class XXPayServiceImpl implements XXPayService{
     }
 
     @Override
-    public String getWxParOederStr(String orderId ,String orderMoney, String orderName, String body) {
+    public String getWxParOederStr(String orderId ,Double orderMoney, String orderName, String body) {
         try {
             WxPayUnifiedOrderRequest orderRequest = new WxPayUnifiedOrderRequest();
             orderRequest.setBody(body);
             orderRequest.setOutTradeNo(orderId);
             orderRequest.setAttach(orderName);
-            orderRequest.setTotalFee(BaseWxPayRequest.yuanToFen(orderMoney));
+            orderRequest.setTradeType("APP");
+            orderRequest.setTotalFee(BaseWxPayRequest.yuanToFen(orderMoney.toString()));
             return wxPayService.createOrder(orderRequest);
         } catch (Exception e) {
             log.error("微信支付失败！订单号：{},原因:{}", orderId, e.getMessage());
