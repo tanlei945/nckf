@@ -47,4 +47,21 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     public List<SpecDict> queryallspec() {
         return GoodsMapper.queryallspec();
     }
+
+    @Override
+    public void editGoodsWithSpec(List<String> list,String id) {
+        int i = GoodsMapper.deleteGoodSpec(id);
+        List<String> strlist = new LinkedList();
+        if(i>-1){
+            list.forEach(value->{
+                String s = GoodsMapper.queryGoodSpec(value);
+                strlist.add(s);
+            });
+        }
+        strlist.forEach(str ->{
+            //GoodsMapper.insertGoodsSpec();
+
+        });
+
+    }
 }

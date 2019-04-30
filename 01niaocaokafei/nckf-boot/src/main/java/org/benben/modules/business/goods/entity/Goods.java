@@ -49,8 +49,8 @@ public class Goods implements Serializable {
 	private java.lang.String imgUrl;
 	/**商品状态,0正常1下架*/
 
-	@Excel(name = "商品状态,0正常1下架", width = 15,dicCode = "user_status")
-	@Dict(dicCode = "user_status")
+	@Excel(name = "商品状态,0正常1下架", width = 15,dicCode = "good_status")
+	@Dict(dicCode = "good_status")
 	private java.lang.String status;
 	/**类别编号*/
 	@Excel(name = "类别编号", width = 15)

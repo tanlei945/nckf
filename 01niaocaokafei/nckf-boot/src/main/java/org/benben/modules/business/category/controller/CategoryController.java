@@ -42,9 +42,9 @@ import java.util.Map;
  * @version： V1.0
  */
 @RestController
-@RequestMapping("/category/category")
+@RequestMapping("/api/category/category")
 @Slf4j
-@Api(tags = {"菜单管理接口"})
+@Api(tags = {"门店管理接口"})
 public class CategoryController {
 	@Autowired
 	private ICategoryService categoryService;
@@ -237,7 +237,7 @@ public class CategoryController {
       }
       return Result.ok("文件导入失败！");
   }
-	@ApiOperation("查询商品种类")
+	@ApiOperation(value="查询商品种类",tags = {"门店管理接口"})
 	@GetMapping("/get_category")
 	 public RestResponseBean getCategory(){
 		try {
