@@ -29,7 +29,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/order")
 @Slf4j
-@Api(tags = {"订单接口"})
+@Api(tags = {"订单购物车接口"})
 public class RestOrderController {
    @Autowired
    private IOrderService orderService;
@@ -46,7 +46,7 @@ public class RestOrderController {
     * @return
     */
    @PostMapping(value = "/list")
-   @ApiOperation(value = "订单多（单）条件查询接口 status:9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价 4已评价", tags = {"订单接口"}, notes = "订单多（单）条件查询接口 status:9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价 4已评价")
+   @ApiOperation(value = "订单多（单）条件查询接口 status:9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价 4已评价", tags = {"订单购物车接口"}, notes = "订单多（单）条件查询接口 status:9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价 4已评价")
    public RestResponseBean queryList(@RequestBody Order order) {
        List<OrderPage> orderPageList = orderService.queryList(order);
        if(orderPageList != null){
@@ -56,7 +56,7 @@ public class RestOrderController {
 
    }
     @PostMapping(value = "/rider/query_order")
-    @ApiOperation(value = "骑手查询可接订单接口", tags = {"订单接口"}, notes = "骑手查询可接订单接口")
+    @ApiOperation(value = "骑手查询可接订单接口", tags = {"订单购物车接口"}, notes = "骑手查询可接订单接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "riderId", value = "骑手的id"),
             @ApiImplicitParam(name = "storeId", value = "商店的id")
@@ -72,7 +72,7 @@ public class RestOrderController {
 
 
     @PostMapping(value = "/rider/receive_order")
-    @ApiOperation(value = "骑手接单接口", tags = {"订单接口"}, notes = "骑手接单接口")
+    @ApiOperation(value = "骑手接单接口", tags = {"订单购物车接口"}, notes = "骑手接单接口")
     public RestResponseBean riderOrder(@RequestParam(name = "riderId",required = true) String riderId,
                                        @RequestParam(name = "orderId",required = true) String orderId){
        boolean flag = orderService.riderOrder(riderId,orderId);
@@ -85,7 +85,7 @@ public class RestOrderController {
 
 
    @GetMapping(value = "/query_by_orderId")
-   @ApiOperation(value = "用户根据订单号查询订单接口", tags = {"订单接口"}, notes = "用户根据订单号查询订单接口")
+   @ApiOperation(value = "用户根据订单号查询订单接口", tags = {"订单购物车接口"}, notes = "用户根据订单号查询订单接口")
    @ApiImplicitParam(name = "orderId", value = "订单的id",required = true )
    public RestResponseBean queryByOrderId(@RequestParam(name="orderId",required=true) String orderId) {
        Order order = orderService.queryByOrderId(orderId);
@@ -102,7 +102,7 @@ public class RestOrderController {
     */
 
    @PostMapping(value = "/add")
-   @ApiOperation(value = "用户新增订单接口", tags = {"订单接口"}, notes = "用户新增订单接口")
+   @ApiOperation(value = "用户新增订单接口", tags = {"订单购物车接口"}, notes = "用户新增订单接口")
    public RestResponseBean add(@RequestBody OrderPage orderPage) {
        Order order = orderService.add(orderPage);
        if(order!=null){
@@ -117,7 +117,7 @@ public class RestOrderController {
     * @return
     */
 
-   @ApiOperation(value = "取消订单接口 参数：订单id", tags = {"订单接口"}, notes = "取消订单接口 参数：订单id")
+   @ApiOperation(value = "取消订单接口 参数：订单id", tags = {"订单购物车接口"}, notes = "取消订单接口 参数：订单id")
    @PostMapping(value = "/cancel")
    public RestResponseBean cancel(@RequestParam(name="id",required=true) String id) {
        boolean flag = orderService.cancel(id);
@@ -134,7 +134,7 @@ public class RestOrderController {
     * @return
     */
    @GetMapping(value = "/query_by_id")
-   @ApiOperation(value = "用户查询订单（不包括商品详情）接口", tags = {"订单接口"}, notes = "用户查询订单（不包括商品详情）接口")
+   @ApiOperation(value = "用户查询订单（不包括商品详情）接口", tags = {"订单购物车接口"}, notes = "用户查询订单（不包括商品详情）接口")
    public RestResponseBean queryById(@RequestParam(name="id",required=true) String id) {
        Order order = orderService.getById(id);
        if(order!=null) {
@@ -148,7 +148,7 @@ public class RestOrderController {
     * @return
     */
    @GetMapping(value = "/query_order_goods_by_mainId")
-   @ApiOperation(value = "用户查询单个订单（包括商品详情）接口", tags = {"订单接口"}, notes = "用户查询订单个（包括商品详情）接口")
+   @ApiOperation(value = "用户查询单个订单（包括商品详情）接口", tags = {"订单购物车接口"}, notes = "用户查询订单个（包括商品详情）接口")
    public RestResponseBean queryOrderGoodsListByMainId(@RequestParam(name="id",required=true)String id) {
        List<OrderGoods> orderGoodsList = orderGoodsService.selectByMainId(id);
        if(orderGoodsList!=null){
