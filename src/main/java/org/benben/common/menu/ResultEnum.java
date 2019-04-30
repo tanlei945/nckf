@@ -107,6 +107,11 @@ public enum ResultEnum {
     PAY_PASSWORD_ERROR(501,"支付密码错误"),
     PAY_PASSWORD_RIGHT(502,"支付密码正确"),
 
+    /**
+     * 发票相关
+     */
+    INVOICE_MONEY_ERROR(1010,"申请发票金额与订单金额不符")
+
     ;
 
     private int value;
