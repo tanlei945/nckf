@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.benben.common.api.vo.RestResponseBean;
@@ -23,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/api/message")
 @Slf4j
-@Api(tags = "消息接口")
+@Api(tags = {"首页"})
 public class RestMessageController {
     @Autowired
     private IMessageService messageService;
@@ -37,7 +39,11 @@ public class RestMessageController {
      * @return
      */
     @GetMapping(value = "/list")
-    @ApiOperation(value = "消息详情列表", notes = "消息详情列表",tags = "消息接口")
+    @ApiOperation(value = "消息详情列表", notes = "消息详情列表",tags = {"首页"})
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="pageNo",value = "当前页",dataType = "Integer",defaultValue = "1"),
+            @ApiImplicitParam(name="pageSize",value = "每页显示条数",dataType = "Integer",defaultValue = "10"),
+    })
     public RestResponseBean queryPageList(Message message,
                                                 @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                                 @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
@@ -58,7 +64,10 @@ public class RestMessageController {
      * @return
      */
     @GetMapping(value = "/query_by_id")
-    @ApiOperation(value = "通过id查询消息详情", notes = "通过id查询消息详情",tags = "消息接口")
+    @ApiOperation(value = "通过id查询消息详情", notes = "通过id查询消息详情",tags = {"首页"})
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="id",value = "消息id",dataType = "String",required = true),
+    })
     public RestResponseBean queryById(@RequestParam(name="id",required=true) String id) {
         Message message = messageService.getById(id);
         if(message==null) {

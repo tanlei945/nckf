@@ -2,18 +2,26 @@ package org.benben.modules.business.cart.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.menu.ResultEnum;
+import org.benben.common.util.DateUtils;
 import org.benben.modules.business.cart.entity.Cart;
 import org.benben.modules.business.cart.service.ICartService;
 import org.benben.modules.business.cart.vo.CartVo;
+import org.benben.modules.business.cart.vo.ListCartVo;
+import org.benben.modules.business.goods.entity.Goods;
+import org.benben.modules.business.goods.service.IGoodsService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -25,6 +33,8 @@ public class RestCartController {
 
     @Autowired
     private ICartService cartService;
+    @Autowired
+    private IGoodsService goodsService;
 
     /**
      * 购物车订单查询
@@ -33,12 +43,27 @@ public class RestCartController {
      */
     @GetMapping(value = "/list")
     @ApiOperation(value = "当前购物车查询", notes = "当前购物车查询",tags = "购物车接口")
-    public RestResponseBean queryPageList(@RequestParam String userId,@RequestParam String storeId) {
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="userId",value = "用户Id",dataType = "String",required = true),
+            @ApiImplicitParam(name="storeId",value = "商店Id",dataType = "String",required = true),
+    })
+    public RestResponseBean queryPageList(@RequestParam(value = "userId",required = true) String userId,@RequestParam(value = "userId",required = true) String storeId) {
         QueryWrapper<Cart> cartQueryWrapper = new QueryWrapper<>();
         cartQueryWrapper.eq("user_id",userId).eq("store_id",storeId).eq("checked_flag",1);
         List<Cart> cartlist = cartService.list(cartQueryWrapper);
-        List<CartVo> cartVo = cartService.getCartVo(cartlist);
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),cartVo);
+        ArrayList<ListCartVo> listCartVos = new ArrayList<>();
+        for(Cart cart :cartlist){
+            QueryWrapper<Goods> goodsQueryWrapper = new QueryWrapper<>();
+            goodsQueryWrapper.eq("id", cart.getGoodsId());
+            Goods goods = goodsService.getOne(goodsQueryWrapper);
+            ListCartVo listCartVo = new ListCartVo();
+            BeanUtils.copyProperties(cart,listCartVo);
+            listCartVo.setPrice(goods.getPrice());
+            listCartVos.add(listCartVo);
+        }
+
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),listCartVos);
+
 
     }
 
@@ -73,6 +98,10 @@ public class RestCartController {
 //    @PostMapping(value = "/adds")
 //    @Transactional
 //    @ApiOperation(value = "购物车批量添加商品", notes = "购物车批量添加商品",tags = "购物车接口")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name="carts",value = "添加的商品",dataType = " List<Cart>"),
+//
+//    })
 //    public RestResponseBean adds(@RequestBody List<Cart> carts) {
 //         for(Cart cart:carts) {
 //             try {
@@ -96,6 +125,10 @@ public class RestCartController {
     @PostMapping(value = "/delete_all")
     @Transactional
     @ApiOperation(value = "清空购物车", notes = "清空购物车",tags = "购物车接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="userId",value = "用户Id",dataType = "String",required = true),
+            @ApiImplicitParam(name="storeId",value = "商店Id",dataType = "String",required = true),
+    })
     public RestResponseBean deleteAll(@RequestParam(name="userId",required=true) String userId,@RequestParam(name="storeId",required=true) String storeId) {
 
         QueryWrapper<Cart> cartQueryWrapper = new QueryWrapper<>();
@@ -117,6 +150,11 @@ public class RestCartController {
     @PostMapping(value = "/delete")
     @Transactional
     @ApiOperation(value = "删除购物车商品",notes = "删除购物车商品",tags = "购物车接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="userId",value = "用户Id",dataType = "String",required = true),
+            @ApiImplicitParam(name="goodsId",value = "商品Id",dataType = "String",required = true),
+            @ApiImplicitParam(name="storeId",value = "商店Id",dataType = "String",required = true)
+    })
     public RestResponseBean delete(@RequestParam(name="userId",required=true) String userId,@RequestParam(name="goodsId",required=true) String goodsId,@RequestParam(name="storeId",required=true) String storeId) {
         boolean ok;
         QueryWrapper<Cart> cartQueryWrapper = new QueryWrapper<>();

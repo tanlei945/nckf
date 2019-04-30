@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.benben.common.api.vo.RestResponseBean;
@@ -37,6 +39,12 @@ public class RestUserCouponsController {
      */
     @GetMapping(value = "/list")
     @ApiOperation(value = "个人优惠券查询", notes = "个人优惠券查询",tags = "用户优惠券接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="pageNo",value = "当前页",dataType = "Integer",defaultValue = "1"),
+            @ApiImplicitParam(name="pageSize",value = "每页显示条数",dataType = "Integer",defaultValue = "10"),
+            @ApiImplicitParam(name="userId",value = "用户Id",dataType = "String"),
+            @ApiImplicitParam(name="couponstype",value = "优惠券状态",dataType = "String")
+    })
     public RestResponseBean queryPageList(UserCoupons userCoupons,
                                                     @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                                     @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,

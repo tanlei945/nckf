@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.benben.common.api.vo.RestResponseBean;
@@ -23,14 +25,18 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/api/rechargeConfig")
 @Slf4j
-@Api(tags = "充值说明")
+@Api(tags = {"首页"})
 public class RestInstructionController {
 
     @Autowired
     private ISystemConfigService systemConfigService;
 
     @GetMapping(value = "/recharge_instruction")
-    @ApiOperation(value = "充值说明查询", notes = "充值说明查询",tags = "充值说明")
+    @ApiOperation(value = "充值说明查询", notes = "充值说明查询",tags = {"首页"})
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="pageNo",value = "当前页",dataType = "Integer",defaultValue = "1"),
+            @ApiImplicitParam(name="pageSize",value = "每页显示条数",dataType = "Integer",defaultValue = "10"),
+    })
     public RestResponseBean queryDictionary(SystemConfig systemConfig,
                                                      @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                                      @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,

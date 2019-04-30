@@ -18,7 +18,7 @@ import java.util.Date;
 @RestController
 @RequestMapping("/api/systemConfig")
 @Slf4j
-@Api(tags = "首页文字接口")
+@Api(tags = {"首页"})
 public class RestSystemConfigController {
 
     @Autowired
@@ -26,7 +26,7 @@ public class RestSystemConfigController {
 
 
     @GetMapping(value = "/query_by_time")
-    @ApiOperation(value = "首页文字", notes = "首页文字",tags = "首页文字接口")
+    @ApiOperation(value = "首页文字", notes = "首页文字",tags = {"首页"})
     public RestResponseBean queryByTime()  {
         Date date =new Date();
         //得到当前时间

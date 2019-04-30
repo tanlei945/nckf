@@ -2,6 +2,8 @@ package org.benben.modules.business.rideraddress.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.benben.common.api.vo.RestResponseBean;
@@ -29,7 +31,6 @@ public class RestRiderAddressController {
     @PostMapping(value = "/address_edit")
     @ApiOperation(value = "新增和修改骑手位置", tags = {"骑手位置接口"}, notes = "新增和修改骑手位置")
     public RestResponseBean edit(@RequestBody RiderAddress riderAddress) {
-
         QueryWrapper<RiderAddress> riderAddressQueryWrapper = new QueryWrapper<>();
         riderAddressQueryWrapper.eq("rider_id",riderAddress.getRiderId());
         RiderAddress riderAddressEntity = riderAddressService.getOne(riderAddressQueryWrapper);
@@ -58,6 +59,9 @@ public class RestRiderAddressController {
      */
     @PostMapping(value = "/delete")
     @ApiOperation(value = "删除骑手位置", tags = {"骑手位置接口"}, notes = "删除骑手位置")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="id",value = "骑手位置id",dataType = "String",required = true),
+    })
     public RestResponseBean delete(@RequestParam(name="id",required=true) String id) {
         QueryWrapper<RiderAddress> riderAddressQueryWrapper = new QueryWrapper<>();
         riderAddressQueryWrapper.eq("rider_id",id);
