@@ -27,7 +27,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/cart")
 @Slf4j
-@Api(tags = "购物车接口")
+@Api(tags = "订单购物车接口")
 public class RestCartController {
 
 
@@ -42,7 +42,7 @@ public class RestCartController {
      * @return
      */
     @GetMapping(value = "/list")
-    @ApiOperation(value = "当前购物车查询", notes = "当前购物车查询",tags = "购物车接口")
+    @ApiOperation(value = "当前购物车查询", notes = "当前购物车查询",tags = "订单购物车接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name="userId",value = "用户Id",dataType = "String",required = true),
             @ApiImplicitParam(name="storeId",value = "商店Id",dataType = "String",required = true),
@@ -75,7 +75,7 @@ public class RestCartController {
      */
     @PostMapping(value = "/add")
     @Transactional
-    @ApiOperation(value = "购物车添加商品", notes = "购物车添加商品",tags = "购物车接口")
+    @ApiOperation(value = "购物车添加商品", notes = "购物车添加商品",tags = "订单购物车接口")
     public RestResponseBean add(@RequestBody Cart cart) {
 
         try {
@@ -124,7 +124,7 @@ public class RestCartController {
 
     @PostMapping(value = "/delete_all")
     @Transactional
-    @ApiOperation(value = "清空购物车", notes = "清空购物车",tags = "购物车接口")
+    @ApiOperation(value = "清空购物车", notes = "清空购物车",tags = "订单购物车接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name="userId",value = "用户Id",dataType = "String",required = true),
             @ApiImplicitParam(name="storeId",value = "商店Id",dataType = "String",required = true),
@@ -149,7 +149,7 @@ public class RestCartController {
 
     @PostMapping(value = "/delete")
     @Transactional
-    @ApiOperation(value = "删除购物车商品",notes = "删除购物车商品",tags = "购物车接口")
+    @ApiOperation(value = "删除购物车商品",notes = "删除购物车商品",tags = "订单购物车接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name="userId",value = "用户Id",dataType = "String",required = true),
             @ApiImplicitParam(name="goodsId",value = "商品Id",dataType = "String",required = true),
