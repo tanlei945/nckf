@@ -12,3 +12,4 @@ filterlist:
   - /api/login/is_exist_mobile
   - /api/sms/**
   - /api/login/third
+  - /api/validate/**
