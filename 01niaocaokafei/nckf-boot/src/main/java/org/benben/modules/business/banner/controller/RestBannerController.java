@@ -25,7 +25,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/banner")
 @Slf4j
-@Api(tags = "轮播图接口")
+@Api(tags = {"首页"})
 public class RestBannerController {
 
     @Autowired
@@ -39,7 +39,7 @@ public class RestBannerController {
      * @return
      */
     @GetMapping(value = "/query_image_list")
-    @ApiOperation(value = "轮播图", notes = "轮播图",tags = "轮播图接口")
+    @ApiOperation(value = "轮播图", notes = "轮播图",tags = {"首页"})
     public RestResponseBean queryImageList(Banner banner,HttpServletRequest req) {
         QueryWrapper<Banner> queryWrapper = QueryGenerator.initQueryWrapper(banner, req.getParameterMap());
         List<String> imageList = bannerService.queryImageList(queryWrapper);

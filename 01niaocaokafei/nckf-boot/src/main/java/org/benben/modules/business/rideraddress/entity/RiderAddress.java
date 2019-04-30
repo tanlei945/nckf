@@ -5,6 +5,7 @@ import java.util.Date;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -25,12 +26,15 @@ public class RiderAddress implements Serializable {
 	@TableId(type = IdType.UUID)
 	private java.lang.String id;
 	/**经度*/
+	@ApiModelProperty(value = "经度")
 	@Excel(name = "经度", width = 15)
 	private java.lang.Double lng;
 	/**纬度*/
+	@ApiModelProperty(value = "纬度")
 	@Excel(name = "纬度", width = 15)
 	private java.lang.Double lat;
 	/**创建者*/
+	@ApiModelProperty(value = "创建者")
 	@Excel(name = "创建者", width = 15)
 	private java.lang.String createBy;
 	/**创建时间*/
@@ -48,5 +52,6 @@ public class RiderAddress implements Serializable {
 	private java.util.Date updateTime;
 	/**骑手id*/
 	@Excel(name = "骑手id", width = 15)
+	@ApiModelProperty(value = "骑手id")
 	private java.lang.String riderId;
 }
