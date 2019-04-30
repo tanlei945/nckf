@@ -1,5 +1,8 @@
 package org.benben.common.XXPay.controller;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.benben.common.XXPay.service.impl.XXPayServiceImpl;
 import org.benben.common.api.vo.Result;
@@ -55,10 +58,16 @@ public class AliPayController {
         return result;
     }
 
-/*    @RequestMapping("/getAlipayOrder")
-    public String getAliPayOrderStr(OrderPage orderPage, String product_code){
-       return alipayServiceImpl.getAliPayOrderStr(orderPage,product_code);
-    }*/
+    @RequestMapping("/getAlipayOrder")
+    @ApiOperation("订单结算")
+    @ApiImplicitParams({@ApiImplicitParam(name="orderId",value="商品订单id",dataType = "String",required = true),
+            @ApiImplicitParam(name="orderMoney",value="订单金额",dataType = "Double",required = true),
+            @ApiImplicitParam(name="orderName",value="订单名称",dataType = "String",required = false),
+            @ApiImplicitParam(name="body",value="订单描述",dataType = "String",required = false)
+    })
+    public String getAliPayOrderStr(String orderId ,Double orderMoney, String orderName, String body){
+       return alipayServiceImpl.getAliPayOrderStr(orderId,orderMoney,orderName,body);
+    }
 
 /*    *//**
      * 支付宝支付成功后.通知页面
