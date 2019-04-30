@@ -23,8 +23,8 @@
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="8">
-            <a-form-item label="删除状态  0/正常,1/已删除">
-              <a-input placeholder="请输入删除状态  0/正常,1/已删除" v-model="queryParam.delFlag"></a-input>
+            <a-form-item label="删除状态  0已删除 1未删除">
+              <a-input placeholder="请输入删除状态  0已删除 1未删除" v-model="queryParam.delFlag"></a-input>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="8">
@@ -119,7 +119,7 @@
     },
     data () {
       return {
-        description: '用户反馈表管理页面',
+        description: '用户评论管理页面',
         // 表头
         columns: [
           {
@@ -148,7 +148,7 @@
             dataIndex: 'type'
            },
 		   {
-            title: '删除状态  0/正常,1/已删除',
+            title: '删除状态  0已删除 1未删除',
             align:"center",
             dataIndex: 'delFlag'
            },

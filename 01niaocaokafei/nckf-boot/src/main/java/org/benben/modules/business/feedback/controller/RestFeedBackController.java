@@ -8,21 +8,23 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.benben.common.api.vo.RestResponseBean;
-import org.benben.common.api.vo.Result;
 import org.benben.common.menu.ResultEnum;
-import org.benben.common.util.aliyun.OSSClientUtils;
 import org.benben.modules.business.feedback.entity.FeedBack;
 import org.benben.modules.business.feedback.service.IFeedBackService;
 import org.benben.modules.business.order.entity.Order;
 import org.benben.modules.business.order.service.IOrderService;
 import org.benben.modules.business.user.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -36,12 +38,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/feedback")
 @Slf4j
-@Api(tags = {"用户反馈接口"})
+@Api(tags = {"用户接口"})
 public class RestFeedBackController {
    @Autowired
    private IFeedBackService feedBackService;
    @Autowired
    private IOrderService orderService;
+   @Value(value = "${benben.path.upload}")
+   private String uploadpath;
 
    /**
      * 分页列表查询
@@ -49,7 +53,7 @@ public class RestFeedBackController {
     * @return
     */
    @PostMapping(value = "/list" )
-   @ApiOperation(value = "用户反馈展示接口", tags = {"用户反馈接口"}, notes = "用户反馈展示接口")
+   @ApiOperation(value = "用户反馈展示接口", tags = {"用户接口"}, notes = "用户反馈展示接口")
    @ApiImplicitParam(name = "storeId", value = "商家的id",required = true )
    public RestResponseBean queryList(@RequestParam(name = "storeId",required = true) String storeId) {
        QueryWrapper<FeedBack> queryWrapper = new QueryWrapper<>();
@@ -68,7 +72,7 @@ public class RestFeedBackController {
     * @return
     */
    @PostMapping(value = "/add")
-   @ApiOperation(value = "用户反馈添加接口(del_flag：0已删除 1未删除)", tags = {"用户反馈接口"}, notes = "用户反馈添加接口(del_flag：0已删除 1未删除)")
+   @ApiOperation(value = "用户反馈添加接口(del_flag：0已删除 1未删除)", tags = {"用户接口"}, notes = "用户反馈添加接口(del_flag：0已删除 1未删除)")
    @ApiImplicitParams({
            @ApiImplicitParam(name = "orderId", value = "商家的id"),
            @ApiImplicitParam(name = "feedBack", value = "反馈实体"),
@@ -78,12 +82,27 @@ public class RestFeedBackController {
 
        log.info("本次上传的文件的数量为-------->"+files.length);
 
-       User userEntity = (User) SecurityUtils.getSubject().getPrincipal();
 
-       String resultName="";
-       Result<FeedBack> result = new Result<FeedBack>();
+       User userEntity = (User) SecurityUtils.getSubject().getPrincipal();
+       String bizPath = "feedback";
+       String nowday = new SimpleDateFormat("yyyyMMdd").format(new Date());
+       String ctxPath = uploadpath;
+       String fileName = "";
+       String resultName = "";
        try {
-           resultName=OSSClientUtils.fileUpload(files);
+           File file = new File(ctxPath + File.separator + bizPath + File.separator + nowday);
+           if (!file.exists()) {
+               file.mkdirs();// 创建文件根目录
+           }
+           for (MultipartFile mf : files) {
+               String orgName = mf.getOriginalFilename();// 获取文件名
+               fileName = orgName.substring(0, orgName.lastIndexOf(".")) + "_" + System.currentTimeMillis() + orgName.substring(orgName.indexOf("."));
+               String savePath = file.getPath() + File.separator + fileName;
+               File savefile = new File(savePath);
+               FileCopyUtils.copy(mf.getBytes(), savefile);
+               resultName += fileName + ",";
+           }
+
            feedBack.setImgUrl(resultName);
            feedBack.setUserId(userEntity.getId());
            feedBack.setCreateBy(userEntity.getUsername());
