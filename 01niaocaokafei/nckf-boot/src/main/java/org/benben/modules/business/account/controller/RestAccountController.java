@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/account")
 @Slf4j
-@Api(tags = {"账户/钱包接口"})
+@Api(tags = {"用户接口"})
 public class RestAccountController {
 
    @Autowired
@@ -39,7 +39,7 @@ public class RestAccountController {
 
 
     @GetMapping(value = "/query_by_id")
-    @ApiOperation(value = "账单/钱包详情", tags = {"账户/钱包接口"}, notes = "账单/钱包详情")
+    @ApiOperation(value = "账单/钱包详情", tags = {"用户接口"}, notes = "账单/钱包详情")
     @ApiImplicitParam(name = "userId",value = "用户的ID",dataType = "String",required = true)
     public RestResponseBean queryById(@RequestParam String userId) {
 
@@ -53,7 +53,7 @@ public class RestAccountController {
     }
 
     @GetMapping(value = "/is_pay_password")
-    @ApiOperation(value = "是否设置支付密码", tags = {"账户/钱包接口"}, notes = "是否设置支付密码")
+    @ApiOperation(value = "是否设置支付密码", tags = {"用户接口"}, notes = "是否设置支付密码")
     @ApiImplicitParam(name = "userId",value = "用户的ID",dataType = "String",required = true)
     public RestResponseBean isPayPassword(String userId){
 
@@ -66,7 +66,7 @@ public class RestAccountController {
 
 
     @GetMapping(value = "is_withdraw_account")
-    @ApiOperation(value = "是否设置收款账户", tags = {"账户/钱包接口"}, notes = "是否设置收款账户")
+    @ApiOperation(value = "是否设置收款账户", tags = {"用户接口"}, notes = "是否设置收款账户")
     @ApiImplicitParam(name = "userId",value = "用户的ID",dataType = "String",required = true)
     public RestResponseBean isWithdrawAccount(String userId){
 
@@ -78,7 +78,7 @@ public class RestAccountController {
     }
 
     @GetMapping("/check_pay_password")
-    @ApiOperation(value = "支付密码是否正确",tags = {"账户/钱包接口"},notes = "支付密码是否正确")
+    @ApiOperation(value = "支付密码是否正确",tags = {"用户接口"},notes = "支付密码是否正确")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId",value = "用户的ID",dataType = "String",required = true),
             @ApiImplicitParam(name = "payPassword",value = "支付密码",dataType = "String",required = true)
@@ -102,7 +102,7 @@ public class RestAccountController {
 
 
     @GetMapping(value = "/reset_pay_password")
-    @ApiOperation(value = "重置支付密码", tags = {"账户/钱包接口"}, notes = "重置支付密码")
+    @ApiOperation(value = "重置支付密码", tags = {"用户接口"}, notes = "重置支付密码")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId",value = "用户的ID",dataType = "String",required = true),
             @ApiImplicitParam(name = "newPayPassword",value = "支付密码",dataType = "String",required = true)

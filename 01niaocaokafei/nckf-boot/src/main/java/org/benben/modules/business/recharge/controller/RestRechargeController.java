@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @RestController
 @RequestMapping("/api/recharge")
-@Api(tags = {"充值接口"})
+@Api(tags = {"用户接口"})
 @Slf4j
 public class RestRechargeController {
     @Autowired
@@ -47,7 +47,7 @@ public class RestRechargeController {
      * @return
      */
     @GetMapping(value = "/list")
-    @ApiOperation(value = "充值记录", tags = {"充值接口"}, notes = "充值记录")
+    @ApiOperation(value = "充值记录", tags = {"用户接口"}, notes = "充值记录")
     public RestResponseBean queryPageList(Recharge recharge,
                                           @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
                                           @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
@@ -68,7 +68,7 @@ public class RestRechargeController {
      * @return
      */
     @GetMapping(value = "/queryById")
-    @ApiOperation(value = "充值详细", tags = {"充值接口"}, notes = "充值详细")
+    @ApiOperation(value = "充值详细", tags = {"用户接口"}, notes = "充值详细")
     @ApiImplicitParam(name = "id",value = "充值的ID",dataType = "String",defaultValue = "1",required = true)
     public RestResponseBean queryById(@RequestParam(name = "id", required = true) String id) {
 
@@ -83,7 +83,7 @@ public class RestRechargeController {
 
 
     @PostMapping(value = "/recharge")
-    @ApiOperation(value = "钱包充值", tags = {"账户/钱包接口"}, notes = "钱包充值")
+    @ApiOperation(value = "钱包充值", tags = {"用户接口"}, notes = "钱包充值")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId",value = "用户的ID",dataType = "String",defaultValue = "1",required = true),
             @ApiImplicitParam(name = "money",value = "充值金额",dataType = "double",defaultValue = "1.00",required = true),

@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/api/address")
 @Slf4j
-@Api(tags = {"个人地址接口"})
+@Api(tags = {"用户接口"})
 public class RestAddressController {
     @Autowired
     private IAddressService addressService;
@@ -52,7 +52,7 @@ public class RestAddressController {
      * @return
      */
     @PostMapping(value = "/add")
-    @ApiOperation(value = "添加地址", tags = {"个人地址接口"}, notes = "添加地址")
+    @ApiOperation(value = "添加地址", tags = {"用户接口"}, notes = "添加地址")
     public RestResponseBean add(@RequestBody Address address) {
 
         try {
@@ -72,7 +72,7 @@ public class RestAddressController {
      * @return
      */
     @PostMapping(value = "/edit")
-    @ApiOperation(value = "编辑地址", tags = {"个人地址接口"}, notes = "编辑地址")
+    @ApiOperation(value = "编辑地址", tags = {"用户接口"}, notes = "编辑地址")
     public RestResponseBean edit(@RequestBody Address address) {
 
         Address addressEntity = addressService.getById(address.getId());
@@ -96,7 +96,7 @@ public class RestAddressController {
      * @return
      */
     @PostMapping(value = "/delete")
-    @ApiOperation(value = "删除地址", tags = {"个人地址接口"}, notes = "删除地址")
+    @ApiOperation(value = "删除地址", tags = {"用户接口"}, notes = "删除地址")
     public RestResponseBean delete(@RequestParam(name="id",required=true) String id) {
 
         Address address = addressService.getById(id);
@@ -114,7 +114,7 @@ public class RestAddressController {
     }
 
     @PostMapping("/edit_default_address")
-    @ApiOperation(value = "修改默认地址", tags = {"个人地址接口"}, notes = "修改默认地址")
+    @ApiOperation(value = "修改默认地址", tags = {"用户接口"}, notes = "修改默认地址")
     public RestResponseBean editDefaultAddress(@RequestParam String userid,@RequestParam String id){
 
         if(addressService.editDefaultAddress(userid,id)){

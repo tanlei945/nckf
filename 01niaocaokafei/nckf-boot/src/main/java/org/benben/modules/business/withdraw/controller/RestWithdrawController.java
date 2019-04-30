@@ -29,7 +29,7 @@ import java.math.BigDecimal;
 @RestController
 @RequestMapping("/api/withdraw")
 @Slf4j
-@Api(tags = {"提现接口"})
+@Api(tags = {"用户接口"})
 public class RestWithdrawController {
     @Autowired
     private IWithdrawService withdrawService;
@@ -46,7 +46,7 @@ public class RestWithdrawController {
      * @return
      */
     @GetMapping(value = "/list")
-    @ApiOperation(value = "提现记录", tags = {"提现接口"}, notes = "提现记录")
+    @ApiOperation(value = "提现记录", tags = {"用户接口"}, notes = "提现记录")
     public RestResponseBean queryPageList(Withdraw withdraw,
                                           @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
                                           @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
@@ -67,7 +67,7 @@ public class RestWithdrawController {
      * @return
      */
     @GetMapping(value = "/query_by_id")
-    @ApiOperation(value = "提现详情", tags = {"提现接口"}, notes = "提现详情")
+    @ApiOperation(value = "提现详情", tags = {"用户接口"}, notes = "提现详情")
     public RestResponseBean queryById(@RequestParam(name = "id", required = true) String id) {
 
         Withdraw withdraw = withdrawService.getById(id);
@@ -86,7 +86,7 @@ public class RestWithdrawController {
      * @return
      */
     @PostMapping(value = "/withdraw_apply")
-    @ApiOperation(value = "账户提现申请", tags = {"提现接口"}, notes = "账户提现申请")
+    @ApiOperation(value = "账户提现申请", tags = {"用户接口"}, notes = "账户提现申请")
     public RestResponseBean withdrawApply(@RequestParam String userId,@RequestParam Double money) {
 
         BigDecimal bigDecimal = new BigDecimal(1.00);

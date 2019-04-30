@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/api/accountBill")
 @Slf4j
-@Api(tags = {"账单接口"})
+@Api(tags = {"用户接口"})
 public class RestAccountBillController {
    @Autowired
    private IAccountBillService accountBillService;
@@ -42,7 +42,7 @@ public class RestAccountBillController {
     * @return
     */
    @GetMapping(value = "/list")
-   @ApiOperation(value = "账单列表", tags = {"账单接口"}, notes = "账单列表")
+   @ApiOperation(value = "账单列表", tags = {"用户接口"}, notes = "账单列表")
    public RestResponseBean queryPageList(AccountBill accountBill,
                                      @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                      @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
@@ -61,7 +61,7 @@ public class RestAccountBillController {
     * @return
     */
    @GetMapping(value = "/query_by_id")
-   @ApiOperation(value = "账单详情", tags = {"账单接口"}, notes = "账单详情")
+   @ApiOperation(value = "账单详情", tags = {"用户接口"}, notes = "账单详情")
    @ApiImplicitParam(name = "id",value = "账单的ID",dataType = "String",required = true)
    public RestResponseBean queryById(@RequestParam(name="id",required=true) String id) {
 
