@@ -136,7 +136,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 		//app端传过来的订单金额需要与数据库中实际的商品金额做判断
 		double appMoney = orderPage.getOrderMoney();
 		List<OrderGoods> orderGoodsList = orderPage.getOrderGoodsList();
-		int sum=0;
+		int sum = 0;
 		Result<Order> result = new Result<Order>();
 		for (OrderGoods orderGoods : orderGoodsList) {
 			sum += orderGoods.getGoodsCount()*orderGoods.getPerPrice();
@@ -144,7 +144,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 		Order order = new Order();
 		if(sum==appMoney){
 			//订单id---->时间戳+用户id
-			String orderId = System.currentTimeMillis()+orderPage.getUserId();
+			String orderId = orderPage.getUserId()+System.currentTimeMillis();
 			orderPage.setOrderId(orderId);
 			try {
 				BeanUtils.copyProperties(orderPage, order);
