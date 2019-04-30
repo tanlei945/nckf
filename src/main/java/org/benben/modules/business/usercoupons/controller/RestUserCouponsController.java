@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/api/userCoupons")
 @Slf4j
-@Api(tags = "用户优惠券接口")
+@Api(tags = "用户接口")
 public class RestUserCouponsController {
     @Autowired
     private IUserCouponsService userCouponsService;
@@ -38,7 +38,7 @@ public class RestUserCouponsController {
      * @return
      */
     @GetMapping(value = "/list")
-    @ApiOperation(value = "个人优惠券查询", notes = "个人优惠券查询",tags = "用户优惠券接口")
+    @ApiOperation(value = "个人优惠券查询", notes = "个人优惠券查询",tags = "用户接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name="pageNo",value = "当前页",dataType = "Integer",defaultValue = "1"),
             @ApiImplicitParam(name="pageSize",value = "每页显示条数",dataType = "Integer",defaultValue = "10"),
