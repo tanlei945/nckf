@@ -372,7 +372,7 @@ public class RestLoginController {
      * @return
      */
     @GetMapping(value = "/wx_login_callBack")
-    public RestResponseBean callBack(HttpServletRequest request) {
+    public RestResponseBean wxCallBack(HttpServletRequest request) {
 
         User userEntity = null;
         //获取回调
