@@ -32,9 +32,9 @@ import java.util.Map;
 
  /**
  * @Title: Controller
- * @Description: 用户反馈表
+ * @Description: 用户评论
  * @author： jeecg-boot
- * @date：   2019-04-22
+ * @date：   2019-04-30
  * @version： V1.0
  */
 @RestController
@@ -188,9 +188,9 @@ public class FeedBackController {
       ModelAndView mv = new ModelAndView(new JeecgEntityExcelView());
       List<FeedBack> pageList = feedBackService.list(queryWrapper);
       //导出文件名称
-      mv.addObject(NormalExcelConstants.FILE_NAME, "用户反馈表列表");
+      mv.addObject(NormalExcelConstants.FILE_NAME, "用户评论列表");
       mv.addObject(NormalExcelConstants.CLASS, FeedBack.class);
-      mv.addObject(NormalExcelConstants.PARAMS, new ExportParams("用户反馈表列表数据", "导出人:Jeecg", "导出信息"));
+      mv.addObject(NormalExcelConstants.PARAMS, new ExportParams("用户评论列表数据", "导出人:Jeecg", "导出信息"));
       mv.addObject(NormalExcelConstants.DATA_LIST, pageList);
       return mv;
   }

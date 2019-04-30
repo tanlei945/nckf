@@ -32,8 +32,8 @@
         <a-form-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
-          label="删除状态  0/正常,1/已删除">
-          <a-input placeholder="请输入删除状态  0/正常,1/已删除" v-decorator="['delFlag', validatorRules.delFlag ]" />
+          label="删除状态  0已删除 1未删除">
+          <a-input placeholder="请输入删除状态  0已删除 1未删除" v-decorator="['delFlag', validatorRules.delFlag ]" />
         </a-form-item>
         <a-form-item
           :labelCol="labelCol"
@@ -71,12 +71,12 @@
         confirmLoading: false,
         form: this.$form.createForm(this),
         validatorRules:{
-        delFlag:{rules: [{ required: true, message: '请输入删除状态  0/正常,1/已删除!' }]},
+        delFlag:{rules: [{ required: true, message: '请输入删除状态  0已删除 1未删除!' }]},
         },
         url: {
-                    add: "/feedback/feedBack/add",
-                    edit: "/feedback/feedBack/edit",
-                  },
+          add: "/feedback/feedBack/add",
+          edit: "/feedback/feedBack/edit",
+        },
       }
     },
     created () {
