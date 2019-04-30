@@ -1,6 +1,7 @@
 package org.benben.modules.business.goods.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -17,6 +18,7 @@ import org.benben.common.util.oConvertUtils;
 import org.benben.modules.business.goods.entity.Goods;
 import org.benben.modules.business.goods.entity.SpecDict;
 import org.benben.modules.business.goods.service.IGoodsService;
+import org.benben.modules.system.entity.SysUser;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -46,9 +48,9 @@ import java.util.Map;
  * @version： V1.0
  */
 @RestController
-@RequestMapping("/goods/goods")
+@RequestMapping("/api/goods/goods")
 @Slf4j
-@Api(tags = {"商品管理接口"})
+@Api(tags = {"门店管理接口"})
 public class GoodsController {
 	@Autowired
 	private IGoodsService goodsService;
@@ -77,6 +79,7 @@ public class GoodsController {
 	}
 	
 	/**
+	 *
 	  *   添加
 	 * @param goods
 	 * @return
@@ -101,7 +104,12 @@ public class GoodsController {
 	 * @return
 	 */
 	@PutMapping(value = "/edit")
-	public Result<Goods> edit(@RequestBody Goods goods) {
+	public Result<Goods> edit(@RequestBody JSONObject jsonObject) {
+		Object selectedRole = jsonObject.get("selectedroles");
+		System.out.println(selectedRole.toString());
+		List<String> selectedRole1 = (List<String>) selectedRole;
+		Goods goods = JSON.parseObject(jsonObject.toJSONString(), Goods.class);
+		goodsService.editGoodsWithSpec(selectedRole1,goods.getId());
 		Result<Goods> result = new Result<Goods>();
 		Goods goodsEntity = goodsService.getById(goods.getId());
 		if(goodsEntity==null) {
@@ -244,7 +252,7 @@ public class GoodsController {
 
 
   @GetMapping("query_goods_byCotegory")
-  @ApiOperation("根据门店id查所属商品")
+  @ApiOperation(value="根据门店id查所属商品",tags = {"门店管理接口"})
   @ApiImplicitParams({
 		  @ApiImplicitParam(name="goodId",value="所属商家id",dataType = "String",required = true),
 		  @ApiImplicitParam(name="categoryType",value="商品类别",dataType = "String",required = true)
@@ -262,7 +270,7 @@ public class GoodsController {
 	  }
   }
 	 @GetMapping("query_goods_spec")
-	 @ApiOperation("根据商品id查商品规格")
+	 @ApiOperation(value="根据商品id查商品规格",tags = {"门店管理接口"})
 	 @ApiImplicitParams({@ApiImplicitParam(name="goodId",value="商品id",dataType = "String",required = true)
 	 })
 	public RestResponseBean querySpec(@RequestParam(name="goodId")String goodId){
@@ -277,7 +285,7 @@ public class GoodsController {
 
 	 }
 	 @GetMapping("query_all_spec")
-	 @ApiOperation("根据所有商品规格")
+	 @ApiOperation(value="根据所有商品规格",tags = {"门店管理接口"})
 	 public RestResponseBean queryallspec(){
 		 try {
 			 List<SpecDict> queryallspec = goodsService.queryallspec();

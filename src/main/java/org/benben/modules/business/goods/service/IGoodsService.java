@@ -17,4 +17,5 @@ public interface IGoodsService extends IService<Goods> {
     List<Goods> queryByCotegory(String categoryType,String belongId);
     HashMap<String, List<String>> querySpec(String goodId);
     List<SpecDict> queryallspec();
+    void editGoodsWithSpec(List<String> list,String id);
 }

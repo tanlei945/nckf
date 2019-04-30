@@ -8,4 +8,5 @@ public class SpecDict {
     private String id;
     private String dictName;
     private String itemText;
+    private String description;
 }
