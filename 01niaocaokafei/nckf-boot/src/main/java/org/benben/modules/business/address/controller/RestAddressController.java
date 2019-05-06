@@ -127,7 +127,7 @@ public class RestAddressController {
     }
 
 
-    @GetMapping("/queryDistance")
+    @GetMapping("/query_distance")
     @ApiOperation(value = "骑手距离",tags={"首页"},notes = "骑手距离")
     public RestResponseBean queryDistance(@RequestParam String lng, @RequestParam String lat, @RequestParam String userId){
         //获取默认的地址信息
