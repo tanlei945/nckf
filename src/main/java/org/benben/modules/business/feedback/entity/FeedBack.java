@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.benben.common.aspect.annotation.Dict;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.jeecgframework.poi.excel.annotation.Excel;
 
@@ -27,14 +28,19 @@ public class FeedBack implements Serializable {
 	/**用户id*/
 	@Excel(name = "用户id", width = 15)
 	private java.lang.String userId;
+	/**用户名*/
+	@Excel(name = "用户名", width = 15)
+	private java.lang.String username;
 	/**评论内容*/
 	@Excel(name = "评论内容", width = 15)
 	private java.lang.Object content;
-	/**0：用户 1：骑手*/
-	@Excel(name = "0：用户 1：骑手", width = 15)
+	/**0：门店 1：骑手*/
+	@Excel(name = "用户类型", width = 15,dicCode = "type")
+	@Dict(dicCode = "type")
 	private java.lang.String type;
 	/**删除状态  0已删除 1未删除*/
-	@Excel(name = "删除状态  0已删除 1未删除", width = 15)
+	@Excel(name = "删除状态", width = 15,dicCode = "del_flag")
+	@Dict(dicCode = "del_flag")
 	private java.lang.String delFlag;
 	/**用户上传图片*/
 	@Excel(name = "用户上传图片", width = 15)
