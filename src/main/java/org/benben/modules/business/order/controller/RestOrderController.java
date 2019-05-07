@@ -1,22 +1,34 @@
 package org.benben.modules.business.order.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.benben.common.api.vo.RestResponseBean;
+import org.benben.common.api.vo.Result;
 import org.benben.common.menu.ResultEnum;
+import org.benben.common.system.query.QueryGenerator;
 import org.benben.modules.business.order.entity.Order;
 import org.benben.modules.business.order.entity.OrderGoods;
 import org.benben.modules.business.order.service.IOrderGoodsService;
 import org.benben.modules.business.order.service.IOrderNoPayService;
 import org.benben.modules.business.order.service.IOrderService;
 import org.benben.modules.business.order.vo.OrderPage;
+import org.benben.modules.business.rideraddress.entity.RiderAddress;
+import org.benben.modules.business.rideraddress.service.IRiderAddressService;
+import org.benben.modules.business.store.entity.Store;
+import org.benben.modules.business.store.service.IStoreService;
+import org.benben.modules.business.user.entity.User;
+import org.benben.modules.business.user.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -37,6 +49,12 @@ public class RestOrderController {
    private IOrderGoodsService orderGoodsService;
    @Autowired
    private IOrderNoPayService orderNoPayService;
+   @Autowired
+   private IUserService userService;
+   @Autowired
+   private IStoreService storeService;
+   @Autowired
+   private IRiderAddressService riderAddressService;
 
 
 
@@ -81,6 +99,40 @@ public class RestOrderController {
         }
         return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
     }
+
+    @PostMapping(value = "/rider/order_user_ok")
+    @ApiOperation(value = "用户确认收货接口", tags = {"订单购物车接口"}, notes = "用户确认收货接口")
+    public RestResponseBean OrderUserOk(@RequestParam(name = "orderId",required = true) String orderId){
+        QueryWrapper<RiderAddress> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("status","3");
+        Order order = new Order();
+        order.setId(orderId);
+        order.setStatus("3");
+        order.setOverTime(new Date());
+        boolean b = orderService.updateById(order);
+        if(b){
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
+        }
+        return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+    }
+
+    @PostMapping(value = "/rider/order_rider_ok")
+    @ApiOperation(value = "骑手送达接口", tags = {"订单购物车接口"}, notes = "骑手送达接口")
+    public RestResponseBean OrderRiderOk(@RequestParam(name = "orderId",required = true) String orderId){
+        QueryWrapper<RiderAddress> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("status","3");
+        Order order = new Order();
+        order.setId(orderId);
+        order.setStatus("3");
+        order.setOverTime(new Date());
+        boolean b = orderService.updateById(order);
+        if(b){
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
+        }
+        return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+    }
+
+
 
 
 
@@ -156,4 +208,44 @@ public class RestOrderController {
        }
        return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
    }
+
+    @GetMapping(value = "/background_list")
+    public Result<IPage<Order>> queryPageList(Order order,
+                                              @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+                                              @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
+                                              HttpServletRequest req) {
+        Result<IPage<Order>> result = new Result<IPage<Order>>();
+        QueryWrapper<Order> queryWrapper = QueryGenerator.initQueryWrapper(order, req.getParameterMap());
+        Page<Order> page = new Page<Order>(pageNo, pageSize);
+        IPage<Order> pageList = orderService.page(page, queryWrapper);
+
+        List<Order> records = pageList.getRecords();
+        for (Order record : records) {
+            String userId = record.getUserId();
+            String riderId = record.getRiderId();
+            String storeId = record.getStoreId();
+
+            User user = userService.getById(userId);
+            if(user!=null){
+                record.setUsername(user.getUsername());
+            }
+
+            QueryWrapper<User> wrapper = new QueryWrapper<>();
+            wrapper.eq("id",riderId);
+            User rider = userService.getOne(wrapper);
+            if(rider != null){
+                record.setRidername(rider.getUsername());
+            }
+
+            Store store = storeService.getById(storeId);
+            if(store != null){
+                record.setStorename(store.getStoreName());
+            }
+        }
+        pageList.setRecords(records);
+
+        result.setSuccess(true);
+        result.setResult(pageList);
+        return result;
+    }
 }

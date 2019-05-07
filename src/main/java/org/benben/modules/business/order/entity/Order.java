@@ -1,94 +1,126 @@
 package org.benben.modules.business.order.entity;
 
+import java.io.Serializable;
+import java.util.Date;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.benben.common.aspect.annotation.Dict;
+import org.jeecgframework.poi.excel.annotation.Excel;
 import org.springframework.format.annotation.DateTimeFormat;
-
-import java.io.Serializable;
 
 /**
  * @Description: 订单
  * @author： jeecg-boot
- * @date：   2019-04-25
+ * @date：   2019-05-07
  * @version： V1.0
  */
 @Data
 @TableName("bb_order")
-@ApiModel(value = "订单实体" ,description="这是订单实体")
 public class Order implements Serializable {
     private static final long serialVersionUID = 1L;
-    
+
 	/**主键id*/
-	@TableId(type = IdType.UUID)
-	private java.lang.String id;
+	private String id;
 	/**用户id*/
-	private java.lang.String userId;
+	@Excel(name = "用户id", width = 15)
+	private String userId;
+	/**username*/
+	@Excel(name = "用户名称", width = 15)
+	private String username;
 	/**骑手id*/
-	private java.lang.String riderId;
+	@Excel(name = "骑手id", width = 15)
+	private String riderId;
+	/**ridername*/
+	@Excel(name = "骑手名称", width = 15)
+	private String ridername;
 	/**商品数量*/
-	private java.lang.Integer goodsCount;
+	@Excel(name = "商品数量", width = 15)
+	private Integer goodsCount;
 	/**门店id*/
-	private java.lang.String storeId;
+	@Excel(name = "门店id", width = 15)
+	private String storeId;
+	@Excel(name = "门店名称", width = 15)
+	private String storename;
 	/**订单编号*/
-	private java.lang.String orderId;
+	@Excel(name = "订单编号", width = 15)
+	private String orderId;
 	/**商品总金额*/
-	private java.lang.Double goodsMoney;
+	@Excel(name = "商品总金额", width = 15)
+	private Double goodsMoney;
 	/**订单总金额*/
-	@ApiModelProperty(name = "money",value = "订单金额",required = true,example = "100.5")
-	private java.lang.Double orderMoney;
+	@Excel(name = "订单总金额", width = 15)
+	private Double orderMoney;
 	/**订单类型(0:送餐  1：店内用餐)*/
-	@ApiModelProperty(value = "订单类型(0:送餐  1：店内用餐)")
-	private java.lang.String orderType;
+	@Excel(name = "订单类型(0:送餐  1：店内用餐)", width = 15,dicCode = "orderType")
+	@Dict(dicCode = "orderType")
+	private String orderType;
 	/**送餐地址*/
-	@ApiModelProperty(hidden = true)
-	private java.lang.String userAddress;
+	@Excel(name = "送餐地址", width = 15)
+	private String userAddress;
 	/**用户电话*/
-	private java.lang.String usedPhone;
+	@Excel(name = "用户电话", width = 15)
+	private String usedPhone;
 	/**骑手电话*/
-	private java.lang.String riderPhone;
+	@Excel(name = "骑手电话", width = 15)
+	private String riderPhone;
 	/**用户优惠券id*/
-	private java.lang.String userCouponsId;
-	/**是否需要发票(0:不需要 1:需要)*/
-	private java.lang.String invoiceFlag;
+	@Excel(name = "用户优惠券id", width = 15)
+	private String userCouponsId;
+	/**是否需要发票(0:不开票 1:已开票)*/
+	@Excel(name = "是否需要发票(0:不开票 1:已开票)", width = 15)
+	private String invoiceFlag;
 	/**发票id*/
-	private java.lang.String invoiceId;
+	@Excel(name = "发票id", width = 15)
+	private String invoiceId;
 	/**订单来源(0:微信1:安卓app 2:苹果app 3:)*/
-	private java.lang.String orderSrc;
+	@Excel(name = "订单来源(0:微信1:安卓app 2:苹果app 3:)", width = 15)
+	private String orderSrc;
 	/**发票是否已开*/
-	private java.lang.String invoiceOpen;
+	@Excel(name = "发票是否已开", width = 15)
+	private String invoiceOpen;
 	/**订单备注*/
-	private java.lang.String orderRemark;
+	@Excel(name = "订单备注", width = 15)
+	private String orderRemark;
 	/**骑手取餐时间*/
+	@Excel(name = "骑手取餐时间", width = 20, format = "yyyy-MM-dd HH:mm:ss")
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-	private java.util.Date getTime;
+	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+	private Date getTime;
 	/**骑手送达时间*/
+	@Excel(name = "骑手送达时间", width = 20, format = "yyyy-MM-dd HH:mm:ss")
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-	private java.util.Date overTime;
+	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+	private Date overTime;
 	/**最小配送金额*/
-	private java.lang.Double createMinMoney;
+	@Excel(name = "最小配送金额", width = 15)
+	private Double createMinMoney;
 	/**配送费*/
-	private java.lang.Double deliveryMoney;
-	/**订单状态：9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价 4已评价*/
-	private java.lang.String status;
-	/**创建者*/
-	private java.lang.String createBy;
-	/**订单创建时间*/
-	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-	private java.util.Date createTime;
-	/**更新人*/
-	private java.lang.String updateBy;
-	/**更新时间*/
-	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-	private java.util.Date updateTime;
+	@Excel(name = "配送费", width = 15)
+	private Double deliveryMoney;
 	/**第三方流水号*/
-	private java.lang.String tradeNo;
+	@Excel(name = "第三方流水号", width = 15)
+	private String tradeNo;
+	/**9:已取消 0:全部 1待付款 2收货中 3待评价 4已评价  */
+	@Excel(name = "9:已取消 0:全部 1待付款 2收货中 3待评价 4已评价  ", width = 15,dicCode = "orderStatus")
+	@Dict(dicCode = "orderStatus")
+	private String status;
+	/**创建者*/
+	@Excel(name = "创建者", width = 15)
+	private String createBy;
+	/**订单创建时间*/
+	@Excel(name = "订单创建时间", width = 20, format = "yyyy-MM-dd HH:mm:ss")
+	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
+	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+	private Date createTime;
+	/**更新人*/
+	@Excel(name = "更新人", width = 15)
+	private String updateBy;
+	/**更新时间*/
+	@Excel(name = "更新时间", width = 20, format = "yyyy-MM-dd HH:mm:ss")
+	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
+	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+	private Date updateTime;
 }

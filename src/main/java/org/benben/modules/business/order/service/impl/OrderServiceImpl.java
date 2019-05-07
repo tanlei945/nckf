@@ -220,6 +220,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 	//
 
 	//用户开发票后修改订单状态
+	@Override
 	public boolean invoiceOk(List<String> orderIdList){
 		Order order = new Order();
 		order.setInvoiceFlag("1");
