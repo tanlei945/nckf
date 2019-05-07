@@ -1,6 +1,8 @@
 package org.benben.modules.business.invoice.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -9,15 +11,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.api.vo.Result;
 import org.benben.common.menu.ResultEnum;
+import org.benben.common.system.query.QueryGenerator;
 import org.benben.modules.business.invoice.entity.Invoice;
 import org.benben.modules.business.invoice.entity.InvoiceTitle;
 import org.benben.modules.business.invoice.service.IInvoiceService;
 import org.benben.modules.business.invoice.service.IInvoiceTitleService;
 import org.benben.modules.business.order.entity.Order;
 import org.benben.modules.business.order.service.IOrderService;
+import org.benben.modules.business.user.entity.User;
+import org.benben.modules.business.user.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,6 +45,8 @@ public class RestInvoiceController {
     private IOrderService orderService;
     @Autowired
     private IInvoiceTitleService invoiceTitleService;
+    @Autowired
+    private IUserService userService;
 
 
    /**
@@ -257,6 +265,32 @@ public class RestInvoiceController {
             }
             return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
         }
+    }
+
+
+    @GetMapping(value = "/background_list")
+    public Result<IPage<Invoice>> queryPageList(Invoice invoice,
+                                                @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+                                                @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
+                                                HttpServletRequest req) {
+        Result<IPage<Invoice>> result = new Result<IPage<Invoice>>();
+        QueryWrapper<Invoice> queryWrapper = QueryGenerator.initQueryWrapper(invoice, req.getParameterMap());
+        Page<Invoice> page = new Page<Invoice>(pageNo, pageSize);
+        IPage<Invoice> pageList = invoiceService.page(page, queryWrapper);
+
+        List<Invoice> records = pageList.getRecords();
+        for (Invoice record : records) {
+            String userId = record.getUserId();
+            User user = userService.getById(userId);
+            if(user != null){
+                record.setUsername(user.getUsername());
+            }
+        }
+        pageList.setRecords(records);
+
+        result.setSuccess(true);
+        result.setResult(pageList);
+        return result;
     }
 
 
