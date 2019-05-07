@@ -1,27 +1,25 @@
 package org.benben.modules.business.invoice.entity;
 
+import java.io.Serializable;
+import java.util.Date;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.jeecgframework.poi.excel.annotation.Excel;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.benben.common.aspect.annotation.Dict;
 import org.springframework.format.annotation.DateTimeFormat;
-
-import java.io.Serializable;
+import org.jeecgframework.poi.excel.annotation.Excel;
 
 /**
  * @Description: 用户发票
  * @author： jeecg-boot
- * @date：   2019-04-23
+ * @date：   2019-05-06
  * @version： V1.0
  */
 @Data
 @TableName("user_invoice")
-@ApiModel(value = "发票实体" )
-public class Invoice<T> implements Serializable {
+public class Invoice implements Serializable {
     private static final long serialVersionUID = 1L;
     
 	/**主键id*/
@@ -30,18 +28,15 @@ public class Invoice<T> implements Serializable {
 	/**用户id*/
 	@Excel(name = "用户id", width = 15)
 	private java.lang.String userId;
+	/**用户名*/
+	@Excel(name = "用户名", width = 15)
+	private java.lang.String username;
 	/**纳税人名称*/
 	@Excel(name = "纳税人名称", width = 15)
 	private java.lang.String invoiceTitileId;
-
-
-
 	/**发票类型（个人:0  公司:1）*/
-	@Excel(name = "发票类型（个人:0  公司:1）", width = 15)
-	@ApiModelProperty(value = "发票类型:个人:0  公司:1")
-
-
-
+	@Excel(name = "发票类型（个人:0  公司:1）", width = 15,dicCode = "invoiceType")
+	@Dict(dicCode = "invoiceType")
 	private java.lang.String invoiceType;
 	/**开票金额*/
 	@Excel(name = "开票金额", width = 15)
@@ -55,27 +50,16 @@ public class Invoice<T> implements Serializable {
 	/**邮寄地址*/
 	@Excel(name = "邮寄地址", width = 15)
 	private java.lang.String mailingAddress;
-
-
-
-
 	/**0：不是纸质发票 1：是*/
-	@Excel(name = "0：不是纸质发票 1：是", width = 15)
-	@ApiModelProperty(value = "是否为纸质发票 0：不是纸质发票 1：是",example = "1")
+	@Excel(name = "0：不是纸质发票 1：是", width = 15,dicCode = "paperFlag")
+	@Dict(dicCode = "paperFlag")
 	private java.lang.String paperFlag;
-
-
 	/**邮箱*/
-	//@ApiModelProperty(hidden = true)
 	@Excel(name = "邮箱", width = 15)
 	private java.lang.String email;
-
-
-
-
-
 	/**0：失败 1 成功*/
-	@Excel(name = "0：失败 1 成功", width = 15)
+	@Excel(name = "1：失败 1 成功", width = 15,dicCode = "is_success")
+	@Dict(dicCode = "is_success")
 	private java.lang.String status;
 	/**创建者*/
 	@Excel(name = "创建者", width = 15)
