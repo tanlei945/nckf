@@ -11,6 +11,7 @@ import org.benben.common.menu.ResultEnum;
 import org.benben.common.system.query.QueryGenerator;
 import org.benben.modules.business.address.entity.Address;
 import org.benben.modules.business.address.service.IAddressService;
+import org.benben.modules.business.rideraddress.entity.RiderAddress;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -129,11 +130,11 @@ public class RestAddressController {
 
     @GetMapping("/query_distance")
     @ApiOperation(value = "骑手距离",tags={"首页"},notes = "骑手距离")
-    public RestResponseBean queryDistance(@RequestParam String lng, @RequestParam String lat, @RequestParam String userId){
-        //获取默认的地址信息
-        Address address = addressService.queryAddress(userId);
+    public RestResponseBean queryDistance(@RequestParam String lng, @RequestParam String lat, @RequestParam String riderId){
+        //获取骑手地点
+        RiderAddress riderAddress = addressService.queryRiderAddress(riderId);
         //计算距离
-        String distance = addressService.queryDistance(Double.parseDouble(lng), Double.parseDouble(lat), address.getLng(), address.getLat());
+        String distance = addressService.queryDistance( riderAddress.getLng(), riderAddress.getLat(),Double.parseDouble(lng), Double.parseDouble(lat));
 
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),distance);
     }
