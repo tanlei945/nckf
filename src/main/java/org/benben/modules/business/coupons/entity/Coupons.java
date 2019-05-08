@@ -71,6 +71,9 @@ public class Coupons implements Serializable {
 	/**创建者*/
 	@Excel(name = "创建者", width = 15)
 	private java.lang.String createBy;
+	/**创建时间*/
+	@Excel(name = "创建时间", width = 15)
+	private java.util.Date createTime;
 	/**更新人*/
 	@Excel(name = "更新人", width = 15)
 	private java.lang.String updateBy;
