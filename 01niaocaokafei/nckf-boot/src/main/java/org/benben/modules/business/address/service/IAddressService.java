@@ -2,6 +2,7 @@ package org.benben.modules.business.address.service;
 
 import org.benben.modules.business.address.entity.Address;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.benben.modules.business.rideraddress.entity.RiderAddress;
 
 import java.util.List;
 
@@ -14,6 +15,8 @@ import java.util.List;
 public interface IAddressService extends IService<Address> {
 
     public Address queryAddress(String userId);
+
+    public RiderAddress queryRiderAddress(String riderId);
 
     public String queryDistance(Double lng, Double lat, Double lng2, Double lat2);
 

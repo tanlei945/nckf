@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.benben.modules.business.address.entity.Address;
 import org.benben.modules.business.address.mapper.AddressMapper;
 import org.benben.modules.business.address.service.IAddressService;
+import org.benben.modules.business.rideraddress.entity.RiderAddress;
+import org.benben.modules.business.rideraddress.mapper.RiderAddressMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,8 @@ import java.util.List;
 public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> implements IAddressService {
     @Autowired
     private AddressMapper addressMapper;
+    @Autowired
+    private RiderAddressMapper riderAddressMapper;
 
     /**
      * 根据userId查询所有地址
@@ -49,6 +53,15 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
         Address address = addressMapper.selectOne(queryWrapper);
 
         return address;
+    }
+
+    @Override
+    public RiderAddress queryRiderAddress(String riderId) {
+        QueryWrapper<RiderAddress> riderAddressQueryWrapper = new QueryWrapper<>();
+        riderAddressQueryWrapper.eq("rider_id",riderId);
+        RiderAddress riderAddress = riderAddressMapper.selectOne(riderAddressQueryWrapper);
+
+        return riderAddress;
     }
 
     /**
