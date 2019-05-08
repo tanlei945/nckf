@@ -25,7 +25,8 @@ public class BannerServiceImpl extends ServiceImpl<BannerMapper, Banner> impleme
     private BannerMapper bannerMapper;
 
     @Override
-    public List<String> queryImageList(QueryWrapper<Banner> queryWrapper) {
+    public List<String> queryImageList() {
+        QueryWrapper<Banner> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("del_flag","1");
         queryWrapper.and(wrapper -> wrapper.eq("use_flag", "1"));
         List<Banner> list = bannerMapper.selectList(queryWrapper);

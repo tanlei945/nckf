@@ -33,16 +33,14 @@ public class RestBannerController {
 
 
     /**
-     *
-     * @param banner
-     * @param req
+     * 轮播图
      * @return
      */
     @GetMapping(value = "/query_image_list")
     @ApiOperation(value = "轮播图", notes = "轮播图",tags = {"首页"})
-    public RestResponseBean queryImageList(Banner banner,HttpServletRequest req) {
-        QueryWrapper<Banner> queryWrapper = QueryGenerator.initQueryWrapper(banner, req.getParameterMap());
-        List<String> imageList = bannerService.queryImageList(queryWrapper);
+    public RestResponseBean queryImageList() {
+      //查询轮播图
+        List<String> imageList = bannerService.queryImageList();
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),imageList);
     }
 }

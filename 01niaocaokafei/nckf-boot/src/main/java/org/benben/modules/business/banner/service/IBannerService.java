@@ -15,6 +15,6 @@ import java.util.List;
  */
 public interface IBannerService extends IService<Banner> {
 
-    public List<String> queryImageList(  QueryWrapper<Banner> queryWrapper);
+    public List<String> queryImageList( );
 
 }
