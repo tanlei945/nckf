@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.benben.common.aspect.annotation.Dict;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.jeecgframework.poi.excel.annotation.Excel;
 
@@ -37,16 +38,20 @@ public class Coupons implements Serializable {
 	@Excel(name = "图片路径", width = 15)
 	private java.lang.String imgUrl;
 	/**状态：-1已过期 0 未使用 1已使用*/
-	@Excel(name = "状态：-1已过期 0 未使用 1已使用", width = 15)
+	@Excel(name = "状态：0/已过期 1/未过期", width = 15,dicCode = "couponse_status")
+	@Dict(dicCode = "couponse_status")
 	private java.lang.String status;
 	/**是否删除：0--否；1--删除*/
-	@Excel(name = "是否删除：0--否；1--删除", width = 15)
+	@Excel(name = "是否删除：0--否；1--删除", width = 15,dicCode = "del_flag")
+	@Dict(dicCode = "del_flag")
 	private java.lang.String delFlag;
 	/**是否新用户 0--否  1--是*/
-	@Excel(name = "是否新用户 0--否  1--是", width = 15)
+	@Excel(name = "新用户专享 0--否  1--是", width = 15,dicCode = "new_user_flag")
+	@Dict(dicCode = "new_user_flag")
 	private java.lang.String newuserFlag;
 	/**是否所有商检通用：0-否 1-是*/
-	@Excel(name = "是否所有商检通用：0-否 1-是", width = 15)
+	@Excel(name = "是否所有商检通用：0-否 1-是", width = 15,dicCode = "common_flag")
+	@Dict(dicCode = "common_flag")
 	private java.lang.String commonFlag;
 	/**优惠券开始发放时间*/
 	@Excel(name = "优惠券开始发放时间", width = 20, format = "yyyy-MM-dd HH:mm:ss")

@@ -8,6 +8,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import io.swagger.annotations.ApiOperation;
 import org.benben.common.api.vo.Result;
 import org.benben.common.system.query.QueryGenerator;
 import org.benben.common.util.oConvertUtils;
@@ -23,6 +25,7 @@ import org.benben.modules.business.store.entity.Store;
 import org.benben.modules.business.store.service.IStoreService;
 import org.benben.modules.business.user.entity.User;
 import org.benben.modules.business.user.service.IUserService;
+import org.benben.modules.system.service.ISysUserService;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -53,6 +56,8 @@ public class EvaluateController {
 	private IUserService userService;
 	@Autowired
 	private IStoreService storeService;
+	@Autowired
+    ISysUserService sysUserService;
 	
 	/**
 	  * 分页列表查询
@@ -62,39 +67,73 @@ public class EvaluateController {
 	 * @param req
 	 * @return
 	 */
-	@GetMapping(value = "/list")
-	public Result<IPage<Evaluate>> queryPageList(Evaluate evaluate,
-									  @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-									  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
-									  HttpServletRequest req) {
-		Result<IPage<Evaluate>> result = new Result<IPage<Evaluate>>();
-		QueryWrapper<Evaluate> queryWrapper = QueryGenerator.initQueryWrapper(evaluate, req.getParameterMap());
-		Page<Evaluate> page = new Page<Evaluate>(pageNo, pageSize);
-		IPage<Evaluate> pageList = evaluateService.page(page, queryWrapper);
+    @GetMapping(value = "/list")
+    @ApiOperation(value = "用户评论展示接口", tags = {"用户接口"}, notes = "用户评论展示接口")
+    public Result<IPage<Evaluate>> queryPageList(Evaluate evaluate,
+                                                 @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+                                                 @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
+                                                 HttpServletRequest req) {
+        String storeId = sysUserService.queryStoreId();
+        if(storeId == null){
+            Result<IPage<Evaluate>> result = new Result<IPage<Evaluate>>();
+            QueryWrapper<Evaluate> queryWrapper = QueryGenerator.initQueryWrapper(evaluate, req.getParameterMap());
+            Page<Evaluate> page = new Page<Evaluate>(pageNo, pageSize);
+            IPage<Evaluate> pageList = evaluateService.page(page, queryWrapper);
 
-		List<Evaluate> records = pageList.getRecords();
-		for (Evaluate record : records) {
-			String userId = record.getUserId();
-			User user = userService.getById(userId);
-			if(user != null){
-				evaluateService.updateById(record);
-				record.setUsername(user.getUsername());
-			}
-			String belongId = record.getBelongId();
-			Store store = storeService.getById(belongId);
-			if(store != null){
-				record.setStorename(store.getStoreName());
-				evaluateService.updateById(record);
-			}
-		}
+            List<Evaluate> records = pageList.getRecords();
+            for (Evaluate record : records) {
+                String userId = record.getUserId();
+                User user = userService.getById(userId);
+                if(user != null){
+                    evaluateService.updateById(record);
+                    record.setUsername(user.getUsername());
+                }
+                String belongId = record.getBelongId();
+                Store store = storeService.getById(belongId);
+                if(store != null){
+                    record.setStorename(store.getStoreName());
+                    evaluateService.updateById(record);
+                }
+            }
 
-		pageList.setRecords(records);
+            pageList.setRecords(records);
 
 
-		result.setSuccess(true);
-		result.setResult(pageList);
-		return result;
-	}
+            result.setSuccess(true);
+            result.setResult(pageList);
+            return result;
+        }else{
+            Result<IPage<Evaluate>> result = new Result<IPage<Evaluate>>();
+            QueryWrapper<Evaluate> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("store_id",storeId);
+            Page<Evaluate> page = new Page<Evaluate>(pageNo, pageSize);
+            IPage<Evaluate> pageList = evaluateService.page(page, queryWrapper);
+
+            List<Evaluate> records = pageList.getRecords();
+            for (Evaluate record : records) {
+                String userId = record.getUserId();
+                User user = userService.getById(userId);
+                if(user != null){
+                    evaluateService.updateById(record);
+                    record.setUsername(user.getUsername());
+                }
+                String belongId = record.getBelongId();
+                Store store = storeService.getById(belongId);
+                if(store != null){
+                    record.setStorename(store.getStoreName());
+                    evaluateService.updateById(record);
+                }
+            }
+
+            pageList.setRecords(records);
+
+
+            result.setSuccess(true);
+            result.setResult(pageList);
+            return result;
+        }
+
+    }
 	
 	/**
 	  *   添加

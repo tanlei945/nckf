@@ -58,7 +58,7 @@ public class RestFeedBackController {
     * @return
     */
    @PostMapping(value = "/list" )
-   @ApiOperation(value = "用户反馈展示接口", tags = {"用户接口"}, notes = "用户反馈展示接口")
+   @ApiOperation(value = "用户系统反馈展示接口", tags = {"用户接口"}, notes = "用户系统反馈展示接口")
    @ApiImplicitParam(name = "storeId", value = "商家的id",required = true )
    public RestResponseBean queryList(@RequestParam(name = "storeId",required = true) String storeId) {
        QueryWrapper<FeedBack> queryWrapper = new QueryWrapper<>();
@@ -77,7 +77,7 @@ public class RestFeedBackController {
     * @return
     */
    @PostMapping(value = "/add")
-   @ApiOperation(value = "用户反馈添加接口(del_flag：0已删除 1未删除)", tags = {"用户接口"}, notes = "用户反馈添加接口(del_flag：0已删除 1未删除)")
+   @ApiOperation(value = "用户系统反馈添加接口(del_flag：0已删除 1未删除)", tags = {"用户接口"}, notes = "用户系统反馈添加接口(del_flag：0已删除 1未删除)")
    @ApiImplicitParams({
            @ApiImplicitParam(name = "orderId", value = "商家的id"),
            @ApiImplicitParam(name = "feedBack", value = "反馈实体"),
@@ -110,6 +110,7 @@ public class RestFeedBackController {
 
            feedBack.setImgUrl(resultName);
            feedBack.setUserId(userEntity.getId());
+           feedBack.setUsername(userEntity.getUsername());
            feedBack.setCreateBy(userEntity.getUsername());
            feedBack.setCreateTime(new Date());
            feedBack.setDelFlag("1");
@@ -133,7 +134,7 @@ public class RestFeedBackController {
      * @param req
      * @return
      */
-    @GetMapping(value = "/list")
+    @GetMapping(value = "/list_background")
     public Result<IPage<FeedBack>> queryPageList(FeedBack feedBack,
                                                  @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                                  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
