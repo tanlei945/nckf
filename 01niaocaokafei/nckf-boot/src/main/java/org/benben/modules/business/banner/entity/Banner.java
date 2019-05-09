@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.benben.common.aspect.annotation.Dict;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.jeecgframework.poi.excel.annotation.Excel;
 
@@ -31,10 +32,12 @@ public class Banner implements Serializable {
 	@Excel(name = "图片大小 单位：字节", width = 15)
 	private java.lang.Integer imgSize;
 	/**是否删除：0-已删除  1-未删除*/
-	@Excel(name = "是否删除：0-已删除  1-未删除", width = 15)
+	@Excel(name = "是否删除：0-已删除  1-未删除", width = 15,dicCode = "del_flag")
+	@Dict(dicCode = "del_flag")
 	private java.lang.String delFlag;
 	/**是否有用：0-不启用 1-启用*/
-	@Excel(name = "是否有用：0-不启用 1-启用", width = 15)
+	@Excel(name = "是否有用：0-不启用 1-启用", width = 15,dicCode = "useFlag")
+	@Dict(dicCode = "useFlag")
 	private java.lang.String useFlag;
 	/**描述*/
 	@Excel(name = "描述", width = 15)

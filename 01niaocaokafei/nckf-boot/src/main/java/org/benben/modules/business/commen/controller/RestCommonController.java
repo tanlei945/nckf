@@ -43,7 +43,6 @@ public class RestCommonController {
 
     @PostMapping(value = "/upload_image_local")
     @ApiOperation(value = "上传图片到本地",tags = {"通用接口"}, notes = "上传图片到本地")
-    @ApiImplicitParam(name = "file",value = "待上传文件",dataType = "MultipartFile",required = true)
     public RestResponseBean uploadImage(@RequestParam(value = "file") MultipartFile file) {
 
         String dbpath =commonService.localUploadImage(file);
@@ -59,7 +58,6 @@ public class RestCommonController {
 
     @PostMapping(value = "/upload_image_ali")
     @ApiOperation(value = "上传图片到阿里云OSS",tags = {"通用接口"}, notes = "上传图片到阿里云OSS")
-    @ApiImplicitParam(name = "files",value = "待上传文件数组",dataType = "MultipartFile[]",required = true)
     public RestResponseBean upload(@RequestParam(value = "file") MultipartFile[] files) {
 
         String result = "";
@@ -76,7 +74,6 @@ public class RestCommonController {
 
     @PostMapping(value = "/file_upload")
     @ApiOperation(value = "上传视频",tags = {"通用接口"}, notes = "上传视频")
-    @ApiImplicitParam(name = "file",value = "待上传文件",dataType = "MultipartFile",required = true)
     public Result<Object> fileUpload(@RequestParam(value = "file") MultipartFile file) throws IOException {
         Result<Object> result = new Result<Object>();
 
