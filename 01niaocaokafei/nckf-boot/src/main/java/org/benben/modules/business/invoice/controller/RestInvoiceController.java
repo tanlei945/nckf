@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.api.vo.Result;
 import org.benben.common.menu.ResultEnum;
@@ -92,6 +93,8 @@ public class RestInvoiceController {
        if(invoice != null){
            if(invoice.getInvoiceMoney( ) == sum){
                try {
+                   User user = (User) SecurityUtils.getSubject().getPrincipal();
+                   invoice.setUsername(user.getUsername());
                    invoiceService.save(invoice);
                    for (String s : orderIdList) {
                        Order order = orderService.getById(s);

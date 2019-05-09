@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.SecurityUtils;
 import org.benben.common.api.vo.Result;
 import org.benben.modules.business.order.entity.Order;
 import org.benben.modules.business.order.entity.OrderGoods;
@@ -14,6 +15,9 @@ import org.benben.modules.business.order.service.IOrderNoPayService;
 import org.benben.modules.business.order.service.IOrderService;
 import org.benben.modules.business.order.vo.OrderNoPay;
 import org.benben.modules.business.order.vo.OrderPage;
+import org.benben.modules.business.store.entity.Store;
+import org.benben.modules.business.store.service.IStoreService;
+import org.benben.modules.business.user.entity.User;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,6 +46,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 	private IOrderGoodsService orderGoodsService;
 	@Autowired
 	private IOrderNoPayService orderNoPayService;
+	@Autowired
+	private IStoreService storeService;
 	
 	@Override
 	@Transactional
@@ -146,6 +152,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 			//订单id---->时间戳+用户id
 			String orderId = orderPage.getUserId()+System.currentTimeMillis();
 			orderPage.setOrderId(orderId);
+			User user = (User) SecurityUtils.getSubject().getPrincipal();
+			orderPage.setUsername(user.getUsername());
+			String storeId = orderPage.getStoreId();
+			Store store = storeService.getById(storeId);
+			orderPage.setStorename(store.getStoreName());
 			try {
 				BeanUtils.copyProperties(orderPage, order);
 				orderService.saveMain(order, orderPage.getOrderGoodsList());

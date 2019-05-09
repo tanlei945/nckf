@@ -21,7 +21,6 @@ import org.jeecgframework.poi.excel.annotation.Excel;
 @TableName("user_feedback")
 public class FeedBack implements Serializable {
     private static final long serialVersionUID = 1L;
-    
 	/**主键id*/
 	@TableId(type = IdType.UUID)
 	private java.lang.String id;
@@ -34,10 +33,6 @@ public class FeedBack implements Serializable {
 	/**评论内容*/
 	@Excel(name = "评论内容", width = 15)
 	private java.lang.Object content;
-	/**0：门店 1：骑手*/
-	@Excel(name = "用户类型", width = 15,dicCode = "type")
-	@Dict(dicCode = "type")
-	private java.lang.String type;
 	/**删除状态  0已删除 1未删除*/
 	@Excel(name = "删除状态", width = 15,dicCode = "del_flag")
 	@Dict(dicCode = "del_flag")

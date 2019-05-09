@@ -67,6 +67,7 @@ public class RestEvaluateController {
                                      @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                      @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
                                      HttpServletRequest req) {
+
        Result<IPage<Evaluate>> result = new Result<IPage<Evaluate>>();
        QueryWrapper<Evaluate> queryWrapper = QueryGenerator.initQueryWrapper(evaluate, req.getParameterMap());
        Page<Evaluate> page = new Page<Evaluate>(pageNo, pageSize);
