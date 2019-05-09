@@ -46,4 +46,8 @@ public interface ISysUserService extends IService<SysUser> {
 	 * @return
 	 */
 	public SysUserCacheInfo getCacheUser(String username);
+
+	public String querySuperAdmin();
+
+	public List<SysUser> queryGeneralUser();
 }

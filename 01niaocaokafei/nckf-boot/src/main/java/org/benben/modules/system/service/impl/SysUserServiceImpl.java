@@ -3,6 +3,7 @@ package org.benben.modules.system.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.shiro.SecurityUtils;
 import org.benben.common.util.oConvertUtils;
 import org.benben.modules.system.entity.SysDepart;
 import org.benben.modules.system.entity.SysUser;
@@ -100,6 +101,22 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		info.setSysOrgCode(sysOrgCode);
 		// TODO companycode 没有处理
 		return info;
+	}
+
+	@Override
+	public String querySuperAdmin() {
+		SysUser sysuser = (SysUser) SecurityUtils.getSubject().getPrincipal();
+		List<String> strings = userMapper.querySuperAdmin();
+		if(strings.contains(sysuser.getId())){
+			return "";
+		}else{
+			return sysuser.getId();
+		}
+	}
+
+	@Override
+	public List<SysUser> queryGeneralUser() {
+		return userMapper.queryGeneralUser();
 	}
 
 }
