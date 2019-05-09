@@ -19,6 +19,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
+import org.benben.modules.business.store.entity.Store;
+import org.benben.modules.business.store.service.IStoreService;
+import org.benben.modules.business.user.entity.User;
+import org.benben.modules.business.user.service.IUserService;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -45,6 +49,10 @@ import com.alibaba.fastjson.JSON;
 public class EvaluateController {
 	@Autowired
 	private IEvaluateService evaluateService;
+	@Autowired
+	private IUserService userService;
+	@Autowired
+	private IStoreService storeService;
 	
 	/**
 	  * 分页列表查询
@@ -63,6 +71,26 @@ public class EvaluateController {
 		QueryWrapper<Evaluate> queryWrapper = QueryGenerator.initQueryWrapper(evaluate, req.getParameterMap());
 		Page<Evaluate> page = new Page<Evaluate>(pageNo, pageSize);
 		IPage<Evaluate> pageList = evaluateService.page(page, queryWrapper);
+
+		List<Evaluate> records = pageList.getRecords();
+		for (Evaluate record : records) {
+			String userId = record.getUserId();
+			User user = userService.getById(userId);
+			if(user != null){
+				evaluateService.updateById(record);
+				record.setUsername(user.getUsername());
+			}
+			String belongId = record.getBelongId();
+			Store store = storeService.getById(belongId);
+			if(store != null){
+				record.setStorename(store.getStoreName());
+				evaluateService.updateById(record);
+			}
+		}
+
+		pageList.setRecords(records);
+
+
 		result.setSuccess(true);
 		result.setResult(pageList);
 		return result;
