@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.benben.common.aspect.annotation.Dict;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.jeecgframework.poi.excel.annotation.Excel;
 
@@ -44,7 +45,8 @@ public class Announcement implements Serializable {
 	@Excel(name = "发布人", width = 15)
 	private java.lang.String sender;
 	/**发布状态（0未发布，1已发布，2已撤销）*/
-	@Excel(name = "发布状态（0未发布，1已发布，2已撤销）", width = 15)
+	@Excel(name = "发布状态（0未发布，1已发布，2已撤销）", width = 15,dicCode = "send_status")
+	@Dict(dicCode = "send_status")
 	private java.lang.String sendStatus;
 	/**发布时间*/
 	@Excel(name = "发布时间", width = 20, format = "yyyy-MM-dd HH:mm:ss")
@@ -60,7 +62,8 @@ public class Announcement implements Serializable {
 	@Excel(name = "图片", width = 15)
 	private java.lang.String imgUrl;
 	/**删除状态（0，正常，1已删除）*/
-	@Excel(name = "删除状态（0，正常，1已删除）", width = 15)
+	@Excel(name = "删除状态（0/已删除，1/正常）", width = 15,dicCode = "del_flag")
+	@Dict(dicCode = "del_flag")
 	private java.lang.String delFlag;
 	/**创建人*/
 	@Excel(name = "创建人", width = 15)
