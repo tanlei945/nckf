@@ -68,7 +68,6 @@ public class EvaluateController {
 	 * @return
 	 */
     @GetMapping(value = "/list")
-    @ApiOperation(value = "用户评论展示接口", tags = {"用户接口"}, notes = "用户评论展示接口")
     public Result<IPage<Evaluate>> queryPageList(Evaluate evaluate,
                                                  @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                                  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
@@ -76,11 +75,11 @@ public class EvaluateController {
         String storeId = sysUserService.queryStoreId();
         if(storeId == null){
             Result<IPage<Evaluate>> result = new Result<IPage<Evaluate>>();
-            QueryWrapper<Evaluate> queryWrapper = QueryGenerator.initQueryWrapper(evaluate, req.getParameterMap());
+			QueryWrapper<Evaluate> queryWrapper = QueryGenerator.initQueryWrapper(evaluate, req.getParameterMap());
             Page<Evaluate> page = new Page<Evaluate>(pageNo, pageSize);
             IPage<Evaluate> pageList = evaluateService.page(page, queryWrapper);
 
-            List<Evaluate> records = pageList.getRecords();
+            /*List<Evaluate> records = pageList.getRecords();
             for (Evaluate record : records) {
                 String userId = record.getUserId();
                 User user = userService.getById(userId);
@@ -97,19 +96,20 @@ public class EvaluateController {
             }
 
             pageList.setRecords(records);
-
+*/
 
             result.setSuccess(true);
             result.setResult(pageList);
             return result;
         }else{
             Result<IPage<Evaluate>> result = new Result<IPage<Evaluate>>();
-            QueryWrapper<Evaluate> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("store_id",storeId);
+            evaluate.setBelongId(storeId);
+			QueryWrapper<Evaluate> queryWrapper = QueryGenerator.initQueryWrapper(evaluate, req.getParameterMap());
+            queryWrapper.eq("belong_id",storeId);
             Page<Evaluate> page = new Page<Evaluate>(pageNo, pageSize);
             IPage<Evaluate> pageList = evaluateService.page(page, queryWrapper);
 
-            List<Evaluate> records = pageList.getRecords();
+            /*List<Evaluate> records = pageList.getRecords();
             for (Evaluate record : records) {
                 String userId = record.getUserId();
                 User user = userService.getById(userId);
@@ -125,7 +125,7 @@ public class EvaluateController {
                 }
             }
 
-            pageList.setRecords(records);
+            pageList.setRecords(records);*/
 
 
             result.setSuccess(true);
@@ -144,6 +144,9 @@ public class EvaluateController {
 	public Result<Evaluate> add(@RequestBody Evaluate evaluate) {
 		Result<Evaluate> result = new Result<Evaluate>();
 		try {
+		    String storeId = evaluate.getBelongId();
+		    Store store = storeService.getById(storeId);
+		    evaluate.setStorename(store.getStoreName());
 			evaluateService.save(evaluate);
 			result.success("添加成功！");
 		} catch (Exception e) {
@@ -172,7 +175,6 @@ public class EvaluateController {
 				result.success("修改成功!");
 			}
 		}
-		
 		return result;
 	}
 	
@@ -193,7 +195,6 @@ public class EvaluateController {
 				result.success("删除成功!");
 			}
 		}
-		
 		return result;
 	}
 	

@@ -18,6 +18,7 @@ import org.benben.modules.business.order.vo.OrderPage;
 import org.benben.modules.business.store.entity.Store;
 import org.benben.modules.business.store.service.IStoreService;
 import org.benben.modules.business.user.entity.User;
+import org.benben.modules.business.user.service.IUserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,6 +49,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 	private IOrderNoPayService orderNoPayService;
 	@Autowired
 	private IStoreService storeService;
+	@Autowired
+	private IUserService userService;
 	
 	@Override
 	@Transactional
@@ -148,13 +151,15 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 			sum += orderGoods.getGoodsCount()*orderGoods.getPerPrice();
 		}
 		Order order = new Order();
-		if(sum==appMoney){
-			//订单id---->时间戳+用户id
+		if(sum == appMoney){
+			//订单id---->用户id+时间戳
 			String orderId = orderPage.getUserId()+System.currentTimeMillis();
 			orderPage.setOrderId(orderId);
 			User user = (User) SecurityUtils.getSubject().getPrincipal();
+			//下单用户名
 			orderPage.setUsername(user.getUsername());
 			String storeId = orderPage.getStoreId();
+			//下单商家
 			Store store = storeService.getById(storeId);
 			orderPage.setStorename(store.getStoreName());
 			try {
@@ -254,7 +259,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 	public synchronized boolean riderOrder(String riderId, String orderId) {
 		Order order = orderService.getById(orderId);
 		if(order!=null&& StringUtils.isBlank(order.getOrderId())){
+			//给订单的骑手id赋上值
 			order.setRiderId(riderId);
+			//给订单的rider  name 赋上值
+			QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+			queryWrapper.eq("id",riderId);
+			User user = userService.getOne(queryWrapper);
+			order.setRidername(user.getUsername());
+			//订单修改时间
 			order.setUpdateTime(new Date());
 			if(orderService.updateById(order)){
 				return true;

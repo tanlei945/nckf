@@ -50,4 +50,8 @@ public interface ISysUserService extends IService<SysUser> {
 	public String querySuperAdmin();
 
 	public List<SysUser> queryGeneralUser();
+
+	public String queryStoreId();
+
+
 }

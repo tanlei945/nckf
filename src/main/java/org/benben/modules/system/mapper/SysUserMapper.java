@@ -23,9 +23,12 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
 	 */
 	public SysUser getUserByName(@Param("username") String username);
 
-	@Select("SELECT user_id FROM sys_user_role where role_id in (select id from sys_role where role_code = 'superadmin')")
+	@Select("SELECT user_id FROM sys_user_role where role_id in (select id from sys_role where role_code in ('superadmin','admin'))")
 	public List<String> querySuperAdmin();
 
 	@Select("select * from sys_user where id in (select sur.user_id from sys_user_role sur where role_id not in (select id from sys_role where role_code = 'superadmin')) ")
 	public List<SysUser> queryGeneralUser();
+
+	@Select("SELECT user_id FROM sys_user_role where role_id in (select id from sys_role where role_code in ('superadmin','admin'))")
+	public List<String> queryIsAdmin();
 }

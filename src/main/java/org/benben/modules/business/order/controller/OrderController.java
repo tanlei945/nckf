@@ -13,6 +13,7 @@ import org.benben.modules.business.order.entity.OrderGoods;
 import org.benben.modules.business.order.service.IOrderGoodsService;
 import org.benben.modules.business.order.service.IOrderService;
 import org.benben.modules.business.order.vo.OrderPage;
+import org.benben.modules.system.service.ISysUserService;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -50,6 +51,8 @@ public class OrderController {
 	private IOrderService orderService;
 	@Autowired
 	private IOrderGoodsService orderGoodsService;
+	@Autowired
+	private ISysUserService sysUserService;
 	
 	/**
 	  * 分页列表查询
@@ -64,13 +67,30 @@ public class OrderController {
 									  @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
 									  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 									  HttpServletRequest req) {
-		Result<IPage<Order>> result = new Result<IPage<Order>>();
-		QueryWrapper<Order> queryWrapper = QueryGenerator.initQueryWrapper(order, req.getParameterMap());
-		Page<Order> page = new Page<Order>(pageNo, pageSize);
-		IPage<Order> pageList = orderService.page(page, queryWrapper);
-		result.setSuccess(true);
-		result.setResult(pageList);
-		return result;
+		String storeId = sysUserService.queryStoreId();
+		log.info("门店id---------->"+storeId);
+		if(storeId == null){
+			Result<IPage<Order>> result = new Result<IPage<Order>>();
+			QueryWrapper<Order> queryWrapper = QueryGenerator.initQueryWrapper(order, req.getParameterMap());
+			Page<Order> page = new Page<Order>(pageNo, pageSize);
+			IPage<Order> pageList = orderService.page(page, queryWrapper);
+			result.setSuccess(true);
+			result.setResult(pageList);
+			return result;
+		}else{
+			Result<IPage<Order>> result = new Result<IPage<Order>>();
+			/*QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
+			queryWrapper.eq("store_id",storeId);*/
+			order.setStoreId(storeId);
+			QueryWrapper<Order> queryWrapper = QueryGenerator.initQueryWrapper(order, req.getParameterMap());
+			Page<Order> page = new Page<Order>(pageNo, pageSize);
+			IPage<Order> pageList = orderService.page(page, queryWrapper);
+			result.setSuccess(true);
+			result.setResult(pageList);
+			return result;
+		}
+
+
 	}
 	
 	/**

@@ -3,8 +3,11 @@ package org.benben.modules.system.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.benben.common.util.oConvertUtils;
+import org.benben.modules.business.store.entity.Store;
+import org.benben.modules.business.store.service.IStoreService;
 import org.benben.modules.system.entity.SysDepart;
 import org.benben.modules.system.entity.SysUser;
 import org.benben.modules.system.entity.SysUserRole;
@@ -26,6 +29,7 @@ import org.springframework.stereotype.Service;
  * @author scott
  * @since 2018-12-20
  */
+@Slf4j
 @Service
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements ISysUserService {
 	
@@ -37,6 +41,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	
 	@Autowired
 	private SysDepartMapper sysDepartMapper;
+
+	@Autowired
+	private IStoreService storeService;
 	
 	@Override
 	public SysUser getUserByName(String username) {
@@ -108,7 +115,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		SysUser sysuser = (SysUser) SecurityUtils.getSubject().getPrincipal();
 		List<String> strings = userMapper.querySuperAdmin();
 		if(strings.contains(sysuser.getId())){
-			return "";
+			return null;
 		}else{
 			return sysuser.getId();
 		}
@@ -119,4 +126,24 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 		return userMapper.queryGeneralUser();
 	}
 
+	@Override
+	public String queryStoreId() {
+		List<String> strings = userMapper.queryIsAdmin();
+		SysUser sysuser = (SysUser) SecurityUtils.getSubject().getPrincipal();
+		log.info("当前登录人的信息-------------->"+sysuser);
+		if(strings.contains(sysuser.getId())){
+			return null;
+		}else{
+			String belongId = sysuser.getId();
+			log.info("当前管理员的id------------->"+belongId);
+			QueryWrapper<Store> queryWrapper = new QueryWrapper<>();
+			queryWrapper.eq("belong_id",belongId);
+			Store store = storeService.getOne(queryWrapper);
+			log.info("门店信息------------->"+store);
+			if(store != null){
+				return store.getId();
+			}
+			return null;
+		}
+	}
 }
