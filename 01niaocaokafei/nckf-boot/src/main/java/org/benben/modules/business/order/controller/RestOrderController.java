@@ -219,7 +219,7 @@ public class RestOrderController {
         Page<Order> page = new Page<Order>(pageNo, pageSize);
         IPage<Order> pageList = orderService.page(page, queryWrapper);
 
-        List<Order> records = pageList.getRecords();
+        /*List<Order> records = pageList.getRecords();
         for (Order record : records) {
             String userId = record.getUserId();
             String riderId = record.getRiderId();
@@ -243,7 +243,7 @@ public class RestOrderController {
             }
         }
         pageList.setRecords(records);
-
+*/
         result.setSuccess(true);
         result.setResult(pageList);
         return result;
