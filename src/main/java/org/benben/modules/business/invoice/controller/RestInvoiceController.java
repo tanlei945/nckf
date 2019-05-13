@@ -36,7 +36,7 @@ import java.util.List;
 * @version： V1.0
 */
 @RestController
-@RequestMapping("/api/invoice")
+@RequestMapping("/api/v1/invoice")
 @Slf4j
 @Api(tags = {"用户接口"})
 public class RestInvoiceController {
