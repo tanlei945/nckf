@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.benben.common.api.vo.Result;
@@ -43,7 +44,8 @@ import java.util.Map;
 * @version： V1.0
 */
 @RestController
-@RequestMapping("/api/evaluate")
+@RequestMapping("/api/v1/evaluate")
+@Api(tags = {"用户接口"})
 @Slf4j
 public class RestEvaluateController {
    @Autowired
