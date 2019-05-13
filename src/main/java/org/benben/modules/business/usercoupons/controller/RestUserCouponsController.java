@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/api/userCoupons")
+@RequestMapping("/api/v1/userCoupons")
 @Slf4j
 @Api(tags = "用户接口")
 public class RestUserCouponsController {

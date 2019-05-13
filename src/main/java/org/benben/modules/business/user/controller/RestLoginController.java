@@ -47,7 +47,7 @@ import javax.validation.Valid;
  * @version： V1.0
  */
 @RestController
-@RequestMapping("/api/login")
+@RequestMapping("/api/v1/login")
 @Api(tags = {"登录接口"})
 @Slf4j
 public class RestLoginController {

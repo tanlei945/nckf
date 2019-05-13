@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/api/message")
+@RequestMapping("/api/v1/message")
 @Slf4j
 @Api(tags = {"首页"})
 public class RestMessageController {

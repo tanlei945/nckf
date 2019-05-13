@@ -27,7 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @version： V1.0
  */
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/v1/user")
 @Api(tags = {"用户接口"})
 @Slf4j
 public class RestUserController {

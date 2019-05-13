@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
  * @version： V1.0
  */
 @RestController
-@RequestMapping("/api/recharge")
+@RequestMapping("/api/v1/recharge")
 @Api(tags = {"用户接口"})
 @Slf4j
 public class RestRechargeController {

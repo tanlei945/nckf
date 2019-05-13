@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 * @version： V1.0
 */
 @RestController
-@RequestMapping("/api/accountBill")
+@RequestMapping("/api/v1/accountBill")
 @Slf4j
 @Api(tags = {"用户接口"})
 public class RestAccountBillController {

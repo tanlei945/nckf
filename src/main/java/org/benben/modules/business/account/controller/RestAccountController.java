@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
 * @version： V1.0
 */
 @RestController
-@RequestMapping("/api/account")
+@RequestMapping("/api/v1/account")
 @Slf4j
 @Api(tags = {"用户接口"})
 public class RestAccountController {

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  * 检验接口
  */
 @RestController
-@RequestMapping(value = "/api/validate")
+@RequestMapping(value = "/api/v1/validate")
 @Api(tags = {"检测接口"})
 public class RestValidateController {
 

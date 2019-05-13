@@ -32,7 +32,7 @@ import java.util.Date;
  * @description:
  */
 @RestController
-@RequestMapping("/api/common/")
+@RequestMapping("/api/v1/common/")
 @Api(tags = {"通用接口"})
 public class RestCommonController {
 

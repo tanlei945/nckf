@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/api/address")
+@RequestMapping("/api/v1/address")
 @Slf4j
 @Api(tags = {"用户接口"})
 public class RestAddressController {
