@@ -61,6 +61,7 @@ public class UserStoreController {
 									  HttpServletRequest req) {
 		Result<IPage<UserStore>> result = new Result<IPage<UserStore>>();
 		QueryWrapper<UserStore> queryWrapper = QueryGenerator.initQueryWrapper(userStore, req.getParameterMap());
+		queryWrapper.orderByAsc("complete_flag");
 		Page<UserStore> page = new Page<UserStore>(pageNo, pageSize);
 		IPage<UserStore> pageList = userStoreService.page(page, queryWrapper);
 		result.setSuccess(true);

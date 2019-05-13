@@ -61,7 +61,36 @@ public class SysUserRoleServiceImpl extends ServiceImpl<SysUserRoleMapper, SysUs
 		}
 		return map;
 	}
-	
+	/**
+	 * 查询所有用户对应的角色信息
+	 */
+	@Override
+	public Map<String,String> queryGeneralUserRole() {
+		List<SysUserRole> uRoleList = this.list();
+		List<SysUser> userList = userService.list();
+		List<SysRole> roleList = roleService.list();
+		Map<String,String> map = new IdentityHashMap<>();
+		String userId = "";
+		String roleId = "";
+		String roleName = "";
+		if(uRoleList != null && uRoleList.size() > 0) {
+			for(SysUserRole uRole : uRoleList) {
+				roleId = uRole.getRoleId();
+				for(SysUser user : userList) {
+					if("superadmin".equals(user.getUsername())){
+						userId = user.getId();
+					}
+					if(uRole.getUserId().equals(userId)) {
+						roleName = this.searchByRoleId(roleList,roleId);
+						map.put(userId, roleName);
+					}
+				}
+			}
+			return map;
+		}
+		return map;
+	}
+
 	/**
 	 * queryUserRole调用的方法
 	 * @param roleList

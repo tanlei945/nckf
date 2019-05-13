@@ -4,12 +4,7 @@ package org.benben.modules.system.controller;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,15 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.benben.common.api.vo.Result;
 import org.benben.common.system.query.QueryGenerator;
 import org.benben.common.util.oConvertUtils;
-import org.benben.modules.system.entity.SysPermission;
-import org.benben.modules.system.entity.SysPermissionDataRule;
-import org.benben.modules.system.entity.SysRole;
-import org.benben.modules.system.entity.SysRolePermission;
+import org.benben.modules.system.entity.*;
 import org.benben.modules.system.model.TreeModel;
-import org.benben.modules.system.service.ISysPermissionDataRuleService;
-import org.benben.modules.system.service.ISysPermissionService;
-import org.benben.modules.system.service.ISysRolePermissionService;
-import org.benben.modules.system.service.ISysRoleService;
+import org.benben.modules.system.service.*;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -200,15 +189,28 @@ public class SysRoleController {
 		}
 		return result;
 	}
-	
+
+	@Autowired
+	private ISysUserService sysUserService;
 	@RequestMapping(value = "/queryall", method = RequestMethod.GET)
 	public Result<List<SysRole>> queryall() {
 		Result<List<SysRole>> result = new Result<>();
+		String s = sysUserService.querySuperAdmin();
 		List<SysRole> list = sysRoleService.list();
-		if(list==null||list.size()<=0) {
+		List<SysRole> list1 = new LinkedList<>();
+		if(s!=null&&!"".equals(s)){
+			list.forEach(value->{
+				if(!"superadmin".equals(value.getRoleCode()))
+				{
+					list1.add(value);
+				}
+			});
+		}
+
+		if(list1==null||list1.size()<=0) {
 			result.error500("未找到角色信息");
 		}else {
-			result.setResult(list);
+			result.setResult(list1);
 			result.setSuccess(true);
 		}
 		return result;

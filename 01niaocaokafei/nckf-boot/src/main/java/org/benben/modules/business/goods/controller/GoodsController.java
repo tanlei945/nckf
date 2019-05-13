@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.api.vo.Result;
 import org.benben.common.menu.ResultEnum;
@@ -19,6 +20,7 @@ import org.benben.modules.business.goods.entity.Goods;
 import org.benben.modules.business.goods.entity.SpecDict;
 import org.benben.modules.business.goods.service.IGoodsService;
 import org.benben.modules.system.entity.SysUser;
+import org.benben.modules.system.service.ISysUserService;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -48,13 +50,16 @@ import java.util.Map;
  * @version： V1.0
  */
 @RestController
-@RequestMapping("/api/goods/goods")
+@RequestMapping("/api/v1/goods")
 @Slf4j
 @Api(tags = {"门店管理接口"})
 public class GoodsController {
 	@Autowired
 	private IGoodsService goodsService;
-	
+
+	@Autowired
+	private ISysUserService sysUserService;
+
 	/**
 	  * 分页列表查询
 	 * @param goods
@@ -71,6 +76,11 @@ public class GoodsController {
 									  HttpServletRequest req) {
 		Result<IPage<Goods>> result = new Result<IPage<Goods>>();
 		QueryWrapper<Goods> queryWrapper = QueryGenerator.initQueryWrapper(goods, req.getParameterMap());
+
+		String s = sysUserService.querySuperAdmin();
+		if(s!=null&&!"".equals(s)){
+			queryWrapper.eq("belong_id",s);
+		}
 		Page<Goods> page = new Page<Goods>(pageNo, pageSize);
 		IPage<Goods> pageList = goodsService.page(page, queryWrapper);
 		result.setSuccess(true);
@@ -87,7 +97,9 @@ public class GoodsController {
 	@PostMapping(value = "/add")
 	public Result<Goods> add(@RequestBody Goods goods) {
 		Result<Goods> result = new Result<Goods>();
+		SysUser sysuser = (SysUser) SecurityUtils.getSubject().getPrincipal();
 		try {
+			goods.setBelongId(sysuser.getId());
 			goodsService.save(goods);
 			result.success("添加成功！");
 		} catch (Exception e) {
@@ -109,7 +121,9 @@ public class GoodsController {
 		System.out.println(selectedRole.toString());
 		List<String> selectedRole1 = (List<String>) selectedRole;
 		Goods goods = JSON.parseObject(jsonObject.toJSONString(), Goods.class);
+		System.out.println(goods);
 		goodsService.editGoodsWithSpec(selectedRole1,goods.getId());
+
 		Result<Goods> result = new Result<Goods>();
 		Goods goodsEntity = goodsService.getById(goods.getId());
 		if(goodsEntity==null) {
@@ -273,7 +287,7 @@ public class GoodsController {
 	 @ApiOperation(value="根据商品id查商品规格",tags = {"门店管理接口"})
 	 @ApiImplicitParams({@ApiImplicitParam(name="goodId",value="商品id",dataType = "String",required = true)
 	 })
-	public RestResponseBean querySpec(@RequestParam(name="goodId")String goodId){
+	public RestResponseBean querySpec(@RequestParam(name="goodId",required = false)String goodId){
 		HashMap<String, List<String>> stringListMap = new HashMap<>();
 		try {
 			stringListMap = goodsService.querySpec(goodId);
