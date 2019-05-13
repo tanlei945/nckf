@@ -39,7 +39,7 @@ import java.util.List;
 * @version： V1.0
 */
 @RestController
-@RequestMapping("/api/order")
+@RequestMapping("/api/v1/order")
 @Slf4j
 @Api(tags = {"订单购物车接口"})
 public class RestOrderController {
