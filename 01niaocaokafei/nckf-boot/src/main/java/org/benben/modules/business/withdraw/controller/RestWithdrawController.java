@@ -27,7 +27,7 @@ import java.math.BigDecimal;
  * @version： V1.0
  */
 @RestController
-@RequestMapping("/api/withdraw")
+@RequestMapping("/api/v1/withdraw")
 @Slf4j
 @Api(tags = {"用户接口"})
 public class RestWithdrawController {

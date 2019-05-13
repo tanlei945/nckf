@@ -29,7 +29,7 @@ import javax.validation.Valid;
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/sms/")
+@RequestMapping("/api/v1/sms/")
 @Api(tags = {"短信接口"})
 public class RestSmsController {
 

@@ -66,7 +66,6 @@ import org.springframework.web.servlet.ModelAndView;
 @Slf4j
 @RestController
 @RequestMapping("/sys/user")
-@Api(tags = {"系统用户接口"})
 public class SysUserController {
 
 	@Autowired

@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 
 
 @RestController
-@RequestMapping("/api/announcement")
+@RequestMapping("/api/v1/announcement")
 @Slf4j
 @Api(tags = {"首页"})
 public class RestAnnouncementController {

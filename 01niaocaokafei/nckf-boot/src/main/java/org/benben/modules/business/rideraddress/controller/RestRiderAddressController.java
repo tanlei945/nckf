@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/riderAddress")
+@RequestMapping("/api/v1/riderAddress")
 @Slf4j
 @Api(tags = {"骑手位置接口"})
 public class RestRiderAddressController {

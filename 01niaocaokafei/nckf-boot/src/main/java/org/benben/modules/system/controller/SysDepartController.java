@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/sysdepart/sysDepart")
 @Slf4j
-@Api(tags = {"部门接口"})
 public class SysDepartController {
 
 	@Autowired

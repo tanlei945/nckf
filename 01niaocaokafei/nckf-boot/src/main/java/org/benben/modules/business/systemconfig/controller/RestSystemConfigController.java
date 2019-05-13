@@ -1,6 +1,5 @@
 package org.benben.modules.business.systemconfig.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +15,7 @@ import java.util.Date;
 
 
 @RestController
-@RequestMapping("/api/systemConfig")
+@RequestMapping("/api/v1/systemConfig")
 @Slf4j
 @Api(tags = {"首页"})
 public class RestSystemConfigController {

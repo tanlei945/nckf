@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/cart")
+@RequestMapping("/api/v1/cart")
 @Slf4j
 @Api(tags = "订单购物车接口")
 public class RestCartController {
