@@ -39,7 +39,7 @@ import java.util.List;
 * @version： V1.0
 */
 @RestController
-@RequestMapping("/api/feedback")
+@RequestMapping("/api/v1/feedback")
 @Slf4j
 @Api(tags = {"用户接口"})
 public class RestFeedBackController {
