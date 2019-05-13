@@ -1,5 +1,7 @@
 package org.benben.modules.system.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
 import org.benben.common.api.vo.Result;
@@ -26,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/sysdepart/sysDepart")
 @Slf4j
+@Api(tags = {"部门接口"})
 public class SysDepartController {
 
 	@Autowired
@@ -36,6 +39,7 @@ public class SysDepartController {
 	 * 
 	 * @return
 	 */
+	@ApiOperation("部门")
 	@RequestMapping(value = "/queryTreeList", method = RequestMethod.GET)
 	public Result<List<SysDepartTreeModel>> queryTreeList() {
 		Result<List<SysDepartTreeModel>> result = new Result<>();

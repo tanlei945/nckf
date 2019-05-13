@@ -17,4 +17,6 @@ public interface CategoryMapper extends BaseMapper<Category> {
     List<Category> getCategory();        //返回根菜单
 
     List<Category> findMenuByParentId(String parentid);//根据父一级菜单，返回所有子菜单
+
+
 }

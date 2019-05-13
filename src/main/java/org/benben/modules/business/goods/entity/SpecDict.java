@@ -9,4 +9,5 @@ public class SpecDict {
     private String dictName;
     private String itemText;
     private String description;
+    private String dictCode;
 }

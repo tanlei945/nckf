@@ -21,4 +21,6 @@ public interface ISysUserRoleService extends IService<SysUserRole> {
 	 * @return
 	 */
 	Map<String,String> queryUserRole();
+
+	Map<String,String> queryGeneralUserRole();
 }

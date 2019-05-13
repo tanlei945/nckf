@@ -3,6 +3,7 @@ package org.benben.modules.business.goods.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.benben.modules.business.goods.entity.Goods;
 import org.benben.modules.business.goods.entity.SpecDict;
@@ -28,12 +29,12 @@ public interface GoodsMapper extends BaseMapper<Goods> {
     List<SpecDict> queryallspec();
 
 
-    @Select("SELECT dict_code from sys_dict sd where sd.dict_name = '#{name}'")
-    String queryGoodSpec(String name);
+    @Select("SELECT * from sys_dict sd where sd.dict_name = #{name}")
+    SpecDict queryGoodSpec(String name);
 
-    @Insert("insert into bb_goods_spec (dictName,description,goods_id) values(#{map.get()},#{list.description},#{list.id})")
-    int insertGoodsSpec(HashMap<String,String> map);
+    @Insert("insert into bb_goods_spec (dict_code,description,goods_id) values(#{dictCode},#{description},#{goods_id})")
+    int insertGoodsSpec(@Param("dictCode") String dictCode, @Param("description")String description, @Param("goods_id")String goods_id);
 
-    @Delete("delete * from bb_goods_spec where id = #{id}")
+    @Delete("delete from bb_goods_spec where goods_id = #{id}")
     int deleteGoodSpec(String id);
 }

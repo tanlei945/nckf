@@ -1,5 +1,6 @@
 package org.benben.modules.business.goods.service.impl;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.benben.modules.business.goods.entity.Goods;
 import org.benben.modules.business.goods.entity.SpecDict;
 import org.benben.modules.business.goods.mapper.GoodsMapper;
@@ -49,19 +50,20 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     }
 
     @Override
-    public void editGoodsWithSpec(List<String> list,String id) {
-        int i = GoodsMapper.deleteGoodSpec(id);
-        List<String> strlist = new LinkedList();
+    public void editGoodsWithSpec(List<String> list, String goodId) {
+        int i = GoodsMapper.deleteGoodSpec(goodId);
+        List<SpecDict> strlist = new LinkedList();
         if(i>-1){
             list.forEach(value->{
-                String s = GoodsMapper.queryGoodSpec(value);
+                SpecDict s = GoodsMapper.queryGoodSpec(value);
                 strlist.add(s);
             });
         }
-        strlist.forEach(str ->{
-            //GoodsMapper.insertGoodsSpec();
-
-        });
-
+        if(!strlist.isEmpty()){
+            strlist.forEach(str ->{
+                System.out.println(str);
+                GoodsMapper.insertGoodsSpec(str.getDictCode(), str.getDescription(), goodId);
+            });
+        }
     }
 }

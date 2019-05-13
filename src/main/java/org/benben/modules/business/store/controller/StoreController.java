@@ -50,7 +50,7 @@ import com.alibaba.fastjson.JSON;
  * @version： V1.0
  */
 @RestController
-@RequestMapping("/api/store/store")
+@RequestMapping("/api/v1/store")
 @Slf4j
 @Api(tags = {"门店管理接口"})
 public class StoreController {
@@ -78,7 +78,8 @@ public class StoreController {
 		result.setResult(pageList);
 		return result;
 	}
-	
+
+
 	/**
 	  *   添加
 	 * @param store
@@ -282,4 +283,18 @@ public class StoreController {
 		 }
 
 	 }
+
+
+	 @RequestMapping("/query_all_store")
+	 public RestResponseBean queryAllStore(){
+		 try {
+			 List<Store> list= storeService.list();
+			 return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), list);
+		 } catch (Exception e) {
+			 e.printStackTrace();
+			 return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
+		 }
+
+	 }
+
 }

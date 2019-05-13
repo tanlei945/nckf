@@ -89,8 +89,8 @@ public class SysUserController {
 		QueryWrapper<SysUser> queryWrapper = QueryGenerator.initQueryWrapper(user, req.getParameterMap());
 
         String s = sysUserService.querySuperAdmin();
-        if(s!=null||!"".equals(s)){
-            queryWrapper.eq("id",s);
+        if(s!=null&&!"".equals(s)){
+            queryWrapper.ne("username","superadmin");
         }
 		Page<SysUser> page = new Page<SysUser>(pageNo, pageSize);
 		IPage<SysUser> pageList = sysUserService.page(page, queryWrapper);
@@ -531,5 +531,19 @@ public class SysUserController {
         }
 
 
+    }
+
+    /**
+     * 查询超级管理员之外用户所对应的角色信息
+     *
+     * @return
+     */
+    @RequestMapping(value = "/queryGeneralUserRoleMap", method = RequestMethod.GET)
+    public Result<Map<String, String>> queryGenaralUserRole() {
+        Result<Map<String, String>> result = new Result<>();
+        Map<String, String> map = userRoleService.queryGeneralUserRole();
+        result.setResult(map);
+        result.setSuccess(true);
+        return result;
     }
 }

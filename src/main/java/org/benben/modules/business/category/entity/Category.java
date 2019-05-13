@@ -58,5 +58,5 @@ public class Category implements Serializable {
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	private java.util.Date updateTime;
 	/**下级商品列表*/
-	private List<Category> categoryList;
+	//private List<Category> categoryList;
 }

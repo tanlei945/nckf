@@ -42,7 +42,7 @@ import java.util.Map;
  * @version： V1.0
  */
 @RestController
-@RequestMapping("/api/category/category")
+@RequestMapping("/api/v1/category")
 @Slf4j
 @Api(tags = {"门店管理接口"})
 public class CategoryController {
