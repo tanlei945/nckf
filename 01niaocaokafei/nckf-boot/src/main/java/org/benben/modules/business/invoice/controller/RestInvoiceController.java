@@ -220,7 +220,6 @@ public class RestInvoiceController {
      */
     @PostMapping(value = "/title/add")
     @ApiOperation(value = "用户发票头提交接口", tags = {"用户接口"}, notes = "用户发票头提交接口")
-    @ApiImplicitParam(name = "invoiceTitle", value = "发票头实体")
     public RestResponseBean add(@RequestBody InvoiceTitle invoiceTitle) {
         if(invoiceTitle.getUserId() == null && invoiceTitle.getUserId()==""){
             return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
