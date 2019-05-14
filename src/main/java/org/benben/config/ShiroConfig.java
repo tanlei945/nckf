@@ -74,7 +74,7 @@ public class ShiroConfig {
 		filterChainDefinitionMap.put("/auto/cgform/**", "anon");
 		filterChainDefinitionMap.put("/online/cgreport/api/exportXls/**", "anon");
 
-		filterChainDefinitionMap.put("/api/user/login", "anon");
+		filterChainDefinitionMap.put("/api/v1/user/login", "anon");
 		//从配置文件读取添加不需要token的路径
 		Yaml yaml = new Yaml();
 		URL url = ShiroConfig.class.getClassLoader().getResource("noneed-login.yml");
