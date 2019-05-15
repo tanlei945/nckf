@@ -7,11 +7,17 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
+import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.api.vo.Result;
+import org.benben.common.menu.ResultEnum;
 import org.benben.common.system.query.QueryGenerator;
 import org.benben.common.util.oConvertUtils;
 import org.benben.modules.business.evaluate.entity.Evaluate;
 import org.benben.modules.business.evaluate.service.IEvaluateService;
+import org.benben.modules.business.feedback.entity.FeedBack;
+import org.benben.modules.business.order.entity.Order;
+import org.benben.modules.business.order.service.IOrderService;
 import org.benben.modules.business.store.entity.Store;
 import org.benben.modules.business.store.service.IStoreService;
 import org.benben.modules.business.user.entity.User;
@@ -22,6 +28,8 @@ import org.jeecgframework.poi.excel.entity.ExportParams;
 import org.jeecgframework.poi.excel.entity.ImportParams;
 import org.jeecgframework.poi.excel.view.JeecgEntityExcelView;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -29,10 +37,13 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -52,8 +63,12 @@ public class RestEvaluateController {
    private IEvaluateService evaluateService;
    @Autowired
    private IUserService userService;
+    @Autowired
+    private IOrderService orderService;
    @Autowired
    private IStoreService storeService;
+    @Value(value = "${benben.path.upload}")
+    private String uploadpath;
 
    /**
      * 分页列表查询
@@ -106,17 +121,50 @@ public class RestEvaluateController {
     */
    @PostMapping(value = "/add")
    @ApiOperation(value = "用户评论提交接口", tags = {"用户接口"}, notes = "用户评论提交接口")
-   public Result<Evaluate> add(@RequestBody Evaluate evaluate) {
-       Result<Evaluate> result = new Result<Evaluate>();
+   public RestResponseBean add(@RequestParam(name="orderId",required=true)String orderId, Evaluate evaluate, @RequestParam(name = "file") MultipartFile[] files) {
+       log.info("本次上传的文件的数量为-------->" + files.length);
+       User userEntity = (User) SecurityUtils.getSubject().getPrincipal();
+       String bizPath = "feedback";
+       String nowday = new SimpleDateFormat("yyyyMMdd").format(new Date());
+       String ctxPath = uploadpath;
+       String fileName = "";
+       String resultName = "";
        try {
+           File file = new File(ctxPath + File.separator + bizPath + File.separator + nowday);
+           if (!file.exists()) {
+               file.mkdirs();// 创建文件根目录
+           }
+           for (MultipartFile mf : files) {
+               String orgName = mf.getOriginalFilename();// 获取文件名
+               fileName = orgName.substring(0, orgName.lastIndexOf(".")) + "_" + System.currentTimeMillis() + orgName.substring(orgName.indexOf("."));
+               String savePath = file.getPath() + File.separator + fileName;
+               File savefile = new File(savePath);
+               FileCopyUtils.copy(mf.getBytes(), savefile);
+               resultName += fileName + ",";
+           }
+           String storeId = evaluate.getBelongId();
+           if(storeId != null){
+               Store store = storeService.getById(storeId);
+               evaluate.setStorename(store.getStoreName());
+           }
+           evaluate.setImgUrl(resultName);
+           evaluate.setUserId(userEntity.getId());
+           evaluate.setUsername(userEntity.getUsername());
+           evaluate.setCreateBy(userEntity.getUsername());
+           evaluate.setCreateTime(new Date());
+           evaluate.setDelFlag("1");
            evaluateService.save(evaluate);
-           result.success("添加成功！");
+           Order order = new Order();
+           order.setId(orderId);
+           order.setStatus("4");
+           order.setUpdateTime(new Date());
+           order.setUpdateBy(userEntity.getUsername());
+           orderService.updateById(order);
+           return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
        } catch (Exception e) {
-           e.printStackTrace();
            log.info(e.getMessage());
-           result.error500("操作失败");
+           return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
        }
-       return result;
    }
 
    /**
