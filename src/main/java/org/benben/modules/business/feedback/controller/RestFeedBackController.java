@@ -54,16 +54,14 @@ public class RestFeedBackController {
 
    /**
      * 分页列表查询
-    * @param storeId
+    *
     * @return
     */
-   @PostMapping(value = "/list" )
+   @PostMapping(value = "/queryFeedBackList" )
    @ApiOperation(value = "用户系统反馈展示接口", tags = {"用户接口"}, notes = "用户系统反馈展示接口")
-   @ApiImplicitParam(name = "storeId", value = "商家的id",required = true )
-   public RestResponseBean queryList(@RequestParam(name = "storeId",required = true) String storeId) {
-       QueryWrapper<FeedBack> queryWrapper = new QueryWrapper<>();
-       queryWrapper.eq("store_id",storeId);
-       List<FeedBack> feedBackList = feedBackService.list(queryWrapper);
+   public RestResponseBean queryFeedBackList() {
+
+       List<FeedBack> feedBackList = feedBackService.list(null);
        if(feedBackList != null){
            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),feedBackList);
        }
