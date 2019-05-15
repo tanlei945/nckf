@@ -274,7 +274,7 @@ public class RestUserController {
      * @return
      */
     @PostMapping(value = "/user_register")
-    @ApiOperation(value = "用户注册", tags = {"登录接口"}, notes = "用户注册")
+    @ApiOperation(value = "用户注册", tags = {"用户接口"}, notes = "用户注册")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "mobile",value = "用户手机号",dataType = "String",defaultValue = "1",required = true),
             @ApiImplicitParam(name = "password",value = "用户密码",dataType = "String",defaultValue = "1",required = true)
@@ -316,7 +316,7 @@ public class RestUserController {
      * @return
      */
     @PostMapping(value = "/rider_register")
-    @ApiOperation(value = "骑手注册", tags = {"登录接口"}, notes = "骑手注册")
+    @ApiOperation(value = "骑手注册", tags = {"用户接口"}, notes = "骑手注册")
     public RestResponseBean riderRegister(@RequestBody UserStoreVo userStoreVo) {
 
         User user = new User();
@@ -360,7 +360,7 @@ public class RestUserController {
      * @return
      */
     @PostMapping(value = "/login")
-    @ApiOperation(value = "账户密码登录", tags = {"登录接口"}, notes = "账户密码登录")
+    @ApiOperation(value = "账户密码登录", tags = {"用户接口"}, notes = "账户密码登录")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "mobile",value = "用户手机号",dataType = "String",defaultValue = "1",required = true),
             @ApiImplicitParam(name = "password",value = "用户密码",dataType = "String",defaultValue = "1",required = true)
@@ -393,7 +393,7 @@ public class RestUserController {
      * @return
      */
     @GetMapping("/logOut")
-    @ApiOperation(value = "退出", tags = {"登录接口"}, notes = "退出")
+    @ApiOperation(value = "退出", tags = {"用户接口"}, notes = "退出")
     public RestResponseBean logOut() {
 
         User user = (User) SecurityUtils.getSubject().getPrincipal();
@@ -413,7 +413,7 @@ public class RestUserController {
      * @return
      */
     @PostMapping(value = "/mobile_login")
-    @ApiOperation(value = "手机验证码登录", tags = {"登录接口"}, notes = "手机验证码登录")
+    @ApiOperation(value = "手机验证码登录", tags = {"用户接口"}, notes = "手机验证码登录")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "mobile",value = "用户手机号",dataType = "String",defaultValue = "1",required = true),
             @ApiImplicitParam(name = "password",value = "用户密码",dataType = "String",defaultValue = "1",required = true)
@@ -469,7 +469,7 @@ public class RestUserController {
      * @param mobile
      */
     @GetMapping(value = "/third")
-    @ApiOperation(value = "三方登录", tags = {"登录接口"}, notes = "三方登录")
+    @ApiOperation(value = "三方登录", tags = {"用户接口"}, notes = "三方登录")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "platform",value = "平台类型('1':QQ,'2':微信,'3':微博)",dataType = "String",defaultValue = "1",required = true),
             @ApiImplicitParam(name = "mobile",value = "用户密码",dataType = "String",defaultValue = "1",required = true)
@@ -584,9 +584,9 @@ public class RestUserController {
     }
 
     @GetMapping(value = "is_exist_mobile")
-    @ApiOperation(value = "手机号是否已被注册",tags = {"登录接口"},notes = "手机号是否已被注册")
+    @ApiOperation(value = "手机号是否已被注册",tags = {"用户接口"},notes = "手机号是否已被注册")
     @ApiImplicitParam(name = "mobile",value = "用户手机号",dataType = "String",defaultValue = "1",required = true)
-    public RestResponseBean isExistMobile(String mobile){
+    public RestResponseBean isExistMobile(@RequestParam String mobile){
 
         User user = userService.queryByMobile(mobile);
 
