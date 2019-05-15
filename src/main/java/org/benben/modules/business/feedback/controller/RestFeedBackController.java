@@ -77,17 +77,14 @@ public class RestFeedBackController {
     * @return
     */
    @PostMapping(value = "/add")
-   @ApiOperation(value = "用户系统反馈添加接口(del_flag：0已删除 1未删除)", tags = {"用户接口"}, notes = "用户系统反馈添加接口(del_flag：0已删除 1未删除)")
+   @ApiOperation(value = "用户系统反馈添加接口", tags = {"用户接口"}, notes = "用户系统反馈添加接口")
    @ApiImplicitParams({
            @ApiImplicitParam(name = "orderId", value = "商家的id"),
            @ApiImplicitParam(name = "feedBack", value = "反馈实体"),
            @ApiImplicitParam(name = "files", value = "上传的文件")
    })
    public RestResponseBean add(@RequestParam(name="orderId",required=true)String orderId, FeedBack feedBack, @RequestParam(name = "file") MultipartFile[] files) {
-
-       log.info("本次上传的文件的数量为-------->"+files.length);
-
-
+       log.info("本次上传的文件的数量为-------->" + files.length);
        User userEntity = (User) SecurityUtils.getSubject().getPrincipal();
        String bizPath = "feedback";
        String nowday = new SimpleDateFormat("yyyyMMdd").format(new Date());
@@ -119,10 +116,10 @@ public class RestFeedBackController {
            order.setId(orderId);
            order.setStatus("4");
            orderService.updateById(order);
-           return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
+           return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
        } catch (Exception e) {
            log.info(e.getMessage());
-           return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+           return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
        }
    }
 
@@ -148,7 +145,7 @@ public class RestFeedBackController {
         for (FeedBack record : records) {
             String userId = record.getUserId();
             User user = userService.getById(userId);
-            if(user != null){
+            if (user != null) {
                 record.setUsername(user.getUsername());
             }
         }
