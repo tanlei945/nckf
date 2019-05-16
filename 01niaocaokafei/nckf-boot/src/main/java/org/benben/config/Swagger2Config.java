@@ -31,18 +31,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class Swagger2Config implements WebMvcConfigurer {
 
 	/**
-	 *
-	 * 显示swagger-ui.html文档展示页，还必须注入swagger资源：
-	 * 
-	 * @param registry
-	 */
-	@Override
-	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
-		registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
-	}
-
-	/**
 	 * swagger2的配置文件，这里可以配置swagger2的一些基本的内容，比如扫描的包等等
 	 *
 	 * @return Docket
