@@ -41,7 +41,7 @@ public class DictAspect {
     @Autowired
     private ISysDictService dictService;
     // 定义切点Pointcut
-    @Pointcut("execution(public * org.benben.modules.*.*.*Controller.*(..))")
+    @Pointcut("execution(public * org.benben.modules.*.*.*.*Controller.*(..))")
     public void excudeService() {
     }
 
