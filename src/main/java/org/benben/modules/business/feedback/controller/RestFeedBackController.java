@@ -74,14 +74,14 @@ public class RestFeedBackController {
     * @param feedBack
     * @return
     */
-   @PostMapping(value = "/add")
+   @PostMapping(value = "/addFeedBack")
    @ApiOperation(value = "用户系统反馈添加接口", tags = {"用户接口"}, notes = "用户系统反馈添加接口")
    @ApiImplicitParams({
            @ApiImplicitParam(name = "orderId", value = "商家的id"),
            @ApiImplicitParam(name = "feedBack", value = "反馈实体"),
            @ApiImplicitParam(name = "files", value = "上传的文件")
    })
-   public RestResponseBean add(@RequestParam(name="orderId",required=true)String orderId, FeedBack feedBack, @RequestParam(name = "file") MultipartFile[] files) {
+   public RestResponseBean addFeedBack(@RequestParam(name="orderId",required=true)String orderId, FeedBack feedBack, @RequestParam(name = "file") MultipartFile[] files) {
        log.info("本次上传的文件的数量为-------->" + files.length);
        User userEntity = (User) SecurityUtils.getSubject().getPrincipal();
        String bizPath = "feedback";
