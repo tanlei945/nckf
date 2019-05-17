@@ -40,13 +40,13 @@ public class RestSmsController {
     private ISMSService ismsService;
 
 
-    @PostMapping(value = "/third_send")
+    @PostMapping(value = "/thirdSend")
     @ApiOperation(value = "发送验证码 ",tags = {"短信接口"},notes = "发送验证码 ")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "mobile",value = "手机号",dataType = "String",required = true),
             @ApiImplicitParam(name = "event",value = "事件",dataType = "String",defaultValue = "register",required = true)
     })
-    public RestResponseBean third_send(@RequestParam String mobile,@RequestParam String event) {
+    public RestResponseBean thirdSend(@RequestParam String mobile,@RequestParam String event) {
 
         if (StringUtils.isBlank(mobile)|| StringUtils.isBlank(event)) {
             return new RestResponseBean(ResultEnum.PARAMETER_MISSING.getValue(), ResultEnum.PARAMETER_MISSING.getDesc(), null);
@@ -68,7 +68,7 @@ public class RestSmsController {
 
     }
 
-    @PostMapping(value = "/ali_send")
+    @PostMapping(value = "/aliSend")
 //    @ApiOperation(value = "使用阿里云发送验证码 ",tags = {"短信接口"},notes = "使用阿里云发送验证码 ")
     public RestResponseBean aliSend(@RequestParam String mobile,@RequestParam String event) {
 
@@ -89,7 +89,7 @@ public class RestSmsController {
 
     }
 
-    @PostMapping(value = "/tencent_send")
+    @PostMapping(value = "/tencentSend")
 //    @ApiOperation(value = "使用腾讯云发送验证码 ",tags = {"短信接口"},notes = "使用腾讯云发送验证码 ")
     public RestResponseBean tencentSend(@RequestParam String mobile,@RequestParam String event) {
 
@@ -119,9 +119,9 @@ public class RestSmsController {
      * @param bindingResult
      * @return
      */
-    @GetMapping(value = "/check")
+    @GetMapping(value = "/checkSend")
     @ApiOperation(value = "检验短信验证码", tags = {"短信接口"},notes = "检验短信验证码")
-    public RestResponseBean check(@Valid SmsDTO smsDTO, BindingResult bindingResult) {
+    public RestResponseBean checkSend(@Valid SmsDTO smsDTO, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors() || StringUtils.isBlank(smsDTO.getCaptcha())) {
             return new RestResponseBean(ResultEnum.PARAMETER_MISSING.getValue(), ResultEnum.PARAMETER_MISSING.getDesc(), null);
@@ -163,9 +163,9 @@ public class RestSmsController {
     }
 
 
-    @PostMapping(value = "/test_send")
+    @PostMapping(value = "/testSend")
     @ApiOperation(value = "测试发送验证码", tags = {"短信接口"},notes = "测试发送验证码")
-    public RestResponseBean test_send(@RequestParam String mobile, @RequestParam String event) {
+    public RestResponseBean testSend(@RequestParam String mobile, @RequestParam String event) {
 
         if (StringUtils.isBlank(mobile) || StringUtils.isBlank(event)) {
             return new RestResponseBean(ResultEnum.PARAMETER_MISSING.getValue(), ResultEnum.PARAMETER_MISSING.getDesc(), null);

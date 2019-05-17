@@ -42,13 +42,13 @@ public class RestAnnouncementController {
      * @param req
      * @return
      */
-    @GetMapping(value = "/list")
+    @GetMapping(value = "/queryAnnouncement")
     @ApiOperation(value = "通告详情列表", notes = "通告详情列表",tags = {"首页"})
     @ApiImplicitParams({
             @ApiImplicitParam(name="pageNo",value = "当前页",dataType = "Integer",defaultValue = "1"),
             @ApiImplicitParam(name="pageSize",value = "每页显示条数",dataType = "Integer",defaultValue = "10"),
     })
-    public RestResponseBean queryPageList(Announcement announcement,
+    public RestResponseBean queryAnnouncement(Announcement announcement,
                                                      @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                                      @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
                                                      HttpServletRequest req) {
@@ -63,12 +63,12 @@ public class RestAnnouncementController {
      * @param id
      * @return
      */
-    @GetMapping(value = "/query_by_id")
+    @GetMapping(value = "/queryAnnouncementById")
     @ApiOperation(value = "通过id查询通告详情", notes = "通过id查询通告详情",tags = {"首页"})
     @ApiImplicitParams({
             @ApiImplicitParam(name="id",value = "通告id",dataType = "String",required = true),
     })
-    public RestResponseBean queryById(@RequestParam(name="id",required=true) String id) {
+    public RestResponseBean queryAnnouncementById(@RequestParam(name="id",required=true) String id) {
         Announcement announcement = announcementService.getById(id);
         if(announcement==null) {
             return new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(),ResultEnum.QUERY_NOT_EXIST.getDesc(),null);

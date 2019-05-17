@@ -34,8 +34,8 @@ public class RestAddressController {
      * @param req
      * @return
      */
-    @GetMapping(value = "/list")
-    public RestResponseBean queryPageList(Address address,
+    @GetMapping(value = "/queryAddress")
+    public RestResponseBean queryAddress(Address address,
                                                 @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                                 @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
                                                 HttpServletRequest req) {
@@ -52,9 +52,9 @@ public class RestAddressController {
      * @param address
      * @return
      */
-    @PostMapping(value = "/add")
+    @PostMapping(value = "/addAddress")
     @ApiOperation(value = "添加地址", tags = {"用户接口"}, notes = "添加地址")
-    public RestResponseBean add(@RequestBody Address address) {
+    public RestResponseBean addAddress(@RequestBody Address address) {
 
         try {
             addressService.save(address);
@@ -72,9 +72,9 @@ public class RestAddressController {
      * @param address
      * @return
      */
-    @PostMapping(value = "/edit")
+    @PostMapping(value = "/editAddress")
     @ApiOperation(value = "编辑地址", tags = {"用户接口"}, notes = "编辑地址")
-    public RestResponseBean edit(@RequestBody Address address) {
+    public RestResponseBean editAddress(@RequestBody Address address) {
 
         Address addressEntity = addressService.getById(address.getId());
 
@@ -96,9 +96,9 @@ public class RestAddressController {
      * @param id
      * @return
      */
-    @PostMapping(value = "/delete")
+    @PostMapping(value = "/deleteAddress")
     @ApiOperation(value = "删除地址", tags = {"用户接口"}, notes = "删除地址")
-    public RestResponseBean delete(@RequestParam(name="id",required=true) String id) {
+    public RestResponseBean deleteAddress(@RequestParam(name="id",required=true) String id) {
 
         Address address = addressService.getById(id);
 
@@ -114,7 +114,7 @@ public class RestAddressController {
         return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),address);
     }
 
-    @PostMapping("/edit_default_address")
+    @PostMapping("/editDefaultAddress")
     @ApiOperation(value = "修改默认地址", tags = {"用户接口"}, notes = "修改默认地址")
     public RestResponseBean editDefaultAddress(@RequestParam String userid,@RequestParam String id){
 
@@ -128,7 +128,7 @@ public class RestAddressController {
     }
 
 
-    @GetMapping("/query_distance")
+    @GetMapping("/queryDistance")
     @ApiOperation(value = "骑手距离",tags={"首页"},notes = "骑手距离")
     public RestResponseBean queryDistance(@RequestParam String lng, @RequestParam String lat, @RequestParam String riderId){
         //获取骑手地点

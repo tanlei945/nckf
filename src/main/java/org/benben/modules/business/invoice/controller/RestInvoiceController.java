@@ -55,10 +55,10 @@ public class RestInvoiceController {
     * @param userId
     * @return
     */
-   @GetMapping(value = "/list")
+   @GetMapping(value = "/queryInvoice")
    @ApiOperation(value = "用户发票查询接口", tags = {"用户接口"}, notes = "用户发票查询接口")
    @ApiImplicitParam(name = "userId", value = "用户id",required = true)
-   public RestResponseBean queryPageList(@RequestParam(name = "userId",required = true) String userId) {
+   public RestResponseBean queryInvoice(@RequestParam(name = "userId",required = true) String userId) {
        QueryWrapper<Invoice> queryWrapper = new QueryWrapper<>();
        queryWrapper.eq("userId",userId);
        List<Invoice> invoiceList = invoiceService.list(queryWrapper);
@@ -73,13 +73,13 @@ public class RestInvoiceController {
     * @param invoice
     * @return
     */
-   @PostMapping(value = "/add")
+   @PostMapping(value = "/addInvoice")
    @ApiOperation(value = "用户发票提交接口", tags = {"用户接口"}, notes = "用户发票提交接口")
    @ApiImplicitParams({
            @ApiImplicitParam(name = "invoice", value = "发票实体"),
            @ApiImplicitParam(name = "orderIdList", value = "选中订单的id")
    })
-   public RestResponseBean add(Invoice invoice,@RequestParam(value = "orderIdList",required = true)List<String> orderIdList) {
+   public RestResponseBean addInvoice(Invoice invoice,@RequestParam(value = "orderIdList",required = true)List<String> orderIdList) {
        //从数据库中获取用户所需的实际开票金额
        double sum = 0;
        QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
@@ -122,10 +122,10 @@ public class RestInvoiceController {
     * @param invoice
     * @return
     */
-   @PostMapping(value = "/edit")
+   @PostMapping(value = "/editInvoice")
    @ApiOperation(value = "用户发票编辑接口", tags = {"用户接口"}, notes = "用户发票编辑接口")
    @ApiImplicitParam(name = "invoice", value = "发票实体")
-   public RestResponseBean edit(Invoice invoice) {
+   public RestResponseBean editInvoice(Invoice invoice) {
        Invoice invoiceEntity = invoiceService.getById(invoice.getId());
        if(invoiceEntity==null) {
            return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
@@ -144,9 +144,9 @@ public class RestInvoiceController {
     * @param id
     * @return
     */
-   @DeleteMapping(value = "/delete")
+   @DeleteMapping(value = "/deleteInvoiceById")
    @ApiImplicitParam(name = "id", value = "发票id",required = true )
-   public RestResponseBean deletebyId(@RequestParam(name="id",required=true) String id) {
+   public RestResponseBean deleteInvoiceById(@RequestParam(name="id",required=true) String id) {
        Invoice invoice = invoiceService.getById(id);
        if(invoice==null) {
            return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
@@ -165,9 +165,9 @@ public class RestInvoiceController {
     * @param ids
     * @return
     */
-   @DeleteMapping(value = "/deleteBatch")
+   @DeleteMapping(value = "/deleteBatchInvoice")
    @ApiImplicitParam(name = "ids", value = "选中发票的id",required = true )
-   public RestResponseBean deleteBatch(@RequestParam(name="ids",required=true) String ids) {
+   public RestResponseBean deleteBatchInvoice(@RequestParam(name="ids",required=true) String ids) {
        if(ids==null || "".equals(ids.trim())) {
            return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
        }else {
@@ -181,9 +181,9 @@ public class RestInvoiceController {
     * @param id
     * @return
     */
-   @GetMapping(value = "/queryById")
+   @GetMapping(value = "/queryInvoiceById")
    @ApiImplicitParam(name = "id", value = "发票id",required = true )
-   public RestResponseBean queryById(@RequestParam(name="id",required=true) String id) {
+   public RestResponseBean queryInvoiceById(@RequestParam(name="id",required=true) String id) {
        Result<Invoice> result = new Result<Invoice>();
        Invoice invoice = invoiceService.getById(id);
        if(invoice==null) {
@@ -199,10 +199,10 @@ public class RestInvoiceController {
      * @param userId
      * @return
      */
-    @GetMapping(value = "/title/list")
+    @GetMapping(value = "/title/queryInvoiceTitle")
     @ApiOperation(value = "用户发票抬头查询接口", tags = {"用户接口"}, notes = "用户发票抬头查询接口")
     @ApiImplicitParam(name = "userId", value = "用户id")
-    public RestResponseBean queryList(@RequestParam(name = "userId",required = true) String userId) {
+    public RestResponseBean queryInvoiceTitle(@RequestParam(name = "userId",required = true) String userId) {
         QueryWrapper<InvoiceTitle> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id", userId);
         InvoiceTitle invoiceTitle = invoiceTitleService.getOne(queryWrapper);
@@ -218,9 +218,9 @@ public class RestInvoiceController {
      * @param invoiceTitle
      * @return
      */
-    @PostMapping(value = "/title/add")
+    @PostMapping(value = "/title/addInvoiceTitle")
     @ApiOperation(value = "用户发票头提交接口", tags = {"用户接口"}, notes = "用户发票头提交接口")
-    public RestResponseBean add(@RequestBody InvoiceTitle invoiceTitle) {
+    public RestResponseBean addInvoiceTitle(@RequestBody InvoiceTitle invoiceTitle) {
         if(invoiceTitle.getUserId() == null && invoiceTitle.getUserId()==""){
             return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
         }else{
@@ -252,10 +252,10 @@ public class RestInvoiceController {
      * @param id
      * @return
      */
-    @PostMapping(value = "/title/delete")
+    @PostMapping(value = "/title/deleteInvoiceTitle")
    /* @ApiOperation(value = "用户发票头根据id删除接口", tags = {"用户接口"}, notes = "用户发票头根据id删除接口")*/
     @ApiImplicitParam(name = "id", value = "发票头id",required = true )
-    public RestResponseBean delete(@RequestParam(name="id",required=true) String id) {
+    public RestResponseBean deleteInvoiceTitle(@RequestParam(name="id",required=true) String id) {
         Result<InvoiceTitle> result = new Result<InvoiceTitle>();
         InvoiceTitle invoiceTitle = invoiceTitleService.getById(id);
         if(invoiceTitle==null) {

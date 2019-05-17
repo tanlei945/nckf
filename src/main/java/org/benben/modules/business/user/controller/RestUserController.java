@@ -92,10 +92,10 @@ public class RestUserController {
      * @param id
      * @return
      */
-    @GetMapping(value = "/query_by_id")
+    @GetMapping(value = "/queryUserById")
     @ApiOperation(value = "通过id查询用户", tags = {"用户接口"}, notes = "通过id查询用户")
     @ApiImplicitParam(name = "id",value = "用户密码",dataType = "String",defaultValue = "1",required = true)
-    public RestResponseBean queryById(@RequestParam(name="id",required=true) String id) {
+    public RestResponseBean queryUserById(@RequestParam(name="id",required=true) String id) {
 
         User user = userService.getById(id);
 
@@ -112,9 +112,9 @@ public class RestUserController {
      * @param user
      * @return
      */
-    @PostMapping(value = "/edit")
+    @PostMapping(value = "/editUser")
     @ApiOperation(value = "用户修改", tags = {"用户接口"}, notes = "用户修改")
-    public RestResponseBean edit(@RequestBody User user) {
+    public RestResponseBean editUser(@RequestBody User user) {
 
         User userEntity = userService.getById(user.getId());
 
@@ -139,7 +139,7 @@ public class RestUserController {
         return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),user);
     }
 
-    @PostMapping(value = "/change_avatar")
+    @PostMapping(value = "/changeAvatar")
     @ApiOperation(value = "修改头像", tags = {"用户接口"}, notes = "修改头像")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId",value = "用户的ID",dataType = "String",defaultValue = "1",required = true),
@@ -168,7 +168,7 @@ public class RestUserController {
     }
 
 
-    @PostMapping(value = "/change_username")
+    @PostMapping(value = "/changeUsername")
     @ApiOperation(value = "修改用户名", tags = {"用户接口"}, notes = "修改用户名")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId",value = "用户的ID",dataType = "String",defaultValue = "1",required = true),
@@ -200,7 +200,7 @@ public class RestUserController {
      * @param mobile
      * @return
      */
-    @PostMapping(value = "/change_mobile")
+    @PostMapping(value = "/changeMobile")
     @ApiOperation(value = "修改手机号", tags = {"用户接口"}, notes = "修改手机号")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId",value = "用户的ID",dataType = "String",defaultValue = "1",required = true),
@@ -234,7 +234,7 @@ public class RestUserController {
     }
 
 
-    @PostMapping(value = "/forget_password")
+    @PostMapping(value = "/forgetPassword")
     @ApiOperation(value = "忘记密码/修改密码", tags = {"用户接口"}, notes = "忘记密码/修改密码")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "mobile",value = "用户手机号",dataType = "String",defaultValue = "1",required = true),
@@ -273,13 +273,13 @@ public class RestUserController {
      * @param password
      * @return
      */
-    @PostMapping(value = "/user_register")
+    @PostMapping(value = "/userRegister")
     @ApiOperation(value = "用户注册", tags = {"用户接口"}, notes = "用户注册")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "mobile",value = "用户手机号",dataType = "String",defaultValue = "1",required = true),
             @ApiImplicitParam(name = "password",value = "用户密码",dataType = "String",defaultValue = "1",required = true)
     })
-    public RestResponseBean register(@RequestParam String mobile, @RequestParam String password) {
+    public RestResponseBean userRegister(@RequestParam String mobile, @RequestParam String password) {
 
         User user = new User();
         Account account = new Account();
@@ -315,7 +315,7 @@ public class RestUserController {
      * @param userStoreVo
      * @return
      */
-    @PostMapping(value = "/rider_register")
+    @PostMapping(value = "/riderRegister")
     @ApiOperation(value = "骑手注册", tags = {"用户接口"}, notes = "骑手注册")
     public RestResponseBean riderRegister(@RequestBody UserStoreVo userStoreVo) {
 
@@ -412,7 +412,7 @@ public class RestUserController {
      * @param bindingResult
      * @return
      */
-    @PostMapping(value = "/mobile_login")
+    @PostMapping(value = "/mobilelogin")
     @ApiOperation(value = "手机验证码登录", tags = {"用户接口"}, notes = "手机验证码登录")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "mobile",value = "用户手机号",dataType = "String",defaultValue = "1",required = true),
@@ -468,13 +468,13 @@ public class RestUserController {
      * @param platform
      * @param mobile
      */
-    @GetMapping(value = "/third")
+    @GetMapping(value = "/thirdLogin")
     @ApiOperation(value = "三方登录", tags = {"用户接口"}, notes = "三方登录")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "platform",value = "平台类型('1':QQ,'2':微信,'3':微博)",dataType = "String",defaultValue = "1",required = true),
             @ApiImplicitParam(name = "mobile",value = "用户密码",dataType = "String",defaultValue = "1",required = true)
     })
-    public void third(@RequestParam String platform, @RequestParam String mobile, HttpServletResponse response){
+    public void thirdLogin(@RequestParam String platform, @RequestParam String mobile, HttpServletResponse response){
 
         switch (platform){
             case "1":
@@ -539,7 +539,7 @@ public class RestUserController {
      * @param request
      * @return
      */
-    @GetMapping(value = "/qq_login_callback")
+    @GetMapping(value = "/qqLoginCallback")
     public RestResponseBean qqLoginCallback(HttpServletRequest request) {
 
         //获取回调
@@ -555,8 +555,8 @@ public class RestUserController {
      * @param request
      * @return
      */
-    @GetMapping(value = "/wx_login_callBack")
-    public RestResponseBean wxCallBack(HttpServletRequest request) {
+    @GetMapping(value = "/wxLoginCallBack")
+    public RestResponseBean wxLoginCallBack(HttpServletRequest request) {
 
         User userEntity = null;
         //获取回调
@@ -572,8 +572,8 @@ public class RestUserController {
      * @param request
      * @return
      */
-    @GetMapping(value = "/wb_login_callback")
-    public RestResponseBean wbCallBack(HttpServletRequest request) {
+    @GetMapping(value = "/wbLoginCallBack")
+    public RestResponseBean wbLoginCallBack(HttpServletRequest request) {
 
         User userEntity = null;
         //获取回调
@@ -583,7 +583,7 @@ public class RestUserController {
         return publicCallBack(openid,mobile,"2");
     }
 
-    @GetMapping(value = "is_exist_mobile")
+    @GetMapping(value = "/isExistMobile")
     @ApiOperation(value = "手机号是否已被注册",tags = {"用户接口"},notes = "手机号是否已被注册")
     @ApiImplicitParam(name = "mobile",value = "用户手机号",dataType = "String",defaultValue = "1",required = true)
     public RestResponseBean isExistMobile(@RequestParam String mobile){

@@ -38,10 +38,10 @@ public class RestAccountController {
 
 
 
-    @GetMapping(value = "/query_by_id")
+    @GetMapping(value = "/queryAccount")
     @ApiOperation(value = "账单/钱包详情", tags = {"用户接口"}, notes = "账单/钱包详情")
     @ApiImplicitParam(name = "userId",value = "用户的ID",dataType = "String",required = true)
-    public RestResponseBean queryById(@RequestParam String userId) {
+    public RestResponseBean queryAccount(@RequestParam String userId) {
 
         Account account = accountService.queryByUserId(userId);
 
@@ -52,7 +52,7 @@ public class RestAccountController {
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),account);
     }
 
-    @GetMapping(value = "/is_pay_password")
+    @GetMapping(value = "/isPayPassword")
     @ApiOperation(value = "是否设置支付密码", tags = {"用户接口"}, notes = "是否设置支付密码")
     @ApiImplicitParam(name = "userId",value = "用户的ID",dataType = "String",required = true)
     public RestResponseBean isPayPassword(String userId){
@@ -65,7 +65,7 @@ public class RestAccountController {
     }
 
 
-    @GetMapping(value = "is_withdraw_account")
+    @GetMapping(value = "isWithdrawAccount")
     @ApiOperation(value = "是否设置收款账户", tags = {"用户接口"}, notes = "是否设置收款账户")
     @ApiImplicitParam(name = "userId",value = "用户的ID",dataType = "String",required = true)
     public RestResponseBean isWithdrawAccount(String userId){
@@ -77,7 +77,7 @@ public class RestAccountController {
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),"已设置收款账户",null);
     }
 
-    @GetMapping("/check_pay_password")
+    @GetMapping("/checkPayPassword")
     @ApiOperation(value = "支付密码是否正确",tags = {"用户接口"},notes = "支付密码是否正确")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId",value = "用户的ID",dataType = "String",required = true),
@@ -101,13 +101,13 @@ public class RestAccountController {
     }
 
 
-    @GetMapping(value = "/reset_pay_password")
+    @GetMapping(value = "/resetPayPassword")
     @ApiOperation(value = "重置支付密码", tags = {"用户接口"}, notes = "重置支付密码")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId",value = "用户的ID",dataType = "String",required = true),
             @ApiImplicitParam(name = "newPayPassword",value = "支付密码",dataType = "String",required = true)
     })
-    public RestResponseBean resetPayPassword(String userId,String newPayPassword){
+    public RestResponseBean resetPayPassword(@RequestParam String userId,@RequestParam String newPayPassword){
 
         if (accountService.resetPayPassword(userId,newPayPassword)){
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);

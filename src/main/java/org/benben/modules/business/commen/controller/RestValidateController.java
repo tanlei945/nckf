@@ -26,9 +26,9 @@ public class RestValidateController {
     @Autowired
     private IEmailServe emailServe;
 
-    @GetMapping(value = "/check_email_available")
+    @GetMapping(value = "/checkEmailAvailable")
     @ApiOperation(value = "检测邮箱",tags = {"检测接口"},notes = "检测邮箱")
-    public RestResponseBean check_email_available(@RequestParam(name = "email")String email, @RequestParam(name="id")String id){
+    public RestResponseBean checkEmailAvailable(@RequestParam(name = "email")String email, @RequestParam(name="id")String id){
         String msg ="";
         int code = 0;
         try {
@@ -44,9 +44,9 @@ public class RestValidateController {
         RestResponseBean RestResponseBean = new RestResponseBean(code,msg,null);
         return RestResponseBean;
     }
-    @GetMapping("/check_email_exist")
+    @GetMapping("/checkEmailExist")
     @ApiOperation(value = "检测邮箱",tags = {"检测接口"},notes = "检测邮箱")
-    public RestResponseBean check_email_exist(@RequestParam(name = "mobile")String email) {
+    public RestResponseBean checkEmailExist(@RequestParam(name = "mobile")String email) {
         String msg = "";
         int code = 0;
         String i = validateService.isExistEmail(email);
@@ -55,9 +55,9 @@ public class RestValidateController {
         RestResponseBean RestResponseBean = new RestResponseBean(code, msg, null);
         return RestResponseBean;
     }
-    @GetMapping(value = "/check_username_available")
+    @GetMapping(value = "/checkUsernameAvailable")
     @ApiOperation(value = "检测用户名",tags = {"检测接口"},notes = "检测用户名")
-    public RestResponseBean check_username_available(@RequestParam(name = "username")String username, @RequestParam(name="id")String id){
+    public RestResponseBean checkUsernameAvailable(@RequestParam(name = "username")String username, @RequestParam(name="id")String id){
         String msg ="";
         int code = 0;
         try {
@@ -73,9 +73,9 @@ public class RestValidateController {
         RestResponseBean RestResponseBean = new RestResponseBean(code,msg,null);
         return RestResponseBean;
     }
-    @GetMapping(value = "/check_mobile_available")
+    @GetMapping(value = "/checkMobileAvailable")
     @ApiOperation(value = "检测手机",tags = {"检测接口"},notes = "检测手机")
-    public RestResponseBean check_mobile_available(@RequestParam(name = "mobile")String mobile, @RequestParam(name="id")String id){
+    public RestResponseBean checkMobileAvailable(@RequestParam(name = "mobile")String mobile, @RequestParam(name="id")String id){
         String msg ="";
         int code = 0;
         try {
@@ -92,9 +92,9 @@ public class RestValidateController {
         return RestResponseBean;
     }
 
-    @GetMapping("/check_mobile_exist")
+    @GetMapping("/checkMobileExist")
     @ApiOperation(value = "检测手机",tags = {"检测接口"},notes = "检测手机")
-    public RestResponseBean check_mobile_exist(@RequestParam(name = "mobile")String mobile) {
+    public RestResponseBean checkMobileExist(@RequestParam(name = "mobile")String mobile) {
         String msg = "";
         int code = 0;
         String i = validateService.isExistMobile(mobile);
@@ -103,9 +103,9 @@ public class RestValidateController {
         RestResponseBean RestResponseBean = new RestResponseBean(code, msg, null);
         return RestResponseBean;
     }
-    @GetMapping("/check_ems_correct")
+    @GetMapping("/checkEmsCorrect")
     @ApiOperation(value = "检测邮箱验证码",tags = {"检测接口"},notes = "检测邮箱验证码")
-    public RestResponseBean check_ems_correct(@RequestParam(name = "email")String email, @RequestParam(name = "captcha")String captcha,
+    public RestResponseBean checkEmsCorrect(@RequestParam(name = "email")String email, @RequestParam(name = "captcha")String captcha,
                                               @RequestParam(name = "event")String event) {
         Boolean aBoolean = validateService.captchaValidate(email,captcha,event);
         if(aBoolean){
@@ -116,8 +116,8 @@ public class RestValidateController {
     }
 
 
-    @GetMapping("/check")
-    public RestResponseBean check_ems_mobile(@RequestParam(name = "mobile")String mobile, @RequestParam(name = "captcha")String captcha,
+    @GetMapping("/checkEmsMobile")
+    public RestResponseBean checkEmsMobile(@RequestParam(name = "mobile")String mobile, @RequestParam(name = "captcha")String captcha,
                                              @RequestParam(name = "event")String event) {
         Boolean aBoolean = validateService.captchaValidate_mobile(mobile,captcha,event);
         if(aBoolean){

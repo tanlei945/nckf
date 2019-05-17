@@ -45,9 +45,9 @@ public class RestWithdrawController {
      * @param req
      * @return
      */
-    @GetMapping(value = "/list")
+    @GetMapping(value = "/queryWithdraw")
     @ApiOperation(value = "提现记录", tags = {"用户接口"}, notes = "提现记录")
-    public RestResponseBean queryPageList(Withdraw withdraw,
+    public RestResponseBean queryWithdraw(Withdraw withdraw,
                                           @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
                                           @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
                                           HttpServletRequest req) {
@@ -66,9 +66,9 @@ public class RestWithdrawController {
      * @param id
      * @return
      */
-    @GetMapping(value = "/query_by_id")
+    @GetMapping(value = "/queryWithdrawById")
     @ApiOperation(value = "提现详情", tags = {"用户接口"}, notes = "提现详情")
-    public RestResponseBean queryById(@RequestParam(name = "id", required = true) String id) {
+    public RestResponseBean queryWithdrawById(@RequestParam(name = "id", required = true) String id) {
 
         Withdraw withdraw = withdrawService.getById(id);
 
@@ -85,7 +85,7 @@ public class RestWithdrawController {
      * @param money
      * @return
      */
-    @PostMapping(value = "/withdraw_apply")
+    @PostMapping(value = "/withdrawApply")
     @ApiOperation(value = "账户提现申请", tags = {"用户接口"}, notes = "账户提现申请")
     public RestResponseBean withdrawApply(@RequestParam String userId,@RequestParam Double money) {
 
