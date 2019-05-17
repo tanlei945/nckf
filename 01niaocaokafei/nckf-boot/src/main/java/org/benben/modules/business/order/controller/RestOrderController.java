@@ -199,9 +199,9 @@ public class RestOrderController {
     * @param id
     * @return
     */
-   @GetMapping(value = "/queryOrderGoodsListByMainId")
+   @GetMapping(value = "/queryOrderGoods")
    @ApiOperation(value = "用户查询单个订单（包括商品详情）接口", tags = {"订单购物车接口"}, notes = "用户查询订单个（包括商品详情）接口")
-   public RestResponseBean queryOrderGoodsListByMainId(@RequestParam(name="id",required=true)String id) {
+   public RestResponseBean queryOrderGoods(@RequestParam(name="id",required=true)String id) {
        List<OrderGoods> orderGoodsList = orderGoodsService.selectByMainId(id);
        if(orderGoodsList!=null){
            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),orderGoodsList);
