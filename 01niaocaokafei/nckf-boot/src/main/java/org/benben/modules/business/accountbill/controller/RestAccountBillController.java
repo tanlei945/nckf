@@ -41,9 +41,9 @@ public class RestAccountBillController {
     * @param req
     * @return
     */
-   @GetMapping(value = "/list")
+   @GetMapping(value = "/queryAccountBill")
    @ApiOperation(value = "账单列表", tags = {"用户接口"}, notes = "账单列表")
-   public RestResponseBean queryPageList(AccountBill accountBill,
+   public RestResponseBean queryAccountBill(AccountBill accountBill,
                                      @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                      @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
                                      HttpServletRequest req) {
@@ -60,10 +60,10 @@ public class RestAccountBillController {
     * @param id
     * @return
     */
-   @GetMapping(value = "/query_by_id")
+   @GetMapping(value = "/queryAccountBillById")
    @ApiOperation(value = "账单详情", tags = {"用户接口"}, notes = "账单详情")
    @ApiImplicitParam(name = "id",value = "账单的ID",dataType = "String",required = true)
-   public RestResponseBean queryById(@RequestParam(name="id",required=true) String id) {
+   public RestResponseBean queryAccountBillById(@RequestParam(name="id",required=true) String id) {
 
        AccountBill accountBill = accountBillService.getById(id);
 

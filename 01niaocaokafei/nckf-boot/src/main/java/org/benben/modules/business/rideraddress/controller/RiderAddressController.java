@@ -54,8 +54,8 @@ public class RiderAddressController {
 	 * @param req
 	 * @return
 	 */
-	@GetMapping(value = "/list")
-	public Result<IPage<RiderAddress>> queryPageList(RiderAddress riderAddress,
+	@GetMapping(value = "/queryiderAddress")
+	public Result<IPage<RiderAddress>> queryiderAddress(RiderAddress riderAddress,
 									  @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
 									  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 									  HttpServletRequest req) {
@@ -73,8 +73,8 @@ public class RiderAddressController {
 	 * @param riderAddress
 	 * @return
 	 */
-	@PostMapping(value = "/add")
-	public Result<RiderAddress> add(@RequestBody RiderAddress riderAddress) {
+	@PostMapping(value = "/addRiderAddress")
+	public Result<RiderAddress> addRiderAddress(@RequestBody RiderAddress riderAddress) {
 		Result<RiderAddress> result = new Result<RiderAddress>();
 		try {
 			riderAddressService.save(riderAddress);
@@ -92,8 +92,8 @@ public class RiderAddressController {
 	 * @param riderAddress
 	 * @return
 	 */
-	@PutMapping(value = "/edit")
-	public Result<RiderAddress> edit(@RequestBody RiderAddress riderAddress) {
+	@PutMapping(value = "/editRiderAddress")
+	public Result<RiderAddress> editRiderAddress(@RequestBody RiderAddress riderAddress) {
 		Result<RiderAddress> result = new Result<RiderAddress>();
 		RiderAddress riderAddressEntity = riderAddressService.getById(riderAddress.getId());
 		if(riderAddressEntity==null) {
@@ -114,8 +114,8 @@ public class RiderAddressController {
 	 * @param id
 	 * @return
 	 */
-	@DeleteMapping(value = "/delete")
-	public Result<RiderAddress> delete(@RequestParam(name="id",required=true) String id) {
+	@DeleteMapping(value = "/deleteRiderAddress")
+	public Result<RiderAddress> deleteRiderAddress(@RequestParam(name="id",required=true) String id) {
 		Result<RiderAddress> result = new Result<RiderAddress>();
 		RiderAddress riderAddress = riderAddressService.getById(id);
 		if(riderAddress==null) {
@@ -135,8 +135,8 @@ public class RiderAddressController {
 	 * @param ids
 	 * @return
 	 */
-	@DeleteMapping(value = "/deleteBatch")
-	public Result<RiderAddress> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
+	@DeleteMapping(value = "/deleteBatchRiderAddress")
+	public Result<RiderAddress> deleteBatchRiderAddress(@RequestParam(name="ids",required=true) String ids) {
 		Result<RiderAddress> result = new Result<RiderAddress>();
 		if(ids==null || "".equals(ids.trim())) {
 			result.error500("参数不识别！");
@@ -152,8 +152,8 @@ public class RiderAddressController {
 	 * @param id
 	 * @return
 	 */
-	@GetMapping(value = "/queryById")
-	public Result<RiderAddress> queryById(@RequestParam(name="id",required=true) String id) {
+	@GetMapping(value = "/queryRiderAddressById")
+	public Result<RiderAddress> queryRiderAddressById(@RequestParam(name="id",required=true) String id) {
 		Result<RiderAddress> result = new Result<RiderAddress>();
 		RiderAddress riderAddress = riderAddressService.getById(id);
 		if(riderAddress==null) {

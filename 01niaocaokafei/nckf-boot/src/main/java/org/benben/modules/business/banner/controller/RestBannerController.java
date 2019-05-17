@@ -28,9 +28,9 @@ public class RestBannerController {
      *
      * @return
      */
-    @GetMapping(value = "/queryBannerList")
+    @GetMapping(value = "/queryBanner")
     @ApiOperation(value = "轮播图", notes = "轮播图", tags = {"首页"})
-    public RestResponseBean queryBannerList() {
+    public RestResponseBean queryBanner() {
         //查询轮播图
         List<String> imageList = bannerService.queryImageList();
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), imageList);

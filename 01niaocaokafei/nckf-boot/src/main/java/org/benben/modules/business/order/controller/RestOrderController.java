@@ -63,9 +63,9 @@ public class RestOrderController {
     * @param order
     * @return
     */
-   @PostMapping(value = "/list")
+   @PostMapping(value = "/queryOrder")
    @ApiOperation(value = "订单多（单）条件查询接口 status:9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价 4已评价", tags = {"订单购物车接口"}, notes = "订单多（单）条件查询接口 status:9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价 4已评价")
-   public RestResponseBean queryList(@RequestBody Order order) {
+   public RestResponseBean queryOrder(@RequestBody Order order) {
        List<OrderPage> orderPageList = orderService.queryList(order);
        if(orderPageList != null){
            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),orderPageList);
@@ -73,7 +73,7 @@ public class RestOrderController {
        return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
 
    }
-    @PostMapping(value = "/rider/query_order")
+    @PostMapping(value = "/rider/queryRiderOrder")
     @ApiOperation(value = "骑手查询可接订单接口", tags = {"订单购物车接口"}, notes = "骑手查询可接订单接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "riderId", value = "骑手的id"),
@@ -89,7 +89,7 @@ public class RestOrderController {
     }
 
 
-    @PostMapping(value = "/rider/receive_order")
+    @PostMapping(value = "/rider/riderOrder")
     @ApiOperation(value = "骑手接单接口", tags = {"订单购物车接口"}, notes = "骑手接单接口")
     public RestResponseBean riderOrder(@RequestParam(name = "riderId",required = true) String riderId,
                                        @RequestParam(name = "orderId",required = true) String orderId){
@@ -100,9 +100,9 @@ public class RestOrderController {
         return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
     }
 
-    @PostMapping(value = "/rider/order_user_ok")
+    @PostMapping(value = "/rider/orderUserOk")
     @ApiOperation(value = "用户确认收货接口", tags = {"订单购物车接口"}, notes = "用户确认收货接口")
-    public RestResponseBean OrderUserOk(@RequestParam(name = "orderId",required = true) String orderId){
+    public RestResponseBean orderUserOk(@RequestParam(name = "orderId",required = true) String orderId){
         QueryWrapper<RiderAddress> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("status","3");
         Order order = new Order();
@@ -116,9 +116,9 @@ public class RestOrderController {
         return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
     }
 
-    @PostMapping(value = "/rider/order_rider_ok")
+    @PostMapping(value = "/rider/orderRiderOk")
     @ApiOperation(value = "骑手送达接口", tags = {"订单购物车接口"}, notes = "骑手送达接口")
-    public RestResponseBean OrderRiderOk(@RequestParam(name = "orderId",required = true) String orderId){
+    public RestResponseBean orderRiderOk(@RequestParam(name = "orderId",required = true) String orderId){
         QueryWrapper<RiderAddress> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("status","3");
         Order order = new Order();
@@ -136,7 +136,7 @@ public class RestOrderController {
 
 
 
-   @GetMapping(value = "/query_by_orderId")
+   @GetMapping(value = "/queryByOrderId")
    @ApiOperation(value = "用户根据订单号查询订单接口", tags = {"订单购物车接口"}, notes = "用户根据订单号查询订单接口")
    @ApiImplicitParam(name = "orderId", value = "订单的id",required = true )
    public RestResponseBean queryByOrderId(@RequestParam(name="orderId",required=true) String orderId) {
@@ -153,9 +153,9 @@ public class RestOrderController {
     * @return
     */
 
-   @PostMapping(value = "/add")
+   @PostMapping(value = "/addOrder")
    @ApiOperation(value = "用户新增订单接口", tags = {"订单购物车接口"}, notes = "用户新增订单接口")
-   public RestResponseBean add(@RequestBody OrderPage orderPage) {
+   public RestResponseBean addOrder(@RequestBody OrderPage orderPage) {
        Order order = orderService.add(orderPage);
        if(order!=null){
            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),order);
@@ -170,8 +170,8 @@ public class RestOrderController {
     */
 
    @ApiOperation(value = "取消订单接口 参数：订单id", tags = {"订单购物车接口"}, notes = "取消订单接口 参数：订单id")
-   @PostMapping(value = "/cancel")
-   public RestResponseBean cancel(@RequestParam(name="id",required=true) String id) {
+   @PostMapping(value = "/cancelOrder")
+   public RestResponseBean cancelOrder(@RequestParam(name="id",required=true) String id) {
        boolean flag = orderService.cancel(id);
        if(flag){
            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
@@ -185,9 +185,9 @@ public class RestOrderController {
     * @param id
     * @return
     */
-   @GetMapping(value = "/query_by_id")
+   @GetMapping(value = "/queryOrderUserById")
    @ApiOperation(value = "用户查询订单（不包括商品详情）接口", tags = {"订单购物车接口"}, notes = "用户查询订单（不包括商品详情）接口")
-   public RestResponseBean queryById(@RequestParam(name="id",required=true) String id) {
+   public RestResponseBean queryOrderUserById(@RequestParam(name="id",required=true) String id) {
        Order order = orderService.getById(id);
        if(order!=null) {
            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
@@ -199,7 +199,7 @@ public class RestOrderController {
     * @param id
     * @return
     */
-   @GetMapping(value = "/query_order_goods_by_mainId")
+   @GetMapping(value = "/queryOrderGoodsListByMainId")
    @ApiOperation(value = "用户查询单个订单（包括商品详情）接口", tags = {"订单购物车接口"}, notes = "用户查询订单个（包括商品详情）接口")
    public RestResponseBean queryOrderGoodsListByMainId(@RequestParam(name="id",required=true)String id) {
        List<OrderGoods> orderGoodsList = orderGoodsService.selectByMainId(id);

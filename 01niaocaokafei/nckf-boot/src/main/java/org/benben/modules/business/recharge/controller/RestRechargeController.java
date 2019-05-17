@@ -46,9 +46,9 @@ public class RestRechargeController {
      * @param req
      * @return
      */
-    @GetMapping(value = "/list")
+    @GetMapping(value = "/queryRecharge")
     @ApiOperation(value = "充值记录", tags = {"用户接口"}, notes = "充值记录")
-    public RestResponseBean queryPageList(Recharge recharge,
+    public RestResponseBean queryRecharge(Recharge recharge,
                                           @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
                                           @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
                                           HttpServletRequest req) {
@@ -67,10 +67,10 @@ public class RestRechargeController {
      * @param id
      * @return
      */
-    @GetMapping(value = "/queryById")
+    @GetMapping(value = "/queryRechargeById")
     @ApiOperation(value = "充值详细", tags = {"用户接口"}, notes = "充值详细")
     @ApiImplicitParam(name = "id",value = "充值的ID",dataType = "String",defaultValue = "1",required = true)
-    public RestResponseBean queryById(@RequestParam(name = "id", required = true) String id) {
+    public RestResponseBean queryRechargeById(@RequestParam(name = "id", required = true) String id) {
 
         Recharge recharge = rechargeService.getById(id);
 
@@ -82,14 +82,14 @@ public class RestRechargeController {
     }
 
 
-    @PostMapping(value = "/recharge")
+    @PostMapping(value = "/rechargeRecharge")
     @ApiOperation(value = "钱包充值", tags = {"用户接口"}, notes = "钱包充值")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId",value = "用户的ID",dataType = "String",defaultValue = "1",required = true),
             @ApiImplicitParam(name = "money",value = "充值金额",dataType = "double",defaultValue = "1.00",required = true),
             @ApiImplicitParam(name = "type",value = "充值方式1：支付宝 2：微信",dataType = "String",required = true)
     })
-    public RestResponseBean recharge(@RequestParam String userId,@RequestParam double money,@RequestParam String type) {
+    public RestResponseBean rechargeRecharge(@RequestParam String userId,@RequestParam double money,@RequestParam String type) {
 
         Recharge recharge = rechargeService.recharge(userId,money,type);
 

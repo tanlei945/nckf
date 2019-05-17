@@ -41,9 +41,9 @@ public class RestCommonController {
     @Autowired
     private ICommonService commonService;
 
-    @PostMapping(value = "/upload_image_local")
+    @PostMapping(value = "/uploadImageLocal")
     @ApiOperation(value = "上传图片到本地",tags = {"通用接口"}, notes = "上传图片到本地")
-    public RestResponseBean uploadImage(@RequestParam(value = "file") MultipartFile file) {
+    public RestResponseBean uploadImageLocal(@RequestParam(value = "file") MultipartFile file) {
 
         String dbpath =commonService.localUploadImage(file);
 
@@ -56,9 +56,9 @@ public class RestCommonController {
     }
 
 
-    @PostMapping(value = "/upload_image_ali")
+    @PostMapping(value = "/uploadImageAli")
     @ApiOperation(value = "上传图片到阿里云OSS",tags = {"通用接口"}, notes = "上传图片到阿里云OSS")
-    public RestResponseBean upload(@RequestParam(value = "file") MultipartFile[] files) {
+    public RestResponseBean uploadImageAli(@RequestParam(value = "file") MultipartFile[] files) {
 
         String result = "";
 
@@ -72,9 +72,9 @@ public class RestCommonController {
     }
 
 
-    @PostMapping(value = "/file_upload")
+    @PostMapping(value = "/uploadVideo")
     @ApiOperation(value = "上传视频",tags = {"通用接口"}, notes = "上传视频")
-    public Result<Object> fileUpload(@RequestParam(value = "file") MultipartFile file) throws IOException {
+    public Result<Object> uploadVideo(@RequestParam(value = "file") MultipartFile file) throws IOException {
         Result<Object> result = new Result<Object>();
 
         if (StringUtils.isEmpty(file.getOriginalFilename())) {

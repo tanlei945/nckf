@@ -24,7 +24,7 @@ public class RestSystemConfigController {
     private ISystemConfigService systemConfigService;
 
 
-    @GetMapping(value = "/query_by_time")
+    @GetMapping(value = "/queryByTime")
     @ApiOperation(value = "首页文字", notes = "首页文字",tags = {"首页"})
     public RestResponseBean queryByTime()  {
         Date date =new Date();

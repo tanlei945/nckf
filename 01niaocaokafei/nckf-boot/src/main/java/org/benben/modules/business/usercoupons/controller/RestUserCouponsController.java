@@ -37,7 +37,7 @@ public class RestUserCouponsController {
      * @param req
      * @return
      */
-    @GetMapping(value = "/list")
+    @GetMapping(value = "/queryUserCoupons")
     @ApiOperation(value = "个人优惠券查询", notes = "个人优惠券查询",tags = "用户接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name="pageNo",value = "当前页",dataType = "Integer",defaultValue = "1"),
@@ -45,7 +45,7 @@ public class RestUserCouponsController {
             @ApiImplicitParam(name="userId",value = "用户Id",dataType = "String"),
             @ApiImplicitParam(name="couponstype",value = "优惠券状态",dataType = "String")
     })
-    public RestResponseBean queryPageList(UserCoupons userCoupons,
+    public RestResponseBean queryUserCoupons(UserCoupons userCoupons,
                                                     @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                                     @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
                                                     HttpServletRequest req,@RequestParam String userId,@RequestParam String couponstype) {

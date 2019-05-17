@@ -31,13 +31,13 @@ public class RestInstructionController {
     @Autowired
     private ISystemConfigService systemConfigService;
 
-    @GetMapping(value = "/recharge_instruction")
+    @GetMapping(value = "/queryRechargeDictionary")
     @ApiOperation(value = "充值说明查询", notes = "充值说明查询",tags = {"首页"})
     @ApiImplicitParams({
             @ApiImplicitParam(name="pageNo",value = "当前页",dataType = "Integer",defaultValue = "1"),
             @ApiImplicitParam(name="pageSize",value = "每页显示条数",dataType = "Integer",defaultValue = "10"),
     })
-    public RestResponseBean queryDictionary(SystemConfig systemConfig,
+    public RestResponseBean queryRechargeDictionary(SystemConfig systemConfig,
                                                      @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                                      @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
                                                      HttpServletRequest req) {

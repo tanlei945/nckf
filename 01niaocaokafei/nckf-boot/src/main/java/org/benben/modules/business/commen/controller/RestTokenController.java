@@ -16,16 +16,16 @@ public class RestTokenController {
     @Autowired
     private ITokenService tokenService;
 
-    @GetMapping("/check")
+    @GetMapping("/checkToken")
     @ApiOperation(value = "验证token", tags = {"token接口"},notes = "验证token")
-    public RestResponseBean check(String key) {
+    public RestResponseBean checkToken(String key) {
         RestResponseBean check = tokenService.check(key);
         return check;
     }
 
-    @GetMapping("/refresh")
+    @GetMapping("/refreshToken")
     @ApiOperation(value = "刷新token", tags = {"token接口"},notes = "刷新token")
-    public String refresh(String key) {
+    public String refreshToken(String key) {
         String refresh = tokenService.refresh(key);
         return refresh;
     }

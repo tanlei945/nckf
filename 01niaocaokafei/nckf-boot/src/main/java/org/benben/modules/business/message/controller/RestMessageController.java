@@ -38,13 +38,13 @@ public class RestMessageController {
      * @param req
      * @return
      */
-    @GetMapping(value = "/list")
+    @GetMapping(value = "/queryMessage")
     @ApiOperation(value = "消息详情列表", notes = "消息详情列表",tags = {"首页"})
     @ApiImplicitParams({
             @ApiImplicitParam(name="pageNo",value = "当前页",dataType = "Integer",defaultValue = "1"),
             @ApiImplicitParam(name="pageSize",value = "每页显示条数",dataType = "Integer",defaultValue = "10"),
     })
-    public RestResponseBean queryPageList(Message message,
+    public RestResponseBean queryMessage(Message message,
                                                 @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                                 @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
                                                 HttpServletRequest req) {
@@ -63,12 +63,12 @@ public class RestMessageController {
      * @param id
      * @return
      */
-    @GetMapping(value = "/query_by_id")
+    @GetMapping(value = "/queryMessageById")
     @ApiOperation(value = "通过id查询消息详情", notes = "通过id查询消息详情",tags = {"首页"})
     @ApiImplicitParams({
             @ApiImplicitParam(name="id",value = "消息id",dataType = "String",required = true),
     })
-    public RestResponseBean queryById(@RequestParam(name="id",required=true) String id) {
+    public RestResponseBean queryMessageById(@RequestParam(name="id",required=true) String id) {
         Message message = messageService.getById(id);
         if(message==null) {
             return new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(),ResultEnum.QUERY_NOT_EXIST.getDesc(),null);

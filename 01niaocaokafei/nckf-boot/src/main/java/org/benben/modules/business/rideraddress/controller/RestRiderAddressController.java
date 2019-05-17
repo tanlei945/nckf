@@ -28,9 +28,9 @@ public class RestRiderAddressController {
      * @param riderAddress
      * @return
      */
-    @PostMapping(value = "/address_edit")
+    @PostMapping(value = "/editRiderAddress")
     @ApiOperation(value = "新增和修改骑手位置", tags = {"骑手位置接口"}, notes = "新增和修改骑手位置")
-    public RestResponseBean edit(@RequestBody RiderAddress riderAddress) {
+    public RestResponseBean editRiderAddress(@RequestBody RiderAddress riderAddress) {
         QueryWrapper<RiderAddress> riderAddressQueryWrapper = new QueryWrapper<>();
         riderAddressQueryWrapper.eq("rider_id",riderAddress.getRiderId());
         RiderAddress riderAddressEntity = riderAddressService.getOne(riderAddressQueryWrapper);
@@ -57,12 +57,12 @@ public class RestRiderAddressController {
      * @param id
      * @return
      */
-    @PostMapping(value = "/delete")
+    @PostMapping(value = "/deleteRiderAddress")
     @ApiOperation(value = "删除骑手位置", tags = {"骑手位置接口"}, notes = "删除骑手位置")
     @ApiImplicitParams({
             @ApiImplicitParam(name="id",value = "骑手位置id",dataType = "String",required = true),
     })
-    public RestResponseBean delete(@RequestParam(name="id",required=true) String id) {
+    public RestResponseBean deleteRiderAddress(@RequestParam(name="id",required=true) String id) {
         QueryWrapper<RiderAddress> riderAddressQueryWrapper = new QueryWrapper<>();
         riderAddressQueryWrapper.eq("rider_id",id);
         RiderAddress riderAddress = riderAddressService.getOne(riderAddressQueryWrapper);
