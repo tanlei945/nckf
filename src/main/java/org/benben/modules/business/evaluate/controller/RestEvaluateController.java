@@ -89,7 +89,7 @@ public class RestEvaluateController {
     * @param evaluate
     * @return
     */
-   @PostMapping(value = "/add")
+   @PostMapping(value = "/addEvaluate")
    @ApiOperation(value = "用户评论提交接口", tags = {"用户接口"}, notes = "用户评论提交接口")
    public RestResponseBean add(@RequestParam(name="orderId",required=true)String orderId, Evaluate evaluate, @RequestParam(name = "file") MultipartFile[] files) {
        log.info("本次上传的文件的数量为-------->" + files.length);
