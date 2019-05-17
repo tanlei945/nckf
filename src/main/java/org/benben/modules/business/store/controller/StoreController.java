@@ -246,13 +246,13 @@ public class StoreController {
       return Result.ok("文件导入失败！");
   }
 
-  @RequestMapping(value = "/query_By_Distance",method = RequestMethod.GET)
+  @RequestMapping(value = "/queryStoreByDistance",method = RequestMethod.GET)
   @ApiOperation(value="查询用户离店铺距离", tags = {"门店管理接口"})
   @ApiImplicitParams({
 		  @ApiImplicitParam(name="lng",value="用户所在经度",dataType = "double",required = true),
 		  @ApiImplicitParam(name="lat",value="用户所在纬度",dataType = "double",required = true)
   })
-	public RestResponseBean queryByDistance(@RequestParam(name="lng")double lng, @RequestParam(name="lat")double lat){
+	public RestResponseBean queryStoreByDistance(@RequestParam(name="lng")double lng, @RequestParam(name="lat")double lat){
 	  List<Store> storeList = null;
 	  try {
 	  		storeList = storeService.queryByDistance(lng, lat);
@@ -264,7 +264,7 @@ public class StoreController {
 
   }
 
-	 @RequestMapping(value = "/queryScope_By_id",method = RequestMethod.GET)
+	 @RequestMapping(value = "/queryScopeById",method = RequestMethod.GET)
 	 @ApiOperation(value="查询收货地址距离是否超过限制",tags = {"门店管理接口"})
 	 @ApiImplicitParams({
 			 @ApiImplicitParam(name="storeId",value="商家id",dataType = "String",required = true),
