@@ -112,7 +112,6 @@ public class GoodsController {
 	
 	/**
 	  *  编辑
-	 * @param goods
 	 * @return
 	 */
 	@PutMapping(value = "/edit")
@@ -265,7 +264,7 @@ public class GoodsController {
   }
 
 
-  @GetMapping("query_goods_byCotegory")
+  @GetMapping("queryGoodsByCategory")
   @ApiOperation(value="根据门店id查所属商品",tags = {"门店管理接口"})
   @ApiImplicitParams({
 		  @ApiImplicitParam(name="goodId",value="所属商家id",dataType = "String",required = true),
@@ -283,7 +282,7 @@ public class GoodsController {
 
 	  }
   }
-	 @GetMapping("query_goods_spec")
+	 @GetMapping("queryGoodsSpec")
 	 @ApiOperation(value="根据商品id查商品规格",tags = {"门店管理接口"})
 	 @ApiImplicitParams({@ApiImplicitParam(name="goodId",value="商品id",dataType = "String",required = true)
 	 })
@@ -298,7 +297,7 @@ public class GoodsController {
 		}
 
 	 }
-	 @GetMapping("query_all_spec")
+	 @GetMapping("querySpecList")
 	 @ApiOperation(value="根据所有商品规格",tags = {"门店管理接口"})
 	 public RestResponseBean queryallspec(){
 		 try {
