@@ -76,9 +76,9 @@ public class CategoryController {
 	 * @param category
 	 * @return
 	 */
-	@PostMapping(value = "/add")
+	@PostMapping(value = "/addCateGory")
 	@ApiOperation("添加菜单接口")
-	public Result<Category> add(@RequestBody Category category) {
+	public Result<Category> addCateGory(@RequestBody Category category) {
 		Result<Category> result = new Result<Category>();
 		try {
 			categoryService.save(category);
@@ -238,7 +238,7 @@ public class CategoryController {
       return Result.ok("文件导入失败！");
   }
 	@ApiOperation(value="查询商品种类",tags = {"门店管理接口"})
-	@GetMapping("/get_category")
+	@GetMapping("/getCategory")
 	 public RestResponseBean getCategory(){
 		try {
 			List<Category> category = categoryService.getCategory();
