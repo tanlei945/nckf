@@ -28,9 +28,9 @@ public class RestRiderAddressController {
      * @param riderAddress
      * @return
      */
-    @PostMapping(value = "/editRiderAddress")
+    @PostMapping(value = "/updateRiderAddress")
     @ApiOperation(value = "新增和修改骑手位置", tags = {"骑手位置接口"}, notes = "新增和修改骑手位置")
-    public RestResponseBean editRiderAddress(@RequestBody RiderAddress riderAddress) {
+    public RestResponseBean updateRiderAddress(@RequestBody RiderAddress riderAddress) {
         QueryWrapper<RiderAddress> riderAddressQueryWrapper = new QueryWrapper<>();
         riderAddressQueryWrapper.eq("rider_id",riderAddress.getRiderId());
         RiderAddress riderAddressEntity = riderAddressService.getOne(riderAddressQueryWrapper);
