@@ -69,17 +69,15 @@ public class GoodsController {
 	 * @return
 	 */
 	@GetMapping(value = "/list")
-	@ApiOperation("list")
-	public Result<IPage<Goods>> queryPageList(Goods goods,
+	public Result<IPage<Goods>> queryGoodsPageList(Goods goods,
 									  @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
 									  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 									  HttpServletRequest req) {
 		Result<IPage<Goods>> result = new Result<IPage<Goods>>();
-		QueryWrapper<Goods> queryWrapper = QueryGenerator.initQueryWrapper(goods, req.getParameterMap());
-
-		String s = sysUserService.querySuperAdmin();
-		if(s!=null&&!"".equals(s)){
-			queryWrapper.eq("belong_id",s);
+			QueryWrapper<Goods> queryWrapper = QueryGenerator.initQueryWrapper(goods, req.getParameterMap());
+			String s = sysUserService.querySuperAdmin();
+			if(s!=null&&!"".equals(s)){
+				queryWrapper.eq("belong_id",s);
 		}
 		Page<Goods> page = new Page<Goods>(pageNo, pageSize);
 		IPage<Goods> pageList = goodsService.page(page, queryWrapper);
@@ -87,6 +85,26 @@ public class GoodsController {
 		result.setResult(pageList);
 		return result;
 	}
+
+	 @GetMapping(value = "/queryGoodsList")
+	 @ApiOperation("查看门店所有商品")
+	 public Result<IPage<Goods>> queryPageList(Goods goods,
+											   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+											   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
+											   HttpServletRequest req) {
+		 Result<IPage<Goods>> result = new Result<IPage<Goods>>();
+		 QueryWrapper<Goods> queryWrapper = QueryGenerator.initQueryWrapper(goods, req.getParameterMap());
+
+		 String s = sysUserService.querySuperAdmin();
+		 if(s!=null&&!"".equals(s)){
+			 queryWrapper.eq("belong_id",s);
+		 }
+		 Page<Goods> page = new Page<Goods>(pageNo, pageSize);
+		 IPage<Goods> pageList = goodsService.page(page, queryWrapper);
+		 result.setSuccess(true);
+		 result.setResult(pageList);
+		 return result;
+	 }
 	
 	/**
 	 *

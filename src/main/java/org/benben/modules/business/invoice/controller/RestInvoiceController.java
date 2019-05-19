@@ -13,6 +13,7 @@ import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.api.vo.Result;
 import org.benben.common.menu.ResultEnum;
 import org.benben.common.system.query.QueryGenerator;
+import org.benben.modules.business.feedback.entity.FeedBack;
 import org.benben.modules.business.invoice.entity.Invoice;
 import org.benben.modules.business.invoice.entity.InvoiceTitle;
 import org.benben.modules.business.invoice.service.IInvoiceService;
@@ -58,12 +59,16 @@ public class RestInvoiceController {
    @GetMapping(value = "/queryInvoice")
    @ApiOperation(value = "用户发票查询接口", tags = {"用户接口"}, notes = "用户发票查询接口")
    @ApiImplicitParam(name = "userId", value = "用户id",required = true)
-   public RestResponseBean queryInvoice(@RequestParam(name = "userId",required = true) String userId) {
+   public RestResponseBean queryInvoice(@RequestParam(name = "userId",required = true) String userId,
+                                        @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+                                        @RequestParam(name="pageSize", defaultValue="10") Integer pageSize) {
+       Result<IPage<Invoice>> result = new Result<IPage<Invoice>>();
        QueryWrapper<Invoice> queryWrapper = new QueryWrapper<>();
        queryWrapper.eq("userId",userId);
-       List<Invoice> invoiceList = invoiceService.list(queryWrapper);
-       if(invoiceList != null){
-           return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),invoiceList);
+       Page<Invoice> page = new Page<Invoice>(pageNo, pageSize);
+       IPage<Invoice> pageList = invoiceService.page(page, queryWrapper);
+       if(pageList != null){
+           return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
        }
        return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
    }
