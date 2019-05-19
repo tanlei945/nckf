@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.*;
 import javax.servlet.Filter;
+
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.mgt.SecurityManager;
@@ -28,6 +30,7 @@ import org.yaml.snakeyaml.Yaml;
  */
 
 @Configuration
+@Slf4j
 public class ShiroConfig {
 
 	/**
@@ -78,6 +81,9 @@ public class ShiroConfig {
 		//从配置文件读取添加不需要token的路径
 		Yaml yaml = new Yaml();
 		URL url = ShiroConfig.class.getClassLoader().getResource("noneed-login.yml");
+
+		log.info("URL"+url.toString());
+
 		Map map = null;
 		try {
 			map = yaml.load(new FileInputStream(url.getFile()));
