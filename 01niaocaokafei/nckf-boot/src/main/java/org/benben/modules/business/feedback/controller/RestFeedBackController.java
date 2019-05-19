@@ -13,6 +13,7 @@ import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.api.vo.Result;
 import org.benben.common.menu.ResultEnum;
 import org.benben.common.system.query.QueryGenerator;
+import org.benben.modules.business.evaluate.entity.Evaluate;
 import org.benben.modules.business.feedback.entity.FeedBack;
 import org.benben.modules.business.feedback.service.IFeedBackService;
 import org.benben.modules.business.order.entity.Order;
@@ -59,11 +60,14 @@ public class RestFeedBackController {
     */
    @PostMapping(value = "/queryFeedBackList" )
    @ApiOperation(value = "用户系统反馈展示接口", tags = {"用户接口"}, notes = "用户系统反馈展示接口")
-   public RestResponseBean queryFeedBackList() {
-
-       List<FeedBack> feedBackList = feedBackService.list(null);
-       if(feedBackList != null){
-           return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),feedBackList);
+   public RestResponseBean queryFeedBackList(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+                                             @RequestParam(name="pageSize", defaultValue="10") Integer pageSize) {
+       Result<IPage<FeedBack>> result = new Result<IPage<FeedBack>>();
+       QueryWrapper<FeedBack> queryWrapper = new QueryWrapper<>();
+       Page<FeedBack> page = new Page<FeedBack>(pageNo, pageSize);
+       IPage<FeedBack> pageList = feedBackService.page(page);
+       if(pageList != null){
+           return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
        }
        return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
 

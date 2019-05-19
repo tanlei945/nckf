@@ -5,6 +5,8 @@ import java.util.Date;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.benben.common.aspect.annotation.Dict;
@@ -19,6 +21,7 @@ import org.jeecgframework.poi.excel.annotation.Excel;
  */
 @Data
 @TableName("user_evaluate")
+@ApiModel(value = "用户评价门店实体")
 public class Evaluate implements Serializable {
     private static final long serialVersionUID = 1L;
     
@@ -33,6 +36,7 @@ public class Evaluate implements Serializable {
 	private java.lang.String username;
 	/**商家id*/
 	@Excel(name = "门店id", width = 15)
+	@ApiModelProperty(required = true)
 	private java.lang.String belongId;
 	/**商家id*/
 	@Excel(name = "门店名称", width = 15)

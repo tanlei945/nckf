@@ -70,18 +70,22 @@ public class RestEvaluateController {
     @Value(value = "${benben.path.upload}")
     private String uploadpath;
 
-   /**
-     * 分页列表查询
-    * @param storeId  商家ID
-    * @return
-    */
+            /**
+              * 分页列表查询
+             * @param storeId  商家ID
+             * @return
+             */
    @GetMapping(value = "/queryEvaluateList")
    @ApiOperation(value = "用户评论商家展示接口", tags = {"用户接口"}, notes = "用户评论商家展示接口")
-   public RestResponseBean queryEvaluateList(@RequestParam(name = "storeId",required = true) String storeId) {
+   public RestResponseBean queryEvaluateList(@RequestParam(name = "storeId",required = true) String storeId,
+                                             @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+                                             @RequestParam(name="pageSize", defaultValue="10") Integer pageSize) {
+       Result<IPage<Evaluate>> result = new Result<IPage<Evaluate>>();
        QueryWrapper<Evaluate> queryWrapper = new QueryWrapper<>();
        queryWrapper.eq("belong_id",storeId);
-       List<Evaluate> records = evaluateService.list(queryWrapper);
-       return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), records);
+       Page<Evaluate> page = new Page<Evaluate>(pageNo, pageSize);
+       IPage<Evaluate> pageList = evaluateService.page(page, queryWrapper);
+       return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), pageList);
    }
 
    /**
@@ -94,7 +98,7 @@ public class RestEvaluateController {
    public RestResponseBean add(@RequestParam(name="orderId",required=true)String orderId, Evaluate evaluate, @RequestParam(name = "file") MultipartFile[] files) {
        log.info("本次上传的文件的数量为-------->" + files.length);
        User userEntity = (User) SecurityUtils.getSubject().getPrincipal();
-       String bizPath = "feedback";
+       String bizPath = "evaluate";
        String nowday = new SimpleDateFormat("yyyyMMdd").format(new Date());
        String ctxPath = uploadpath;
        String fileName = "";
@@ -110,8 +114,13 @@ public class RestEvaluateController {
                String savePath = file.getPath() + File.separator + fileName;
                File savefile = new File(savePath);
                FileCopyUtils.copy(mf.getBytes(), savefile);
-               resultName += fileName + ",";
+               String dbpath = bizPath + File.separator + nowday + File.separator + fileName;
+               if (dbpath.contains("\\")) {
+                   dbpath = dbpath.replace("\\", "/");
+               }
+               resultName += dbpath + ",";
            }
+
            String storeId = evaluate.getBelongId();
            if(storeId != null){
                Store store = storeService.getById(storeId);
