@@ -30,7 +30,9 @@ public class JsonParseConfig extends WebMvcConfigurationSupport {
         // 2 添加fastjson 的配置信息 比如 是否要格式化 返回的json数据
         FastJsonConfig fastJsonConfig = new FastJsonConfig();
         fastJsonConfig.setSerializerFeatures(SerializerFeature.PrettyFormat);
+        //解决返回json数据，属性值为null或空被省略的问题
         fastJsonConfig.setSerializerFeatures(SerializerFeature.WriteMapNullValue);
+
         fastConverter.setFastJsonConfig(fastJsonConfig);
         // 解决乱码的问题
         List<MediaType> fastMediaTypes = new ArrayList<>();
