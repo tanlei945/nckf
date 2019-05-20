@@ -1,15 +1,15 @@
 filterlist:
   # 用户删除
   - /api/v1/user/delete
-  - /api/v1/user/mobile_login
-  - /api/v1/user/qq_login_callback
-  - /api/v1/user/wx_login_callBack
-  - /api/v1/user/wb_login_callback
-  - /api/v1/user/user_register
-  - /api/v1/user/rider_register
+  - /api/v1/user/mobileLogin
+  - /api/v1/user/qqLoginCallback
+  - /api/v1/user/wxLoginCallBack
+  - /api/v1/user/wbLoginCallback
+  - /api/v1/user/userRegister
+  - /api/v1/user/riderRegister
   - /api/v1/user/login
-  - /api/v1/user/forget_password
-  - /api/v1/user/is_exist_mobile
+  - /api/v1/user/forgetPassword
+  - /api/v1/user/isExistMobile
   - /api/v1/sms/**
   - /api/v1/login/third
   - /api/v1/validate/**
