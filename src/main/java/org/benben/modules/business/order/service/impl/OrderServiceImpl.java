@@ -7,6 +7,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.benben.common.api.vo.Result;
 import org.benben.common.util.DateUtils;
+import org.benben.modules.business.goods.entity.Goods;
+import org.benben.modules.business.goods.service.IGoodsService;
 import org.benben.modules.business.order.entity.Order;
 import org.benben.modules.business.order.entity.OrderGoods;
 import org.benben.modules.business.order.mapper.OrderGoodsMapper;
@@ -52,10 +54,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 	private IStoreService storeService;
 	@Autowired
 	private IUserService userService;
+	@Autowired
+	private IGoodsService goodsService;
 	
 	@Override
-	@Transactional
+
 	public void saveMain(Order order, List<OrderGoods> orderGoodsList) {
+		System.out.println("-------------"+order+"------------");
 		orderMapper.insert(order);
 		for(OrderGoods entity:orderGoodsList) {
 			//外键设置
@@ -143,6 +148,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
 	@Override
 	public Order add(OrderPage orderPage) {
+		//给订单的商品数量赋值
+		int count = 0;
+		List<OrderGoods> goodsList = orderPage.getOrderGoodsList();
+		for (OrderGoods orderGoods : goodsList) {
+			count += orderGoods.getGoodsCount();
+		}
+		orderPage.setGoodsCount(count);
+
 		//app端传过来的订单金额需要与数据库中实际的商品金额做判断
 		double appMoney = orderPage.getOrderMoney();
 		List<OrderGoods> orderGoodsList = orderPage.getOrderGoodsList();
@@ -153,22 +166,30 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 		}
 		Order order = new Order();
 		if(sum == appMoney){
-			//订单id---->用户id+时间戳
-			String orderId = orderPage.getUserId()+System.currentTimeMillis();
-			orderPage.setOrderId(orderId);
+			//开始给order赋值
 			User user = (User) SecurityUtils.getSubject().getPrincipal();
+			//订单id---->用户id+时间戳
+			String orderId = user.getId()+System.currentTimeMillis();
+			orderPage.setOrderId(orderId);
 			//下单用户名
 			orderPage.setUsername(user.getUsername());
-			String storeId = orderPage.getStoreId();
-			//下单商家
-			Store store = storeService.getById(storeId);
+			orderPage.setUserId(user.getId());
+			//获取订单商品的id
+			String goodsId = orderPage.getOrderGoodsList().get(0).getGoodsId();
+			//查出商品信息
+			Goods goods = goodsService.getById(goodsId);
+			//利用商品id获取下单商家的id
+			Store store = storeService.getById(goods.getBelongId());
+			//给订单的商家id和商家名称赋值
+			orderPage.setStoreId(store.getId());
 			orderPage.setStorename(store.getStoreName());
-			try {
-				BeanUtils.copyProperties(orderPage, order);
-				orderService.saveMain(order, orderPage.getOrderGoodsList());
-			} catch (Exception e) {
-				log.info(e.getMessage());
-			}
+
+			BeanUtils.copyProperties(orderPage, order);
+			//log.info("订单信息"+order);
+			//log.info("订单信息"+orderPage);
+			orderService.saveMain(order, orderPage.getOrderGoodsList());
+			//log.info("----------------测试---------------");
+
 			QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
 			queryWrapper.eq("order_id",orderId);
 			order = orderService.getOne(queryWrapper);
@@ -180,6 +201,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 			orderNoPay.setCreateTime(orderPage.getCreateTime());
 			orderNoPay.setUpdateBy(orderPage.getUpdateBy());
 			orderNoPay.setCreateTime(orderPage.getCreateTime());
+
 			orderNoPayService.insert(orderNoPay);
 			//根据orderId查询Order
 			QueryWrapper<Order> wrapper = new QueryWrapper<>();

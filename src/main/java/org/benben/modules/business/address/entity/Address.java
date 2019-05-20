@@ -49,8 +49,8 @@ public class Address implements Serializable {
 	@Excel(name = "纬度", width = 15)
 	private java.lang.Double lat;
 	/**地址类型：1-公司 2-家 3-学校*/
-	@Excel(name = "地址类型：1-公司 2-家 3-学校", width = 15)
-	private java.lang.String type;
+	@Excel(name = "0/女 1/男", width = 15)
+	private java.lang.String sex;
 	/**省份*/
 	@Excel(name = "省份", width = 15)
 	@ApiModelProperty(name = "areap", value = "省份", required = true)
@@ -64,7 +64,7 @@ public class Address implements Serializable {
 	@ApiModelProperty(name = "areax", value = "县（区）", required = true)
 	private java.lang.String areax;
 	/**标签*/
-	@Excel(name = "标签", width = 15)
+	@Excel(name = "地址类型：1-公司 2-家 3-学校", width = 15)
 	@ApiModelProperty(name = "addressLabel", value = "标签")
 	private java.lang.String addressLabel;
 	/**收货人姓名*/
