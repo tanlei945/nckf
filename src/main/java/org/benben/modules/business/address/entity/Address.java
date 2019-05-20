@@ -49,7 +49,7 @@ public class Address implements Serializable {
 	@Excel(name = "纬度", width = 15)
 	private java.lang.Double lat;
 	/**地址类型：1-公司 2-家 3-学校*/
-	@Excel(name = "0/女 1/男", width = 15)
+	@Excel(name = "0/女 1/男", width = 1)
 	private java.lang.String sex;
 	/**省份*/
 	@Excel(name = "省份", width = 15)
