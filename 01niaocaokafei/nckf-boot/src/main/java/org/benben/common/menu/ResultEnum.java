@@ -15,15 +15,18 @@ public enum ResultEnum {
     /**
      * 登陆注册返回code
      */
-    LOGIN_SUCCESS(0,"登陆成功"),
+    LOGIN_SUCCESS(1,"登陆成功"),
     LOGIN_FAIL(0,"登录失败"),
     USER_PWD_ERROR(0,"用户名或密码错误"),
     USER_EXIST(0, "用户已存在"),
     USER_NOT_EXIST(0, "用户不存在"),
 //    PASSWORD_ERROR(306,"密码错误"),
 //    PASSWORD_RIGHT(307,"密码正确"),
-    MOBILE_NOT_EXIST(0,"手机不存在"),
-    MOBILE_EXIST(0,"手机已存在"),
+    MOBILE_NOT_EXIST(0,"手机号不存在"),
+    MOBILE_EXIST(0,"手机号已存在"),
+	MOBILE_NOT_REGISTER(0,"手机号未注册"),
+	MOBILE_EXIST_REGISTER(0,"手机号已注册"),
+
     /**
      * 权限不足 返回code 值范围
      */
@@ -55,7 +58,7 @@ public enum ResultEnum {
     /**
      * 返回token认证
      */
-    TOKEN_OVERDUE(0,"token已过期"),
+    TOKEN_OVERDUE(2,"token已过期"),
     TOKEN_NOT_OVERDUE(0,"token未过期"),
 
 
@@ -69,7 +72,7 @@ public enum ResultEnum {
     /**
      * QQ/微信/微博
      */
-    BINDING_SUCCESS(0,"绑定成功"),
+    BINDING_SUCCESS(1,"绑定成功"),
     BINDING_FAIL(0,"绑定失败"),
     UNBOUND_OPENID(0,"未绑定账号"),
     REPEATED_BINDING(0,"重复绑定"),
@@ -78,7 +81,7 @@ public enum ResultEnum {
     /**
      * 短信相关
      */
-    SMS_SEND_SUCCESS(0,"验证码发送成功"),
+    SMS_SEND_SUCCESS(1,"验证码发送成功"),
 
     SMS_SEND_FAIL(0,"验证码发送失败"),
 
@@ -86,7 +89,7 @@ public enum ResultEnum {
 
     SMS_CODE_OVERTIME(0,"验证码超时"),
 
-    SMS_VALIDATE_SUCCESS(0,"短信验证通过"),
+    SMS_VALIDATE_SUCCESS(1,"短信验证通过"),
 
 
     /**
@@ -105,7 +108,7 @@ public enum ResultEnum {
      * 支付相关
      */
     PAY_PASSWORD_ERROR(0,"支付密码错误"),
-    PAY_PASSWORD_RIGHT(0,"支付密码正确"),
+    PAY_PASSWORD_RIGHT(1,"支付密码正确"),
 
     /**
      * 发票相关
