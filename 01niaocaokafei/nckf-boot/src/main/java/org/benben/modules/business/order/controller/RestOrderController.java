@@ -155,7 +155,7 @@ public class RestOrderController {
 
    @PostMapping(value = "/addOrder")
    @ApiOperation(value = "用户新增订单接口", tags = {"订单购物车接口"}, notes = "用户新增订单接口")
-   public RestResponseBean addOrder(@RequestBody OrderPage orderPage) {
+   public RestResponseBean addOrder(OrderPage orderPage) {
        Order order = orderService.add(orderPage);
        if(order!=null){
            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),order);

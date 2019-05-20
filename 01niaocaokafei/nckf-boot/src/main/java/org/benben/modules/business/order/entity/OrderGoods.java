@@ -33,7 +33,7 @@ public class OrderGoods implements Serializable {
 	/**orderId*/
 	private String orderId;
 	/**门店id*/
-    @Excel(name = "门店id", width = 15)
+	@Excel(name = "门店id", width = 15)
 	private String storeId;
 	/**商品数量*/
     @Excel(name = "商品数量", width = 15)
