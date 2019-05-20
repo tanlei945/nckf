@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.api.vo.Result;
 import org.benben.common.menu.ResultEnum;
@@ -66,6 +67,10 @@ public class RestOrderController {
    @PostMapping(value = "/queryOrder")
    @ApiOperation(value = "订单多（单）条件查询接口 status:9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价 4已评价", tags = {"订单购物车接口"}, notes = "订单多（单）条件查询接口 status:9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价 4已评价")
    public RestResponseBean queryOrder(@RequestBody Order order) {
+       User user = (User) SecurityUtils.getSubject().getPrincipal();
+       if(user==null) {
+           return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+       }
        List<OrderPage> orderPageList = orderService.queryList(order);
        if(orderPageList != null){
            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),orderPageList);
@@ -81,6 +86,10 @@ public class RestOrderController {
     })
     public RestResponseBean queryRiderOrder(@RequestParam(name = "riderId",required = true) String riderId,
                                             @RequestParam(name = "storeId",required = true) String storeId){
+        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        if(user==null) {
+            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+        }
         QueryWrapper<Order> wrapper = new QueryWrapper<>();
         wrapper.eq("store_id",storeId).eq("status","2").eq("rider_id",riderId);
         List<Order> list = orderService.list(wrapper);
@@ -93,6 +102,10 @@ public class RestOrderController {
     @ApiOperation(value = "骑手接单接口", tags = {"订单购物车接口"}, notes = "骑手接单接口")
     public RestResponseBean riderOrder(@RequestParam(name = "riderId",required = true) String riderId,
                                        @RequestParam(name = "orderId",required = true) String orderId){
+        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        if(user==null) {
+            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+        }
        boolean flag = orderService.riderOrder(riderId,orderId);
         if(flag){
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
@@ -103,6 +116,10 @@ public class RestOrderController {
     @PostMapping(value = "/rider/orderUserOk")
     @ApiOperation(value = "用户确认收货接口", tags = {"订单购物车接口"}, notes = "用户确认收货接口")
     public RestResponseBean orderUserOk(@RequestParam(name = "orderId",required = true) String orderId){
+        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        if(user==null) {
+            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+        }
         QueryWrapper<RiderAddress> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("status","3");
         Order order = new Order();
@@ -119,6 +136,10 @@ public class RestOrderController {
     @PostMapping(value = "/rider/orderRiderOk")
     @ApiOperation(value = "骑手送达接口", tags = {"订单购物车接口"}, notes = "骑手送达接口")
     public RestResponseBean orderRiderOk(@RequestParam(name = "orderId",required = true) String orderId){
+        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        if(user==null) {
+            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+        }
         QueryWrapper<RiderAddress> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("status","3");
         Order order = new Order();
@@ -140,6 +161,10 @@ public class RestOrderController {
    @ApiOperation(value = "用户根据订单号查询订单接口", tags = {"订单购物车接口"}, notes = "用户根据订单号查询订单接口")
    @ApiImplicitParam(name = "orderId", value = "订单的id",required = true )
    public RestResponseBean queryByOrderId(@RequestParam(name="orderId",required=true) String orderId) {
+       User user = (User) SecurityUtils.getSubject().getPrincipal();
+       if(user==null) {
+           return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+       }
        Order order = orderService.queryByOrderId(orderId);
        if(order!=null){
            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),order);
@@ -156,6 +181,10 @@ public class RestOrderController {
    @PostMapping(value = "/addOrder")
    @ApiOperation(value = "用户新增订单接口", tags = {"订单购物车接口"}, notes = "用户新增订单接口")
    public RestResponseBean addOrder(OrderPage orderPage) {
+       User user = (User) SecurityUtils.getSubject().getPrincipal();
+       if(user==null) {
+           return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+       }
        Order order = orderService.add(orderPage);
        if(order!=null){
            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),order);
@@ -172,6 +201,10 @@ public class RestOrderController {
    @ApiOperation(value = "取消订单接口 参数：订单id", tags = {"订单购物车接口"}, notes = "取消订单接口 参数：订单id")
    @PostMapping(value = "/cancelOrder")
    public RestResponseBean cancelOrder(@RequestParam(name="id",required=true) String id) {
+       User user = (User) SecurityUtils.getSubject().getPrincipal();
+       if(user==null) {
+           return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+       }
        boolean flag = orderService.cancel(id);
        if(flag){
            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
@@ -188,6 +221,10 @@ public class RestOrderController {
    @GetMapping(value = "/queryOrderUserById")
    @ApiOperation(value = "用户查询订单（不包括商品详情）接口", tags = {"订单购物车接口"}, notes = "用户查询订单（不包括商品详情）接口")
    public RestResponseBean queryOrderUserById(@RequestParam(name="id",required=true) String id) {
+       User user = (User) SecurityUtils.getSubject().getPrincipal();
+       if(user==null) {
+           return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+       }
        Order order = orderService.getById(id);
        if(order!=null) {
            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
@@ -199,15 +236,19 @@ public class RestOrderController {
     * @param id
     * @return
     */
-   @GetMapping(value = "/queryOrderGoods")
-   @ApiOperation(value = "用户查询单个订单（包括商品详情）接口", tags = {"订单购物车接口"}, notes = "用户查询订单个（包括商品详情）接口")
-   public RestResponseBean queryOrderGoods(@RequestParam(name="id",required=true)String id) {
-       List<OrderGoods> orderGoodsList = orderGoodsService.selectByMainId(id);
-       if(orderGoodsList!=null){
-           return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),orderGoodsList);
-       }
-       return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
-   }
+    @GetMapping(value = "/queryOrderGoods")
+    @ApiOperation(value = "用户查询单个订单（包括商品详情）接口", tags = {"订单购物车接口"}, notes = "用户查询订单个（包括商品详情）接口")
+    public RestResponseBean queryOrderGoods(@RequestParam(name="id",required=true)String id) {
+        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        if(user==null) {
+            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+        }
+        List<OrderGoods> orderGoodsList = orderGoodsService.selectByMainId(id);
+        if(orderGoodsList!=null){
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),orderGoodsList);
+        }
+        return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+    }
 
     @GetMapping(value = "/background_list")
     public Result<IPage<Order>> queryPageList(Order order,

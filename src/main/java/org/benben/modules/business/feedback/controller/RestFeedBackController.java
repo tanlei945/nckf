@@ -62,6 +62,10 @@ public class RestFeedBackController {
    @ApiOperation(value = "用户系统反馈展示接口", tags = {"用户接口"}, notes = "用户系统反馈展示接口")
    public RestResponseBean queryFeedBackList(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                              @RequestParam(name="pageSize", defaultValue="10") Integer pageSize) {
+       User user = (User) SecurityUtils.getSubject().getPrincipal();
+       if(user==null) {
+           return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+       }
        Result<IPage<FeedBack>> result = new Result<IPage<FeedBack>>();
        QueryWrapper<FeedBack> queryWrapper = new QueryWrapper<>();
        Page<FeedBack> page = new Page<FeedBack>(pageNo, pageSize);
@@ -86,6 +90,10 @@ public class RestFeedBackController {
            @ApiImplicitParam(name = "files", value = "上传的文件")
    })
    public RestResponseBean addFeedBack(@RequestParam(name="orderId",required=true)String orderId, FeedBack feedBack, @RequestParam(name = "file") MultipartFile[] files) {
+       User user = (User) SecurityUtils.getSubject().getPrincipal();
+       if(user==null) {
+           return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+       }
        log.info("本次上传的文件的数量为-------->" + files.length);
        User userEntity = (User) SecurityUtils.getSubject().getPrincipal();
        String bizPath = "feedback";

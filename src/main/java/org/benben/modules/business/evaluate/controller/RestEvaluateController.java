@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.api.vo.Result;
+import org.benben.common.aspect.annotation.CheckToken;
 import org.benben.common.menu.ResultEnum;
 import org.benben.common.system.query.QueryGenerator;
 import org.benben.common.util.oConvertUtils;
@@ -75,11 +76,16 @@ public class RestEvaluateController {
              * @param storeId  商家ID
              * @return
              */
+
    @GetMapping(value = "/queryEvaluateList")
    @ApiOperation(value = "用户评论商家展示接口", tags = {"用户接口"}, notes = "用户评论商家展示接口")
    public RestResponseBean queryEvaluateList(@RequestParam(name = "storeId",required = true) String storeId,
                                              @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                              @RequestParam(name="pageSize", defaultValue="10") Integer pageSize) {
+       User user = (User) SecurityUtils.getSubject().getPrincipal();
+       if(user==null) {
+           return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+       }
        Result<IPage<Evaluate>> result = new Result<IPage<Evaluate>>();
        QueryWrapper<Evaluate> queryWrapper = new QueryWrapper<>();
        queryWrapper.eq("belong_id",storeId);
@@ -96,8 +102,12 @@ public class RestEvaluateController {
    @PostMapping(value = "/addEvaluate")
    @ApiOperation(value = "用户评论提交接口", tags = {"用户接口"}, notes = "用户评论提交接口")
    public RestResponseBean add(@RequestParam(name="orderId",required=true)String orderId, Evaluate evaluate, @RequestParam(name = "file") MultipartFile[] files) {
+
+       User user = (User) SecurityUtils.getSubject().getPrincipal();
+       if(user==null) {
+           return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+       }
        log.info("本次上传的文件的数量为-------->" + files.length);
-       User userEntity = (User) SecurityUtils.getSubject().getPrincipal();
        String bizPath = "evaluate";
        String nowday = new SimpleDateFormat("yyyyMMdd").format(new Date());
        String ctxPath = uploadpath;
@@ -127,9 +137,9 @@ public class RestEvaluateController {
                evaluate.setStorename(store.getStoreName());
            }
            evaluate.setImgUrl(resultName);
-           evaluate.setUserId(userEntity.getId());
-           evaluate.setUsername(userEntity.getUsername());
-           evaluate.setCreateBy(userEntity.getUsername());
+           evaluate.setUserId(user.getId());
+           evaluate.setUsername(user.getUsername());
+           evaluate.setCreateBy(user.getUsername());
            evaluate.setCreateTime(new Date());
            evaluate.setDelFlag("1");
            evaluateService.save(evaluate);
@@ -137,7 +147,7 @@ public class RestEvaluateController {
            order.setId(orderId);
            order.setStatus("4");
            order.setUpdateTime(new Date());
-           order.setUpdateBy(userEntity.getUsername());
+           order.setUpdateBy(user.getUsername());
            orderService.updateById(order);
            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
        } catch (Exception e) {
@@ -164,7 +174,6 @@ public class RestEvaluateController {
                result.success("修改成功!");
            }
        }
-
        return result;
    }
 
