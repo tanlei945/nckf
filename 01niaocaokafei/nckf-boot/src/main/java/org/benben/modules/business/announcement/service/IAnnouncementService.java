@@ -3,6 +3,8 @@ package org.benben.modules.business.announcement.service;
 import org.benben.modules.business.announcement.entity.Announcement;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * @Description: 用户通告
  * @author： jeecg-boot
@@ -10,5 +12,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @version： V1.0
  */
 public interface IAnnouncementService extends IService<Announcement> {
+
+	List<Announcement> queryAnnouncement();
 
 }

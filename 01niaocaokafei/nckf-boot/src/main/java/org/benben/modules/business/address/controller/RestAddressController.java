@@ -129,7 +129,7 @@ public class RestAddressController {
 
 
     @GetMapping("/queryDistance")
-    @ApiOperation(value = "骑手距离",tags={"首页"},notes = "骑手距离")
+    @ApiOperation(value = "骑手距离",tags={"用户接口"},notes = "骑手距离")
     public RestResponseBean queryDistance(@RequestParam String lng, @RequestParam String lat, @RequestParam String riderId){
         //获取骑手地点
         RiderAddress riderAddress = addressService.queryRiderAddress(riderId);

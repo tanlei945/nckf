@@ -286,6 +286,7 @@ public class StoreController {
 
 
 	 @RequestMapping("/query_all_store")
+	 @ApiOperation(value="门店列表", tags = {"门店管理接口"})
 	 public RestResponseBean queryAllStore(){
 		 try {
 			 List<Store> list= storeService.list();
