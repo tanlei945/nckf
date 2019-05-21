@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.benben.common.api.vo.RestResponseBean;
+import org.benben.common.constant.CommonConstant;
 import org.benben.common.menu.ResultEnum;
 import org.benben.common.menu.SMSResultEnum;
 import org.benben.common.util.DateUtils;
@@ -15,6 +16,8 @@ import org.benben.common.util.RedisUtil;
 import org.benben.modules.business.commen.dto.SmsDTO;
 import org.benben.modules.business.commen.service.ISMSService;
 import org.benben.modules.business.message.service.IMessageService;
+import org.benben.modules.business.user.entity.User;
+import org.benben.modules.business.user.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -39,9 +42,12 @@ public class RestSmsController {
     @Autowired
     private ISMSService ismsService;
 
+    @Autowired
+    private IUserService userService;
+
 
     @PostMapping(value = "/thirdSend")
-    @ApiOperation(value = "发送验证码 ",tags = {"短信接口"},notes = "发送验证码 ")
+//    @ApiOperation(value = "发送验证码 ",tags = {"短信接口"},notes = "发送验证码 ")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "mobile",value = "手机号",dataType = "String",required = true),
             @ApiImplicitParam(name = "event",value = "事件",dataType = "String",defaultValue = "register",required = true)
@@ -171,13 +177,29 @@ public class RestSmsController {
             return new RestResponseBean(ResultEnum.PARAMETER_MISSING.getValue(), ResultEnum.PARAMETER_MISSING.getDesc(), null);
         }
 
+		User user = userService.queryByMobile(mobile);
+
+		if(StringUtils.equals(event,CommonConstant.SMS_EVENT_REGISTER)){ //注册
+
+			if(user != null ){
+				return new RestResponseBean(ResultEnum.MOBILE_EXIST_REGISTER.getValue(),ResultEnum.MOBILE_EXIST_REGISTER.getDesc(),null);
+			}
+
+		}else{ //忘记密码/登录
+
+        	if(user == null){
+				return new RestResponseBean(ResultEnum.MOBILE_NOT_REGISTER.getValue(),ResultEnum.MOBILE_NOT_REGISTER.getDesc(),null);
+			}
+
+		}
+
         Integer code = (int) ((Math.random() * 9 + 1) * 100000);
 
         redisUtil.set(mobile + "," + event, String.valueOf(code), 300);
 
         System.out.println("验证码:" + code);
 
-        return new RestResponseBean(ResultEnum.SMS_SEND_SUCCESS.getValue(), ResultEnum.SMS_SEND_SUCCESS.getDesc(), null);
+        return new RestResponseBean(ResultEnum.SMS_SEND_SUCCESS.getValue(), ResultEnum.SMS_SEND_SUCCESS.getDesc(), code);
 
     }
 

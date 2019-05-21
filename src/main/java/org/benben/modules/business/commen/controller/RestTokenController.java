@@ -11,20 +11,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/token/")
-@Api(tags = {"token接口"})
+//@Api(tags = {"token接口"})
 public class RestTokenController {
     @Autowired
     private ITokenService tokenService;
 
     @GetMapping("/checkToken")
-    @ApiOperation(value = "验证token", tags = {"token接口"},notes = "验证token")
+//    @ApiOperation(value = "验证token", tags = {"token接口"},notes = "验证token")
     public RestResponseBean checkToken(String key) {
         RestResponseBean check = tokenService.check(key);
         return check;
     }
 
     @GetMapping("/refreshToken")
-    @ApiOperation(value = "刷新token", tags = {"token接口"},notes = "刷新token")
+//    @ApiOperation(value = "刷新token", tags = {"token接口"},notes = "刷新token")
     public String refreshToken(String key) {
         String refresh = tokenService.refresh(key);
         return refresh;

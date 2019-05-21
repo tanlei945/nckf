@@ -12,7 +12,7 @@ public class UserStoreVo {
 
     /**真实姓名*/
     @Excel(name = "真实姓名", width = 15)
-    @ApiModelProperty(value = "真实姓名",name = "realname",required = true,example = "张三")
+    @ApiModelProperty(value = "真实姓名",name = "realname",required = true)
     private java.lang.String realname;
     /**性别  0/男,1/女*/
     @Excel(name = "性别  0/男,1/女", width = 15)
@@ -20,18 +20,18 @@ public class UserStoreVo {
     private java.lang.Integer sex;
     /**年龄*/
     @Excel(name = "年龄", width = 15)
-    @ApiModelProperty(value = "年龄",name = "age",required = true,example = "2X")
+    @ApiModelProperty(value = "年龄",name = "age",required = true)
     private java.lang.String age;
     /**手机号*/
     @Excel(name = "手机号", width = 15)
-    @ApiModelProperty(value = "手机号",name = "mobile",required = true,example = "15899999999")
+    @ApiModelProperty(value = "手机号",name = "mobile",required = true)
     private java.lang.String mobile;
     /**密码*/
     @Excel(name = "密码", width = 15)
     @ApiModelProperty(value = "密码",name = "password",required = true)
     private java.lang.String password;
     /**身份证号*/
-    @ApiModelProperty(value = "身份证号",name = "idCard",required = true,example = "41140319870301XXXX")
+    @ApiModelProperty(value = "身份证号",name = "idCard",required = true)
     @Excel(name = "身份证号", width = 15)
     private java.lang.String idCard;
     /**身份证正面照*/
