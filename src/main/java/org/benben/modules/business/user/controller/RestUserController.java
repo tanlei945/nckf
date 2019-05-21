@@ -15,7 +15,6 @@ import org.benben.common.menu.ResultEnum;
 import org.benben.common.system.api.ISysBaseAPI;
 import org.benben.common.util.PasswordUtil;
 import org.benben.common.util.RedisUtil;
-import org.benben.modules.business.account.service.IAccountService;
 import org.benben.modules.business.commen.dto.SmsDTO;
 import org.benben.modules.business.commen.service.*;
 import org.benben.modules.business.user.entity.User;
@@ -24,7 +23,6 @@ import org.benben.modules.business.user.service.IUserService;
 import org.benben.modules.business.user.service.IUserThirdService;
 import org.benben.modules.business.user.vo.UserStoreVo;
 import org.benben.modules.business.user.vo.UserVo;
-import org.benben.modules.business.userstore.service.IUserStoreService;
 import org.benben.modules.shiro.authc.util.JwtUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,11 +73,11 @@ public class RestUserController {
 
 
     /**
-     * 通过id查询
+     * 用户详情
      * @return
      */
     @GetMapping(value = "/queryUserById")
-    @ApiOperation(value = "通过id查询用户", tags = {"用户接口"}, notes = "通过id查询用户")
+    @ApiOperation(value = "用户详情", tags = {"用户接口"}, notes = "用户详情")
     public RestResponseBean queryUserById() {
 
 		User user = (User) SecurityUtils.getSubject().getPrincipal();

@@ -51,7 +51,7 @@ public class RestCouponsController {
                                                 HttpServletRequest req) {
 
         QueryWrapper<Coupons> queryWrapper = QueryGenerator.initQueryWrapper(coupons, req.getParameterMap());
-        queryWrapper.eq("status",1).eq("del_flag",0);
+        queryWrapper.lambda().eq(Coupons::getStatus,"1").eq(Coupons::getDelFlag,"0");
         Page<Coupons> page = new Page<Coupons>(pageNo, pageSize);
         IPage<Coupons> pageList = couponsService.page(page, queryWrapper);
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);

@@ -2,9 +2,9 @@ package org.benben.modules.business.account.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.menu.ResultEnum;
 import org.benben.common.util.PasswordUtil;
@@ -33,17 +33,19 @@ public class RestAccountController {
    @Autowired
    private IAccountService accountService;
 
-   @Autowired
-   private IUserService userService;
-
 
 
     @GetMapping(value = "/queryAccount")
     @ApiOperation(value = "账单/钱包详情", tags = {"用户接口"}, notes = "账单/钱包详情")
-    @ApiImplicitParam(name = "userId",value = "用户的ID",dataType = "String",required = true)
-    public RestResponseBean queryAccount(@RequestParam String userId) {
+    public RestResponseBean queryAccount() {
 
-        Account account = accountService.queryByUserId(userId);
+		User user = (User) SecurityUtils.getSubject().getPrincipal();
+
+		if(user == null){
+			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+		}
+
+        Account account = accountService.queryByUserId(user.getId());
 
         if(account==null) {
             return new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(),ResultEnum.QUERY_NOT_EXIST.getDesc(),null);
@@ -54,10 +56,15 @@ public class RestAccountController {
 
     @GetMapping(value = "/isPayPassword")
     @ApiOperation(value = "是否设置支付密码", tags = {"用户接口"}, notes = "是否设置支付密码")
-    @ApiImplicitParam(name = "userId",value = "用户的ID",dataType = "String",required = true)
-    public RestResponseBean isPayPassword(String userId){
+    public RestResponseBean isPayPassword(){
 
-        if(accountService.isPayPassword(userId)){
+		User user = (User) SecurityUtils.getSubject().getPrincipal();
+
+		if(user == null){
+			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+		}
+
+        if(accountService.isPayPassword(user.getId())){
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),"未设置支付密码",null);
         }
 
@@ -67,8 +74,13 @@ public class RestAccountController {
 
     @GetMapping(value = "isWithdrawAccount")
     @ApiOperation(value = "是否设置收款账户", tags = {"用户接口"}, notes = "是否设置收款账户")
-    @ApiImplicitParam(name = "userId",value = "用户的ID",dataType = "String",required = true)
     public RestResponseBean isWithdrawAccount(String userId){
+
+		User user = (User) SecurityUtils.getSubject().getPrincipal();
+
+		if(user == null){
+			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+		}
 
         if(accountService.isWithdrawAccount(userId)){
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),"未设置收款账户",null);
@@ -79,14 +91,16 @@ public class RestAccountController {
 
     @GetMapping("/checkPayPassword")
     @ApiOperation(value = "支付密码是否正确",tags = {"用户接口"},notes = "支付密码是否正确")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "userId",value = "用户的ID",dataType = "String",required = true),
-            @ApiImplicitParam(name = "payPassword",value = "支付密码",dataType = "String",required = true)
-    })
-    public RestResponseBean checkPayPassword(String userId,String payPassword){
+	@ApiImplicitParam(name = "payPassword",value = "支付密码",dataType = "String",required = true)
+    public RestResponseBean checkPayPassword(String payPassword){
 
-        User user = userService.getById(userId);
-        Account account = accountService.queryByUserId(userId);
+		User user = (User) SecurityUtils.getSubject().getPrincipal();
+
+		if(user == null){
+			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+		}
+
+        Account account = accountService.queryByUserId(user.getId());
 
         if(user == null || account == null){
             return new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(),ResultEnum.QUERY_NOT_EXIST.getDesc(),null);
@@ -103,13 +117,16 @@ public class RestAccountController {
 
     @GetMapping(value = "/resetPayPassword")
     @ApiOperation(value = "重置支付密码", tags = {"用户接口"}, notes = "重置支付密码")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "userId",value = "用户的ID",dataType = "String",required = true),
-            @ApiImplicitParam(name = "newPayPassword",value = "支付密码",dataType = "String",required = true)
-    })
-    public RestResponseBean resetPayPassword(@RequestParam String userId,@RequestParam String newPayPassword){
+	@ApiImplicitParam(name = "newPayPassword",value = "支付密码",dataType = "String",required = true)
+    public RestResponseBean resetPayPassword(@RequestParam String newPayPassword){
 
-        if (accountService.resetPayPassword(userId,newPayPassword)){
+		User user = (User) SecurityUtils.getSubject().getPrincipal();
+
+		if(user == null){
+			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+		}
+
+        if (accountService.resetPayPassword(user.getId(),newPayPassword)){
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
         }
 

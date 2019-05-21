@@ -43,8 +43,7 @@ public class RestMessageController {
 			@RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
 			@RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
 		QueryWrapper<Message> queryWrapper = new QueryWrapper<>();
-		queryWrapper.eq("del_flag","1");
-		queryWrapper.eq("message_type",messageType);
+		queryWrapper.lambda().eq(Message::getDelFlag,"1").eq(Message::getMessageType,messageType);
 		Page<Message> page = new Page<Message>(pageNo, pageSize);
 		IPage<Message> pageList = messageService.page(page, queryWrapper);
 
