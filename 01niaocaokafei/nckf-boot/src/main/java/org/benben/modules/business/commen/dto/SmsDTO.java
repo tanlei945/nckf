@@ -25,10 +25,10 @@ public class SmsDTO {
 
     @NotNull(message = "事件不能为空")
     @NotBlank(message = "事件不能为空")
-    @ApiModelProperty(value = "短信事件",name = "event",required = true,example = "register")
+    @ApiModelProperty(value = "短信事件",name = "event",required = true,example = "1、register2、login3、forget")
     private String event;
 
-    @ApiModelProperty(value = "短信验证码",name = "captcha",example = "张三")
+    @ApiModelProperty(value = "短信验证码",name = "captcha")
     private String captcha;
 
 }

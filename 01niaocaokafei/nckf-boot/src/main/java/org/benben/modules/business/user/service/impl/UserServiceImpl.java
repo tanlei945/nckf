@@ -3,13 +3,23 @@ package org.benben.modules.business.user.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.qq.connect.QQConnectException;
 import com.qq.connect.utils.QQConnectConfig;
+import org.benben.common.constant.CommonConstant;
 import org.benben.common.util.PasswordUtil;
 import org.benben.common.util.oConvertUtils;
+import org.benben.modules.business.account.entity.Account;
+import org.benben.modules.business.account.mapper.AccountMapper;
 import org.benben.modules.business.user.entity.User;
 import org.benben.modules.business.user.entity.UserThird;
 import org.benben.modules.business.user.mapper.UserThirdMapper;
 import org.benben.modules.business.user.mapper.UserMapper;
 import org.benben.modules.business.user.service.IUserService;
+import org.benben.modules.business.user.vo.UserStoreVo;
+import org.benben.modules.business.user.vo.UserVo;
+import org.benben.modules.business.usercoupons.entity.UserCoupons;
+import org.benben.modules.business.usercoupons.mapper.UserCouponsMapper;
+import org.benben.modules.business.userstore.entity.UserStore;
+import org.benben.modules.business.userstore.mapper.UserStoreMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
+
 
 /**
  * @Description: 普通用户
@@ -31,6 +43,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     private UserMapper userMapper;
     @Autowired
     private UserThirdMapper userThirdMapper;
+    @Autowired
+    private AccountMapper accountMapper;
+    @Autowired
+    private UserCouponsMapper userCouponsMapper;
+    @Autowired
+    private UserStoreMapper userStoreMapper;
 
 //	@Override
 //	@Transactional
@@ -147,14 +165,93 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
         String salt = oConvertUtils.randomGen(8);
         user.setSalt(salt);
-        String passwordEncode = PasswordUtil.encrypt(mobile, password, salt);
+        String passwordEncode = PasswordUtil.encrypt(password, password, salt);
         user.setPassword(passwordEncode);
 
         return userMapper.updateById(user);
     }
 
+	/**
+	 * 用户详情
+	 * @param user
+	 * @return
+	 */
+	@Override
+	public UserVo queryUserVo(User user) {
 
-    public String getAuthorizeURL(String response_type, String state, String scope) throws QQConnectException {
+		UserVo userVo = new UserVo();
+
+		Account account = accountMapper.queryByUserId(user.getId());
+		List<UserCoupons> list = userCouponsMapper.queryByUserId(user.getId());
+		BeanUtils.copyProperties(user,userVo);
+
+		userVo.setMoney(account.getMoney());
+		userVo.setCouponsNumber(list.size());
+
+		return userVo;
+	}
+
+	/**
+	 * 用户注册
+	 * @param mobile
+	 * @param password
+	 * @return
+	 */
+	@Override
+	@Transactional
+	public User userRegister(String mobile, String password) {
+
+		User user = new User();
+		Account account = new Account();
+
+		//保存用户信息
+		user.setMobile(mobile);
+		String salt = oConvertUtils.randomGen(8);
+		user.setSalt(salt);
+		String passwordEncode = PasswordUtil.encrypt(password, password, salt);
+		user.setPassword(passwordEncode);
+		userMapper.insert(user);
+
+		//生成钱包
+		account.setUserId(user.getId());
+		accountMapper.insert(account);
+
+		return user;
+	}
+
+	/**
+	 * 骑手注册
+	 * @param userStoreVo
+	 * @return
+	 */
+	@Override
+	@Transactional
+	public User riderRegister(UserStoreVo userStoreVo) {
+
+		User user = new User();
+		UserStore userStore = new UserStore();
+		Account account = new Account();
+
+		BeanUtils.copyProperties(userStoreVo,user);
+		BeanUtils.copyProperties(userStoreVo,userStore);
+		user.setUserType("1");
+		String salt = oConvertUtils.randomGen(8);
+		user.setSalt(salt);
+		String passwordEncode = PasswordUtil.encrypt(CommonConstant.NCKF_PWD, CommonConstant.NCKF_PWD, salt);
+		user.setPassword(passwordEncode);
+		userMapper.insert(user);
+		// 保存骑手信息
+		userStore.setUserId(user.getId());
+		userStore.setCompleteFlag("0");
+		userStoreMapper.insert(userStore);
+		// 生成账单
+		account.setUserId(user.getId());
+		accountMapper.insert(account);
+
+		return user;
+	}
+
+	public String getAuthorizeURL(String response_type, String state, String scope) throws QQConnectException {
         return QQConnectConfig.getValue("authorizeURL").trim() + "?client_id=" + QQConnectConfig.getValue("app_ID").trim() + "&redirect_uri=" + QQConnectConfig.getValue("redirect_URI").trim() + "&response_type=" + response_type + "&state=" + state + "&scope=" + scope;
     }
 }

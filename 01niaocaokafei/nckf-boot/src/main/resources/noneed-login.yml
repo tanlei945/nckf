@@ -13,3 +13,5 @@ filterlist:
   - /api/v1/sms/**
   - /api/v1/login/third
   - /api/v1/validate/**
+  - /api/v1/announcement/**
+  - /api/v1/banner/**
