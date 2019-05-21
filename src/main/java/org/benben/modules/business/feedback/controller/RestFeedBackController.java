@@ -87,50 +87,27 @@ public class RestFeedBackController {
    @ApiImplicitParams({
            @ApiImplicitParam(name = "orderId", value = "商家的id"),
            @ApiImplicitParam(name = "feedBack", value = "反馈实体"),
-           @ApiImplicitParam(name = "files", value = "上传的文件")
+           @ApiImplicitParam(name = "imagesUrl", value = "图片们的url")
    })
-   public RestResponseBean addFeedBack(@RequestParam(name="orderId",required=true)String orderId, FeedBack feedBack, @RequestParam(name = "file") MultipartFile[] files) {
+   public RestResponseBean addFeedBack(@RequestParam(name="orderId",required=true)String orderId, FeedBack feedBack, String imagesUrl) {
        User user = (User) SecurityUtils.getSubject().getPrincipal();
        if(user==null) {
            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
        }
-       log.info("本次上传的文件的数量为-------->" + files.length);
-       User userEntity = (User) SecurityUtils.getSubject().getPrincipal();
-       String bizPath = "feedback";
-       String nowday = new SimpleDateFormat("yyyyMMdd").format(new Date());
-       String ctxPath = uploadpath;
-       String fileName = "";
-       String resultName = "";
-       try {
-           File file = new File(ctxPath + File.separator + bizPath + File.separator + nowday);
-           if (!file.exists()) {
-               file.mkdirs();// 创建文件根目录
-           }
-           for (MultipartFile mf : files) {
-               String orgName = mf.getOriginalFilename();// 获取文件名
-               fileName = orgName.substring(0, orgName.lastIndexOf(".")) + "_" + System.currentTimeMillis() + orgName.substring(orgName.indexOf("."));
-               String savePath = file.getPath() + File.separator + fileName;
-               File savefile = new File(savePath);
-               FileCopyUtils.copy(mf.getBytes(), savefile);
-               resultName += fileName + ",";
-           }
+       feedBack.setImgUrl(imagesUrl);
+       feedBack.setUserId(user.getId());
+       feedBack.setUsername(user.getUsername());
+       feedBack.setCreateBy(user.getUsername());
+       feedBack.setCreateTime(new Date());
+       feedBack.setDelFlag("1");
+       feedBackService.save(feedBack);
+       Order order = new Order();
+       order.setId(orderId);
+       order.setStatus("4");
+       orderService.updateById(order);
+       return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
 
-           feedBack.setImgUrl(resultName);
-           feedBack.setUserId(userEntity.getId());
-           feedBack.setUsername(userEntity.getUsername());
-           feedBack.setCreateBy(userEntity.getUsername());
-           feedBack.setCreateTime(new Date());
-           feedBack.setDelFlag("1");
-           feedBackService.save(feedBack);
-           Order order = new Order();
-           order.setId(orderId);
-           order.setStatus("4");
-           orderService.updateById(order);
-           return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
-       } catch (Exception e) {
-           log.info(e.getMessage());
-           return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
-       }
+
    }
 
     /**
