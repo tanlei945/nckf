@@ -28,27 +28,24 @@ import javax.servlet.http.HttpServletRequest;
 @Api(tags = {"首页"})
 public class RestInstructionController {
 
-    @Autowired
-    private ISystemConfigService systemConfigService;
+	@Autowired
+	private ISystemConfigService systemConfigService;
 
-    @GetMapping(value = "/queryRechargeDictionary")
-    @ApiOperation(value = "充值说明查询", notes = "充值说明查询",tags = {"首页"})
-    @ApiImplicitParams({
-            @ApiImplicitParam(name="pageNo",value = "当前页",dataType = "Integer",defaultValue = "1"),
-            @ApiImplicitParam(name="pageSize",value = "每页显示条数",dataType = "Integer",defaultValue = "10"),
-    })
-    public RestResponseBean queryRechargeDictionary(SystemConfig systemConfig,
-                                                     @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-                                                     @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
-                                                     HttpServletRequest req) {
+	@GetMapping(value = "/queryRechargeDictionary")
+	@ApiOperation(value = "充值说明查询", notes = "充值说明查询", tags = {"首页"})
+	@ApiImplicitParams({@ApiImplicitParam(name = "pageNo", value = "当前页", dataType = "Integer", defaultValue = "1"),
+			@ApiImplicitParam(name = "pageSize", value = "每页显示条数", dataType = "Integer", defaultValue = "10"),})
+	public RestResponseBean queryRechargeDictionary(@RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+			@RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
 
-        QueryWrapper<SystemConfig> queryWrapper = QueryGenerator.initQueryWrapper(systemConfig, req.getParameterMap());
-        //查询条件
-        queryWrapper.eq("config_group","recharge");
-        Page<SystemConfig> page = new Page<SystemConfig>(pageNo, pageSize);
-        IPage<SystemConfig> pageList = systemConfigService.page(page, queryWrapper);
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
-    }
+		QueryWrapper<SystemConfig> queryWrapper = new QueryWrapper<>();
+		//查询条件
+		queryWrapper.eq("config_group", "recharge");
+		Page<SystemConfig> page = new Page<SystemConfig>(pageNo, pageSize);
+		IPage<SystemConfig> pageList = systemConfigService.page(page, queryWrapper);
+		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(),
+				pageList);
+	}
 
 
 }

@@ -8,9 +8,11 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.menu.ResultEnum;
 import org.benben.common.system.query.QueryGenerator;
+import org.benben.modules.business.user.entity.User;
 import org.benben.modules.business.usercoupons.entity.UserCoupons;
 import org.benben.modules.business.usercoupons.service.IUserCouponsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,47 +28,37 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 @Api(tags = "用户接口")
 public class RestUserCouponsController {
-    @Autowired
-    private IUserCouponsService userCouponsService;
+	@Autowired
+	private IUserCouponsService userCouponsService;
 
-    /**
-     * 个人优惠券查询
-     * @param userCoupons
-     * @param pageNo
-     * @param pageSize
-     * @param req
-     * @return
-     */
-    @GetMapping(value = "/queryUserCoupons")
-    @ApiOperation(value = "个人优惠券查询", notes = "个人优惠券查询",tags = "用户接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name="pageNo",value = "当前页",dataType = "Integer",defaultValue = "1"),
-            @ApiImplicitParam(name="pageSize",value = "每页显示条数",dataType = "Integer",defaultValue = "10"),
-            @ApiImplicitParam(name="userId",value = "用户Id",dataType = "String"),
-            @ApiImplicitParam(name="couponstype",value = "优惠券状态",dataType = "String")
-    })
-    public RestResponseBean queryUserCoupons(UserCoupons userCoupons,
-                                                    @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-                                                    @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
-                                                    HttpServletRequest req,@RequestParam String userId,@RequestParam String couponstype) {
+	/**
+	 * 个人优惠券查询
+	 * @param status
+	 * @param pageNo
+	 * @param pageSize
+	 * @return
+	 */
+	@GetMapping(value = "/list")
+	@ApiOperation(value = "个人优惠券查询", notes = "个人优惠券查询", tags = "用户接口")
+	@ApiImplicitParams({@ApiImplicitParam(name = "pageNo", value = "当前页", dataType = "Integer", defaultValue = "1"),
+			@ApiImplicitParam(name = "pageSize", value = "每页显示条数", dataType = "Integer", defaultValue = "10"),
+			@ApiImplicitParam(name = "status", value = "状态：-1已过期 0 未使用 1已使用", dataType = "String")})
+	public RestResponseBean list(@RequestParam String status,
+			@RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+			@RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
 
+		User user = (User) SecurityUtils.getSubject().getPrincipal();
+		if(user == null){
+			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+		}
 
-        QueryWrapper<UserCoupons> queryWrapper = QueryGenerator.initQueryWrapper(userCoupons, req.getParameterMap());
-        //判断优惠券状态
-        if("待使用".equals(couponstype)) {
-            queryWrapper.eq("user_id", userId).eq("used_flag", 0).eq("status", 1);
-        }
-        if("已使用".equals(couponstype)) {
-            queryWrapper.eq("user_id", userId).eq("used_flag", 1);
-        }
-        if("已失效".equals(couponstype)) {
-            queryWrapper.eq("user_id", userId).eq("used_flag", 0).eq("status", 0);
-        }
-        Page<UserCoupons> page = new Page<UserCoupons>(pageNo, pageSize);
-        IPage<UserCoupons> pageList = userCouponsService.page(page, queryWrapper);
-        return  new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
-    }
-
-
+		QueryWrapper<UserCoupons> queryWrapper = new QueryWrapper<>();
+		queryWrapper.eq("user_id",user.getId());
+		queryWrapper.eq("status", status);
+		Page<UserCoupons> page = new Page<UserCoupons>(pageNo, pageSize);
+		IPage<UserCoupons> pageList = userCouponsService.page(page, queryWrapper);
+		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(),
+				pageList);
+	}
 
 }

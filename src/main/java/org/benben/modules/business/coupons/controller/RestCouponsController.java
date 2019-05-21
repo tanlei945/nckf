@@ -65,10 +65,10 @@ public class RestCouponsController {
      * @return
      */
     @GetMapping(value = "/queryCouponsById")
-    @ApiOperation(value = "通过id查询优惠券", notes = "通过id查询优惠券",tags = {"首页"})
-    @ApiImplicitParams({
-            @ApiImplicitParam(name="couponsId",value = "优惠券id",dataType = "String",required = true),
-    })
+//    @ApiOperation(value = "通过id查询优惠券", notes = "通过id查询优惠券",tags = {"首页"})
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name="couponsId",value = "优惠券id",dataType = "String",required = true),
+//    })
     public RestResponseBean queryCouponsById(@RequestParam(name="couponsId",required=true) String couponsId) {
 
         QueryWrapper<Coupons> couponsQueryWrapper = new QueryWrapper<>();

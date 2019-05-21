@@ -19,20 +19,20 @@ import java.util.List;
 @Api(tags = {"首页"})
 public class RestBannerController {
 
-    @Autowired
-    private IBannerService bannerService;
+	@Autowired
+	private IBannerService bannerService;
 
 
-    /**
-     * 轮播图
-     *
-     * @return
-     */
-    @GetMapping(value = "/queryBanner")
-    @ApiOperation(value = "轮播图", notes = "轮播图", tags = {"首页"})
-    public RestResponseBean queryBanner() {
-        //查询轮播图
-        List<String> imageList = bannerService.queryImageList();
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), imageList);
-    }
+	/**
+	 * 轮播图
+	 *
+	 * @return
+	 */
+	@GetMapping(value = "/queryBanner")
+	@ApiOperation(value = "轮播图", notes = "轮播图", tags = {"首页"})
+	public RestResponseBean queryBanner() {
+
+		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(),
+				bannerService.queryImageList());
+	}
 }

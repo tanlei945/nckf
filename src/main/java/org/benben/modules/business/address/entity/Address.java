@@ -40,7 +40,7 @@ public class Address implements Serializable {
 	private java.lang.String delFlag;
 	/**是否默认（1：默认）*/
 	@Excel(name = "是否默认（1：默认）", width = 15)
-	@ApiModelProperty(name = "defaultFlag", value = "是否默认（0：否，1：是）")
+	@ApiModelProperty(name = "defaultFlag", value = "是否默认（0：否，1：是）", required = true)
 	private java.lang.String defaultFlag;
 	/**经度*/
 	@Excel(name = "经度", width = 15)
@@ -48,8 +48,9 @@ public class Address implements Serializable {
 	/**纬度*/
 	@Excel(name = "纬度", width = 15)
 	private java.lang.Double lat;
-	/**地址类型：1-公司 2-家 3-学校*/
+	/**性别：0/女 1/男*/
 	@Excel(name = "0/女 1/男", width = 1)
+	@ApiModelProperty(name = "sex", value = "性别（0：女，1：男）", required = true)
 	private java.lang.String sex;
 	/**省份*/
 	@Excel(name = "省份", width = 15)
