@@ -9,12 +9,14 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.SecurityUtils;
 import org.benben.common.XXPay.service.XXPayService;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.menu.ResultEnum;
 import org.benben.common.system.query.QueryGenerator;
 import org.benben.modules.business.recharge.entity.Recharge;
 import org.benben.modules.business.recharge.service.IRechargeService;
+import org.benben.modules.business.user.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,20 +42,26 @@ public class RestRechargeController {
     /**
      * 充值记录
      *
-     * @param recharge
+     * @param rechargeType
      * @param pageNo
      * @param pageSize
-     * @param req
      * @return
      */
     @GetMapping(value = "/queryRecharge")
     @ApiOperation(value = "充值记录", tags = {"用户接口"}, notes = "充值记录")
-    public RestResponseBean queryRecharge(Recharge recharge,
+	@ApiImplicitParam(name = "rechargeType",value = "1：支付宝 2：微信",dataType = "String",required = true)
+    public RestResponseBean queryRecharge(@RequestParam(name = "rechargeType", required = true)String rechargeType,
                                           @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
-                                          @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
-                                          HttpServletRequest req) {
+                                          @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
 
-        QueryWrapper<Recharge> queryWrapper = QueryGenerator.initQueryWrapper(recharge, req.getParameterMap());
+		User user = (User) SecurityUtils.getSubject().getPrincipal();
+
+		if(user == null){
+			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+		}
+
+        QueryWrapper<Recharge> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(Recharge::getUserId,user.getId()).eq(Recharge::getRechargeType,rechargeType);
         Page<Recharge> page = new Page<Recharge>(pageNo, pageSize);
         IPage<Recharge> pageList = rechargeService.page(page, queryWrapper);
 
@@ -85,22 +93,27 @@ public class RestRechargeController {
     @PostMapping(value = "/rechargeRecharge")
     @ApiOperation(value = "钱包充值", tags = {"用户接口"}, notes = "钱包充值")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "userId",value = "用户的ID",dataType = "String",defaultValue = "1",required = true),
             @ApiImplicitParam(name = "money",value = "充值金额",dataType = "double",defaultValue = "1.00",required = true),
             @ApiImplicitParam(name = "type",value = "充值方式1：支付宝 2：微信",dataType = "String",required = true)
     })
-    public RestResponseBean rechargeRecharge(@RequestParam String userId,@RequestParam double money,@RequestParam String type) {
+    public RestResponseBean rechargeRecharge(@RequestParam double money,@RequestParam String type) {
 
-        Recharge recharge = rechargeService.recharge(userId,money,type);
+		User user = (User) SecurityUtils.getSubject().getPrincipal();
+
+		if(user == null){
+			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+		}
+
+        Recharge recharge = rechargeService.recharge(user.getId(),money,type);
 
         if(recharge == null){
             return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
         }
-        //TODO 调用支付宝统一下单接口
+        // 调用支付宝统一下单接口
         if(StringUtils.equals(type,"1")){
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),xxPayService.getAliPayOrderStr(recharge.getId(),recharge.getRechargeMoney(),"recharge","鸟巢咖啡充值"));
         }
-        //TODO 调用微信下单接口
+        // 调用微信下单接口
 
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),xxPayService.getWxParOederStr(recharge.getId(),recharge.getRechargeMoney(),"recharge","鸟巢咖啡充值"));
     }

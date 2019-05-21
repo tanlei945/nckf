@@ -43,7 +43,7 @@ public class RestUserCouponsController {
 	@ApiImplicitParams({@ApiImplicitParam(name = "pageNo", value = "当前页", dataType = "Integer", defaultValue = "1"),
 			@ApiImplicitParam(name = "pageSize", value = "每页显示条数", dataType = "Integer", defaultValue = "10"),
 			@ApiImplicitParam(name = "status", value = "状态：-1已过期 0 未使用 1已使用", dataType = "String")})
-	public RestResponseBean list(@RequestParam String status,
+	public RestResponseBean list(@RequestParam(name = "status",required = true) String status,
 			@RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
 			@RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
 
@@ -53,8 +53,7 @@ public class RestUserCouponsController {
 		}
 
 		QueryWrapper<UserCoupons> queryWrapper = new QueryWrapper<>();
-		queryWrapper.eq("user_id",user.getId());
-		queryWrapper.eq("status", status);
+		queryWrapper.lambda().eq(UserCoupons::getUserId,user.getId()).eq(UserCoupons::getStatus,status);
 		Page<UserCoupons> page = new Page<UserCoupons>(pageNo, pageSize);
 		IPage<UserCoupons> pageList = userCouponsService.page(page, queryWrapper);
 		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(),
