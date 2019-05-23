@@ -5,8 +5,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.menu.ResultEnum;
@@ -44,16 +46,20 @@ public class RestWithdrawController {
      *
      * @param pageNo
      * @param pageSize
-     * @param req
      * @return
      */
     @GetMapping(value = "/queryWithdraw")
     @ApiOperation(value = "提现记录", tags = {"用户接口"}, notes = "提现记录")
-	@ApiImplicitParam(name = "status", value = "0-未审核 1-审核未通过 2-审核已通过", dataType = "String")
-    public RestResponseBean queryWithdraw(@RequestParam(name = "status",required = true) String status,
+	@ApiImplicitParams({@ApiImplicitParam(name = "pageNo", value = "当前页", dataType = "Integer", defaultValue = "1"),
+			@ApiImplicitParam(name = "pageSize", value = "每页显示条数", dataType = "Integer", defaultValue = "10"),
+			@ApiImplicitParam(name = "status", value = "0-未审核 1-审核未通过 2-审核已通过", dataType = "String")})
+    public RestResponseBean queryWithdraw(@RequestParam(name = "status") String status,
                                           @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
-                                          @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
-                                          HttpServletRequest req) {
+                                          @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+
+		if(StringUtils.isBlank(status)){
+			return new RestResponseBean(ResultEnum.PARAMETER_MISSING.getValue(),ResultEnum.PARAMETER_MISSING.getDesc(),null);
+		}
 
 		User user = (User) SecurityUtils.getSubject().getPrincipal();
 
