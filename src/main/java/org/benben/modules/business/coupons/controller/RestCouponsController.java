@@ -33,7 +33,6 @@ public class RestCouponsController {
 
     /**
      * 分页列表查询
-     * @param coupons
      * @param pageNo
      * @param pageSize
      * @param req
@@ -45,12 +44,12 @@ public class RestCouponsController {
             @ApiImplicitParam(name="pageNo",value = "当前页",dataType = "Integer",defaultValue = "1"),
             @ApiImplicitParam(name="pageSize",value = "每页显示条数",dataType = "Integer",defaultValue = "10"),
     })
-    public RestResponseBean queryCoupons(Coupons coupons,
+    public RestResponseBean queryCoupons(
                                                 @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                                 @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
                                                 HttpServletRequest req) {
 
-        QueryWrapper<Coupons> queryWrapper = QueryGenerator.initQueryWrapper(coupons, req.getParameterMap());
+        QueryWrapper<Coupons> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(Coupons::getStatus,"1").eq(Coupons::getDelFlag,"0");
         Page<Coupons> page = new Page<Coupons>(pageNo, pageSize);
         IPage<Coupons> pageList = couponsService.page(page, queryWrapper);

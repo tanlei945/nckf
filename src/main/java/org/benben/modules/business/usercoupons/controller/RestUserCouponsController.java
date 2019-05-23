@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.menu.ResultEnum;
@@ -43,9 +44,13 @@ public class RestUserCouponsController {
 	@ApiImplicitParams({@ApiImplicitParam(name = "pageNo", value = "当前页", dataType = "Integer", defaultValue = "1"),
 			@ApiImplicitParam(name = "pageSize", value = "每页显示条数", dataType = "Integer", defaultValue = "10"),
 			@ApiImplicitParam(name = "status", value = "状态：-1已过期 0 未使用 1已使用", dataType = "String")})
-	public RestResponseBean list(@RequestParam(name = "status",required = true) String status,
+	public RestResponseBean list(@RequestParam(name = "status") String status,
 			@RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
 			@RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+
+		if(StringUtils.isBlank(status)){
+			return new RestResponseBean(ResultEnum.PARAMETER_MISSING.getValue(),ResultEnum.PARAMETER_MISSING.getDesc(),null);
+		}
 
 		User user = (User) SecurityUtils.getSubject().getPrincipal();
 		if(user == null){
