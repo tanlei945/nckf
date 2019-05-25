@@ -54,22 +54,18 @@ public class RestInvoiceController {
 
    /**
      * 查询
-    * @param userId
     * @return
     */
    @GetMapping(value = "/queryInvoice")
    @ApiOperation(value = "用户发票查询接口", tags = {"用户接口"}, notes = "用户发票查询接口")
-   @ApiImplicitParam(name = "userId", value = "用户id",required = true)
-   public RestResponseBean queryInvoice(@RequestParam(name = "userId",required = true) String userId,
-                                        @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-                                        @RequestParam(name="pageSize", defaultValue="10") Integer pageSize) {
+   public RestResponseBean queryInvoice(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo, @RequestParam(name="pageSize", defaultValue="10") Integer pageSize) {
        User user = (User) SecurityUtils.getSubject().getPrincipal();
        if(user==null) {
            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
        }
        Result<IPage<Invoice>> result = new Result<IPage<Invoice>>();
        QueryWrapper<Invoice> queryWrapper = new QueryWrapper<>();
-       queryWrapper.eq("userId",userId);
+       queryWrapper.eq("userId",user.getId());
        Page<Invoice> page = new Page<Invoice>(pageNo, pageSize);
        IPage<Invoice> pageList = invoiceService.page(page, queryWrapper);
        if(pageList != null){
