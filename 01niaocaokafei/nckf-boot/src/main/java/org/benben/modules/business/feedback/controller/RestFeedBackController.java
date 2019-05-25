@@ -87,25 +87,28 @@ public class RestFeedBackController {
    @ApiImplicitParams({
            @ApiImplicitParam(name = "orderId", value = "商家的id"),
            @ApiImplicitParam(name = "feedBack", value = "反馈实体"),
-           @ApiImplicitParam(name = "imagesUrl", value = "图片们的url")
+           @ApiImplicitParam(name = "imageUrl", value = "图片的url")
    })
-   public RestResponseBean addFeedBack(@RequestParam(name="orderId",required=true)String orderId, FeedBack feedBack, String imagesUrl) {
+   public RestResponseBean addFeedBack(@RequestParam(name="orderId",required=true)String orderId, FeedBack feedBack, String imageUrl) {
        User user = (User) SecurityUtils.getSubject().getPrincipal();
        if(user==null) {
            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
        }
-       feedBack.setImgUrl(imagesUrl);
+       feedBack.setImgUrl(imageUrl);
        feedBack.setUserId(user.getId());
        feedBack.setUsername(user.getUsername());
        feedBack.setCreateBy(user.getUsername());
        feedBack.setCreateTime(new Date());
        feedBack.setDelFlag("1");
-       feedBackService.save(feedBack);
+       boolean flag = feedBackService.save(feedBack);
        Order order = new Order();
        order.setId(orderId);
        order.setStatus("4");
-       orderService.updateById(order);
-       return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
+       boolean flag1 = orderService.updateById(order);
+       if(flag && flag1){
+           return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
+       }
+       return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
 
 
    }
