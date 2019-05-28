@@ -385,7 +385,7 @@ public class RestUserController {
      * @param bindingResult
      * @return
      */
-    @PostMapping(value = "/mobilelogin")
+    @PostMapping(value = "/mobileLogin")
     @ApiOperation(value = "手机验证码登录", tags = {"用户接口"}, notes = "手机验证码登录")
     public RestResponseBean mobilelogin(@RequestBody @Valid SmsDTO smsDTO, BindingResult bindingResult) {
 
@@ -558,13 +558,26 @@ public class RestUserController {
 
     @GetMapping(value = "/isExistMobile")
     @ApiOperation(value = "手机号是否已被注册",tags = {"用户接口"},notes = "手机号是否已被注册")
-    @ApiImplicitParam(name = "mobile",value = "用户手机号",dataType = "String",required = true)
-    public RestResponseBean isExistMobile(@RequestParam String mobile){
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "mobile",value = "手机号",dataType = "String",required = true),
+            @ApiImplicitParam(name = "type",value = "0:登录1:注册2:忘记密码",dataType = "String",required = true)
+    })
+    public RestResponseBean isExistMobile(@RequestParam String mobile,@RequestParam String type){
 
         User user = userService.queryByMobile(mobile);
 
-        if(user == null){
-            return new RestResponseBean(ResultEnum.MOBILE_NOT_EXIST.getValue(),ResultEnum.MOBILE_NOT_EXIST.getDesc(),null);
+        if(StringUtils.equals(type,"0") || StringUtils.equals(type,"2")){
+
+            if(user == null){
+                return new RestResponseBean(ResultEnum.MOBILE_NOT_EXIST.getValue(),ResultEnum.MOBILE_NOT_EXIST.getDesc(),null);
+            }
+
+        }else{
+
+            if(user != null){
+
+                return new RestResponseBean(ResultEnum.MOBILE_EXIST.getValue(),ResultEnum.MOBILE_EXIST.getDesc(),null);
+            }
         }
 
         return new RestResponseBean(ResultEnum.MOBILE_EXIST.getValue(),ResultEnum.MOBILE_EXIST.getDesc(),null);

@@ -67,33 +67,50 @@ public class ShiroConfig {
 		filterChainDefinitionMap.put("/swagger**/**", "anon");
 		filterChainDefinitionMap.put("/webjars/**", "anon");
 		filterChainDefinitionMap.put("/v2/**", "anon");
-		
+
+		//暂时的
+		filterChainDefinitionMap.put("/api/v1/user/mobileLogin", "anon");
+		filterChainDefinitionMap.put("/api/v1/user/qqLoginCallback", "anon");
+		filterChainDefinitionMap.put("/api/v1/user/wxLoginCallBack", "anon");
+		filterChainDefinitionMap.put("/api/v1/user/wbLoginCallback", "anon");
+		filterChainDefinitionMap.put("/api/v1/user/userRegister", "anon");
+		filterChainDefinitionMap.put("/api/v1/user/riderRegister", "anon");
+		filterChainDefinitionMap.put("/api/v1/user/login", "anon");
+		filterChainDefinitionMap.put("/api/v1/user/forgetPassword", "anon");
+		filterChainDefinitionMap.put("/api/v1/user/isExistMobile", "anon");
+		filterChainDefinitionMap.put("/api/v1/sms/**", "anon");
+		filterChainDefinitionMap.put("/api/v1/login/third", "anon");
+		filterChainDefinitionMap.put("/api/v1/validate/**", "anon");
+		filterChainDefinitionMap.put("/api/v1/announcement/**", "anon");
+		filterChainDefinitionMap.put("/api/v1/banner/**", "anon");
+		filterChainDefinitionMap.put("/api/v1/rechargeConfig/queryRechargeDictionary", "anon");
+
 		//性能监控
 		filterChainDefinitionMap.put("/actuator/metrics/**", "anon");
 		filterChainDefinitionMap.put("/actuator/httptrace/**", "anon");
 		filterChainDefinitionMap.put("/redis/**", "anon");
-		
+
 		//TODO 排除Online请求
 		filterChainDefinitionMap.put("/auto/cgform/**", "anon");
 		filterChainDefinitionMap.put("/online/cgreport/api/exportXls/**", "anon");
 
 		filterChainDefinitionMap.put("/api/v1/user/login", "anon");
 		//从配置文件读取添加不需要token的路径
-		Yaml yaml = new Yaml();
-		URL url = ShiroConfig.class.getClassLoader().getResource("noneed-login.yml");
-
-		log.info("URL"+url.toString());
-
-		Map map = null;
-		try {
-			map = yaml.load(new FileInputStream(url.getFile()));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		if(map!=null){
-			List<String> filterlist = (List)map.get("filterlist");
-			filterlist.forEach(value->filterChainDefinitionMap.put(value,"anon"));
-		}
+//		Yaml yaml = new Yaml();
+//		URL url = ShiroConfig.class.getClassLoader().getResource("noneed-login.yml");
+//
+//		log.info("URL"+url.toString());
+//
+//		Map map = null;
+//		try {
+//			map = yaml.load(new FileInputStream(url.getFile()));
+//		} catch (FileNotFoundException e) {
+//			e.printStackTrace();
+//		}
+//		if(map!=null){
+//			List<String> filterlist = (List)map.get("filterlist");
+//			filterlist.forEach(value->filterChainDefinitionMap.put(value,"anon"));
+//		}
 
 		// 添加自己的过滤器并且取名为jwt
 		Map<String, Filter> filterMap = new HashMap<String, Filter>(1);
