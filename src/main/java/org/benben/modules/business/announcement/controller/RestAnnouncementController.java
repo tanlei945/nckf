@@ -15,10 +15,7 @@ import org.benben.common.system.query.QueryGenerator;
 import org.benben.modules.business.announcement.entity.Announcement;
 import org.benben.modules.business.announcement.service.IAnnouncementService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -86,6 +83,26 @@ public class RestAnnouncementController {
 					announcement);
 		}
 
+	}
+
+	/**
+	 *   添加
+	 * @param announcement
+	 * @return
+	 */
+	@PostMapping(value = "/add")
+	@ApiOperation(value = "添加通告详情", notes = "添加通告详情", tags = {"首页"})
+	public Result<Announcement> add(@RequestBody Announcement announcement) {
+		Result<Announcement> result = new Result<Announcement>();
+		try {
+			announcementService.save(announcement);
+			result.success("添加成功！");
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.info(e.getMessage());
+			result.error500("操作失败");
+		}
+		return result;
 	}
 
 }
