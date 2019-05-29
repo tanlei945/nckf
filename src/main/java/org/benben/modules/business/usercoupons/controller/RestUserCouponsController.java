@@ -17,12 +17,10 @@ import org.benben.modules.business.user.entity.User;
 import org.benben.modules.business.usercoupons.entity.UserCoupons;
 import org.benben.modules.business.usercoupons.service.IUserCouponsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 
 @RestController
 @RequestMapping("/api/v1/userCoupons")
@@ -40,7 +38,7 @@ public class RestUserCouponsController {
 	 * @return
 	 */
 	@GetMapping(value = "/list")
-	@ApiOperation(value = "个人优惠券查询", notes = "个人优惠券查询", tags = "用户接口")
+	@ApiOperation(value = "个人优惠券查询", notes = "个人优惠券查询", tags = "首页")
 	@ApiImplicitParams({@ApiImplicitParam(name = "pageNo", value = "当前页", dataType = "Integer", defaultValue = "1"),
 			@ApiImplicitParam(name = "pageSize", value = "每页显示条数", dataType = "Integer", defaultValue = "10"),
 			@ApiImplicitParam(name = "status", value = "状态：-1已过期 0 未使用 1已使用", dataType = "String")})
@@ -61,8 +59,32 @@ public class RestUserCouponsController {
 		queryWrapper.lambda().eq(UserCoupons::getUserId,user.getId()).eq(UserCoupons::getStatus,status);
 		Page<UserCoupons> page = new Page<UserCoupons>(pageNo, pageSize);
 		IPage<UserCoupons> pageList = userCouponsService.page(page, queryWrapper);
-		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(),
-				pageList);
+		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), pageList);
+	}
+
+	@PostMapping(value = "/getCoupons")
+	@ApiOperation(value = "用户领取优惠券", notes = "用户领取优惠券",tags = {"首页"})
+	@ApiImplicitParams({
+			@ApiImplicitParam(name="couponsId",value = "优惠券id")
+	})
+	public RestResponseBean getCoupons(@RequestParam(value = "couponsId",required = true) String couponsId){
+		User user = (User) SecurityUtils.getSubject().getPrincipal();
+		if (user == null) {
+			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(), ResultEnum.TOKEN_OVERDUE.getDesc(), null);
+		}
+		UserCoupons userCoupons = new UserCoupons();
+		userCoupons.setUserId(user.getId());
+		userCoupons.setStatus("0");
+		userCoupons.setCouponsId(couponsId);
+		userCoupons.setGetTime(new Date());
+		userCoupons.setCreateBy(user.getUsername());
+		userCoupons.setCreateTime(new Date());
+
+		boolean flag = userCouponsService.save(userCoupons);
+		if(flag){
+			return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
+		}
+		return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
 	}
 
 }
