@@ -42,7 +42,7 @@ import java.util.Map;
  * @version： V1.0
  */
 @RestController
-@RequestMapping("/api/v1/category")
+@RequestMapping("/category/category")
 @Slf4j
 @Api(tags = {"门店管理接口"})
 public class CategoryController {
@@ -237,18 +237,6 @@ public class CategoryController {
       }
       return Result.ok("文件导入失败！");
   }
-	@ApiOperation(value="查询商品种类",tags = {"门店管理接口"})
-	@GetMapping("/getCategory")
-	 public RestResponseBean getCategory(){
-		try {
-			List<Category> category = categoryService.getCategory();
-			return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), category);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
-		}
-	}
-
 
 /*	 @ApiOperation("查询多级菜单")
 	 @GetMapping("/find_category_byParentId")

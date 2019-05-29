@@ -50,7 +50,7 @@ import com.alibaba.fastjson.JSON;
  * @version： V1.0
  */
 @RestController
-@RequestMapping("/api/v1/store")
+@RequestMapping("/store/store")
 @Slf4j
 @Api(tags = {"门店管理接口"})
 public class StoreController {
@@ -245,57 +245,5 @@ public class StoreController {
       }
       return Result.ok("文件导入失败！");
   }
-
-  @RequestMapping(value = "/queryStoreByDistance",method = RequestMethod.GET)
-  @ApiOperation(value="查询用户离店铺距离", tags = {"门店管理接口"})
-  @ApiImplicitParams({
-		  @ApiImplicitParam(name="lng",value="用户所在经度",dataType = "double",required = true),
-		  @ApiImplicitParam(name="lat",value="用户所在纬度",dataType = "double",required = true)
-  })
-	public RestResponseBean queryStoreByDistance(@RequestParam(name="lng")double lng, @RequestParam(name="lat")double lat){
-	  List<Store> storeList = null;
-	  try {
-	  		storeList = storeService.queryByDistance(lng, lat);
-		  return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), storeList);
-	  } catch (Exception e) {
-		  e.printStackTrace();
-		  return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
-	  }
-
-  }
-
-	 @RequestMapping(value = "/queryScopeById",method = RequestMethod.GET)
-	 @ApiOperation(value="查询收货地址距离是否超过限制",tags = {"门店管理接口"})
-	 @ApiImplicitParams({
-			 @ApiImplicitParam(name="storeId",value="商家id",dataType = "String",required = true),
-			 @ApiImplicitParam(name="lng",value="收货地址经度",dataType = "double",required = true),
-			 @ApiImplicitParam(name="lat",value="收货地址纬度",dataType = "double",required = true)
-	 })
-	 public RestResponseBean queryScopeById(@RequestParam(name="storeId")String storeId, @RequestParam(name="lng")
-			 double lng,@RequestParam(name="lat") double lat){
-		 Boolean aBoolean = null;
-		 try {
-			 aBoolean = storeService.queryScopeById(storeId,lng,lat);
-			 return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), aBoolean);
-		 } catch (Exception e) {
-			 e.printStackTrace();
-			 return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
-		 }
-
-	 }
-
-
-	 @GetMapping("/query_all_store")
-	 @ApiOperation(value="门店列表", tags = {"门店管理接口"})
-	 public RestResponseBean queryAllStore(){
-		 try {
-			 List<Store> list= storeService.list();
-			 return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), list);
-		 } catch (Exception e) {
-			 e.printStackTrace();
-			 return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
-		 }
-
-	 }
 
 }
