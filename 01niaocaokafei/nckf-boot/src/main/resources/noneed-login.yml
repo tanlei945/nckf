@@ -17,3 +17,6 @@ filterlist:
   - /api/v1/banner/**
   - /api/v1/rechargeConfig/queryRechargeDictionary
   - /api/v1/systemConfig/**
+  - /api/v1/store/*
+  - /api/v1/goods/*
+  - /api/v1/category/*
