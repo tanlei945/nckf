@@ -171,6 +171,10 @@ public class RestSmsController {
 
     @PostMapping(value = "/testSend")
     @ApiOperation(value = "测试发送验证码", tags = {"短信接口"},notes = "测试发送验证码")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "mobile",value = "手机号",dataType = "String",required = true),
+			@ApiImplicitParam(name = "event",value = "login、register、forget、changePayPwd、binding",dataType = "String",defaultValue = "register",required = true)
+	})
     public RestResponseBean testSend(@RequestParam String mobile, @RequestParam String event) {
 
         if (StringUtils.isBlank(mobile) || StringUtils.isBlank(event)) {
@@ -179,16 +183,16 @@ public class RestSmsController {
 
 		User user = userService.queryByMobile(mobile);
 
-		if(StringUtils.equals(event,CommonConstant.SMS_EVENT_REGISTER)){ //注册
+		if(StringUtils.equals(event,CommonConstant.SMS_EVENT_REGISTER) || StringUtils.equals(event,CommonConstant.SMS_EVENT_BINGDING)){ //注册、换绑
 
 			if(user != null ){
 				return new RestResponseBean(ResultEnum.MOBILE_EXIST_REGISTER.getValue(),ResultEnum.MOBILE_EXIST_REGISTER.getDesc(),null);
 			}
 
-		}else{ //忘记密码/登录
+		}else{ //忘记密码/重置支付密码/登录
 
         	if(user == null){
-				return new RestResponseBean(ResultEnum.MOBILE_NOT_REGISTER.getValue(),ResultEnum.MOBILE_NOT_REGISTER.getDesc(),null);
+				return new RestResponseBean(ResultEnum.MOBILE_NOT_EXIST.getValue(),ResultEnum.MOBILE_NOT_REGISTER.getDesc(),null);
 			}
 
 		}

@@ -2,6 +2,7 @@ package org.benben.modules.business.address.service;
 
 import org.benben.modules.business.address.entity.Address;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.benben.modules.business.address.vo.AddressVO;
 import org.benben.modules.business.rideraddress.entity.RiderAddress;
 
 import java.util.List;
@@ -23,4 +24,6 @@ public interface IAddressService extends IService<Address> {
     public List<Address> selectByMainId(String mainId);
 
     public boolean editDefaultAddress(String userId,String id);
+
+	Boolean save(AddressVO addressVO,String userId);
 }

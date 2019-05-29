@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @Description: 钱包/账户表
@@ -29,12 +30,6 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
 
     @Autowired
     private AccountMapper accountMapper;
-    @Autowired
-    private AccountBillMapper accountBillMapper;
-    @Autowired
-    private RechargeMapper rechargeMapper;
-    @Autowired
-    private WithdrawMapper withdrawMapper;
     @Autowired
     private UserMapper userMapper;
 
@@ -95,6 +90,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
      * @return
      */
     @Override
+	@Transactional
     public boolean resetPayPassword(String userId,String payPassword) {
 
         Account account = this.queryByUserId(userId);

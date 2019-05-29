@@ -57,6 +57,10 @@ public interface CommonConstant {
 
 	public static String SMS_EVENT_FORGET = "forget";
 
+	public static String SMS_EVENT_CHANGE_PAY_PWD = "changePayPwd";
+
+	public static String SMS_EVENT_BINGDING = "binding";
+
 	public static String NCKF_PWD="nckf123";
     
     /**
