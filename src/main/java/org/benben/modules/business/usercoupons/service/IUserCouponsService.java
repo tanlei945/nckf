@@ -20,4 +20,6 @@ public interface IUserCouponsService extends IService<UserCoupons> {
 	 */
 	List<UserCoupons> queryByUserId(String userId);
 
+	void updateStatus(String couponsId,String status);
+
 }

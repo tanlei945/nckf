@@ -1,6 +1,7 @@
 package org.benben.modules.business.usercoupons.mapper;
 
 
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.benben.modules.business.usercoupons.entity.UserCoupons;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -17,6 +18,9 @@ public interface UserCouponsMapper extends BaseMapper<UserCoupons> {
 
 	@Select("select * from bb_user_coupons where user_id = #{userId}")
 	List<UserCoupons> queryByUserId(String userId);
+
+	@Select("update bb_user_coupons set status = #{status} where id = #{userCouponsId}")
+	void updateStatus(@Param("userCouponsId") String userCouponsId, @Param("status") String status);
 
 
 
