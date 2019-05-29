@@ -79,21 +79,20 @@ public class RestFeedBackController {
 
    /**
      *   添加
-    * @param feedBack
     * @return
     */
    @PostMapping(value = "/addFeedBack")
    @ApiOperation(value = "用户系统反馈添加接口", tags = {"用户接口"}, notes = "用户系统反馈添加接口")
    @ApiImplicitParams({
-           @ApiImplicitParam(name = "orderId", value = "商家的id"),
-           @ApiImplicitParam(name = "feedBack", value = "反馈实体"),
+           @ApiImplicitParam(name = "content", value = "反馈内容"),
            @ApiImplicitParam(name = "imageUrl", value = "图片的url")
    })
-   public RestResponseBean addFeedBack(@RequestParam(name="orderId",required=true)String orderId, FeedBack feedBack, String imageUrl) {
+   public RestResponseBean addFeedBack(String content, String imageUrl) {
        User user = (User) SecurityUtils.getSubject().getPrincipal();
        if(user==null) {
            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
        }
+       FeedBack feedBack = new FeedBack();
        feedBack.setImgUrl(imageUrl);
        feedBack.setUserId(user.getId());
        feedBack.setUsername(user.getUsername());
@@ -101,11 +100,7 @@ public class RestFeedBackController {
        feedBack.setCreateTime(new Date());
        feedBack.setDelFlag("1");
        boolean flag = feedBackService.save(feedBack);
-       Order order = new Order();
-       order.setId(orderId);
-       order.setStatus("4");
-       boolean flag1 = orderService.updateById(order);
-       if(flag && flag1){
+       if(flag){
            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
        }
        return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
