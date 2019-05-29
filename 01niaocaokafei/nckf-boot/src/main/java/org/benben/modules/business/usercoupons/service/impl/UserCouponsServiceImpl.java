@@ -36,4 +36,9 @@ public class UserCouponsServiceImpl extends ServiceImpl<UserCouponsMapper, UserC
 
 		return userCouponsMapper.selectList(queryWrapper);
 	}
+
+	@Override
+	public void updateStatus(String couponsId,String status) {
+		userCouponsMapper.updateStatus(couponsId,status);
+	}
 }
