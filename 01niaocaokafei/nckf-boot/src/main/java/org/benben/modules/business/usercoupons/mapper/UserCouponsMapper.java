@@ -18,4 +18,6 @@ public interface UserCouponsMapper extends BaseMapper<UserCoupons> {
 	@Select("select * from bb_user_coupons where user_id = #{userId}")
 	List<UserCoupons> queryByUserId(String userId);
 
+
+
 }
