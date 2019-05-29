@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.benben.modules.business.address.entity.Address;
 import org.benben.modules.business.address.mapper.AddressMapper;
 import org.benben.modules.business.address.service.IAddressService;
+import org.benben.modules.business.address.vo.AddressVO;
 import org.benben.modules.business.rideraddress.entity.RiderAddress;
 import org.benben.modules.business.rideraddress.mapper.RiderAddressMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -89,7 +91,25 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
         return true;
     }
 
-    @Override
+	/**
+	 * 保存地址
+	 * @param addressVO
+	 * @return
+	 */
+	@Override
+	public Boolean save(AddressVO addressVO,String userId) {
+
+		Address address = new Address();
+		address.setUserId(userId);
+		BeanUtils.copyProperties(addressVO,address);
+
+		if(addressMapper.insert(address) == 0){
+			return false;
+		}
+		return true;
+	}
+
+	@Override
     public String queryDistance(Double lng1, Double lat1, Double lng2, Double lat2) {
         double radLat1 = rad(lat1);
         double radLat2 = rad(lat2);

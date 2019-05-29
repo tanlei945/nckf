@@ -2,14 +2,18 @@ package org.benben.modules.business.account.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.benben.common.api.vo.RestResponseBean;
+import org.benben.common.constant.CommonConstant;
 import org.benben.common.menu.ResultEnum;
 import org.benben.common.util.PasswordUtil;
 import org.benben.modules.business.account.entity.Account;
 import org.benben.modules.business.account.service.IAccountService;
+import org.benben.modules.business.commen.service.ISMSService;
 import org.benben.modules.business.user.entity.User;
 import org.benben.modules.business.user.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +36,9 @@ public class RestAccountController {
 
    @Autowired
    private IAccountService accountService;
+
+	@Autowired
+	private ISMSService ismsService;
 
 
 
@@ -117,8 +124,13 @@ public class RestAccountController {
 
     @GetMapping(value = "/resetPayPassword")
     @ApiOperation(value = "重置支付密码", tags = {"用户接口"}, notes = "重置支付密码")
-	@ApiImplicitParam(name = "newPayPassword",value = "支付密码",dataType = "String",required = true)
-    public RestResponseBean resetPayPassword(@RequestParam String newPayPassword){
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "mobile",value = "用户手机号",dataType = "String",required = true),
+			@ApiImplicitParam(name = "event",value = "事件",dataType = "String",required = true),
+			@ApiImplicitParam(name = "captcha",value = "验证码",dataType = "String",required = true),
+			@ApiImplicitParam(name = "payPassword",value = "用户支付密码",dataType = "String",required = true)
+	})
+    public RestResponseBean resetPayPassword(@RequestParam String mobile, @RequestParam String event, @RequestParam String captcha,@RequestParam String payPassword){
 
 		User user = (User) SecurityUtils.getSubject().getPrincipal();
 
@@ -126,7 +138,26 @@ public class RestAccountController {
 			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
 		}
 
-        if (accountService.resetPayPassword(user.getId(),newPayPassword)){
+		if(StringUtils.isBlank(mobile)|| StringUtils.isBlank(event)|| StringUtils.isBlank(captcha) || StringUtils.isBlank(payPassword)){
+			return new RestResponseBean(ResultEnum.PARAMETER_MISSING.getValue(),ResultEnum.PARAMETER_MISSING.getDesc(),null);
+		}
+
+		if(!StringUtils.equals(user.getMobile(),mobile)){
+			return new RestResponseBean(ResultEnum.MOBILE_ERROR.getValue(),ResultEnum.MOBILE_ERROR.getDesc(),null);
+		}
+
+		if(!org.apache.commons.lang3.StringUtils.equals(CommonConstant.SMS_EVENT_CHANGE_PAY_PWD,event)){
+			return new RestResponseBean(ResultEnum.SMS_CODE_ERROR.getValue(),ResultEnum.SMS_CODE_ERROR.getDesc(),null);
+		}
+
+		switch (ismsService.check(mobile, event, captcha)) {
+			case 1:
+				return new RestResponseBean(ResultEnum.SMS_CODE_OVERTIME.getValue(), ResultEnum.SMS_CODE_OVERTIME.getDesc(), null);
+			case 2:
+				return new RestResponseBean(ResultEnum.SMS_CODE_ERROR.getValue(), ResultEnum.SMS_CODE_ERROR.getDesc(), null);
+		}
+
+        if (accountService.resetPayPassword(user.getId(),payPassword)){
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
         }
 

@@ -32,7 +32,7 @@ public class FeedBack implements Serializable {
 	private java.lang.String username;
 	/**评论内容*/
 	@Excel(name = "评论内容", width = 15)
-	private java.lang.Object content;
+	private java.lang.String content;
 	/**删除状态  0已删除 1未删除*/
 	@Excel(name = "删除状态", width = 15,dicCode = "del_flag")
 	@Dict(dicCode = "del_flag")

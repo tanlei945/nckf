@@ -37,6 +37,7 @@ public class Address implements Serializable {
 	private java.lang.String detailedAddress;
 	/**是否删除*/
 	@Excel(name = "是否删除", width = 15)
+	@ApiModelProperty(name = "delFlag", value = "是否默认（0：否，1：是）", required = true)
 	private java.lang.String delFlag;
 	/**是否默认（1：默认）*/
 	@Excel(name = "是否默认（1：默认）", width = 15)

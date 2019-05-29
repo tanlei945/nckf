@@ -23,9 +23,10 @@ public enum ResultEnum {
 //    PASSWORD_ERROR(306,"密码错误"),
 //    PASSWORD_RIGHT(307,"密码正确"),
     MOBILE_NOT_EXIST(0,"手机号不存在"),
-    MOBILE_EXIST(0,"手机号已存在"),
-	MOBILE_NOT_REGISTER(0,"手机号未注册"),
+    MOBILE_EXIST(1,"手机号已存在"),
+	MOBILE_NOT_REGISTER(1,"手机号未注册"),
 	MOBILE_EXIST_REGISTER(0,"手机号已注册"),
+	MOBILE_ERROR(0,"手机号码错误"),
 
     /**
      * 权限不足 返回code 值范围
