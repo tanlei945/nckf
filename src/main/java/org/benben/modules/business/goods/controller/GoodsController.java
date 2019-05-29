@@ -50,7 +50,7 @@ import java.util.Map;
  * @version： V1.0
  */
 @RestController
-@RequestMapping("/api/v1/goods")
+@RequestMapping("/goods/goods")
 @Slf4j
 @Api(tags = {"门店管理接口"})
 public class GoodsController {
@@ -86,26 +86,6 @@ public class GoodsController {
 		return result;
 	}
 
-	 @GetMapping(value = "/queryGoodsList")
-	 @ApiOperation("查看门店所有商品")
-	 public Result<IPage<Goods>> queryPageList(Goods goods,
-											   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-											   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
-											   HttpServletRequest req) {
-		 Result<IPage<Goods>> result = new Result<IPage<Goods>>();
-		 QueryWrapper<Goods> queryWrapper = QueryGenerator.initQueryWrapper(goods, req.getParameterMap());
-
-		 String s = sysUserService.querySuperAdmin();
-		 if(s!=null&&!"".equals(s)){
-			 queryWrapper.eq("belong_id",s);
-		 }
-		 Page<Goods> page = new Page<Goods>(pageNo, pageSize);
-		 IPage<Goods> pageList = goodsService.page(page, queryWrapper);
-		 result.setSuccess(true);
-		 result.setResult(pageList);
-		 return result;
-	 }
-	
 	/**
 	 *
 	  *   添加
@@ -280,43 +260,8 @@ public class GoodsController {
       }
       return Result.ok("文件导入失败！");
   }
-
-
-  @GetMapping("queryGoodsByCategory")
-  @ApiOperation(value="根据门店id查所属商品",tags = {"门店管理接口"})
-  @ApiImplicitParams({
-		  @ApiImplicitParam(name="goodId",value="所属商家id",dataType = "String",required = true),
-		  @ApiImplicitParam(name="categoryType",value="商品类别",dataType = "String",required = true)
-  })
-  public RestResponseBean queryByCotegory(@RequestParam(name="categoryType")String categoryType,
-										  @RequestParam(name="belongId")String belongId)
-  {
-	  try {
-		  List<Goods> goods = goodsService.queryByCotegory(categoryType, belongId);
-		  return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), goods);
-	  } catch (Exception e) {
-		  e.printStackTrace();
-		  return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
-
-	  }
-  }
-	 @GetMapping("queryGoodsSpec")
-	 @ApiOperation(value="根据商品id查商品规格",tags = {"门店管理接口"})
-	 @ApiImplicitParams({@ApiImplicitParam(name="goodId",value="商品id",dataType = "String",required = true)
-	 })
-	public RestResponseBean querySpec(@RequestParam(name="goodId",required = false)String goodId){
-		HashMap<String, List<String>> stringListMap = new HashMap<>();
-		try {
-			stringListMap = goodsService.querySpec(goodId);
-			return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), stringListMap);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
-		}
-
-	 }
 	 @GetMapping("querySpecList")
-	 @ApiOperation(value="根据所有商品规格",tags = {"门店管理接口"})
+	 @ApiOperation(value="查询所有商品规格",tags = {"门店管理接口"})
 	 public RestResponseBean queryallspec(){
 		 try {
 			 List<SpecDict> queryallspec = goodsService.queryallspec();
