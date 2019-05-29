@@ -8,17 +8,16 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.api.vo.Result;
 import org.benben.common.menu.ResultEnum;
 import org.benben.common.system.query.QueryGenerator;
 import org.benben.modules.business.coupons.entity.Coupons;
 import org.benben.modules.business.coupons.service.ICouponsService;
+import org.benben.modules.business.user.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -39,7 +38,7 @@ public class RestCouponsController {
      * @return
      */
     @GetMapping(value = "/queryCoupons")
-    @ApiOperation(value = "优惠券", notes = "优惠券",tags = {"首页"})
+    @ApiOperation(value = "展示优惠券", notes = "展示优惠券",tags = {"首页"})
     @ApiImplicitParams({
             @ApiImplicitParam(name="pageNo",value = "当前页",dataType = "Integer",defaultValue = "1"),
             @ApiImplicitParam(name="pageSize",value = "每页显示条数",dataType = "Integer",defaultValue = "10"),
@@ -48,14 +47,28 @@ public class RestCouponsController {
                                                 @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                                 @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
                                                 HttpServletRequest req) {
-
         QueryWrapper<Coupons> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(Coupons::getStatus,"1").eq(Coupons::getDelFlag,"0");
+        queryWrapper.lambda().eq(Coupons::getStatus,"1").eq(Coupons::getDelFlag,"1");
         Page<Coupons> page = new Page<Coupons>(pageNo, pageSize);
         IPage<Coupons> pageList = couponsService.page(page, queryWrapper);
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
-
     }
+    @PostMapping(value = "/getCouponsCount")
+    @ApiOperation(value = "用户优惠券数量", notes = "用户优惠券数量",tags = {"首页"})
+    public RestResponseBean getCouponsCount(){
+        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        if (user == null) {
+            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(), ResultEnum.TOKEN_OVERDUE.getDesc(), null);
+        }
+        Integer count = couponsService.getCouponsCount(user.getId());
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),count);
+    }
+
+
+
+
+
+
 
 
     /**

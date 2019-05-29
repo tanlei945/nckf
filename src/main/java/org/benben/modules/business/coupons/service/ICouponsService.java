@@ -10,5 +10,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @version： V1.0
  */
 public interface ICouponsService extends IService<Coupons> {
-
+    int getCouponsCount(String userId);
 }

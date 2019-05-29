@@ -13,5 +13,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @version： V1.0
  */
 public interface CouponsMapper extends BaseMapper<Coupons> {
-
+    int getCouponsCount(String userId);
 }
