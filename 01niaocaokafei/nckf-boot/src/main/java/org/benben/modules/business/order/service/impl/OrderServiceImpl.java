@@ -22,6 +22,7 @@ import org.benben.modules.business.store.entity.Store;
 import org.benben.modules.business.store.service.IStoreService;
 import org.benben.modules.business.user.entity.User;
 import org.benben.modules.business.user.service.IUserService;
+import org.benben.modules.business.usercoupons.service.IUserCouponsService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,7 +48,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 	@Autowired
 	private IOrderService orderService;
 	@Autowired
-	private IOrderGoodsService orderGoodsService;
+	private IUserCouponsService userCouponsService;
 	@Autowired
 	private IOrderNoPayService orderNoPayService;
 	@Autowired
@@ -60,7 +61,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 	@Override
 
 	public void saveMain(Order order, List<OrderGoods> orderGoodsList) {
-		System.out.println("-------------"+order+"------------");
 		orderMapper.insert(order);
 		for(OrderGoods entity:orderGoodsList) {
 			//外键设置
@@ -188,7 +188,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 			//log.info("订单信息"+order);
 			//log.info("订单信息"+orderPage);
 			orderService.saveMain(order, orderPage.getOrderGoodsList());
-			//log.info("----------------测试---------------");
+			//修改优惠券使用的状态
+			String userCouponsId = order.getUserCouponsId();
+			if(userCouponsId != null){
+				userCouponsService.updateStatus(userCouponsId,"1");
+			}
+
 
 			QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
 			queryWrapper.eq("order_id",orderId);
@@ -227,6 +232,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 			//设置订单状态为取消状态
 			order.setStatus("9");
 			try{
+				//设置优惠券状态为未使用,如果使用优惠券的话
+				if(order.getUserCouponsId() != null){
+				userCouponsService.updateStatus(order.getUserCouponsId(),"0");
+				}
 				orderService.updateById(order);
 				orderNoPayService.removeById(order.getId());
 				return true;
