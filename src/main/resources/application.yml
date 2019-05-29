@@ -35,3 +35,7 @@ weibo:
 mail:
   username: sanshixuxian@163.com
   password: a75861943
+
+#本地ip
+local :
+  ip : http://192.168.1.119

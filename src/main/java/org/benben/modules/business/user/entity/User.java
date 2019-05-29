@@ -51,6 +51,9 @@ public class User implements Serializable {
 	/**手机号*/
 	@Excel(name = "手机号", width = 15)
 	private java.lang.String mobile;
+	/**旧头像*/
+	@Excel(name = "旧头像", width = 15)
+	private java.lang.String oldAvatar;
 	/**头像*/
 	@Excel(name = "头像", width = 15)
 	private java.lang.String avatar;

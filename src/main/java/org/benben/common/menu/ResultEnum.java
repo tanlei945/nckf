@@ -28,7 +28,13 @@ public enum ResultEnum {
 	MOBILE_EXIST_REGISTER(0,"手机号已注册"),
 	MOBILE_ERROR(0,"手机号码错误"),
 
-    /**
+
+	/**
+	 * 个人中心
+	 */
+	NOT_EXIST_OLDAVATAR(0,"没有上一个头像"),
+
+	/**
      * 权限不足 返回code 值范围
      */
     SESSION_EXPIRED(0, "请先登录"),

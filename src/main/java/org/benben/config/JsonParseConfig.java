@@ -4,6 +4,7 @@ package org.benben.config;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -19,6 +20,13 @@ import java.util.List;
  */
 @SpringBootApplication
 public class JsonParseConfig extends WebMvcConfigurationSupport {
+
+	@Value("${benben.path.upload}")
+	private String upLoadPath;
+	@Value("${benben.path.webapp}")
+	private String webAppPath;
+	@Value("${spring.resource.static-locations}")
+	private String staticLocations;
 
     /**
      * 配置fastJson 用于替代jackson
@@ -54,5 +62,8 @@ public class JsonParseConfig extends WebMvcConfigurationSupport {
                 "classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**").addResourceLocations(
                 "classpath:/META-INF/resources/webjars/");
+		registry.addResourceHandler("/**")
+				.addResourceLocations("file:" + upLoadPath + "//", "file:" + webAppPath + "//")
+				.addResourceLocations(staticLocations.split(","));
     }
 }

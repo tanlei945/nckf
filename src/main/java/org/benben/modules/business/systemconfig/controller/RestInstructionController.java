@@ -25,27 +25,76 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/api/v1/rechargeConfig")
 @Slf4j
-@Api(tags = {"首页"})
+@Api(tags = {"个人中心接口"})
 public class RestInstructionController {
 
 	@Autowired
 	private ISystemConfigService systemConfigService;
 
 	@GetMapping(value = "/queryRechargeDictionary")
-	@ApiOperation(value = "充值说明查询", notes = "充值说明查询", tags = {"首页"})
-	@ApiImplicitParams({@ApiImplicitParam(name = "pageNo", value = "当前页", dataType = "Integer", defaultValue = "1"),
-			@ApiImplicitParam(name = "pageSize", value = "每页显示条数", dataType = "Integer", defaultValue = "10"),})
-	public RestResponseBean queryRechargeDictionary(@RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
-			@RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+	@ApiOperation(value = "充值说明查询", tags = {"个人中心接口"}, notes = "充值说明查询")
+	public RestResponseBean queryRechargeDictionary() {
 
 		QueryWrapper<SystemConfig> queryWrapper = new QueryWrapper<>();
 		//查询条件
-		queryWrapper.eq("config_group", "recharge");
-		Page<SystemConfig> page = new Page<SystemConfig>(pageNo, pageSize);
-		IPage<SystemConfig> pageList = systemConfigService.page(page, queryWrapper);
+		queryWrapper.eq("config_group", "rechargeExplain");
 		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(),
-				pageList);
+				systemConfigService.list(queryWrapper));
 	}
 
+	@GetMapping(value = "/queryRechargeDictionary")
+	@ApiOperation(value = "如何购买查询", tags = {"个人中心接口"}, notes = "如何购买查询")
+	public RestResponseBean queryHowToBuy() {
+
+		QueryWrapper<SystemConfig> queryWrapper = new QueryWrapper<>();
+		//查询条件
+		queryWrapper.eq("config_group", "howToBuy");
+		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(),
+				systemConfigService.getOne(queryWrapper));
+	}
+
+	@GetMapping(value = "/queryHowToRecharge")
+	@ApiOperation(value = "如何充值查询", tags = {"个人中心接口"}, notes = "如何充值查询")
+	public RestResponseBean queryHowToRecharge() {
+
+		QueryWrapper<SystemConfig> queryWrapper = new QueryWrapper<>();
+		//查询条件
+		queryWrapper.eq("config_group", "howToRecharge");
+		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(),
+				systemConfigService.getOne(queryWrapper));
+	}
+
+	@GetMapping(value = "/queryUserPrivacy")
+	@ApiOperation(value = "用户隐私查询", tags = {"个人中心接口"}, notes = "用户隐私查询")
+	public RestResponseBean queryUserPrivacy() {
+
+		QueryWrapper<SystemConfig> queryWrapper = new QueryWrapper<>();
+		//查询条件
+		queryWrapper.eq("config_group", "userPrivacy");
+		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(),
+				systemConfigService.getOne(queryWrapper));
+	}
+
+	@GetMapping(value = "/queryInvoiceIssued")
+	@ApiOperation(value = "发票开具查询", tags = {"个人中心接口"}, notes = "发票开具查询")
+	public RestResponseBean queryInvoiceIssued() {
+
+		QueryWrapper<SystemConfig> queryWrapper = new QueryWrapper<>();
+		//查询条件
+		queryWrapper.eq("config_group", "howToBuy");
+		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(),
+				systemConfigService.getOne(queryWrapper));
+	}
+
+	@GetMapping(value = "/queryOtherProblems")
+	@ApiOperation(value = "其他问题查询", tags = {"个人中心接口"}, notes = "其他问题查询")
+	public RestResponseBean queryOtherProblems() {
+
+		QueryWrapper<SystemConfig> queryWrapper = new QueryWrapper<>();
+		//查询条件
+		queryWrapper.eq("config_group", "otherProblems");
+		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(),
+				systemConfigService.getOne(queryWrapper));
+	}
 
 }

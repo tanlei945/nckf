@@ -26,6 +26,7 @@ import org.benben.modules.business.user.vo.UserVo;
 import org.benben.modules.shiro.authc.util.JwtUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,6 +47,16 @@ import javax.validation.Valid;
 @Api(tags = {"用户接口"})
 @Slf4j
 public class RestUserController {
+
+	@Value(value = "${local.ip}")
+	private String ip;
+
+	@Value(value = "${server.servlet.context-path}")
+	private String projectName;
+
+	@Value(value = "${server.port}")
+	private String port;
+
     @Autowired
     private IUserService userService;
 
@@ -87,6 +98,9 @@ public class RestUserController {
         }
 
 		UserVo userVo = userService.queryUserVo(user);
+        if(StringUtils.isNotBlank(userVo.getAvatar()) && userVo.getAvatar().indexOf("http") == -1){
+        	userVo.setAvatar(ip + ":" + port + projectName + "/" + userVo.getAvatar());
+		}
         if(userVo == null){
         	return new RestResponseBean(ResultEnum.ERROR.getValue(),ResultEnum.ERROR.getDesc(),null);
 		}
@@ -141,6 +155,10 @@ public class RestUserController {
 
         User userEntity = userService.getById(user.getId());
 
+		if(StringUtils.isNotBlank(userEntity.getAvatar())){
+			userEntity.setOldAvatar(userEntity.getAvatar());
+		}
+
 		userEntity.setAvatar(avatar);
 
         if(userService.updateById(userEntity)){
@@ -150,6 +168,32 @@ public class RestUserController {
 
         return new RestResponseBean(ResultEnum.ERROR.getValue(),ResultEnum.ERROR.getDesc(),null);
     }
+
+	@PostMapping(value = "/changeOldAvatar")
+	@ApiOperation(value = "选择上一个头像", tags = {"用户接口"}, notes = "选择上一个头像")
+	public RestResponseBean changeOldAvatar(){
+
+		User user = (User) SecurityUtils.getSubject().getPrincipal();
+
+		if(user==null) {
+			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+		}
+
+		User userEntity = userService.getById(user.getId());
+
+		if(StringUtils.isBlank(userEntity.getOldAvatar())){
+			return new RestResponseBean(ResultEnum.NOT_EXIST_OLDAVATAR.getValue(),ResultEnum.NOT_EXIST_OLDAVATAR.getDesc(),null);
+		}
+
+		userEntity.setAvatar(userEntity.getOldAvatar());
+
+		if(userService.updateById(userEntity)){
+
+			return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.desc(),null);
+		}
+
+		return new RestResponseBean(ResultEnum.ERROR.getValue(),ResultEnum.ERROR.getDesc(),null);
+	}
 
 
     @PostMapping(value = "/changeUsername")
