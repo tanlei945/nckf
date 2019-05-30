@@ -52,7 +52,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/goods/goods")
 @Slf4j
-@Api(tags = {"门店管理接口"})
 public class GoodsController {
 	@Autowired
 	private IGoodsService goodsService;

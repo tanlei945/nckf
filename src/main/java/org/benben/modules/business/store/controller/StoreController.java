@@ -52,7 +52,6 @@ import com.alibaba.fastjson.JSON;
 @RestController
 @RequestMapping("/store/store")
 @Slf4j
-@Api(tags = {"门店管理接口"})
 public class StoreController {
 	@Autowired
 	private IStoreService storeService;
