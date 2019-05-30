@@ -84,6 +84,8 @@ public class ShiroConfig {
 		filterChainDefinitionMap.put("/api/v1/banner/**", "anon");
 		filterChainDefinitionMap.put("/api/v1/rechargeConfig/queryRechargeDictionary", "anon");
 		filterChainDefinitionMap.put("/api/v1/coupons/queryCoupons", "anon");
+		filterChainDefinitionMap.put("/api/v1/announcement/queryAnnouncementTitle", "anon");
+
 
 		//性能监控
 		filterChainDefinitionMap.put("/actuator/metrics/**", "anon");
