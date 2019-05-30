@@ -724,7 +724,7 @@ public class RestUserController {
         String token = JwtUtil.signUser(CommonConstant.SIGN_MEMBER_USER + user.getMobile(), user.getPassword());
         redisUtil.set(CommonConstant.PREFIX_USER_TOKEN + token, token);
         //设置超时时间
-        redisUtil.expire(CommonConstant.PREFIX_USER_TOKEN + token, JwtUtil.EXPIRE_TIME / 1000);
+        redisUtil.expire(CommonConstant.PREFIX_USER_TOKEN + token, JwtUtil.APP_EXPIRE_TIME / 1000);
 
 		obj.put("token", token);
         obj.put("user", userService.queryUserVo(user));

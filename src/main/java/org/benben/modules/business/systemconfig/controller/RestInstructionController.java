@@ -81,7 +81,7 @@ public class RestInstructionController {
 
 		QueryWrapper<SystemConfig> queryWrapper = new QueryWrapper<>();
 		//查询条件
-		queryWrapper.eq("config_group", "howToBuy");
+		queryWrapper.eq("config_group", "invoiceIssued");
 		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(),
 				systemConfigService.getOne(queryWrapper));
 	}
