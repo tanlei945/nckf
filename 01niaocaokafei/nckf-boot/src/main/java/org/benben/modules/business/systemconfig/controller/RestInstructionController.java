@@ -42,7 +42,7 @@ public class RestInstructionController {
 				systemConfigService.list(queryWrapper));
 	}
 
-	@GetMapping(value = "/queryRechargeDictionary")
+	@GetMapping(value = "/queryHowToBuy")
 	@ApiOperation(value = "如何购买查询", tags = {"个人中心接口"}, notes = "如何购买查询")
 	public RestResponseBean queryHowToBuy() {
 
