@@ -8,16 +8,21 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.api.vo.Result;
 import org.benben.common.menu.ResultEnum;
 import org.benben.common.system.query.QueryGenerator;
 import org.benben.modules.business.announcement.entity.Announcement;
 import org.benben.modules.business.announcement.service.IAnnouncementService;
+import org.benben.modules.business.announcement.vo.AnnouncementVo;
+import org.benben.modules.business.message.entity.Message;
+import org.benben.modules.business.user.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -49,8 +54,7 @@ public class RestAnnouncementController {
 		QueryWrapper<Announcement> queryWrapper = QueryGenerator.initQueryWrapper(announcement, req.getParameterMap());
 		Page<Announcement> page = new Page<Announcement>(pageNo, pageSize);
 		IPage<Announcement> pageList = announcementService.page(page, queryWrapper);
-		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(),
-				pageList);
+		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), pageList);
 	}
 
 	/**
@@ -58,9 +62,8 @@ public class RestAnnouncementController {
 	 * @return
 	 */
 	@GetMapping(value = "/queryAnnouncement")
-	@ApiOperation(value = "通告详情列表", notes = "通告详情列表", tags = {"首页"})
+	//@ApiOperation(value = "通告详情列表", notes = "通告详情列表", tags = {"首页"})
 	public RestResponseBean queryAnnouncement() {
-
 		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(),
 				announcementService.queryAnnouncement());
 	}
@@ -82,8 +85,9 @@ public class RestAnnouncementController {
 			return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(),
 					announcement);
 		}
-
 	}
+
+
 
 	/**
 	 *   添加
@@ -91,7 +95,7 @@ public class RestAnnouncementController {
 	 * @return
 	 */
 	@PostMapping(value = "/add")
-	@ApiOperation(value = "添加通告详情", notes = "添加通告详情", tags = {"首页"})
+	/*@ApiOperation(value = "添加通告详情", notes = "添加通告详情", tags = {"首页"})*/
 	public Result<Announcement> add(@RequestBody Announcement announcement) {
 		Result<Announcement> result = new Result<Announcement>();
 		try {
@@ -103,6 +107,25 @@ public class RestAnnouncementController {
 			result.error500("操作失败");
 		}
 		return result;
+	}
+
+
+	@GetMapping(value = "/queryAnnouncementTitle")
+	@ApiOperation(value = "获取系统公告标题和id", notes = "获取系统公告标题和id", tags = {"首页"})
+	public RestResponseBean queryAnnouncementTitle() {
+		QueryWrapper<Announcement> queryWrapper = new QueryWrapper<>();
+		queryWrapper.lambda().eq(Announcement::getDelFlag,"1");
+		List<Announcement> list = announcementService.list(queryWrapper);
+		List<AnnouncementVo> listVo = new ArrayList<>();
+		AnnouncementVo announcementVo = new AnnouncementVo();
+		for (Announcement announcement : list) {
+			announcementVo.setAnnouncementId(announcement.getId());
+			announcementVo.setTitle(announcement.getTitile());
+			listVo.add(announcementVo);
+		}
+
+		return new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(), ResultEnum.QUERY_NOT_EXIST.getDesc(),
+				listVo);
 	}
 
 }
