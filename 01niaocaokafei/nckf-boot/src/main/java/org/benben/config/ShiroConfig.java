@@ -17,11 +17,9 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.benben.modules.shiro.authc.MyRealm;
 import org.benben.modules.shiro.authc.aop.JwtFilter;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import org.yaml.snakeyaml.Yaml;
 
 /**
  * @author: Scott
@@ -68,6 +66,7 @@ public class ShiroConfig {
 		filterChainDefinitionMap.put("/webjars/**", "anon");
 		filterChainDefinitionMap.put("/v2/**", "anon");
 
+
 		//暂时的
 		filterChainDefinitionMap.put("/api/v1/user/mobileLogin", "anon");
 		filterChainDefinitionMap.put("/api/v1/user/qqLoginCallback", "anon");
@@ -84,6 +83,7 @@ public class ShiroConfig {
 		filterChainDefinitionMap.put("/api/v1/announcement/**", "anon");
 		filterChainDefinitionMap.put("/api/v1/banner/**", "anon");
 		filterChainDefinitionMap.put("/api/v1/rechargeConfig/queryRechargeDictionary", "anon");
+		filterChainDefinitionMap.put("/api/v1/coupons/queryCoupons", "anon");
 
 		//性能监控
 		filterChainDefinitionMap.put("/actuator/metrics/**", "anon");
