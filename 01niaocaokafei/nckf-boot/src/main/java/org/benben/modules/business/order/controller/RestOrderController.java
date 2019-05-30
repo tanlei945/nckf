@@ -13,11 +13,13 @@ import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.api.vo.Result;
 import org.benben.common.menu.ResultEnum;
 import org.benben.common.system.query.QueryGenerator;
+import org.benben.common.util.DistanceUtil;
 import org.benben.modules.business.order.entity.Order;
 import org.benben.modules.business.order.entity.OrderGoods;
 import org.benben.modules.business.order.service.IOrderGoodsService;
 import org.benben.modules.business.order.service.IOrderNoPayService;
 import org.benben.modules.business.order.service.IOrderService;
+import org.benben.modules.business.order.vo.OrderDistanceVo;
 import org.benben.modules.business.order.vo.OrderPage;
 import org.benben.modules.business.rideraddress.entity.RiderAddress;
 import org.benben.modules.business.rideraddress.service.IRiderAddressService;
@@ -30,7 +32,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
 * @Title: Controller
@@ -59,25 +63,69 @@ public class RestOrderController {
 
 
 
+
    /**
      * 分页列表查询
-    * @param order
+    * @param status
     * @return
     */
    @PostMapping(value = "/queryOrder")
-   @ApiOperation(value = "订单多（单）条件查询接口 status:9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价 4已评价", tags = {"订单购物车接口"}, notes = "订单多（单）条件查询接口 status:9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价 4已评价")
-   public RestResponseBean queryOrder(@RequestBody Order order) {
+   @ApiOperation(value = "订单多（单）条件查询接口 status:9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价", tags = {"订单购物车接口"}, notes = "订单多（单）条件查询接口 status:9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价")
+   public RestResponseBean queryOrder(@RequestParam(required = true) String status) {
        User user = (User) SecurityUtils.getSubject().getPrincipal();
        if(user==null) {
            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
        }
+       Order order = new Order();
+       order.setStatus(status);
+       order.setUserId(user.getId());
+       //获取所需状态的订单
        List<OrderPage> orderPageList = orderService.queryList(order);
-       if(orderPageList != null){
-           return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),orderPageList);
-       }
-       return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+       Map<String,Object> map = new HashMap<>();
+       //放入map中
+       map.put("orderList",orderPageList);
+       //获取各种状态的订单数量
+
+       //代付款订单的数量
+       QueryWrapper<Order> queryWrapper1 = new QueryWrapper<>();
+       queryWrapper1.lambda().eq(Order::getUserId,user.getId()).eq(Order::getStatus,"1");
+       List<Order> list1 = orderService.list(queryWrapper1);
+       map.put("1",list1.size());
+
+       //收货中订单的数量
+       QueryWrapper<Order> queryWrapper2 = new QueryWrapper<>();
+       queryWrapper1.lambda().eq(Order::getUserId,user.getId()).eq(Order::getStatus,"2");
+       List<Order> list2 = orderService.list(queryWrapper2);
+       map.put("2",list2.size());
+
+       //待评价订单的数量
+       QueryWrapper<Order> queryWrapper3 = new QueryWrapper<>();
+       queryWrapper1.lambda().eq(Order::getUserId,user.getId()).eq(Order::getStatus,"3");
+       List<Order> list3 = orderService.list(queryWrapper3);
+       map.put("3",list1.size());
+
+       return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),map);
+
 
    }
+
+    @PostMapping(value = "/queryOrderCount")
+    @ApiOperation(value = "订单多（单）条件查询接口 status:9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价", tags = {"订单购物车接口"}, notes = "订单多（单）条件查询接口 status:9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价")
+    public RestResponseBean queryOrderCount(@RequestParam(required = true) String status) {
+        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        if(user==null) {
+            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+        }
+        QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(Order::getUserId,user.getId()).eq(Order::getStatus,status);
+        List<Order> list = orderService.list(queryWrapper);
+        if(list != null){
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),list.size());
+        }
+        return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+
+    }
+
     @PostMapping(value = "/rider/queryRiderOrder")
     @ApiOperation(value = "骑手查询可接订单接口", tags = {"订单购物车接口"}, notes = "骑手查询可接订单接口")
     @ApiImplicitParams({
@@ -250,6 +298,54 @@ public class RestOrderController {
         return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
     }
 
+    @GetMapping(value = "/distance")
+    @ApiOperation(value = "用户最近订单的骑手距离", tags = {"订单购物车接口"}, notes = "用户最近订单的骑手距离")
+    public RestResponseBean queryDistance(double riderLng,double riderLat){
+        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        if(user==null) {
+            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+        }
+        QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(Order::getUserId,user.getId()).eq(Order::getStatus,"2");
+        List<Order> list = orderService.list(queryWrapper);
+        if(list == null){
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
+        }
+
+        Order newOrder = new Order();
+        if(list.size()==1){
+            newOrder = list.get(0);
+            //计算距离
+            QueryWrapper<RiderAddress> queryWrapper1 = new QueryWrapper<>();
+            queryWrapper1.lambda().eq(RiderAddress::getRiderId,newOrder.getRiderId());
+            RiderAddress riderAddress = riderAddressService.getOne(queryWrapper1);
+
+            OrderDistanceVo orderDistanceVo = new OrderDistanceVo();
+            orderDistanceVo.setLat(riderAddress.getLat());
+            orderDistanceVo.setLng(riderAddress.getLng());
+            orderDistanceVo.setOrderId(newOrder.getId());
+
+            String meter = DistanceUtil.algorithm(riderAddress.getLat(),riderAddress.getLng(),riderLng,riderLat);
+
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),meter);
+
+        }else{
+            newOrder = selectLastOne(list);
+            //计算距离
+            QueryWrapper<RiderAddress> queryWrapper1 = new QueryWrapper<>();
+            queryWrapper1.lambda().eq(RiderAddress::getRiderId,newOrder.getRiderId());
+            RiderAddress riderAddress = riderAddressService.getOne(queryWrapper1);
+
+            OrderDistanceVo orderDistanceVo = new OrderDistanceVo();
+            orderDistanceVo.setLat(riderAddress.getLat());
+            orderDistanceVo.setLng(riderAddress.getLng());
+            orderDistanceVo.setOrderId(newOrder.getId());
+
+            String meter = DistanceUtil.algorithm(riderAddress.getLat(),riderAddress.getLng(),riderLng,riderLat);
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),meter);
+        }
+    }
+
     @GetMapping(value = "/background_list")
     public Result<IPage<Order>> queryPageList(Order order,
                                               @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
@@ -289,4 +385,27 @@ public class RestOrderController {
         result.setResult(pageList);
         return result;
     }
+
+
+    public Order selectLastOne(List<Order> list) {
+        Order order = new Order();
+
+        Long dates[] = new Long[list.size()];
+        for (int i = 1; i <= list.size(); i++) {
+            // 把date类型的时间对象转换为long类型，时间越往后，long的值就越大，
+            // 所以就依靠这个原理来判断距离现在最近的时间
+            dates[i - 1] = list.get(i).getCreateTime().getTime();
+        }
+
+        Long maxIndex = dates[0];// 定义最大值为该数组的第一个数
+        for (int j = 0; j < dates.length; j++) {
+            if (maxIndex < dates[j]) {
+                maxIndex = dates[j];
+                // 找到了这个j
+                order = list.get(j + 1);
+            }
+        }
+        return order;
+    }
+
 }
