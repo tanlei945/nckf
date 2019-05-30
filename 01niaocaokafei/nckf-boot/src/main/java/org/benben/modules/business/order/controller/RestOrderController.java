@@ -102,7 +102,7 @@ public class RestOrderController {
        QueryWrapper<Order> queryWrapper3 = new QueryWrapper<>();
        queryWrapper1.lambda().eq(Order::getUserId,user.getId()).eq(Order::getStatus,"3");
        List<Order> list3 = orderService.list(queryWrapper3);
-       map.put("3",list1.size());
+       map.put("3",list3.size());
 
        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),map);
 
