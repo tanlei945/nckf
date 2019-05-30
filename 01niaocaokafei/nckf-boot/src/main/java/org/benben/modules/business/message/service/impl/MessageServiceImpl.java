@@ -3,6 +3,7 @@ package org.benben.modules.business.message.service.impl;
 import org.benben.modules.business.message.entity.Message;
 import org.benben.modules.business.message.mapper.MessageMapper;
 import org.benben.modules.business.message.service.IMessageService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -15,5 +16,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
  */
 @Service
 public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> implements IMessageService {
-
+    @Autowired
+    private MessageMapper messageMapper;
+    @Override
+    public int queryCount(String userId) {
+        return messageMapper.queryCount(userId);
+    }
 }

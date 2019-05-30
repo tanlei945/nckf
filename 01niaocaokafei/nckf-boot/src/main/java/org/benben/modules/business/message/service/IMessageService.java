@@ -10,5 +10,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @version： V1.0
  */
 public interface IMessageService extends IService<Message> {
-
+    int queryCount(String userId);
 }
