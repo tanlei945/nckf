@@ -65,7 +65,7 @@ public class RestInvoiceController {
        }
        Result<IPage<Invoice>> result = new Result<IPage<Invoice>>();
        QueryWrapper<Invoice> queryWrapper = new QueryWrapper<>();
-       queryWrapper.eq("userId",user.getId());
+       queryWrapper.eq("user_id",user.getId());
        Page<Invoice> page = new Page<Invoice>(pageNo, pageSize);
        IPage<Invoice> pageList = invoiceService.page(page, queryWrapper);
        if(pageList != null){
@@ -132,8 +132,8 @@ public class RestInvoiceController {
     * @return
     */
    @PostMapping(value = "/editInvoice")
-   @ApiOperation(value = "用户发票编辑接口", tags = {"用户接口"}, notes = "用户发票编辑接口")
-   @ApiImplicitParam(name = "invoice", value = "发票实体")
+   /*@ApiOperation(value = "用户发票编辑接口", tags = {"用户接口"}, notes = "用户发票编辑接口")
+   @ApiImplicitParam(name = "invoice", value = "发票实体")*/
    public RestResponseBean editInvoice(Invoice invoice) {
        User user = (User) SecurityUtils.getSubject().getPrincipal();
        if(user==null) {
@@ -158,7 +158,7 @@ public class RestInvoiceController {
     * @return
     */
    @DeleteMapping(value = "/deleteInvoiceById")
-   @ApiImplicitParam(name = "id", value = "发票id",required = true )
+   /*@ApiImplicitParam(name = "id", value = "发票id",required = true )*/
    public RestResponseBean deleteInvoiceById(@RequestParam(name="id",required=true) String id) {
        User user = (User) SecurityUtils.getSubject().getPrincipal();
        if(user==null) {
@@ -183,7 +183,7 @@ public class RestInvoiceController {
     * @return
     */
    @DeleteMapping(value = "/deleteBatchInvoice")
-   @ApiImplicitParam(name = "ids", value = "选中发票的id",required = true )
+   /*@ApiImplicitParam(name = "ids", value = "选中发票的id",required = true )*/
    public RestResponseBean deleteBatchInvoice(@RequestParam(name="ids",required=true) String ids) {
        User user = (User) SecurityUtils.getSubject().getPrincipal();
        if(user==null) {
@@ -221,19 +221,18 @@ public class RestInvoiceController {
 
     /**
      * 分页列表查询
-     * @param userId
      * @return
      */
     @GetMapping(value = "/title/queryInvoiceTitle")
     @ApiOperation(value = "用户发票抬头查询接口", tags = {"用户接口"}, notes = "用户发票抬头查询接口")
     @ApiImplicitParam(name = "userId", value = "用户id")
-    public RestResponseBean queryInvoiceTitle(@RequestParam(name = "userId",required = true) String userId) {
+    public RestResponseBean queryInvoiceTitle() {
         User user = (User) SecurityUtils.getSubject().getPrincipal();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
         QueryWrapper<InvoiceTitle> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("user_id", userId);
+        queryWrapper.eq("user_id", user.getId());
         InvoiceTitle invoiceTitle = invoiceTitleService.getOne(queryWrapper);
         if(invoiceTitle != null){
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),invoiceTitle);
