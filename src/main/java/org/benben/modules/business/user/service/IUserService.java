@@ -52,9 +52,11 @@ public interface IUserService extends IService<User> {
 
     public User queryByMobile(String moblie);
 
+    public User queryByMobileAndUserId(String mobile,String userId);
+
     public int bindingThird(String openId , String userId, String type);
 
-    public int forgetPassword(String mobile, String password);
+    public int changePassword(String mobile, String password);
 
     UserVo queryUserVo(User user);
 
