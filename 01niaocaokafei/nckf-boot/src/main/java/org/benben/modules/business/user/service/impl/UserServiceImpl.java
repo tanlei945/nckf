@@ -119,13 +119,25 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public User queryByMobile(String moblie) {
-        QueryWrapper<User> userInfoQueryWrapper = new QueryWrapper<>();
-        userInfoQueryWrapper.eq("mobile", moblie);
-        User userInfo = userMapper.selectOne(userInfoQueryWrapper);
-        return userInfo;
+
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+		queryWrapper.eq("mobile", moblie);
+
+        return userMapper.selectOne(queryWrapper);
     }
 
-    /**
+	@Override
+	public User queryByMobileAndUserId(String mobile, String userId) {
+
+    	QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+		queryWrapper.lambda()
+				.eq(User::getMobile,mobile)
+				.eq(User::getId,userId);
+
+		return userMapper.selectOne(queryWrapper);
+	}
+
+	/**
      * 绑定三方信息
      * @param openId 识别
      * @param userId 用户ID
@@ -153,7 +165,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
      */
     @Override
     @Transactional
-    public int forgetPassword(String mobile, String password) {
+    public int changePassword(String mobile, String password) {
 
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("mobile",mobile);

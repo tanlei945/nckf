@@ -31,21 +31,21 @@ public interface CommonConstant {
 	 * 系统日志类型： 操作
 	 */
 	int LOG_TYPE_2 = 2;
-	
-	
+
+
 	/** {@code 500 Server Error} (HTTP/1.0 - RFC 1945) */
     public static final Integer SC_INTERNAL_SERVER_ERROR_500 = 500;
     /** {@code 200 OK} (HTTP/1.0 - RFC 1945) */
     public static final Integer SC_OK_200 = 200;
 
-    
-    public static String PREFIX_USER_ROLE = "PREFIX_USER_ROLE";
-    public static String PREFIX_USER_PERMISSION  = "PREFIX_USER_PERMISSION ";
-    public static int  TOKEN_EXPIRE_TIME  = 3600; //3600秒即是一小时
-    
-    public static String PREFIX_USER_TOKEN  = "PREFIX_USER_TOKEN ";
 
-	public static String PREFIX_MEMBER_TOKEN  = "PREFIX_MEMBER_TOKEN ";
+    public static String PREFIX_USER_ROLE = "PREFIX_USER_ROLE";
+    public static String PREFIX_USER_PERMISSION  = "PREFIX_USER_PERMISSION";
+    public static int  TOKEN_EXPIRE_TIME  = 3600; //3600秒即是一小时
+
+    public static String PREFIX_USER_TOKEN  = "PREFIX_USER_TOKEN";
+
+	public static String PREFIX_MEMBER_TOKEN  = "PREFIX_MEMBER_TOKEN";
 
 	public static String SIGN_SYS_USER = "sysUser@";
 
@@ -57,18 +57,20 @@ public interface CommonConstant {
 
 	public static String SMS_EVENT_FORGET = "forget";
 
+	public static String SMS_EVENT_CHANGE_PWD = "changePwd";
+
 	public static String SMS_EVENT_CHANGE_PAY_PWD = "changePayPwd";
 
 	public static String SMS_EVENT_BINGDING = "binding";
 
 	public static String NCKF_PWD="nckf123";
-    
+
     /**
      *  0：一级菜单
      */
     public static Integer MENU_TYPE_0  = 0;
    /**
-    *  1：子菜单 
+    *  1：子菜单
     */
     public static Integer MENU_TYPE_1  = 1;
     /**

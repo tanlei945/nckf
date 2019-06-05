@@ -173,7 +173,7 @@ public class RestSmsController {
     @ApiOperation(value = "测试发送验证码", tags = {"短信接口"},notes = "测试发送验证码")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "mobile",value = "手机号",dataType = "String",required = true),
-			@ApiImplicitParam(name = "event",value = "login、register、forget、changePayPwd、binding",dataType = "String",defaultValue = "register",required = true)
+			@ApiImplicitParam(name = "event",value = "login、register、forget、changePwd、changePayPwd、binding",dataType = "String",required = true)
 	})
     public RestResponseBean testSend(@RequestParam String mobile, @RequestParam String event) {
 
@@ -181,21 +181,21 @@ public class RestSmsController {
             return new RestResponseBean(ResultEnum.PARAMETER_MISSING.getValue(), ResultEnum.PARAMETER_MISSING.getDesc(), null);
         }
 
-		User user = userService.queryByMobile(mobile);
-
-		if(StringUtils.equals(event,CommonConstant.SMS_EVENT_REGISTER) || StringUtils.equals(event,CommonConstant.SMS_EVENT_BINGDING)){ //注册、换绑
-
-			if(user != null ){
-				return new RestResponseBean(ResultEnum.MOBILE_EXIST_REGISTER.getValue(),ResultEnum.MOBILE_EXIST_REGISTER.getDesc(),null);
-			}
-
-		}else{ //忘记密码/重置支付密码/登录
-
-        	if(user == null){
-				return new RestResponseBean(ResultEnum.MOBILE_NOT_EXIST.getValue(),ResultEnum.MOBILE_NOT_REGISTER.getDesc(),null);
-			}
-
-		}
+//		User user = userService.queryByMobile(mobile);
+//
+//		if(StringUtils.equals(event,CommonConstant.SMS_EVENT_REGISTER) || StringUtils.equals(event,CommonConstant.SMS_EVENT_BINGDING)){ //注册、换绑
+//
+//			if(user != null ){
+//				return new RestResponseBean(ResultEnum.MOBILE_EXIST_REGISTER.getValue(),ResultEnum.MOBILE_EXIST_REGISTER.getDesc(),null);
+//			}
+//
+//		}else{ //忘记密码/重置支付密码/登录
+//
+//        	if(user == null){
+//				return new RestResponseBean(ResultEnum.MOBILE_NOT_EXIST.getValue(),ResultEnum.MOBILE_NOT_REGISTER.getDesc(),null);
+//			}
+//
+//		}
 
         Integer code = (int) ((Math.random() * 9 + 1) * 100000);
 

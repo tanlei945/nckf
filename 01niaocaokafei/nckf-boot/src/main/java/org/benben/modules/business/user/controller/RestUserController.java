@@ -274,16 +274,16 @@ public class RestUserController {
     }
 
 
-    @PostMapping(value = "/forgetPassword")
-    @ApiOperation(value = "忘记密码/修改密码", tags = {"用户接口"}, notes = "忘记密码/修改密码")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "mobile",value = "用户手机号",dataType = "String",required = true),
-            @ApiImplicitParam(name = "password",value = "用户新密码",dataType = "String",required = true),
-			@ApiImplicitParam(name = "event",value = "事件",dataType = "String",required = true),
+	@PostMapping(value = "/forgetPassword")
+	@ApiOperation(value = "忘记密码", tags = {"用户接口"}, notes = "忘记密码")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "mobile",value = "用户手机号",dataType = "String",required = true),
+			@ApiImplicitParam(name = "password",value = "用户新密码",dataType = "String",required = true),
+			@ApiImplicitParam(name = "event",value = "事件",dataType = "String",defaultValue = CommonConstant.SMS_EVENT_FORGET,required = true),
 			@ApiImplicitParam(name = "captcha",value = "验证码",dataType = "String",required = true)
-    })
-    public RestResponseBean forgetPassword(@RequestParam String mobile,@RequestParam String password,@RequestParam String event,@RequestParam String captcha){
-
+	})
+	public RestResponseBean forgetPassword(@RequestParam String mobile, @RequestParam String password,
+			@RequestParam String event,@RequestParam String captcha){
 
 		if(StringUtils.isBlank(mobile)||StringUtils.isBlank(password) || StringUtils.isBlank(event) ||StringUtils.isBlank(captcha)){
 			return new RestResponseBean(ResultEnum.PARAMETER_MISSING.getValue(),ResultEnum.PARAMETER_MISSING.getDesc(),null);
@@ -300,13 +300,73 @@ public class RestUserController {
 				return new RestResponseBean(ResultEnum.SMS_CODE_ERROR.getValue(), ResultEnum.SMS_CODE_ERROR.getDesc(), null);
 		}
 
+		if(userService.changePassword(mobile,password) == 0){
+			return new RestResponseBean(ResultEnum.ERROR.getValue(),ResultEnum.ERROR.getDesc(),null);
+		}
 
-        if(userService.forgetPassword(mobile,password) == 0){
-            return new RestResponseBean(ResultEnum.ERROR.getValue(),ResultEnum.ERROR.getDesc(),null);
-        }
+		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
+	}
 
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
-    }
+
+	@PostMapping(value = "/changePassword")
+	@ApiOperation(value = "修改密码", tags = {"用户接口"}, notes = "修改密码")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "oldPassword",value = "用户旧密码",dataType = "String"),
+			@ApiImplicitParam(name = "newPassword",value = "用户新密码",dataType = "String"),
+			@ApiImplicitParam(name = "mobile",value = "用户手机号",dataType = "String"),
+			@ApiImplicitParam(name = "event",value = "事件",dataType = "String",defaultValue = CommonConstant.SMS_EVENT_CHANGE_PWD),
+			@ApiImplicitParam(name = "captcha",value = "验证码",dataType = "String")
+	})
+	public RestResponseBean changePassword(@RequestParam String oldPassword, @RequestParam String newPassword,@RequestParam String mobile,
+			@RequestParam String event,@RequestParam String captcha){
+
+		User user = (User) SecurityUtils.getSubject().getPrincipal();
+
+		if(user == null){
+
+			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+		}
+
+		User userEntity = userService.getById(user.getId()); //如果修改密码前端不设置重新登录,避免取到jwt中旧数据,应再次查询对象
+
+		if(StringUtils.isBlank(mobile)){ //旧密码修改密码
+
+			if(StringUtils.isBlank(oldPassword) || StringUtils.isBlank(newPassword)){
+				return new RestResponseBean(ResultEnum.PARAMETER_MISSING.getValue(),ResultEnum.PARAMETER_MISSING.getDesc(),null);
+			}
+
+			String passwordEncode = PasswordUtil.encrypt(oldPassword, oldPassword, userEntity.getSalt()); //输入的密码加密后
+
+			if(!StringUtils.equals(userEntity.getPassword(),passwordEncode)){
+				return new RestResponseBean(ResultEnum.PASSWORD_ERROR.getValue(),ResultEnum.PASSWORD_ERROR.getDesc(),null);
+			}
+
+
+		} else { //手机号修改密码
+
+			if(StringUtils.isBlank(mobile)||StringUtils.isBlank(newPassword) || StringUtils.isBlank(event) ||StringUtils.isBlank(captcha)){
+				return new RestResponseBean(ResultEnum.PARAMETER_MISSING.getValue(),ResultEnum.PARAMETER_MISSING.getDesc(),null);
+			}
+
+			if(!StringUtils.equals(CommonConstant.SMS_EVENT_CHANGE_PWD,event)){
+				return new RestResponseBean(ResultEnum.SMS_CODE_ERROR.getValue(),ResultEnum.SMS_CODE_ERROR.getDesc(),null);
+			}
+
+			switch (ismsService.check(mobile, event, captcha)) {
+				case 1:
+					return new RestResponseBean(ResultEnum.SMS_CODE_OVERTIME.getValue(), ResultEnum.SMS_CODE_OVERTIME.getDesc(), null);
+				case 2:
+					return new RestResponseBean(ResultEnum.SMS_CODE_ERROR.getValue(), ResultEnum.SMS_CODE_ERROR.getDesc(), null);
+			}
+
+		}
+
+		if(userService.changePassword(userEntity.getMobile(),newPassword) == 0){
+			return new RestResponseBean(ResultEnum.ERROR.getValue(),ResultEnum.ERROR.getDesc(),null);
+		}
+
+		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
+	}
 
     /**
      * 根据姓名查找
@@ -506,7 +566,7 @@ public class RestUserController {
     @ApiOperation(value = "三方登录", tags = {"用户接口"}, notes = "三方登录")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "platform",value = "平台类型('1':QQ,'2':微信,'3':微博)",dataType = "String",required = true),
-            @ApiImplicitParam(name = "mobile",value = "用户密码",dataType = "String",required = true)
+            @ApiImplicitParam(name = "mobile",value = "用户手机号",dataType = "String",required = true)
     })
     public void thirdLogin(@RequestParam String platform, @RequestParam String mobile, HttpServletResponse response){
 
@@ -618,33 +678,45 @@ public class RestUserController {
     }
 
     @GetMapping(value = "/isExistMobile")
-    @ApiOperation(value = "手机号是否已被注册",tags = {"用户接口"},notes = "手机号是否已被注册")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "mobile",value = "手机号",dataType = "String",required = true),
-            @ApiImplicitParam(name = "type",value = "0:登录1:注册2:忘记密码",dataType = "String",required = true)
-    })
-    public RestResponseBean isExistMobile(@RequestParam String mobile,@RequestParam String type){
+    @ApiOperation(value = "手机号是否存在",tags = {"用户接口"},notes = "手机号是否存在")
+	@ApiImplicitParam(name = "mobile",value = "手机号",dataType = "String",required = true)
+    public RestResponseBean isExistMobile(@RequestParam String mobile){
 
         User user = userService.queryByMobile(mobile);
 
-        if(StringUtils.equals(type,"0") || StringUtils.equals(type,"2")){	//登录或忘记密码
+		if(user == null){
 
-            if(user == null){
-                return new RestResponseBean(ResultEnum.MOBILE_NOT_REGISTER.getValue(),ResultEnum.MOBILE_NOT_REGISTER.getDesc(),null);
-            }
-			return new RestResponseBean(ResultEnum.MOBILE_EXIST_REGISTER.getValue(),ResultEnum.MOBILE_EXIST_REGISTER.getDesc(),null);
+			return new RestResponseBean(ResultEnum.MOBILE_EXIST.getValue(),ResultEnum.MOBILE_EXIST.getDesc(),null);
+		}
 
-        }else{	//注册
-
-            if(user != null){
-
-                return new RestResponseBean(ResultEnum.MOBILE_EXIST_REGISTER.getValue(),ResultEnum.MOBILE_EXIST_REGISTER.getDesc(),null);
-            }
-			return new RestResponseBean(ResultEnum.MOBILE_NOT_REGISTER.getValue(),ResultEnum.MOBILE_NOT_REGISTER.getDesc(),null);
-        }
-
+		return new RestResponseBean(ResultEnum.MOBILE_NOT_EXIST.getValue(),ResultEnum.MOBILE_NOT_EXIST.getDesc(),null);
 
     }
+
+
+	@GetMapping(value = "/isExistMobileByUserId")
+	@ApiOperation(value = "根据当前用户查询手机号是否正确",tags = {"用户接口"},notes = "根据当前用户查询手机号是否正确")
+	@ApiImplicitParam(name = "mobile",value = "手机号",dataType = "String",required = true)
+	public RestResponseBean isExistMobileByUserId(@RequestParam String mobile){
+
+		User user = (User) SecurityUtils.getSubject().getPrincipal();
+
+		if(user == null){
+
+			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+		}
+
+		User userEntity = userService.queryByMobileAndUserId(mobile,user.getId());
+
+		if(userEntity == null){
+
+			return new RestResponseBean(ResultEnum.MOBILE_ERROR.getValue(),ResultEnum.MOBILE_ERROR.getDesc(),null);
+		}
+
+
+		return new RestResponseBean(ResultEnum.MOBILE_RIGHT.getValue(),ResultEnum.MOBILE_RIGHT.getDesc(),null);
+
+	}
 
 
 
