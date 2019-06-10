@@ -27,12 +27,16 @@ import org.benben.modules.shiro.authc.util.JwtUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -80,6 +84,9 @@ public class RestUserController {
 
     @Autowired
     private ISMSService ismsService;
+
+	@Autowired
+	private StringRedisTemplate stringRedisTemplate;
 
 
 
@@ -473,7 +480,7 @@ public class RestUserController {
     })
     public RestResponseBean login(@RequestParam String mobile, @RequestParam String password) {
 
-        JSONObject obj = new JSONObject();
+		Map<String,Object> obj = new HashMap<>();
         User user = userService.queryByMobile(mobile);
 
         if (user == null) {
@@ -789,21 +796,27 @@ public class RestUserController {
      * @param user 根据传参查询到的实体
      * @return
      */
-    private JSONObject tokenBuild(User user) {
+	private Map tokenBuild(User user) {
 
-        JSONObject obj = new JSONObject();
-        //生成token
-        String token = JwtUtil.signUser(CommonConstant.SIGN_MEMBER_USER + user.getMobile(), user.getPassword());
-        redisUtil.set(CommonConstant.PREFIX_USER_TOKEN + token, token);
-        //设置超时时间
-        redisUtil.expire(CommonConstant.PREFIX_USER_TOKEN + token, JwtUtil.APP_EXPIRE_TIME / 1000);
+		Map<String,Object> map = new HashMap();
+		//生成token
+		String token = JwtUtil.signUser(CommonConstant.SIGN_MEMBER_USER + user.getMobile(), user.getPassword());
 
-		obj.put("token", token);
-        obj.put("user", userService.queryUserVo(user));
+		//根据用户ID模糊查询
+		Set<String> keys = stringRedisTemplate.keys("*" + user.getId());
+		//清除redis中存在此手机号的token记录
+		stringRedisTemplate.delete(keys);
 
-        sysBaseAPI.addLog("手机号: " + user.getMobile() + ",登录成功！", CommonConstant.LOG_TYPE_1, null);
+		redisUtil.set(CommonConstant.PREFIX_USER_TOKEN + token + user.getId(), token);
+		//设置超时时间
+		redisUtil.expire(CommonConstant.PREFIX_USER_TOKEN + token + user.getId(), JwtUtil.APP_EXPIRE_TIME / 1000);
 
-        return obj;
-    }
+		map.put("token", token);
+		map.put("user", userService.queryUserVo(user));
+
+		sysBaseAPI.addLog("手机号: " + user.getMobile() + ",登录成功！", CommonConstant.LOG_TYPE_1, null);
+
+		return map;
+	}
 
 }
