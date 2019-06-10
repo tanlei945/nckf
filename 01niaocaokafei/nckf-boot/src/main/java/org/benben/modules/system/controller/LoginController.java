@@ -17,6 +17,7 @@ import org.benben.modules.system.model.SysLoginModel;
 import org.benben.modules.system.service.ISysLogService;
 import org.benben.modules.system.service.ISysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +27,8 @@ import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Set;
 
 /**
  * @author scott
@@ -44,6 +47,8 @@ public class LoginController {
 	private ISysLogService logService;
 	@Autowired
 	private RedisUtil redisUtil;
+	@Autowired
+	private StringRedisTemplate stringRedisTemplate;
 
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
@@ -65,11 +70,17 @@ public class LoginController {
 				result.error500("用户名或密码错误");
 				return result;
 			}
+
+			//根据用户ID模糊查询
+			Set<String> keys = stringRedisTemplate.keys("*" + sysUser.getId());
+			//清除redis中存在此手机号的token记录
+			stringRedisTemplate.delete(keys);
+
 			//生成token
 			String token = JwtUtil.sign(CommonConstant.SIGN_SYS_USER + username, syspassword);
-			redisUtil.set(CommonConstant.PREFIX_USER_TOKEN + token, token);
+			redisUtil.set(CommonConstant.PREFIX_USER_TOKEN + token + sysUser.getId(), token);
 			//设置超时时间
-			redisUtil.expire(CommonConstant.PREFIX_USER_TOKEN + token, JwtUtil.EXPIRE_TIME/1000);
+			redisUtil.expire(CommonConstant.PREFIX_USER_TOKEN + token + sysUser.getId(), JwtUtil.EXPIRE_TIME/1000);
 
 			JSONObject obj = new JSONObject();
 			obj.put("token", token);
@@ -97,7 +108,7 @@ public class LoginController {
 
 		String token = request.getHeader(DefContants.X_ACCESS_TOKEN);
 		//清空用户Token缓存
-		redisUtil.del(CommonConstant.PREFIX_USER_TOKEN + token);
+		redisUtil.del(CommonConstant.PREFIX_USER_TOKEN + token + sysUser.getId());
 		//清空用户角色缓存
 		redisUtil.del(CommonConstant.PREFIX_USER_ROLE + sysUser.getUsername());
 		return Result.ok("退出登录成功！");

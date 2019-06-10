@@ -125,7 +125,7 @@ public class MyRealm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken auth) throws AuthenticationException {
 
-        String password,sign;
+        String password,sign,userId;
         int status,number =0;
         SysUser sysUser = new SysUser();
         User userInfo = new User();
@@ -147,6 +147,7 @@ public class MyRealm extends AuthorizingRealm {
             username = username.substring(username.indexOf("@") + 1, username.length());
             // 查询用户信息
             sysUser = sysUserService.getUserByName(username);
+			userId = sysUser.getId();
             password = sysUser.getPassword();
             status = sysUser.getStatus();
 
@@ -156,6 +157,7 @@ public class MyRealm extends AuthorizingRealm {
             mobile = mobile.substring(mobile.indexOf("@") + 1, mobile.length());
             //查询会员信息
             userInfo = userService.queryByMobile(mobile);
+			userId = userInfo.getId();
             password = userInfo.getPassword();
             status = userInfo.getStatus();
             number = 1;
@@ -164,7 +166,7 @@ public class MyRealm extends AuthorizingRealm {
         }
 
         //校验token是否超时失效 & 或者账号密码是否错误
-        if (!jwtTokenRefresh(token, username, password, sign)) {
+        if (!jwtTokenRefresh(token, userId, username, password, sign)) {
             throw new AuthenticationException("用户名或密码错误!");
         }
 
@@ -200,9 +202,9 @@ public class MyRealm extends AuthorizingRealm {
      * @param passWord
      * @return
      */
-    public boolean jwtTokenRefresh(String token, String userName, String passWord, String sign) {
+    public boolean jwtTokenRefresh(String token,String userId, String userName, String passWord, String sign) {
         //缓冲中拿取token
-        String cacheToken = String.valueOf(redisUtil.get(CommonConstant.PREFIX_USER_TOKEN + token));
+        String cacheToken = String.valueOf(redisUtil.get(CommonConstant.PREFIX_USER_TOKEN + token + userId));
         //若为会员用户,重新规定有效期时长
         if (StringUtils.equals(CommonConstant.SIGN_MEMBER_USER, sign)) {
             JwtUtil.EXPIRE_TIME = JwtUtil.APP_EXPIRE_TIME;
@@ -212,13 +214,13 @@ public class MyRealm extends AuthorizingRealm {
             //校验token有效性
             if (!JwtUtil.verify(token, userName, passWord)) {
                 String newAuthorization = JwtUtil.sign(sign + userName, passWord);
-                redisUtil.set(CommonConstant.PREFIX_USER_TOKEN + token, newAuthorization);
+                redisUtil.set(CommonConstant.PREFIX_USER_TOKEN + token + userId, newAuthorization);
                 //设置超时时间
-                redisUtil.expire(CommonConstant.PREFIX_USER_TOKEN + token, JwtUtil.EXPIRE_TIME / 1000);
+                redisUtil.expire(CommonConstant.PREFIX_USER_TOKEN + token + userId, JwtUtil.EXPIRE_TIME / 1000);
             } else {
-                redisUtil.set(CommonConstant.PREFIX_USER_TOKEN + token, cacheToken);
+                redisUtil.set(CommonConstant.PREFIX_USER_TOKEN + token + userId, cacheToken);
                 //设置超时时间
-                redisUtil.expire(CommonConstant.PREFIX_USER_TOKEN + token, JwtUtil.EXPIRE_TIME / 1000);
+                redisUtil.expire(CommonConstant.PREFIX_USER_TOKEN + token + userId, JwtUtil.EXPIRE_TIME / 1000);
             }
             return true;
         }
