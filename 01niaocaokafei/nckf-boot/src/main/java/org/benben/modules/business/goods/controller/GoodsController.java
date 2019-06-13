@@ -5,9 +5,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
@@ -38,7 +35,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -259,7 +255,7 @@ public class GoodsController {
       }
       return Result.ok("文件导入失败！");
   }
-	 @GetMapping("querySpecList")
+	 @GetMapping("query_all_spec")
 	 @ApiOperation(value="查询所有商品规格",tags = {"门店管理接口"})
 	 public RestResponseBean queryallspec(){
 		 try {
