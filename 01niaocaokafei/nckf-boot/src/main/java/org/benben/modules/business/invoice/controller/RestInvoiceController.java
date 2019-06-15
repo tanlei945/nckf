@@ -92,7 +92,6 @@ public class RestInvoiceController {
        }
        //从数据库中获取用户所需的实际开票金额
        double sum = 0;
-       QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
        for (String s : orderIdList) {
            Order order = orderService.getById(s);
            if(order.getOrderMoney()!=0){
@@ -108,9 +107,9 @@ public class RestInvoiceController {
                    for (String s : orderIdList) {
                        Order order = orderService.getById(s);
                        order.setInvoiceFlag("1");
-                       QueryWrapper<Order> queryWrapper1 = new QueryWrapper<>();
+                       QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
                        queryWrapper.eq("id",s);
-                       orderService.update(order,queryWrapper1);
+                       orderService.update(order,queryWrapper);
                    }
                    orderService.invoiceOk(orderIdList);
                    return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
