@@ -118,8 +118,9 @@ public class RestEvaluateController {
         evaluate.setCreateTime(new Date());
         evaluate.setDelFlag("1");
         evaluateService.save(evaluate);
-        Order order = new Order();
-        order.setId(orderId);
+
+
+		Order order = orderService.getById(orderId);
         order.setStatus("4");
         order.setUpdateTime(new Date());
         order.setUpdateBy(user.getUsername());
