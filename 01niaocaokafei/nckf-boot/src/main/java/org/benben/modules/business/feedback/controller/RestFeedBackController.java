@@ -66,8 +66,6 @@ public class RestFeedBackController {
        if(user==null) {
            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
        }
-       Result<IPage<FeedBack>> result = new Result<IPage<FeedBack>>();
-       QueryWrapper<FeedBack> queryWrapper = new QueryWrapper<>();
        Page<FeedBack> page = new Page<FeedBack>(pageNo, pageSize);
        IPage<FeedBack> pageList = feedBackService.page(page);
        if(pageList != null){
