@@ -110,41 +110,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 	}
 
 
-	@Override
-	public List<OrderPage> queryList(Order order) {
-		if(order!=null){
-			if("0".equals(order.getStatus())){
-				//把状态为0的查询全部 分开为查询1 2 3 最后再合并为一个List
-				//状态为1的查询
-				order.setStatus("1");
-				List<OrderPage> orderPageList1 = orderService.queryList(order);
-				//状态为2的查询
-				order.setStatus("2");
-				List<OrderPage> orderPageList2 = orderService.queryList(order);
-				//状态为3的查询
-				order.setStatus("3");
-				List<OrderPage> orderPageList3 = orderService.queryList(order);
-				//合并
-				List<OrderPage> orderListAll = new ArrayList<>();
-
-				for (OrderPage orderPage : orderPageList1) {
-					orderListAll.add(orderPage);
-				}
-				for (OrderPage orderPage : orderPageList2) {
-					orderListAll.add(orderPage);
-				}
-				for (OrderPage orderPage : orderPageList3) {
-					orderListAll.add(orderPage);
-				}
-				return orderListAll;
-			}else{
-				List<OrderPage> orderPageList = orderService.queryList(order);
-				return orderPageList;
-			}
-		}
-		return null;
-	}
-
 
 	@Override
 	public Order add(OrderPage orderPage) {

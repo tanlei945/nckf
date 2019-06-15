@@ -71,16 +71,27 @@ public class RestOrderController {
     */
    @PostMapping(value = "/queryOrder")
    @ApiOperation(value = "订单多（单）条件查询接口 status:9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价", tags = {"订单购物车接口"}, notes = "订单多（单）条件查询接口 status:9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价")
-   public RestResponseBean queryOrder(@RequestParam(required = true) String status) {
+   public RestResponseBean queryOrder(@RequestParam(required = true) String status,
+                                      @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+                                      @RequestParam(name="pageSize", defaultValue="10") Integer pageSize) {
        User user = (User) SecurityUtils.getSubject().getPrincipal();
        if(user==null) {
            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
        }
-       Order order = new Order();
-       order.setStatus(status);
-       order.setUserId(user.getId());
+
+       IPage<Order> orderPageList = null;
+       QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
+       Page<Order> page = new Page<Order>(pageNo, pageSize);
+       //查询当前用户所有不包括已取消订单
+       if("0".equals(status)){
+           queryWrapper.lambda().eq(Order::getUserId,user.getId()).ne(Order::getStatus,"9");
+           orderPageList = orderService.page(page,queryWrapper);
+       }
+
+       queryWrapper.eq("user_id",user.getId()).eq("status",status);
+
        //获取所需状态的订单
-       List<OrderPage> orderPageList = orderService.queryList(order);
+       orderPageList = orderService.page(page,queryWrapper);
        Map<String,Object> map = new HashMap<>();
        //放入map中
        map.put("orderList",orderPageList);
