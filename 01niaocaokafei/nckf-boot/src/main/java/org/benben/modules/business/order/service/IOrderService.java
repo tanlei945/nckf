@@ -39,9 +39,6 @@ public interface IOrderService extends IService<Order> {
 	 */
 	public void delBatchMain (Collection<? extends Serializable> idList);
 
-	//根据不同状态查询订单信息
-	public List<OrderPage> queryList(Order order);
-
 
 	//根据订单id查询订单
 	public Order queryByOrderId( String orderId);
