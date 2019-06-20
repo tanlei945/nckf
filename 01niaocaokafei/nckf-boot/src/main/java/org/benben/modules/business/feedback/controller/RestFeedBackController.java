@@ -32,13 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-/**
-* @Title: Controller
-* @Description: 用户反馈表
-* @author： jeecg-boot
-* @date：   2019-04-22
-* @version： V1.0
-*/
+
 @RestController
 @RequestMapping("/api/v1/feedback")
 @Slf4j
@@ -53,11 +47,31 @@ public class RestFeedBackController {
    @Value(value = "${benben.path.upload}")
    private String uploadpath;
 
-   /**
-     * 分页列表查询
-    *
-    * @return
-    */
+    /**
+     * showdoc
+     * @catalog 用户接口
+     * @title 用户系统反馈展示接口
+     * @description 用户系统反馈展示接口
+     * @method POST
+     * @url /nckf-boot/api/v1/feedback/queryFeedBackList
+     * @return {"code": 1,"data": {"current": 1,"pages": 1,"records": [{"content": "46564654","createBy": "suolong","createTime": 1556246655000,"delFlag": "1","id": "00d68dbd5e354c3d8599061e456c3f7f","imgUrl": "user/20190506/bg2_1557122864112.png","updateBy": "admin","updateTime": 1556594065000,"userId": "5058ee89b95af5251dee5e7e2b8a8cf3","username": "spring"}],"searchCount": true,"size": 10,"total": 10},"msg": "操作成功","time": "1561013915105"}
+     * @return_param code String 响应状态
+     * @return_param data List 反馈信息
+     * @return_param content String 评论内容
+     * @return_param createBy String 创建者
+     * @return_param createTime Date 创建时间
+     * @return_param delFlag String 删除状态(0:已删除 1:未删除)
+     * @return_param id String 反馈id
+     * @return_param imgUrl String 用户上传图片
+     * @return_param updateBy String 更新人
+     * @return_param updateTime Date 更新时间
+     * @return_param userId String 用户id
+     * @return_param username String 用户名
+     * @return_param msg String 操作信息
+     * @return_param time Date 操作时间
+     * @remark 这里是备注信息
+     * @number 11
+     */
    @PostMapping(value = "/queryFeedBackList" )
    @ApiOperation(value = "用户系统反馈展示接口", tags = {"用户接口"}, notes = "用户系统反馈展示接口")
    public RestResponseBean queryFeedBackList(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
@@ -75,10 +89,23 @@ public class RestFeedBackController {
 
    }
 
-   /**
-     *   添加
-    * @return
-    */
+    /**
+     * showdoc
+     * @catalog 用户接口
+     * @title 用户系统反馈添加接口
+     * @description 用户系统反馈添加接口
+     * @method POST
+     * @url /nckf-boot/api/v1/feedback/addFeedBack
+     * @param content 选填 String 反馈内容
+     * @param imageUrl 选填 String 图片的url
+     * @return {"code": 1,"data": null,"msg": "操作成功","time": "1561013990634"}
+     * @return_param code String 响应状态
+     * @return_param data String 没有含义
+     * @return_param msg String 操作信息
+     * @return_param time Date 操作时间
+     * @remark 这里是备注信息
+     * @number 12
+     */
    @PostMapping(value = "/addFeedBack")
    @ApiOperation(value = "用户系统反馈添加接口", tags = {"用户接口"}, notes = "用户系统反馈添加接口")
    @ApiImplicitParams({

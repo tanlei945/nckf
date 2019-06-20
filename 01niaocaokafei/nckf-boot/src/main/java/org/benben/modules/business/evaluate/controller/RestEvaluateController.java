@@ -44,13 +44,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @Title: Controller
- * @Description: 评价表
- * @author： jeecg-boot
- * @date： 2019-04-23
- * @version： V1.0
- */
+
 @RestController
 @RequestMapping("/api/v1/evaluate")
 @Api(tags = {"用户接口"})
@@ -68,12 +62,34 @@ public class RestEvaluateController {
     private String uploadpath;
 
     /**
-     * 分页列表查询
-     *
-     * @param storeId 商家ID
-     * @return
+     * showdoc
+     * @catalog 用户接口
+     * @title 用户评论商家展示接口
+     * @description 用户评论商家展示接口
+     * @method GET
+     * @url /nckf-boot/api/v1/evaluate/queryEvaluateList
+     * @param storeId 必填 String 商家id
+     * @return {"code": 1,"data": {"current": 1,"pages": 1,"records": [{"belongId": "3ca3980536388ccd81a6b15eab1f703a","content": "骑手送的块","createBy": "","createTime": 1557387029000,"delFlag": "1","evaluateType": "1","id": "1","imgUrl": "user/20190506/bg2_1557122864112.png,","starCount": null,"storename": "鸟巢咖啡谈磊店","updateBy": "superadmin","updateTime": 1557387491000,"userId": "b3aab68d9d03fee89f97cfa2b627bf21","username": "lufei"}],"searchCount": true,"size": 10,"total": 4},"msg": "操作成功","time": "1561016071610"}
+     * @return_param code String 响应状态
+     * @return_param belongId String 商家id
+     * @return_param content String 评论内容
+     * @return_param createBy String 创建者
+     * @return_param createTime Date 创建时间
+     * @return_param delFlag String 是否被删除(0:已删除 1:未删除)
+     * @return_param evaluateType String 评论对象(0:评论商家 1:评论骑手)
+     * @return_param id String 评价id
+     * @return_param imgUrl String 用户上传图片
+     * @return_param starCount String 星级
+     * @return_param storename String 门店名称
+     * @return_param updateBy String 更新人
+     * @return_param updateTime Date 更新时间
+     * @return_param userId String 用户id
+     * @return_param username String 纬度
+     * @return_param msg String 操作信息
+     * @return_param time Date 操作时间
+     * @remark 这里是备注信息
+     * @number 15
      */
-
     @GetMapping(value = "/queryEvaluateList")
     @ApiOperation(value = "用户评论商家展示接口", tags = {"用户接口"}, notes = "用户评论商家展示接口")
     public RestResponseBean queryEvaluateList(@RequestParam(name = "storeId", required = true) String storeId,
