@@ -17,13 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 
-/**
- * @Title: Controller
- * @Description: 账单
- * @author： jeecg-boot
- * @date： 2019-04-24
- * @version： V1.0
- */
+
 @RestController
 @RequestMapping("/api/v1/accountBill")
 @Slf4j
@@ -33,11 +27,20 @@ public class RestAccountBillController {
 	private IAccountBillService accountBillService;
 
 	/**
-	 * 分页列表查询
-	 * @param billType
-	 * @param pageNo
-	 * @param pageSize
-	 * @return
+	 * showdoc
+	 * @catalog 用户接口
+	 * @title 账单列表
+	 * @description 账单列表
+	 * @method GET
+	 * @url /nckf-boot/api/v1/accountBill/queryAccountBill
+	 * @param billType 必填 String 支出方式(1:充值 2:消费)
+	 * @return {"code": 1,"data": {"current": 1,"pages": 0,"records": [],"searchCount": true,"size": 10,"total": 0},"msg": "操作成功","time": "1561014568509"}
+	 * @return_param code String 响应状态
+	 * @return_param data List 账单对象
+	 * @return_param msg String 操作信息
+	 * @return_param time Date 操作时间
+	 * @remark 这里是备注信息
+	 * @number 15
 	 */
 	@GetMapping(value = "/queryAccountBill")
 	@ApiOperation(value = "账单列表", tags = {"用户接口"}, notes = "账单列表")

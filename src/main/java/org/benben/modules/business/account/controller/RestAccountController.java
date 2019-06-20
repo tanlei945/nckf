@@ -60,7 +60,7 @@ public class RestAccountController {
      * @return_param msg String 操作信息
      * @return_param time Date 操作时间
      * @remark 这里是备注信息
-     * @number 99
+     * @number 1
      */
     @GetMapping(value = "/queryAccount")
     @ApiOperation(value = "账单/钱包详情", tags = {"用户接口"}, notes = "账单/钱包详情")
@@ -80,7 +80,21 @@ public class RestAccountController {
 
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),account);
     }
-
+    /**
+     * showdoc
+     * @catalog 用户接口
+     * @title 是否设置支付密码
+     * @description 是否设置支付密码
+     * @method GET
+     * @url /nckf-boot/api/v1/account/isPayPassword
+     * @return {"code": 1,"data": null,"msg": "已设置支付密码","time": "1561014921063"}
+     * @return_param code String 响应状态
+     * @return_param data String 没有含义
+     * @return_param msg String 操作信息
+     * @return_param time Date 操作时间
+     * @remark 这里是备注信息
+     * @number 2
+     */
     @GetMapping(value = "/isPayPassword")
     @ApiOperation(value = "是否设置支付密码", tags = {"用户接口"}, notes = "是否设置支付密码")
     public RestResponseBean isPayPassword(){
@@ -98,7 +112,22 @@ public class RestAccountController {
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),"已设置支付密码",null);
     }
 
-
+    /**
+     * showdoc
+     * @catalog 用户接口
+     * @title 是否设置收款账户
+     * @description 是否设置收款账户
+     * @method GET
+     * @url /nckf-boot/api/v1/account/isWithdrawAccount
+     * @param userId 必填 String 用户id
+     * @return {"code": 1,"data": null,"msg": "已设置收款账户","time": "1561014836809"}
+     * @return_param code String 响应状态
+     * @return_param data String 没有含义
+     * @return_param msg String 操作信息
+     * @return_param time Date 操作时间
+     * @remark 这里是备注信息
+     * @number 3
+     */
     @GetMapping(value = "isWithdrawAccount")
     @ApiOperation(value = "是否设置收款账户", tags = {"用户接口"}, notes = "是否设置收款账户")
     public RestResponseBean isWithdrawAccount(String userId){
@@ -116,6 +145,22 @@ public class RestAccountController {
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),"已设置收款账户",null);
     }
 
+    /**
+     * showdoc
+     * @catalog 用户接口
+     * @title 是否设置收款账户
+     * @description 是否设置收款账户
+     * @method GET
+     * @url /nckf-boot/api/v1/account/checkPayPassword
+     * @param payPassword 必填 String 支付密码
+     * @return {"code": 1,"data": null,"msg": "支付密码正确","time": "1561015159420"}
+     * @return_param code String 响应状态
+     * @return_param data String 没有含义
+     * @return_param msg String 操作信息
+     * @return_param time Date 操作时间
+     * @remark 这里是备注信息
+     * @number 4
+     */
     @GetMapping("/checkPayPassword")
     @ApiOperation(value = "支付密码是否正确",tags = {"用户接口"},notes = "支付密码是否正确")
 	@ApiImplicitParam(name = "payPassword",value = "支付密码",dataType = "String",required = true)
@@ -141,7 +186,25 @@ public class RestAccountController {
         return new RestResponseBean(ResultEnum.PAY_PASSWORD_RIGHT.getValue(), ResultEnum.PAY_PASSWORD_RIGHT.getDesc(), null);
     }
 
-
+    /**
+     * showdoc
+     * @catalog 用户接口
+     * @title 重置支付密码
+     * @description 重置支付密码
+     * @method GET
+     * @url /nckf-boot/api/v1/account/resetPayPassword
+     * @param captcha 必填 String 验证码
+     * @param event 必填 String 事件
+     * @param mobile 必填 String 用户手机号
+     * @param payPassword 必填 String 用户支付密码
+     * @return {"code": 1,"data": null,"msg": "操作成功","time": "1561015116988"}
+     * @return_param code String 响应状态
+     * @return_param data String 没有含义
+     * @return_param msg String 操作信息
+     * @return_param time Date 操作时间
+     * @remark 这里是备注信息
+     * @number 5
+     */
     @GetMapping(value = "/resetPayPassword")
     @ApiOperation(value = "重置支付密码", tags = {"用户接口"}, notes = "重置支付密码")
 	@ApiImplicitParams({
