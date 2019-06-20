@@ -23,11 +23,7 @@ public class RestBannerController {
 	private IBannerService bannerService;
 
 
-	/**
-	 * 轮播图
-	 *
-	 * @return
-	 */
+
 	/**
 	 * showdoc
 	 * @catalog 首页

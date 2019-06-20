@@ -22,13 +22,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
-/**
- * @Title: Controller
- * @Description: 充值
- * @author： jeecg-boot
- * @date： 2019-04-25
- * @version： V1.0
- */
 @RestController
 @RequestMapping("/api/v1/recharge")
 @Api(tags = {"用户接口"})
@@ -40,12 +33,20 @@ public class RestRechargeController {
     private XXPayService xxPayService;
 
     /**
-     * 充值记录
-     *
-     * @param rechargeType
-     * @param pageNo
-     * @param pageSize
-     * @return
+     * showdoc
+     * @catalog 用户接口
+     * @title 充值记录
+     * @description 充值记录
+     * @method GET
+     * @url /nckf-boot/api/v1/recharge/queryRecharge
+     * @param rechargeType 必填 String 支付类型（1:支付宝 2:微信)
+     * @return {"code": 1,"data": {"current": 1,"pages": 0,"records": [],"searchCount": true,"size": 10,"total": 0},"msg": "操作成功","time": "1561013320530"}
+     * @return_param code String 响应状态
+     * @return_param data List 充值信息
+     * @return_param msg String 操作信息
+     * @return_param time Date 操作时间
+     * @remark 这里是备注信息
+     * @number 20
      */
     @GetMapping(value = "/queryRecharge")
     @ApiOperation(value = "充值记录", tags = {"用户接口"}, notes = "充值记录")
@@ -70,10 +71,30 @@ public class RestRechargeController {
 
 
     /**
-     * 充值详细
-     *
-     * @param id
-     * @return
+     * showdoc
+     * @catalog 用户接口
+     * @title 充值详细
+     * @description 充值详细
+     * @method GET
+     * @url /nckf-boot/api/v1/recharge/queryRechargeById
+     * @param id 必填 String 充值id
+     * @return {"code": 1,"data": {"createBy": null,"createTime": 1559099515000,"id": "25231bca915e8c37ae8fe5bff0002470","orderNo": null,"rechargeMoney": 0,"rechargeType": "1","status": "2","updateBy": null,"updateTime": null,"userId": "67450f9df12e7b4b415c931aa6cd58f4"},"msg": "操作成功","time": "1561013831784"}
+     * @return_param code String 响应状态
+     * @return_param data Object 充值对象
+     * @return_param createBy String 创建人
+     * @return_param createTime Date 创建时间
+     * @return_param id String 充值id
+     * @return_param orderNo String 第三方订单号
+     * @return_param rechargeMoney Double 充值金额
+     * @return_param rechargeType String 充值方式(1:支付宝 2:微信)
+     * @return_param status String 是否充值成功（0:失败 1:成功）
+     * @return_param updateBy String 编辑人
+     * @return_param updateTime Date 更新时间
+     * @return_param userId String 用户id
+     * @return_param msg String 操作信息
+     * @return_param time Date 操作时间
+     * @remark 这里是备注信息
+     * @number 21
      */
     @GetMapping(value = "/queryRechargeById")
     @ApiOperation(value = "充值详细", tags = {"用户接口"}, notes = "充值详细")
@@ -89,7 +110,23 @@ public class RestRechargeController {
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), recharge);
     }
 
-
+    /**
+     * showdoc
+     * @catalog 用户接口
+     * @title 钱包充值
+     * @description 钱包充值
+     * @method POST
+     * @url /nckf-boot/api/v1/recharge/rechargeRecharge
+     * @param money 必填 Double 充值金额
+     * @param type 必填 String 充值方式
+     * @return {"code": 1,"data": "alipay_sdk=alipay-sdk-java-dynamicVersionNo&biz_content=%7B%22body%22%3A%22%E9%B8%9F%E5%B7%A2%E5%92%96%E5%95%A1%E5%85%85%E5%80%BC%22%2C%22out_trade_no%22%3A%226b6279d168c1b2c7e5da22afa5778a3b%22%2C%22product_code%22%3A%22QUICK_MSECURITY_PAY%22%2C%22subject%22%3A%22recharge%22%2C%22timeout_express%22%3A%2215m%22%2C%22total_amount%22%3A%22100.0%22%7D&charset=UTF-8&method=alipay.trade.app.pay&timestamp=2019-06-20+14%3A55%3A43&version=1.0","msg": "操作成功","time": "1561013743400"}
+     * @return_param code String 响应状态
+     * @return_param data String 秘钥
+     * @return_param msg String 操作信息
+     * @return_param time Date 操作时间
+     * @remark 这里是备注信息
+     * @number 22
+     */
     @PostMapping(value = "/rechargeRecharge")
     @ApiOperation(value = "钱包充值", tags = {"用户接口"}, notes = "钱包充值")
     @ApiImplicitParams({
