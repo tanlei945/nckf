@@ -24,13 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 
-/**
- * @Title: RestWithdrawController
- * @Description: 提现
- * @author： WangHao
- * @date： 2019-04-25
- * @version： V1.0
- */
+
 @RestController
 @RequestMapping("/api/v1/withdraw")
 @Slf4j
@@ -42,11 +36,20 @@ public class RestWithdrawController {
     private IAccountService accountService;
 
     /**
-     * 提现记录
-     *
-     * @param pageNo
-     * @param pageSize
-     * @return
+     * showdoc
+     * @catalog 用户接口
+     * @title 提现记录
+     * @description 提现记录
+     * @method GET
+     * @url /nckf-boot/api/v1/withdraw/queryWithdraw
+     * @param status 必填 String 优惠券状态(-1已过期 0 未使用 1已使用)
+     * @return {"code": 1,"data": {"current": 1,"pages": 0,"records": [],"searchCount": true,"size": 10,"total": 0},"msg": "操作成功","time": "1561016605235"}
+     * @return_param code String 响应状态
+     * @return_param data List 提现信息
+     * @return_param msg String 操作信息
+     * @return_param time Date 操作时间
+     * @remark 这里是备注信息
+     * @number 23
      */
     @GetMapping(value = "/queryWithdraw")
     @ApiOperation(value = "提现记录", tags = {"用户接口"}, notes = "提现记录")
@@ -77,10 +80,29 @@ public class RestWithdrawController {
 
 
     /**
-     * 提现详情
-     *
-     * @param id
-     * @return
+     * showdoc
+     * @catalog 用户接口
+     * @title 提现详情
+     * @description 提现详情
+     * @method GET
+     * @url /nckf-boot/api/v1/withdraw/queryWithdrawById
+     * @param id 必填 String 提现id
+     * @return {"code": 1,"data": {"createBy": null,"createTime": 1556361155000,"id": "be57effe75b5c37a9acd075a2d3f022f","money": 1,"orderNo": null,"status": "0","updateBy": null,"updateTime": null,"userId": "c73ee7f3d95a74f9970eaac804548f78","withdrawType": null},"msg": "操作成功","time": "1561016682645"}
+     * @return_param code String 响应状态
+     * @return_param createBy String 创建人
+     * @return_param createTime Date 创建时间
+     * @return_param id String 提现id
+     * @return_param money Double 充值金额
+     * @return_param orderNo String 第三方订单号
+     * @return_param status String 提现状态(0:未审核 1:审核未通过 2:审核已通过)
+     * @return_param updateBy String 编辑人
+     * @return_param updateTime Date 更新时间
+     * @return_param userId String 用户id
+     * @return_param withdrawType String 提现至(1:支付宝 2:微信)
+     * @return_param msg String 操作信息
+     * @return_param time Date 操作时间
+     * @remark 这里是备注信息
+     * @number 24
      */
     @GetMapping(value = "/queryWithdrawById")
     @ApiOperation(value = "提现详情", tags = {"用户接口"}, notes = "提现详情")
@@ -96,9 +118,20 @@ public class RestWithdrawController {
     }
 
     /**
-     * 账户提现申请
-     * @param money
-     * @return
+     * showdoc
+     * @catalog 用户接口
+     * @title 账户提现申请
+     * @description 账户提现申请
+     * @method POST
+     * @url /nckf-boot/api/v1/withdraw/withdrawApply
+     * @param money 必填 Double 提现金额
+     * @return {"code": 0,"data": null,"msg": "余额不足","time": "1561016713997"}
+     * @return_param code String 响应状态
+     * @return_param data String 没有含义
+     * @return_param msg String 操作信息
+     * @return_param time Date 操作时间
+     * @remark 这里是备注信息
+     * @number 25
      */
     @PostMapping(value = "/withdrawApply")
     @ApiOperation(value = "账户提现申请", tags = {"用户接口"}, notes = "账户提现申请")
