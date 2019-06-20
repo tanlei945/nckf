@@ -32,13 +32,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 import com.alibaba.fastjson.JSON;
 
- /**
- * @Title: Controller
- * @Description: 轮播图
- * @author： jeecg-boot
- * @date：   2019-04-23
- * @version： V1.0
- */
+
 @RestController
 @RequestMapping("/banner/banner")
 @Slf4j
