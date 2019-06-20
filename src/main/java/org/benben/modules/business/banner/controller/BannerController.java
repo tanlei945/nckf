@@ -40,14 +40,7 @@ public class BannerController {
 	@Autowired
 	private IBannerService bannerService;
 	
-	/**
-	  * 分页列表查询
-	 * @param banner
-	 * @param pageNo
-	 * @param pageSize
-	 * @param req
-	 * @return
-	 */
+
 	@GetMapping(value = "/list")
 	public Result<IPage<Banner>> queryPageList(Banner banner,
 									  @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
@@ -62,11 +55,7 @@ public class BannerController {
 		return result;
 	}
 	
-	/**
-	  *   添加
-	 * @param banner
-	 * @return
-	 */
+
 	@PostMapping(value = "/add")
 	public Result<Banner> add(@RequestBody Banner banner) {
 		Result<Banner> result = new Result<Banner>();
@@ -80,12 +69,7 @@ public class BannerController {
 		}
 		return result;
 	}
-	
-	/**
-	  *  编辑
-	 * @param banner
-	 * @return
-	 */
+
 	@PutMapping(value = "/edit")
 	public Result<Banner> edit(@RequestBody Banner banner) {
 		Result<Banner> result = new Result<Banner>();
@@ -103,11 +87,7 @@ public class BannerController {
 		return result;
 	}
 	
-	/**
-	  *   通过id删除
-	 * @param id
-	 * @return
-	 */
+
 	@DeleteMapping(value = "/delete")
 	public Result<Banner> delete(@RequestParam(name="id",required=true) String id) {
 		Result<Banner> result = new Result<Banner>();
@@ -124,11 +104,7 @@ public class BannerController {
 		return result;
 	}
 	
-	/**
-	  *  批量删除
-	 * @param ids
-	 * @return
-	 */
+
 	@DeleteMapping(value = "/deleteBatch")
 	public Result<Banner> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
 		Result<Banner> result = new Result<Banner>();
@@ -141,11 +117,7 @@ public class BannerController {
 		return result;
 	}
 	
-	/**
-	  * 通过id查询
-	 * @param id
-	 * @return
-	 */
+
 	@GetMapping(value = "/queryById")
 	public Result<Banner> queryById(@RequestParam(name="id",required=true) String id) {
 		Result<Banner> result = new Result<Banner>();
@@ -159,12 +131,7 @@ public class BannerController {
 		return result;
 	}
 
-  /**
-      * 导出excel
-   *
-   * @param request
-   * @param response
-   */
+
   @RequestMapping(value = "/exportXls")
   public ModelAndView exportXls(HttpServletRequest request, HttpServletResponse response) {
       // Step.1 组装查询条件
@@ -191,13 +158,7 @@ public class BannerController {
       return mv;
   }
 
-  /**
-      * 通过excel导入数据
-   *
-   * @param request
-   * @param response
-   * @return
-   */
+
   @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
   public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
       MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
