@@ -18,13 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
-* @Title: Controller
-* @Description: 店面
-* @author： jeecg-boot
-* @date：   2019-04-23
-* @version： V1.0
-*/
+
 @RestController
 @RequestMapping("/api/v1/store")
 @Slf4j
@@ -32,8 +26,41 @@ import java.util.List;
 public class RestStoreController {
    @Autowired
    private IStoreService storeService;
+
+
+
+
+
+    /**
+     * showdoc
+     * @catalog 门店管理接口
+     * @title 查询用户周边商家
+     * @description 查询用户周边商家
+     * @method POST
+     * @url /nckf-boot/api/v1/store/queryStoreByDistance
+     * @return {"code": 1,"data": [{"addressDesc": "荥阳6","belongId": "cdabef37c2d4203327da90533640a9d7","createBy": "谭磊","createTime": 1555961353000,"description": "咖啡有点苦","distance": "10468.5","endTime": 1555961353000,"freight": 0,"id": "3ca3980536388ccd81a6b15eab1f703a","lat": 28.858749,"lng": 118.073294,"mark": 0,"minDeliveryMoney": 1,"notice": null,"phone": "1223456","salesCountMonth": 0,"startTime": 1555961353000,"storeName": "鸟巢咖啡谈磊店","storeScope": 0,"updateBy": "string","updateTime": 1555961353000}],"msg": "操作成功","time": "1561018810184"}
+     * @return_param code List 附近商家
+     * @return_param addressDesc String 地址详情
+     * @return_param belongId String 门店管理员id
+     * @return_param startTime Date 营业时间
+     * @return_param endTime String 结束时间
+     * @return_param freight Double 配送费
+     * @return_param lat String 经度
+     * @return_param lng String 维度
+     * @return_param mark String 距商家距离
+     * @return_param notice String 商家公告
+     * @return_param minDeliveryMoney String 最小配送费
+     * @return_param salesCountMonth Int 月销量
+     * @return_param storeName String 商家名称
+     * @return_param storeScope String 配送范围
+     * @return_param msg String 操作信息
+     * @return_param time Date 操作时间
+     *
+     * @remark
+     * @number 1
+     */
  @RequestMapping(value = "/queryStoreByDistance",method = RequestMethod.GET)
- @ApiOperation(value="查询用户离店铺距离", tags = {"门店管理接口"})
+ @ApiOperation(value="查询用户周边商家", tags = {"门店管理接口"})
  @ApiImplicitParams({
          @ApiImplicitParam(name="lng",value="用户所在经度",dataType = "double",required = true),
          @ApiImplicitParam(name="lat",value="用户所在纬度",dataType = "double",required = true)
@@ -50,6 +77,29 @@ public class RestStoreController {
 
  }
 
+
+
+
+    /**
+     * 门店管理接口
+     *
+     * @return
+     */
+    /**
+     * showdoc
+     * @catalog 门店管理接口
+     * @title 查询收货地址距离是否超过限制
+     * @description 查询收货地址距离是否超过限制
+     * @method POST
+     * @url /nckf-boot/api/v1/store/queryScopeById
+     * @return {"code": 1,"data": false,"msg": "操作成功","time": "1561018418200"}
+     * @return_param code String 响应状态
+     * @return_param data Boolean false:超过配送距离 true：未超过配送距离
+     * @return_param msg String 操作信息
+     * @return_param time Date 操作时间
+     * @remark
+     * @number 1
+     */
     @RequestMapping(value = "/queryScopeById",method = RequestMethod.GET)
     @ApiOperation(value="查询收货地址距离是否超过限制",tags = {"门店管理接口"})
     @ApiImplicitParams({
@@ -71,6 +121,69 @@ public class RestStoreController {
     }
 
 
+    /**
+     * showdoc
+     * @catalog 门店管理接口
+     * @title 门店列表
+     * @description 门店列表
+     * @method POST
+     * @url /nckf-boot/api/v1/store/query_all_store
+     * @return {
+     *   "code": 1,
+     *   "data": {
+     *     "current": 1,
+     *     "pages": 1,
+     *     "records": [
+     *       {
+     *         "addressDesc": "荥阳6",
+     *         "belongId": "cdabef37c2d4203327da90533640a9d7",
+     *         "createBy": "谭磊",
+     *         "createTime": 1555961353000,
+     *         "description": "咖啡有点苦",
+     *         "distance": null,
+     *         "endTime": 1555961353000,
+     *         "freight": 0,
+     *         "id": "3ca3980536388ccd81a6b15eab1f703a",
+     *         "lat": 28.858749,
+     *         "lng": 118.073294,
+     *         "mark": 0,
+     *         "minDeliveryMoney": 1,
+     *         "notice": null,
+     *         "phone": "1223456",
+     *         "salesCountMonth": 0,
+     *         "startTime": 1555961353000,
+     *         "storeName": "鸟巢咖啡谈磊店",
+     *         "storeScope": 0,
+     *         "updateBy": "string",
+     *         "updateTime": 1555961353000
+     *       }
+     *     ],
+     *     "searchCount": true,
+     *     "size": 10,
+     *     "total": 1
+     *   },
+     *   "msg": "操作成功",
+     *   "time": "1561022792122"
+     * }
+     * @return_param addressDesc String 地址详情
+     * @return_param belongId String 门店管理员id
+     * @return_param startTime Date 营业时间
+     * @return_param endTime String 结束时间
+     * @return_param freight Double 配送费
+     * @return_param lat String 经度
+     * @return_param lng String 维度
+     * @return_param mark String 距商家距离
+     * @return_param notice String 商家公告
+     * @return_param minDeliveryMoney String 最小配送费
+     * @return_param salesCountMonth Int 月销量
+     * @return_param storeName String 商家名称
+     * @return_param storeScope String 配送范围
+     * @return_param msg String 操作信息
+     * @return_param time Date 操作时间
+     *
+     * @remark
+     * @number 1
+     */
     @GetMapping("/query_all_store")
     @ApiOperation(value="门店列表", tags = {"门店管理接口"})
     public RestResponseBean queryAllStore(Store store,@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,

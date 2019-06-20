@@ -38,12 +38,7 @@ public class RestRiderAddressController {
      * @description 新增和修改骑手位置
      * @method POST
      * @url /nckf-boot/api/v1/riderAddress/updateRiderAddress
-     * @return {
-     *   "code": 1,
-     *   "data": null,
-     *   "msg": "操作成功",
-     *   "time": "1561013457705"
-     * }
+     * @return {"code": 1,"data": null,"msg": "操作成功", "time": "1561013457705"}
      * @return_param code String 响应状态
      * @return_param data String null
      * @return_param msg String 操作信息
@@ -88,12 +83,7 @@ public class RestRiderAddressController {
      * @description 删除骑手位置接口
      * @method POST
      * @url /nckf-boot/api/v1/riderAddress/deleteRiderAddress
-     * @return {
-     *   "code": 1,
-     *   "data": null,
-     *   "msg": "操作成功",
-     *   "time": "1561013457705"
-     * }
+     * @return {"code": 1,"data": null,"msg": "操作成功","time": "1561013457705"}
      * @return_param code String 响应状态
      * @return_param data String null
      * @return_param msg String 操作信息

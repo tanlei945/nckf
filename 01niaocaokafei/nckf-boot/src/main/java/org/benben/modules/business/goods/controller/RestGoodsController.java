@@ -38,10 +38,41 @@ public class RestGoodsController {
    private ISysUserService sysUserService;
 
 
+
+
+    /**
+     * 门店管理接口
+     *
+     * @return
+     */
+    /**
+     * showdoc
+     * @catalog 门店管理接口
+     * @title 根据门店id查所属商品
+     * @description 根据门店id查所属商品
+     * @method POST
+     * @url /nckf-boot/api/v1/goods/queryGoodsByCategory
+     * @return {"code": 1,"data": [{"belongId": "3ca3980536388ccd81a6b15eab1f703a","categoryType": "2","createBy": "谭磊","createTime": 1555979788000,"description": "没有描述","goodsCount": 100,"goodsName": "火腿肠","id": "4a1cd6c4b494133c12af9f710602bf6c","imgUrl": "user/20190505/1557025800(1)_1557039185258.jpg","linePrice": 11,"price": 11,"status": "0","updateBy": "string","updateTime": 1555979788000}],"msg": "操作成功","time": "1561015746068"}
+     * @return_param code String 响应状态
+     * @return_param data List 类别下的所有商品
+     * @return_param description String 描述
+     * @return_param goodsCount Int 商品数量
+     * @return_param goodsName String 商品名称
+     * @return_param imgUrl String 商品图片
+     * @return_param linePrice String 划线价
+     * @return_param price double 单价
+     * @return_param status String 商品状态0：下架 1：正常
+     * @return_param categoryType String 类别编号
+     * @return_param goodsCount Int 库存
+     * @return_param msg String 操作信息
+     * @return_param time Date 操作时间
+     * @remark
+     * @number 1
+     */
  @GetMapping("queryGoodsByCategory")
  @ApiOperation(value="根据门店id查所属商品",tags = {"门店管理接口"})
  @ApiImplicitParams({
-         @ApiImplicitParam(name="goodId",value="所属商家id",dataType = "String",required = true),
+         @ApiImplicitParam(name="belongId",value="所属商家id",dataType = "String",required = true),
          @ApiImplicitParam(name="categoryType",value="商品类别",dataType = "String",required = true)
  })
  public RestResponseBean queryByCotegory(@RequestParam(name="categoryType")String categoryType,
@@ -56,6 +87,22 @@ public class RestGoodsController {
 
      }
  }
+
+
+    /**
+     * showdoc
+     * @catalog 门店管理接口
+     * @title 根据商品id查商品规格
+     * @description 根据商品id查商品规格
+     * @method POST
+     * @url /nckf-boot/api/v1/goods/queryGoodsByCategory
+     * @return {"code": 1,"data": {"商品温度": ["热","冰","常温"],"规格": ["小","大","中"],"商品加糖": ["加糖","不加糖"]},"msg": "操作成功","time": "1561017610898"}
+     * @return_param code String 响应状态
+     * @return_param msg String 操作信息
+     * @return_param time Date 操作时间
+     * @remark
+     * @number 1
+     */
     @GetMapping("queryGoodsSpec")
     @ApiOperation(value="根据商品id查商品规格",tags = {"门店管理接口"})
     @ApiImplicitParams({@ApiImplicitParam(name="goodId",value="商品id",dataType = "String",required = true)
