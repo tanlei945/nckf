@@ -69,9 +69,35 @@ public class RestAnnouncementController {
 	}
 
 	/**
-	 * 通过id查询
-	 * @param id
-	 * @return
+	 * showdoc
+	 * @catalog 首页
+	 * @title 通过id查询通告详情
+	 * @description 通过id查询通告详情
+	 * @method GET
+	 * @url /nckf-boot/api/v1/announcement/queryAnnouncementById
+	 * @param id 必填 String 通告id
+	 * @return {"code": 1,"data": {"cancelTime": 1558520808000,"createBy": null,"createTime": null,"delFlag": "0","endTime": 1558175366000,"id": "1","imgUrl": "user/20190506/bg2_1557122864112.png","msgContent": "第一个","sendStatus": null,"sendTime": 1558780013000,"sender": "555","startTime": 1557397761000,"titile": "哈哈哈","updateBy": "admin","updateTime": 1557484175000},"msg": "操作成功","time": "1561014044741"}
+	 * @return_param code String 响应状态
+	 * @return_param data Object 通告信息
+	 * @return_param cancelTime 撤销时间
+	 * @return_param createBy String 创建人
+	 * @return_param createTime Date 创建时间
+	 * @return_param delFlag String 删除状态（0:已删除 1:正常）
+	 * @return_param endTime Date 结束时间
+	 * @return_param id String 通告id
+	 * @return_param imgUrl String 图片
+	 * @return_param msgContent String 内容
+	 * @return_param sendStatus String 发布状态（0:未发布 1:已发布 2:已撤销）
+	 * @return_param sendTime Date 发布时间
+	 * @return_param sender String 发布人
+	 * @return_param startTime Date 开始时间
+	 * @return_param titile String 标题
+	 * @return_param updateBy String 更新人
+	 * @return_param updateTime Date 更新时间
+	 * @return_param msg String 操作信息
+	 * @return_param time Date 操作时间
+	 * @remark 这里是备注信息
+	 * @number 1
 	 */
 	@GetMapping(value = "/queryAnnouncementById")
 	@ApiOperation(value = "通过id查询通告详情", notes = "通过id查询通告详情", tags = {"首页"})
