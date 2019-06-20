@@ -39,13 +39,6 @@ import java.util.Map;
 import java.util.Set;
 
 
-/**
- * @Title: RestUserController
- * @Description: 用户
- * @author： jeecg-boot
- * @date： 2019-04-19
- * @version： V1.0
- */
 @RestController
 @RequestMapping("/api/v1/user")
 @Api(tags = {"用户接口"})
@@ -91,8 +84,27 @@ public class RestUserController {
 
 
     /**
-     * 用户详情
-     * @return
+     * showdoc
+     * @catalog 用户接口
+     * @title 用户详情
+     * @description 用户详情
+     * @method GET
+     * @url /nckf-boot/api/v1/user/userRegister
+     * @return {"code": 1,"data": {"avatar": null,"couponsNumber": 0,"id": "c73ee7f3d95a74f9970eaac804548f78","mobile": "18503840250","money": 0,"sex": 0,"userType": "0","username": null},"msg": "操作成功","time": "1561012425988"}
+     * @return_param code String 响应状态
+     * @return_param user Object 用户信息
+     * @return_param avatar String 头像
+     * @return_param couponsNumber String 优惠劵数量
+     * @return_param id String 用户id
+     * @return_param mobile String 手机号
+     * @return_param money Double 余额
+     * @return_param sex String 性别(0:男 1:女)
+     * @return_param userType String 用户类型（0:普通用户 1:骑手）
+     * @return_param username String 用户名
+     * @return_param msg String 操作信息
+     * @return_param time Date 操作时间
+     * @remark 这里是备注信息
+     * @number 33
      */
     @GetMapping(value = "/queryUserById")
     @ApiOperation(value = "用户详情", tags = {"用户接口"}, notes = "用户详情")
@@ -390,10 +402,32 @@ public class RestUserController {
     }
 
     /**
-     * 用户注册
-     * @param mobile
-     * @param password
-     * @return
+     * showdoc
+     * @catalog 用户接口
+     * @title 用户注册
+     * @description 用户注册
+     * @method POST
+     * @url /nckf-boot/api/v1/user/userRegister
+     * @param captcha 必填 String 验证码
+     * @param event 必填 String 事件
+     * @param mobile 必填 String 用户手机号
+     * @param password 必填 String 用户密码
+     * @return {"code": 1,"data": {"user": {"avatar": null,"couponsNumber": 0,"id": "c73ee7f3d95a74f9970eaac804548f78","mobile": "18503840250","money": 0,"sex": null,"userType": null,"username": null},"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2JpbGUiOiJtZW1iZXJVc2VyQDE4NTAzODQwMjUwIiwiZXhwIjoxNTYxNjE3MTQxfQ.NJ99mTUKQHzO6diCpJ3wzdaAFrlVKv0TIjizmibRwKE"},"msg": "操作成功","time": "1561012341771"}
+     * @return_param code String 响应状态
+     * @return_param user Object 用户信息
+     * @return_param avatar String 头像
+     * @return_param couponsNumber String 优惠劵数量
+     * @return_param id String 用户id
+     * @return_param mobile String 手机号
+     * @return_param money Double 余额
+     * @return_param sex String 性别(0:男 1:女)
+     * @return_param userType String 用户类型（0:普通用户 1:骑手）
+     * @return_param username String 用户名
+     * @return_param token String 访问权限
+     * @return_param msg String 操作信息
+     * @return_param time Date 操作时间
+     * @remark 这里是备注信息
+     * @number 36
      */
     @PostMapping(value = "/userRegister")
     @ApiOperation(value = "用户注册", tags = {"用户接口"}, notes = "用户注册")
@@ -467,10 +501,30 @@ public class RestUserController {
 
 
     /**
-     * 账户密码登录
-     * @param mobile
-     * @param password
-     * @return
+     * showdoc
+     * @catalog 用户接口
+     * @title 账户密码登录
+     * @description 账户密码登录
+     * @method POST
+     * @url /nckf-boot/api/v1/user/login
+     * @param mobile 必填 String 用户手机号
+     * @param password 必填 String 用户密码
+     * @return {"code": 1,"data": {"user": {"avatar": null,"couponsNumber": 0,"id": "c73ee7f3d95a74f9970eaac804548f78","mobile": "18503840250","money": 0,"sex": 0,"userType": "0","username": null},"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2JpbGUiOiJtZW1iZXJVc2VyQDE4NTAzODQwMjUwIiwiZXhwIjoxNTYxNjE3MjY2fQ.mpFv9F-QC97eUOZrvyEk7_YYcMCuAzuI-j2a6SpOAI0"},"msg": "登陆成功","time": "1561012466360"}
+     * @return_param code String 响应状态
+     * @return_param user Object 用户信息
+     * @return_param avatar String 头像
+     * @return_param couponsNumber String 优惠劵数量
+     * @return_param id String 用户id
+     * @return_param mobile String 手机号
+     * @return_param money Double 余额
+     * @return_param sex String 性别(0:男 1:女)
+     * @return_param userType String 用户类型（0:普通用户 1:骑手）
+     * @return_param username String 用户名
+     * @return_param token String 访问权限
+     * @return_param msg String 操作信息
+     * @return_param time Date 操作时间
+     * @remark 这里是备注信息
+     * @number 31
      */
     @PostMapping(value = "/login")
     @ApiOperation(value = "账户密码登录", tags = {"用户接口"}, notes = "账户密码登录")

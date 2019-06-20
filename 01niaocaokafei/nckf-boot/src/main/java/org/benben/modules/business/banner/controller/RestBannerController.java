@@ -37,11 +37,11 @@ public class RestBannerController {
 	 * @url /nckf-boot/api/v1/banner/queryBanner
 	 * @return { "code": 1, "data": [ "user/20190510/33522_1557479564265.jpg" ], "msg": "操作成功", "time": "1561000377064" }
 	 * @return_param code String 响应状态
-	 * @return_param data String 轮播图List
+	 * @return_param data List 轮播图信息
 	 * @return_param msg String 操作信息
 	 * @return_param time Date 操作时间
 	 * @remark 这里是备注信息
-	 * @number 1
+	 * @number 3
 	 */
 
 	@GetMapping(value = "/queryBanner")

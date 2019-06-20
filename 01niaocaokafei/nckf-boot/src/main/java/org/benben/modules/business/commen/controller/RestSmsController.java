@@ -25,11 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 
-/**
- * @author: WangHao
- * @date: 2019/4/9 16:30
- * @description: 短信控制层
- */
+
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/sms/")
@@ -119,11 +115,21 @@ public class RestSmsController {
     }
 
     /**
-     * 检验验证码
-     *
-     * @param smsDTO
-     * @param bindingResult
-     * @return
+     * showdoc
+     * @catalog 短信接口
+     * @title 检验短信验证码
+     * @description 检验短信验证码
+     * @method GET
+     * @url /nckf-boot/api/v1/sms/checkSend
+     * @param mobile 必填 String 登录手机号
+     * @param event 必填 String 短信事件
+     * @return {"code": 1,"data": null,"msg": "短信验证通过","time": "1561015747083"}
+     * @return_param code String 响应状态
+     * @return_param data String 没有含义
+     * @return_param msg String 操作信息
+     * @return_param time Date 操作时间
+     * @remark 这里是备注信息
+     * @number 2
      */
     @GetMapping(value = "/checkSend")
     @ApiOperation(value = "检验短信验证码", tags = {"短信接口"},notes = "检验短信验证码")
@@ -168,7 +174,24 @@ public class RestSmsController {
         return message;
     }
 
-
+    /**
+     * showdoc
+     * @catalog 短信接口
+     * @title 测试发送验证码
+     * @description 测试发送验证码
+     * @method POST
+     * @url /nckf-boot/api/v1/sms/testSend
+     * @param mobile 必填 String 登录手机号
+     * @param event 必填 String 短信事件
+     * @param captcha 选填 String 验证码
+     * @return {"code": 1,"data": 842811,"msg": "验证码发送成功","time": "1561015290370"}
+     * @return_param code String 响应状态
+     * @return_param data String 验证码信息
+     * @return_param msg String 操作信息
+     * @return_param time Date 操作时间
+     * @remark 这里是备注信息
+     * @number 1
+     */
     @PostMapping(value = "/testSend")
     @ApiOperation(value = "测试发送验证码", tags = {"短信接口"},notes = "测试发送验证码")
 	@ApiImplicitParams({

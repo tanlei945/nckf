@@ -23,7 +23,21 @@ public class RestSystemConfigController {
     @Autowired
     private ISystemConfigService systemConfigService;
 
-
+    /**
+     * showdoc
+     * @catalog 首页
+     * @title 首页文字
+     * @description 首页文字
+     * @method GET
+     * @url /nckf-boot/api/v1/systemConfig/queryByTime
+     * @return {"code": 1,"data": "下午好","msg": "操作成功","time": "1561014629886"}
+     * @return_param code String 响应状态
+     * @return_param data String 文字信息
+     * @return_param msg String 操作信息
+     * @return_param time Date 操作时间
+     * @remark 这里是备注信息
+     * @number 8
+     */
     @GetMapping(value = "/queryByTime")
     @ApiOperation(value = "首页文字", notes = "首页文字",tags = {"首页"})
     public RestResponseBean queryByTime()  {

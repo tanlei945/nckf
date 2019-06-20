@@ -37,9 +37,21 @@ public class RestCartController {
     private IGoodsService goodsService;
 
     /**
-     * 购物车订单查询
-     * @param userId
-     * @return
+     * showdoc
+     * @catalog 订单购物车接口
+     * @title 清空购物车
+     * @description 清空购物车
+     * @method GET
+     * @url /nckf-boot/api/v1/cart/queryCart
+     * @param storeId 必填 String 商户id
+     * @param userId 必填 String 用户id
+     * @return {"code": 1,"data": [],"msg": "操作成功","time": "1561012911038"}
+     * @return_param code String 响应状态
+     * @return_param data List 购物车商品信息
+     * @return_param msg String 操作信息
+     * @return_param time Date 操作时间
+     * @remark 这里是备注信息
+     * @number 4
      */
     @GetMapping(value = "/queryCart")
     @ApiOperation(value = "当前购物车查询", notes = "当前购物车查询",tags = "订单购物车接口")
@@ -69,9 +81,31 @@ public class RestCartController {
 
 
     /**
-     *   添加
-     * @param cart
-     * @return
+     * showdoc
+     * @catalog 订单购物车接口
+     * @title 购物车添加商品
+     * @description 购物车添加商品
+     * @method POST
+     * @url /nckf-boot/api/v1/cart/addCart
+     * @param cart 必填 Object 用户购物车实体
+     * @param checkedFlag 必填 String 是否选中(0未选中 1:选中)
+     * @param createByS 选填 String 创建者
+     * @param createTime 选填 Date 创建时间
+     * @param goodsId 选填 String 商品id
+     * @param goodsNum 选填 Integer 商品数量
+     * @param goodstSpecid 选填 String 商品规格
+     * @param id 选填 String 购物车id
+     * @param storeId 选填 String 商户id
+     * @param updateBy 选填 String 修改者
+     * @param updateTime 选填 Date 修改时间
+     * @param userId 选填 String 用户id
+     * @return {"code": 1,"data": null,"msg": "操作成功","time": "1561012549542"}
+     * @return_param code String 响应状态
+     * @return_param data String 没有含义
+     * @return_param msg String 操作信息
+     * @return_param time Date 操作时间
+     * @remark 这里是备注信息
+     * @number 1
      */
     @PostMapping(value = "/addCart")
     @Transactional

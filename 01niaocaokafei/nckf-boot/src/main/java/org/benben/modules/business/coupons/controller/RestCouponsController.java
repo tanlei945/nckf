@@ -31,11 +31,36 @@ public class RestCouponsController {
     private ICouponsService couponsService;
 
     /**
-     * 分页列表查询
-     * @param pageNo
-     * @param pageSize
-     * @param req
-     * @return
+     * showdoc
+     * @catalog 首页
+     * @title 展示优惠券
+     * @description 展示优惠券
+     * @method GET
+     * @url /nckf-boot/api/v1/coupons/queryCoupons
+     * @return {"code": 1,"data": {"current": 1,"pages": 1,"records": [{"commonFlag": "1","couponsName": "减50元","createBy": null,"createTime": null,"delFlag": "1","id": "1","imgUrl": null,"newuserFlag": "0","saveMoney": 10,"sendEndTime": 1557306995000,"sendStartTime": 1557479807000,"status": "1","updateBy": null,"updateTime": 1557307015000,"useCondition": 50,"useEndTime": 1561886203000,"useStartTime": 1557998200000}],"searchCount": true,"size": 10,"total": 5},"msg": "操作成功","time": "1561014489138"}
+     * @return_param code String 响应状态
+     * @return_param data List 优惠券信息
+     * @return_param commonFlag String 是否所有商家通用（0:否 1:是）
+     * @return_param couponsName String 优惠券名称
+     * @return_param createBy String 创建者
+     * @return_param createTime Date 创建时间
+     * @return_param delFlag String 是否删除(0:否 1:是)
+     * @return_param id String 优惠券id
+     * @return_param imgUrl String 图片路径
+     * @return_param newuserFlag String 新用户专享(0:否 1:是)
+     * @return_param saveMoney Double 优惠金额
+     * @return_param sendEndTime Date 优惠券结束发放时间
+     * @return_param sendStartTime Date 优惠券结束发放时间
+     * @return_param status String 是否过期（0:已过期 1:未过期）
+     * @return_param updateBy String 更新人
+     * @return_param updateTime Date 更新时间
+     * @return_param useCondition String
+     * @return_param useEndTime Date 过期时间
+     * @return_param useStartTime Date 开始使用时间
+     * @return_param msg String 操作信息
+     * @return_param time Date 操作时间
+     * @remark 这里是备注信息
+     * @number 5
      */
     @GetMapping(value = "/queryCoupons")
     @ApiOperation(value = "展示优惠券", notes = "展示优惠券",tags = {"首页"})
@@ -53,6 +78,22 @@ public class RestCouponsController {
         IPage<Coupons> pageList = couponsService.page(page, queryWrapper);
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
     }
+
+    /**
+     * showdoc
+     * @catalog 首页
+     * @title 用户优惠券数量
+     * @description 用户优惠券数量
+     * @method POST
+     * @url /nckf-boot/api/v1/coupons/getCouponsCount
+     * @return {"code": 1,"data": 0,"msg": "操作成功","time": "1561014430794"}
+     * @return_param code String 响应状态
+     * @return_param data Integer 优惠券数量
+     * @return_param msg String 操作信息
+     * @return_param time Date 操作时间
+     * @remark 这里是备注信息
+     * @number 4
+     */
     @PostMapping(value = "/getCouponsCount")
     @ApiOperation(value = "用户优惠券数量", notes = "用户优惠券数量",tags = {"首页"})
     public RestResponseBean getCouponsCount(){
