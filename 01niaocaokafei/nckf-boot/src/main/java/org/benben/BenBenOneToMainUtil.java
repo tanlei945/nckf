@@ -7,12 +7,7 @@ import org.jeecgframework.codegenerate.generate.impl.CodeGenerateOneToMany;
 import org.jeecgframework.codegenerate.generate.pojo.onetomany.MainTableVo;
 import org.jeecgframework.codegenerate.generate.pojo.onetomany.SubTableVo;
 
-/**
- * 代码生成器入口【一对多】
- * @author 张代浩
- * @site www.benben.org
- * 
- */
+
 public class BenBenOneToMainUtil {
 
 	/**
