@@ -28,6 +28,22 @@ public class RestBannerController {
 	 *
 	 * @return
 	 */
+	/**
+	 * showdoc
+	 * @catalog 首页
+	 * @title 轮播图接口
+	 * @description 轮播图接口
+	 * @method GET
+	 * @url /nckf-boot/api/v1/banner/queryBanner
+	 * @return { "code": 1, "data": [ "user/20190510/33522_1557479564265.jpg" ], "msg": "操作成功", "time": "1561000377064" }
+	 * @return_param code String 响应状态
+	 * @return_param data String 轮播图List
+	 * @return_param msg String 操作信息
+	 * @return_param time Date 操作时间
+	 * @remark 这里是备注信息
+	 * @number 1
+	 */
+
 	@GetMapping(value = "/queryBanner")
 	@ApiOperation(value = "轮播图", notes = "轮播图", tags = {"首页"})
 	public RestResponseBean queryBanner() {
