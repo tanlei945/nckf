@@ -32,7 +32,7 @@ public class RestUserCouponsController {
 
 	/**
 	 * showdoc
-	 * @catalog 首页
+	 * @catalog 用户接口
 	 * @title 个人优惠券查询
 	 * @description 个人优惠券查询
 	 * @method GET
@@ -44,7 +44,7 @@ public class RestUserCouponsController {
 	 * @return_param msg String 操作信息
 	 * @return_param time Date 操作时间
 	 * @remark 这里是备注信息
-	 * @number 10
+	 * @number 21
 	 */
 	@GetMapping(value = "/list")
 	@ApiOperation(value = "个人优惠券查询", notes = "个人优惠券查询", tags = "首页")
@@ -73,24 +73,19 @@ public class RestUserCouponsController {
 
 	/**
 	 * showdoc
-	 * @catalog 首页
+	 * @catalog 用户接口
 	 * @title 用户领取优惠券
 	 * @description 用户领取优惠券
 	 * @method POST
 	 * @url /nckf-boot/api/v1/userCoupons/getCoupons
 	 * @param couponsId 必填 String 优惠券id
-	 * @return {
-	 *   "code": 1,
-	 *   "data": null,
-	 *   "msg": "操作成功",
-	 *   "time": "1561014660668"
-	 * }
+	 * @return {"code": 1,"data": null,"msg": "操作成功","time": "1561014660668"}
 	 * @return_param code String 响应状态
 	 * @return_param data String NULL
 	 * @return_param msg String 操作信息
 	 * @return_param time Date 操作时间
 	 * @remark 这里是备注信息
-	 * @number 9
+	 * @number 22
 	 */
 	@PostMapping(value = "/getCoupons")
 	@ApiOperation(value = "用户领取优惠券", notes = "用户领取优惠券",tags = {"首页"})
