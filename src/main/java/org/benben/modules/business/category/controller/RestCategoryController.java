@@ -14,13 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-/**
-* @Title: Controller
-* @Description: 商品种类列表
-* @author： jeecg-boot
-* @date：   2019-04-23
-* @version： V1.0
-*/
+
 @RestController
 @RequestMapping("/api/v1/category")
 @Slf4j
@@ -28,7 +22,35 @@ import java.util.List;
 public class RestCategoryController {
    @Autowired
    private ICategoryService categoryService;
-
+    /**
+     * 门店管理接口
+     *
+     * @return
+     */
+    /**
+     * showdoc
+     * @catalog 门店管理接口
+     * @title 查询商品种类
+     * @description 查询商品种类
+     * @method GET
+     * @url /nckf-boot/api/v1/category/getCategory
+     * @return {"code": 1, "data": [{"categoryName": "谭磊","createBy": "string","createTime": 1555976259000,"delFlag": "0","id": "1","parentId": "0","showFlag": "0","sortId": 1,"updateBy": "谭磊","updateTime": 1555976259000}],"msg": "操作成功","time": "1561014951538"}
+     * @return_param code String 响应状态
+     * @return_param data List 类别信息
+     * @return_param categoryName String 类别名称
+     * @return_param createBy String 创建人
+     * @return_param createTime Date 创建时间
+     * @return_param delFlag String 是否删除 0：已删除 1：未删除
+     * @return_param id String id
+     * @return_param parentId String 父级类别id
+     * @return_param sortId String 排序编号
+     * @return_param updateBy String 更信人
+     * @return_param updateTime Date 更信时间
+     * @return_param msg String 操作信息
+     * @return_param time Date 操作时间
+     * @remark
+     * @number 1
+     */
 
    @ApiOperation(value="查询商品种类",tags = {"门店管理接口"})
    @GetMapping("/getCategory")

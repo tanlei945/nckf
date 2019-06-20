@@ -31,13 +31,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
- /**
- * @Title: Controller
- * @Description: 商品种类列表
- * @author： jeecg-boot
- * @date：   2019-04-23
- * @version： V1.0
- */
+
 @RestController
 @RequestMapping("/category/category")
 @Slf4j
@@ -45,14 +39,7 @@ public class CategoryController {
 	@Autowired
 	private ICategoryService categoryService;
 	
-	/**
-	  * 分页列表查询
-	 * @param category
-	 * @param pageNo
-	 * @param pageSize
-	 * @param req
-	 * @return
-	 */
+
 	@GetMapping(value = "/list")
 	public Result<IPage<Category>> queryPageList(Category category,
 									  @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
@@ -67,11 +54,7 @@ public class CategoryController {
 		return result;
 	}
 	
-	/**
-	  *   添加
-	 * @param category
-	 * @return
-	 */
+
 	@PostMapping(value = "/addCateGory")
 	@ApiOperation("添加菜单接口")
 	public Result<Category> addCateGory(@RequestBody Category category) {
@@ -87,11 +70,7 @@ public class CategoryController {
 		return result;
 	}
 	
-	/**
-	  *  编辑
-	 * @param category
-	 * @return
-	 */
+
 	@PutMapping(value = "/edit")
 	public Result<Category> edit(@RequestBody Category category) {
 		Result<Category> result = new Result<Category>();
@@ -109,11 +88,7 @@ public class CategoryController {
 		return result;
 	}
 	
-	/**
-	  *   通过id删除
-	 * @param id
-	 * @return
-	 */
+
 	@DeleteMapping(value = "/delete")
 	public Result<Category> delete(@RequestParam(name="id",required=true) String id) {
 		Result<Category> result = new Result<Category>();
@@ -130,11 +105,7 @@ public class CategoryController {
 		return result;
 	}
 	
-	/**
-	  *  批量删除
-	 * @param ids
-	 * @return
-	 */
+
 	@DeleteMapping(value = "/deleteBatch")
 	public Result<Category> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
 		Result<Category> result = new Result<Category>();
@@ -147,11 +118,7 @@ public class CategoryController {
 		return result;
 	}
 	
-	/**
-	  * 通过id查询
-	 * @param id
-	 * @return
-	 */
+
 	@GetMapping(value = "/queryById")
 	public Result<Category> queryById(@RequestParam(name="id",required=true) String id) {
 		Result<Category> result = new Result<Category>();
@@ -165,12 +132,7 @@ public class CategoryController {
 		return result;
 	}
 
-  /**
-      * 导出excel
-   *
-   * @param request
-   * @param response
-   */
+
   @RequestMapping(value = "/exportXls")
   public ModelAndView exportXls(HttpServletRequest request, HttpServletResponse response) {
       // Step.1 组装查询条件
@@ -197,13 +159,7 @@ public class CategoryController {
       return mv;
   }
 
-  /**
-      * 通过excel导入数据
-   *
-   * @param request
-   * @param response
-   * @return
-   */
+
   @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
   public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
       MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;

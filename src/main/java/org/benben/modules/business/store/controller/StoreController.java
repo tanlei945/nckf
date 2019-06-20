@@ -42,13 +42,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 import com.alibaba.fastjson.JSON;
 
- /**
- * @Title: Controller
- * @Description: 店面
- * @author： jeecg-boot
- * @date：   2019-04-23
- * @version： V1.0
- */
+
 @RestController
 @RequestMapping("/store/store")
 @Slf4j
@@ -56,14 +50,7 @@ public class StoreController {
 	@Autowired
 	private IStoreService storeService;
 	
-	/**
-	  * 分页列表查询
-	 * @param store
-	 * @param pageNo
-	 * @param pageSize
-	 * @param req
-	 * @return
-	 */
+
 	@GetMapping(value = "/list")
 	public Result<IPage<Store>> queryPageList(Store store,
 									  @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
@@ -79,11 +66,7 @@ public class StoreController {
 	}
 
 
-	/**
-	  *   添加
-	 * @param store
-	 * @return
-	 */
+
 	@PostMapping(value = "/add")
 	public Result<Store> add(@RequestBody Store store) {
 		Result<Store> result = new Result<Store>();
@@ -98,11 +81,7 @@ public class StoreController {
 		return result;
 	}
 	
-	/**
-	  *  编辑
-	 * @param store
-	 * @return
-	 */
+
 	@PutMapping(value = "/edit")
 	public Result<Store> edit(@RequestBody Store store) {
 		Result<Store> result = new Result<Store>();
@@ -120,11 +99,7 @@ public class StoreController {
 		return result;
 	}
 	
-	/**
-	  *   通过id删除
-	 * @param id
-	 * @return
-	 */
+
 	@DeleteMapping(value = "/delete")
 	public Result<Store> delete(@RequestParam(name="id",required=true) String id) {
 		Result<Store> result = new Result<Store>();
@@ -141,11 +116,7 @@ public class StoreController {
 		return result;
 	}
 	
-	/**
-	  *  批量删除
-	 * @param ids
-	 * @return
-	 */
+
 	@DeleteMapping(value = "/deleteBatch")
 	public Result<Store> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
 		Result<Store> result = new Result<Store>();
@@ -158,11 +129,7 @@ public class StoreController {
 		return result;
 	}
 	
-	/**
-	  * 通过id查询
-	 * @param id
-	 * @return
-	 */
+
 	@GetMapping(value = "/queryById")
 	public Result<Store> queryById(@RequestParam(name="id",required=true) String id) {
 		Result<Store> result = new Result<Store>();
@@ -176,12 +143,7 @@ public class StoreController {
 		return result;
 	}
 
-  /**
-      * 导出excel
-   *
-   * @param request
-   * @param response
-   */
+
   @RequestMapping(value = "/exportXls")
   public ModelAndView exportXls(HttpServletRequest request, HttpServletResponse response) {
       // Step.1 组装查询条件
@@ -208,13 +170,6 @@ public class StoreController {
       return mv;
   }
 
-  /**
-      * 通过excel导入数据
-   *
-   * @param request
-   * @param response
-   * @return
-   */
   @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
   public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
       MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;

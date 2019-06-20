@@ -38,13 +38,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
- /**
- * @Title: Controller
- * @Description: 商品列表
- * @author： jeecg-boot
- * @date：   2019-04-23
- * @version： V1.0
- */
+
 @RestController
 @RequestMapping("/goods/goods")
 @Slf4j
@@ -55,14 +49,7 @@ public class GoodsController {
 	@Autowired
 	private ISysUserService sysUserService;
 
-	/**
-	  * 分页列表查询
-	 * @param goods
-	 * @param pageNo
-	 * @param pageSize
-	 * @param req
-	 * @return
-	 */
+
 	@GetMapping(value = "/list")
 	public Result<IPage<Goods>> queryGoodsPageList(Goods goods,
 									  @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
@@ -81,12 +68,7 @@ public class GoodsController {
 		return result;
 	}
 
-	/**
-	 *
-	  *   添加
-	 * @param goods
-	 * @return
-	 */
+
 	@PostMapping(value = "/add")
 	public Result<Goods> add(@RequestBody Goods goods) {
 		Result<Goods> result = new Result<Goods>();
@@ -103,10 +85,7 @@ public class GoodsController {
 		return result;
 	}
 	
-	/**
-	  *  编辑
-	 * @return
-	 */
+
 	@PutMapping(value = "/edit")
 	public Result<Goods> edit(@RequestBody JSONObject jsonObject) {
 		Object selectedRole = jsonObject.get("selectedroles");
@@ -131,11 +110,7 @@ public class GoodsController {
 		return result;
 	}
 	
-	/**
-	  *   通过id删除
-	 * @param id
-	 * @return
-	 */
+
 	@DeleteMapping(value = "/delete")
 	public Result<Goods> delete(@RequestParam(name="id",required=true) String id) {
 		Result<Goods> result = new Result<Goods>();
@@ -152,11 +127,7 @@ public class GoodsController {
 		return result;
 	}
 	
-	/**
-	  *  批量删除
-	 * @param ids
-	 * @return
-	 */
+
 	@DeleteMapping(value = "/deleteBatch")
 	public Result<Goods> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
 		Result<Goods> result = new Result<Goods>();
@@ -169,11 +140,7 @@ public class GoodsController {
 		return result;
 	}
 	
-	/**
-	  * 通过id查询
-	 * @param id
-	 * @return
-	 */
+
 	@GetMapping(value = "/queryById")
 	public Result<Goods> queryById(@RequestParam(name="id",required=true) String id) {
 		Result<Goods> result = new Result<Goods>();
@@ -187,12 +154,7 @@ public class GoodsController {
 		return result;
 	}
 
-  /**
-      * 导出excel
-   *
-   * @param request
-   * @param response
-   */
+
   @RequestMapping(value = "/exportXls")
   public ModelAndView exportXls(HttpServletRequest request, HttpServletResponse response) {
       // Step.1 组装查询条件
@@ -219,13 +181,7 @@ public class GoodsController {
       return mv;
   }
 
-  /**
-      * 通过excel导入数据
-   *
-   * @param request
-   * @param response
-   * @return
-   */
+
   @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
   public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
       MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
@@ -256,7 +212,7 @@ public class GoodsController {
       return Result.ok("文件导入失败！");
   }
 	 @GetMapping("query_all_spec")
-	 @ApiOperation(value="查询所有商品规格",tags = {"门店管理接口"})
+	 //@ApiOperation(value="查询所有商品规格",tags = {"门店管理接口"})
 	 public RestResponseBean queryallspec(){
 		 try {
 			 List<SpecDict> queryallspec = goodsService.queryallspec();

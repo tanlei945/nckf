@@ -32,13 +32,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 import com.alibaba.fastjson.JSON;
 
- /**
- * @Title: Controller
- * @Description: 骑手位置表
- * @author： jeecg-boot
- * @date：   2019-04-27
- * @version： V1.0
- */
+
 @RestController
 @RequestMapping("/rideraddress/riderAddress")
 @Slf4j
