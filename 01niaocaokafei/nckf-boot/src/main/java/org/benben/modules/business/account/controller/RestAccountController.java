@@ -13,6 +13,7 @@ import org.benben.common.menu.ResultEnum;
 import org.benben.common.util.PasswordUtil;
 import org.benben.modules.business.account.entity.Account;
 import org.benben.modules.business.account.service.IAccountService;
+import org.benben.modules.business.accountbill.entity.AccountBill;
 import org.benben.modules.business.commen.service.ISMSService;
 import org.benben.modules.business.user.entity.User;
 import org.benben.modules.business.user.service.IUserService;
@@ -34,6 +35,32 @@ public class RestAccountController {
 	@Autowired
 	private ISMSService ismsService;
 
+	/**
+	 * 通过id查询
+	 * @param id
+	 * @return
+	 */
+	@GetMapping(value = "/queryAccountBillById")
+	@ApiOperation(value = "账单详情", tags = {"用户接口"}, notes = "账单详情")
+	public RestResponseBean queryAccountBillById() {
+
+		User user = (User) SecurityUtils.getSubject().getPrincipal();
+
+		if (user == null) {
+			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(), ResultEnum.TOKEN_OVERDUE.getDesc(), null);
+		}
+
+		//根据用户id查询账单
+		Account accountBill = accountService.getByUid(user.getId());
+
+		if (accountBill == null) {
+			return new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(), ResultEnum.QUERY_NOT_EXIST.getDesc(),
+					null);
+		}
+
+		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(),
+				accountBill);
+	}
 
 
     /**

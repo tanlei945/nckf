@@ -64,32 +64,5 @@ public class RestAccountBillController {
 				pageList);
 	}
 
-	/**
-	 * 通过id查询
-	 * @param id
-	 * @return
-	 */
-	@GetMapping(value = "/queryAccountBillById")
-	@ApiOperation(value = "账单详情", tags = {"用户接口"}, notes = "账单详情")
-	@ApiImplicitParam(name = "id", value = "账单的ID", dataType = "String", required = true)
-	public RestResponseBean queryAccountBillById(@RequestParam(name = "id", required = true) String id) {
-
-		User user = (User) SecurityUtils.getSubject().getPrincipal();
-
-		if (user == null) {
-			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(), ResultEnum.TOKEN_OVERDUE.getDesc(), null);
-		}
-
-		AccountBill accountBill = accountBillService.getById(id);
-
-		if (accountBill == null) {
-			return new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(), ResultEnum.QUERY_NOT_EXIST.getDesc(),
-					null);
-		}
-
-		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(),
-				accountBill);
-	}
-
 
 }
