@@ -33,7 +33,7 @@ public class RestInstructionController {
 
 	/**
 	 * showdoc
-	 * @catalog 个人中心接扣
+	 * @catalog 个人中心接口
 	 * @title 充值说明查询
 	 * @description 充值说明查询
 	 * @method GET
@@ -111,7 +111,7 @@ public class RestInstructionController {
 
 	/**
 	 * showdoc
-	 * @catalog 个人中心接扣
+	 * @catalog 个人中心接口
 	 * @title 如何充值查询
 	 * @description 如何充值查询
 	 * @method GET
@@ -150,7 +150,7 @@ public class RestInstructionController {
 
 	/**
 	 * showdoc
-	 * @catalog 个人中心接扣
+	 * @catalog 个人中心接口
 	 * @title 用户隐私查询
 	 * @description 用户隐私查询
 	 * @method GET
@@ -189,7 +189,7 @@ public class RestInstructionController {
 
 	/**
 	 * showdoc
-	 * @catalog 个人中心接扣
+	 * @catalog 个人中心接口
 	 * @title 发票开具查询
 	 * @description 发票开具查询
 	 * @method GET
@@ -228,7 +228,7 @@ public class RestInstructionController {
 
 	/**
 	 * showdoc
-	 * @catalog 个人中心接扣
+	 * @catalog 个人中心接口
 	 * @title 其他问题查询
 	 * @description 其他问题查询
 	 * @method GET
