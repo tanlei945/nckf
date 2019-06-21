@@ -56,7 +56,6 @@ public class CategoryController {
 	
 
 	@PostMapping(value = "/addCateGory")
-	@ApiOperation("添加菜单接口")
 	public Result<Category> addCateGory(@RequestBody Category category) {
 		Result<Category> result = new Result<Category>();
 		try {
