@@ -96,6 +96,7 @@ public class RestGoodsController {
      * @catalog 门店管理接口
      * @title 根据商品id查商品规格
      * @description 根据商品id查商品规格
+     * @param goodId 必填 String 商品ID
      * @method POST
      * @url /nckf-boot/api/v1/goods/queryGoodsByCategory
      * @return {"code": 1,"data": {"商品温度": ["热","冰","常温"],"规格": ["小","大","中"],"商品加糖": ["加糖","不加糖"]},"msg": "操作成功","time": "1561017610898"}
@@ -109,7 +110,7 @@ public class RestGoodsController {
     @ApiOperation(value="根据商品id查商品规格",tags = {"门店管理接口"})
     @ApiImplicitParams({@ApiImplicitParam(name="goodId",value="商品id",dataType = "String",required = true)
     })
-   public RestResponseBean querySpec(@RequestParam(name="goodId",required = false)String goodId){
+   public RestResponseBean querySpec(@RequestParam(name="goodId")String goodId){
        HashMap<String, List<String>> stringListMap = new HashMap<>();
        try {
            stringListMap = goodsService.querySpec(goodId);
