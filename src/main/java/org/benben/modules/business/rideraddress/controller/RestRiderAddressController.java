@@ -37,24 +37,13 @@ public class RestRiderAddressController {
      * @title 新增和修改骑手位置
      * @description 新增和修改骑手位置
      * @param id 非必填 String ID
-     * @param lat 必填 String ID
-     * @param lng 必填 String ID
-     * @param riderId 必填 String ID
-     * @param createBy 非必填 String ID
-     * @param createTime 非必填 String ID
-     * @param updateBy 非必填 String ID
-     * @param updateTime 非必填 String ID
-     *
-     * {
-     * 	"createBy": "",
-     * 	"createTime": "",
-     * 	"id": "",
-     * 	"lat": 0,
-     * 	"lng": 0,
-     * 	"riderId": "",
-     * 	"updateBy": "",
-     * 	"updateTime": ""
-     * }
+     * @param lat 必填 String 经度
+     * @param lng 必填 String 纬度
+     * @param riderId 必填 String 骑手id
+     * @param createBy 非必填 String 创建人
+     * @param createTime 非必填 String 创建时间
+     * @param updateBy 非必填 String 修改人
+     * @param updateTime 非必填 String 修改时间
      * @method POST
      * @url /nckf-boot/api/v1/riderAddress/updateRiderAddress
      * @return {"code": 1,"data": null,"msg": "操作成功", "time": "1561013457705"}
@@ -90,11 +79,7 @@ public class RestRiderAddressController {
         return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
     }
 
-    /**
-     * 新增和修改骑手位置
-     *
-     * @return
-     */
+
     /**
      * showdoc
      * @catalog 骑手位置接口
