@@ -36,6 +36,8 @@ public class RestStoreController {
      * @catalog 门店管理接口
      * @title 查询用户周边商家
      * @description 查询用户周边商家
+     * @param lat 必填 String 经度
+     * @param lng 必填 String 纬度
      * @method POST
      * @url /nckf-boot/api/v1/store/queryStoreByDistance
      * @return {"code": 1,"data": [{"addressDesc": "荥阳6","belongId": "cdabef37c2d4203327da90533640a9d7","createBy": "谭磊","createTime": 1555961353000,"description": "咖啡有点苦","distance": "10468.5","endTime": 1555961353000,"freight": 0,"id": "3ca3980536388ccd81a6b15eab1f703a","lat": 28.858749,"lng": 118.073294,"mark": 0,"minDeliveryMoney": 1,"notice": null,"phone": "1223456","salesCountMonth": 0,"startTime": 1555961353000,"storeName": "鸟巢咖啡谈磊店","storeScope": 0,"updateBy": "string","updateTime": 1555961353000}],"msg": "操作成功","time": "1561018810184"}
@@ -90,6 +92,9 @@ public class RestStoreController {
      * @catalog 门店管理接口
      * @title 查询收货地址距离是否超过限制
      * @description 查询收货地址距离是否超过限制
+     * @param storeId 必填 String 商家ID
+     * @param lat 必填 Double 经度
+     * @param lng 必填 Double 纬度
      * @method POST
      * @url /nckf-boot/api/v1/store/queryScopeById
      * @return {"code": 1,"data": false,"msg": "操作成功","time": "1561018418200"}
@@ -126,45 +131,11 @@ public class RestStoreController {
      * @catalog 门店管理接口
      * @title 门店列表
      * @description 门店列表
+     * @param pageNo String 非必填 页码 default:1
+     * @param pageSize String 非必填 每页条数 default:10
      * @method POST
      * @url /nckf-boot/api/v1/store/query_all_store
-     * @return {
-     *   "code": 1,
-     *   "data": {
-     *     "current": 1,
-     *     "pages": 1,
-     *     "records": [
-     *       {
-     *         "addressDesc": "荥阳6",
-     *         "belongId": "cdabef37c2d4203327da90533640a9d7",
-     *         "createBy": "谭磊",
-     *         "createTime": 1555961353000,
-     *         "description": "咖啡有点苦",
-     *         "distance": null,
-     *         "endTime": 1555961353000,
-     *         "freight": 0,
-     *         "id": "3ca3980536388ccd81a6b15eab1f703a",
-     *         "lat": 28.858749,
-     *         "lng": 118.073294,
-     *         "mark": 0,
-     *         "minDeliveryMoney": 1,
-     *         "notice": null,
-     *         "phone": "1223456",
-     *         "salesCountMonth": 0,
-     *         "startTime": 1555961353000,
-     *         "storeName": "鸟巢咖啡谈磊店",
-     *         "storeScope": 0,
-     *         "updateBy": "string",
-     *         "updateTime": 1555961353000
-     *       }
-     *     ],
-     *     "searchCount": true,
-     *     "size": 10,
-     *     "total": 1
-     *   },
-     *   "msg": "操作成功",
-     *   "time": "1561022792122"
-     * }
+     * @return {"code": 1,"data": {"current": 1,"pages": 1,"records": [{"addressDesc": "荥阳6","belongId": "cdabef37c2d4203327da90533640a9d7","createBy": "谭磊","createTime": 1555961353000,"description": "咖啡有点苦","distance": null,"endTime": 1555961353000,"freight": 0,"id": "3ca3980536388ccd81a6b15eab1f703a","lat": 28.858749,"lng": 118.073294,"mark": 0,"minDeliveryMoney": 1,"notice": null,"phone": "1223456","salesCountMonth": 0,"startTime": 1555961353000,"storeName": "鸟巢咖啡谈磊店","storeScope": 0,"updateBy": "string","updateTime": 1555961353000}],"searchCount": true,"size": 10,"total": 1},"msg": "操作成功","time": "1561022792122"}
      * @return_param addressDesc String 地址详情
      * @return_param belongId String 门店管理员id
      * @return_param startTime Date 营业时间
