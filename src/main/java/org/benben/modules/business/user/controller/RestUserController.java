@@ -86,10 +86,10 @@ public class RestUserController {
     /**
      * showdoc
      * @catalog 用户接口
-     * @title 用户详情
-     * @description 用户详情
+     * @title 通用-->用户详情
+     * @description 通用-->用户详情
      * @method GET
-     * @url /nckf-boot/api/v1/user/userRegister
+     * @url /nckf-boot/api/v1/user/queryUserById
      * @return {"code": 1,"data": {"avatar": null,"couponsNumber": 0,"id": "c73ee7f3d95a74f9970eaac804548f78","mobile": "18503840250","money": 0,"sex": 0,"userType": "0","username": null},"msg": "操作成功","time": "1561012425988"}
      * @return_param code String 响应状态
      * @return_param user Object 用户信息
@@ -107,7 +107,7 @@ public class RestUserController {
      * @number 26
      */
     @GetMapping(value = "/queryUserById")
-    @ApiOperation(value = "用户详情", tags = {"用户接口"}, notes = "用户详情")
+    @ApiOperation(value = "通用-->用户详情", tags = {"用户接口"}, notes = "通用-->用户详情")
     public RestResponseBean queryUserById() {
 
 		User user = (User) SecurityUtils.getSubject().getPrincipal();
@@ -131,19 +131,19 @@ public class RestUserController {
     /**
      * showdoc
      * @catalog 用户接口
-     * @title 用户修改
-     * @description 用户修改
+     * @title 通用-->用户修改
+     * @description 通用-->用户修改
      * @method POST
      * @url /nckf-boot/api/v1/user/editUser
      * @param userVo 必填 Object 用户对象
-     * @param avatar 必填 String 头像
-     * @param couponsNumber 必填 String 优惠券数量
-     * @param id 必填 String 用户id
-     * @param mobile 必填 String 手机号
-     * @param money 必填 String 余额
-     * @param sex 必填 String 性别
-     * @param userType 必填 String 用户类型(0:普通用户 1:骑手)
-     * @param username 必填 String 用户名
+     * @json_param avatar 必填 String 头像
+     * @json_param couponsNumber 必填 String 优惠券数量
+     * @json_param id 必填 String 用户id
+     * @json_param mobile 必填 String 手机号
+     * @json_param money 必填 String 余额
+     * @json_param sex 必填 String 性别
+     * @json_param userType 必填 String 用户类型(0:普通用户 1:骑手)
+     * @json_param username 必填 String 用户名
      * @return {"code": 1,"data": null,"msg": "操作成功","time": "1561015942780"}
      * @return_param code String 响应状态
      * @return_param data String 没有含义
@@ -153,7 +153,7 @@ public class RestUserController {
      * @number 27
      */
     @PostMapping(value = "/editUser")
-    @ApiOperation(value = "用户修改", tags = {"用户接口"}, notes = "用户修改")
+    @ApiOperation(value = "通用-->用户修改", tags = {"用户接口"}, notes = "通用-->用户修改")
     public RestResponseBean editUser(@RequestBody UserVo userVo) {
 
 		User user = (User) SecurityUtils.getSubject().getPrincipal();
@@ -183,8 +183,8 @@ public class RestUserController {
     /**
      * showdoc
      * @catalog 用户接口
-     * @title 修改头像
-     * @description 修改头像
+     * @title 通用-->修改头像
+     * @description 通用-->修改头像
      * @method POST
      * @url /nckf-boot/api/v1/user/changeAvatar
      * @param avatar 必填 String 头像图片
@@ -197,7 +197,7 @@ public class RestUserController {
      * @number 28
      */
     @PostMapping(value = "/changeAvatar")
-    @ApiOperation(value = "修改头像", tags = {"用户接口"}, notes = "修改头像")
+    @ApiOperation(value = "通用-->修改头像", tags = {"用户接口"}, notes = "通用-->修改头像")
 	@ApiImplicitParam(name = "avatar",value = "头像图片",dataType = "String",required = true)
     public RestResponseBean changeAvatar(@RequestParam String avatar){
 
@@ -226,8 +226,8 @@ public class RestUserController {
     /**
      * showdoc
      * @catalog 用户接口
-     * @title 选择上一个头像
-     * @description 选择上一个头像
+     * @title 通用-->选择上一个头像
+     * @description 通用-->选择上一个头像
      * @method POST
      * @url /nckf-boot/api/v1/user/changeOldAvatar
      * @return {"code": 0,"data": null,"msg": "没有上一个头像","time": "1561013111479"}
@@ -239,7 +239,7 @@ public class RestUserController {
      * @number 29
      */
 	@PostMapping(value = "/changeOldAvatar")
-	@ApiOperation(value = "选择上一个头像", tags = {"用户接口"}, notes = "选择上一个头像")
+	@ApiOperation(value = "通用-->选择上一个头像", tags = {"用户接口"}, notes = "通用-->选择上一个头像")
 	public RestResponseBean changeOldAvatar(){
 
 		User user = (User) SecurityUtils.getSubject().getPrincipal();
@@ -267,8 +267,8 @@ public class RestUserController {
     /**
      * showdoc
      * @catalog 用户接口
-     * @title 修改用户名
-     * @description 修改用户名
+     * @title 通用-->修改用户名
+     * @description 通用-->修改用户名
      * @method POST
      * @url /nckf-boot/api/v1/user/changeUsername
      * @param username 必填 String 用户名
@@ -281,7 +281,7 @@ public class RestUserController {
      * @number 31
      */
     @PostMapping(value = "/changeUsername")
-    @ApiOperation(value = "修改用户名", tags = {"用户接口"}, notes = "修改用户名")
+    @ApiOperation(value = "通用-->修改用户名", tags = {"用户接口"}, notes = "通用-->修改用户名")
 	@ApiImplicitParam(name = "username",value = "用户名",dataType = "String",defaultValue = "1",required = true)
     public RestResponseBean changeUsername(@RequestParam String username){
 
@@ -312,8 +312,8 @@ public class RestUserController {
     /**
      * showdoc
      * @catalog 用户接口
-     * @title 修改手机号
-     * @description 修改手机号
+     * @title 通用-->修改手机号
+     * @description 通用-->修改手机号
      * @method POST
      * @url /nckf-boot/api/v1/user/changeMobile
      * @param captcha 必填 String 验证码
@@ -328,7 +328,7 @@ public class RestUserController {
      * @number 32
      */
     @PostMapping(value = "/changeMobile")
-    @ApiOperation(value = "修改手机号", tags = {"用户接口"}, notes = "修改手机号")
+    @ApiOperation(value = "通用-->修改手机号", tags = {"用户接口"}, notes = "通用-->修改手机号")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "mobile",value = "用户手机号",dataType = "String",required = true),
 			@ApiImplicitParam(name = "event",value = "事件",dataType = "String",required = true),
@@ -373,8 +373,8 @@ public class RestUserController {
     /**
      * showdoc
      * @catalog 用户接口
-     * @title 忘记密码
-     * @description 忘记密码
+     * @title 通用-->忘记密码
+     * @description 通用-->忘记密码
      * @method POST
      * @url /nckf-boot/api/v1/user/forgetPassword
      * @param mobile 必填 String 用户手机号
@@ -390,7 +390,7 @@ public class RestUserController {
      * @number 33
      */
 	@PostMapping(value = "/forgetPassword")
-	@ApiOperation(value = "忘记密码", tags = {"用户接口"}, notes = "忘记密码")
+	@ApiOperation(value = "通用-->忘记密码", tags = {"用户接口"}, notes = "通用-->忘记密码")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "mobile",value = "用户手机号",dataType = "String",required = true),
 			@ApiImplicitParam(name = "password",value = "用户新密码",dataType = "String",required = true),
@@ -433,7 +433,8 @@ public class RestUserController {
      * @param mobile 必填 String 用户手机号
      * @param event 必填 String 事件
      * @param captcha 必填 String 验证码
-     * @param password 必填 String 新密码
+     * @param newPassword 必填 String 新密码
+     * @param oldPassword 必填 String 旧密码
      * @return {code": 1,"data": null,"msg": "操作成功","time": "1561012941348"}
      * @return_param code String 响应状态
      * @return_param data String 没有含义
@@ -519,8 +520,8 @@ public class RestUserController {
     /**
      * showdoc
      * @catalog 用户接口
-     * @title 用户注册
-     * @description 用户注册
+     * @title 通用-->用户注册
+     * @description 通用-->用户注册
      * @method POST
      * @url /nckf-boot/api/v1/user/userRegister
      * @param captcha 必填 String 验证码
@@ -545,7 +546,7 @@ public class RestUserController {
      * @number 35
      */
     @PostMapping(value = "/userRegister")
-    @ApiOperation(value = "用户注册", tags = {"用户接口"}, notes = "用户注册")
+    @ApiOperation(value = "通用-->用户注册", tags = {"用户接口"}, notes = "通用-->用户注册")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "mobile",value = "用户手机号",dataType = "String",required = true),
             @ApiImplicitParam(name = "password",value = "用户密码",dataType = "String",required = true),
@@ -598,14 +599,14 @@ public class RestUserController {
      * @method POST
      * @url /nckf-boot/api/v1/user/riderRegister
      * @param userStoreVo 必填 Object 骑手对象
-     * @param age 必填 String 年龄
-     * @param backUrl 必填 String 身份证反面照
-     * @param frontUrl 必填 String 身份证正面照
-     * @param idCard 必填 String 身份证号
-     * @param mobile 必填 String 手机号
-     * @param password 必填 String 密码
-     * @param realname 必填 String 真实姓名
-     * @param sex 必填 String 性别
+     * @json_param age 必填 String 年龄
+     * @json_param backUrl 必填 String 身份证反面照
+     * @json_param frontUrl 必填 String 身份证正面照
+     * @json_param idCard 必填 String 身份证号
+     * @json_param mobile 必填 String 手机号
+     * @json_param password 必填 String 密码
+     * @json_param realname 必填 String 真实姓名
+     * @json_param sex 必填 String 性别
      * @return {"code": 1,"data": {"user": {"avatar": null,"couponsNumber": 0,"id": "1de3acc53edd742aa45a6d7d76930451","mobile": "1","money": 0,"sex": 0,"userType": "1","username": null},"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2JpbGUiOiJtZW1iZXJVc2VyQDEiLCJleHAiOjE1NjE2MjExMjN9.VCH-9r6lrB7SL_W4vkByxBQRMsNcjZNdr-t_7_676ag"},"msg": "操作成功","time": "1561016323262"}
      * @return_param code String 响应状态
      * @return_param user Object 用户信息
@@ -646,10 +647,10 @@ public class RestUserController {
     /**
      * showdoc
      * @catalog 用户接口
-     * @title 账户密码登录
-     * @description 账户密码登录
+     * @title 骑手-->账户密码登录
+     * @description 骑手-->账户密码登录
      * @method POST
-     * @url /nckf-boot/api/v1/user/login
+     * @url /nckf-boot/api/v1/user/riderlogin
      * @param mobile 必填 String 用户手机号
      * @param password 必填 String 用户密码
      * @return {"code": 1,"data": {"user": {"avatar": null,"couponsNumber": 0,"id": "c73ee7f3d95a74f9970eaac804548f78","mobile": "18503840250","money": 0,"sex": 0,"userType": "0","username": null},"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2JpbGUiOiJtZW1iZXJVc2VyQDE4NTAzODQwMjUwIiwiZXhwIjoxNTYxNjE3MjY2fQ.mpFv9F-QC97eUOZrvyEk7_YYcMCuAzuI-j2a6SpOAI0"},"msg": "登陆成功","time": "1561012466360"}
@@ -669,13 +670,13 @@ public class RestUserController {
      * @remark 这里是备注信息
      * @number 37
      */
-    @PostMapping(value = "/login")
-    @ApiOperation(value = "账户密码登录", tags = {"用户接口"}, notes = "账户密码登录")
+    @PostMapping(value = "/riderlogin")
+    @ApiOperation(value = "骑手-->账户密码登录", tags = {"用户接口"}, notes = "骑手-->账户密码登录")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "mobile",value = "用户手机号",dataType = "String",required = true),
             @ApiImplicitParam(name = "password",value = "用户密码",dataType = "String",required = true)
     })
-    public RestResponseBean login(@RequestParam String mobile, @RequestParam String password) {
+    public RestResponseBean riderlogin(@RequestParam String mobile, @RequestParam String password) {
 
 		Map<String,Object> obj = new HashMap<>();
         User user = userService.queryByMobile(mobile);
@@ -698,11 +699,75 @@ public class RestUserController {
     }
 
 
+
+
+
+
+	/**
+	 * showdoc
+	 * @catalog 用户接口
+	 * @title 用户-->账户密码登录
+	 * @description 用户-->账户密码登录
+	 * @method POST
+	 * @url /nckf-boot/api/v1/user/userlogin
+	 * @param mobile 必填 String 用户手机号
+	 * @param password 必填 String 用户密码
+	 * @return {"code": 1,"data": {"user": {"avatar": null,"couponsNumber": 0,"id": "c73ee7f3d95a74f9970eaac804548f78","mobile": "18503840250","money": 0,"sex": 0,"userType": "0","username": null},"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtb2JpbGUiOiJtZW1iZXJVc2VyQDE4NTAzODQwMjUwIiwiZXhwIjoxNTYxNjE3MjY2fQ.mpFv9F-QC97eUOZrvyEk7_YYcMCuAzuI-j2a6SpOAI0"},"msg": "登陆成功","time": "1561012466360"}
+	 * @return_param code String 响应状态
+	 * @return_param user Object 用户信息
+	 * @return_param avatar String 头像
+	 * @return_param couponsNumber String 优惠劵数量
+	 * @return_param id String 用户id
+	 * @return_param mobile String 手机号
+	 * @return_param money Double 余额
+	 * @return_param sex String 性别(0:男 1:女)
+	 * @return_param userType String 用户类型（0:普通用户 1:骑手）
+	 * @return_param username String 用户名
+	 * @return_param token String 访问权限
+	 * @return_param msg String 操作信息
+	 * @return_param time Date 操作时间
+	 * @remark 这里是备注信息
+	 * @number 37
+	 */
+	@PostMapping(value = "/userlogin")
+	@ApiOperation(value = "用户-->账户密码登录", tags = {"用户接口"}, notes = "用户-->账户密码登录")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "mobile",value = "用户手机号",dataType = "String",required = true),
+			@ApiImplicitParam(name = "password",value = "用户密码",dataType = "String",required = true)
+	})
+	public RestResponseBean userlogin(@RequestParam String mobile, @RequestParam String password) {
+
+		Map<String,Object> obj = new HashMap<>();
+		User user = userService.queryByMobile(mobile);
+
+		if (user == null) {
+			sysBaseAPI.addLog("登录失败，用户名:" + mobile + "不存在！", CommonConstant.LOG_TYPE_1, null);
+			return new RestResponseBean(ResultEnum.USER_NOT_EXIST.getValue(), ResultEnum.USER_NOT_EXIST.getDesc(), null);
+		} else {
+			//密码验证
+			String userpassword = PasswordUtil.encrypt(password, password, user.getSalt());
+			String syspassword = user.getPassword();
+			if (!syspassword.equals(userpassword)) {
+				return new RestResponseBean(ResultEnum.USER_PWD_ERROR.getValue(), ResultEnum.USER_PWD_ERROR.getDesc(), null);
+			}
+			//调用公共方法
+			obj = tokenBuild(user);
+		}
+
+		return new RestResponseBean(ResultEnum.LOGIN_SUCCESS.getValue(), ResultEnum.LOGIN_SUCCESS.getDesc(), obj);
+	}
+
+
+
+
+
+
+
     /**
      * showdoc
      * @catalog 用户接口
-     * @title 手机验证码登录
-     * @description 手机验证码登录
+     * @title 用户-->手机验证码登录
+     * @description 用户-->手机验证码登录
      * @method POST
      * @url /nckf-boot/api/v1/user/mobileLogin
      * @param mobile 必填 String 用户手机号
@@ -726,7 +791,7 @@ public class RestUserController {
      * @number 38
      */
     @PostMapping(value = "/mobileLogin")
-    @ApiOperation(value = "手机验证码登录", tags = {"用户接口"}, notes = "手机验证码登录")
+    @ApiOperation(value = "用户-->手机验证码登录", tags = {"用户接口"}, notes = "用户-->手机验证码登录")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "mobile",value = "用户手机号",dataType = "String",required = true),
 			@ApiImplicitParam(name = "event",value = "事件",dataType = "String",required = true),
@@ -787,7 +852,7 @@ public class RestUserController {
      * @param mobile
      */
     @GetMapping(value = "/thirdLogin")
-    @ApiOperation(value = "三方登录", tags = {"用户接口"}, notes = "三方登录")
+    @ApiOperation(value = "用户-->三方登录", tags = {"用户接口"}, notes = "用户-->三方登录")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "platform",value = "平台类型('1':QQ,'2':微信,'3':微博)",dataType = "String",required = true),
             @ApiImplicitParam(name = "mobile",value = "用户手机号",dataType = "String",required = true)
@@ -904,8 +969,8 @@ public class RestUserController {
     /**
      * showdoc
      * @catalog 用户接口
-     * @title 手机号是否存在
-     * @description 手机号是否存在
+     * @title 通用-->手机号是否存在
+     * @description 通用-->手机号是否存在
      * @method GET
      * @url /nckf-boot/api/v1/user/isExistMobile
      * @param mobile 必填 String 用户手机号
@@ -919,7 +984,7 @@ public class RestUserController {
      * @number 39
      */
     @GetMapping(value = "/isExistMobile")
-    @ApiOperation(value = "手机号是否存在",tags = {"用户接口"},notes = "手机号是否存在")
+    @ApiOperation(value = "通用-->手机号是否存在",tags = {"用户接口"},notes = "通用-->手机号是否存在")
 	@ApiImplicitParam(name = "mobile",value = "手机号",dataType = "String",required = true)
     public RestResponseBean isExistMobile(@RequestParam String mobile){
 
