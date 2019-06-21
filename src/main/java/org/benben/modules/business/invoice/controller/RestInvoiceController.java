@@ -80,7 +80,39 @@ public class RestInvoiceController {
        return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
    }
 
-
+    /**
+     * showdoc
+     * @catalog 用户接口
+     * @title 用户发票提交接口
+     * @description 用户发票提交接口
+     * @method POST
+     * @url /nckf-boot/api/v1/invoice/addInvoice
+     * @json_param invoice 必填 Object 发票对象
+     * @json_param id 必填 String 发票id
+     * @json_param invoiceContent 必填 String 发票内容
+     * @json_param invoiceMoney 必填 Double 开票金额
+     * @json_param invoiceTitileId 必填 String 纳税人名称
+     * @json_param invoiceType 必填 String 发票类型(0:个人 1:公司)
+     * @json_param mailingAddress String 邮寄地址
+     * @json_param orderIdList 必填 String 选中订单的id
+     * @json_param paperFlag 必填 String 纸质发票(0:不是 1:是)
+     * @json_param phone 必填 String 电话
+     * @json_param status 必填 String 是否开票成功(0:失败 1:成功)
+     * @json_param userId 必填 String 用户id
+     * @json_param username 必填 String 用户名
+     * @json_param email 必填 String 邮箱
+     * @json_param createBy 必填 String 创建者
+     * @json_param createTime 必填 String 创建时间
+     * @json_param updateBy 必填 String 更新人
+     * @json_param updateTime 必填 String 更新时间
+     * @return {"code": 0,"data": null,"msg": "申请发票金额与订单金额不符","time": "1561086735092"}
+     * @return_param code String 响应状态
+     * @return_param data String null
+     * @return_param msg String 操作信息
+     * @return_param time Date 操作时间
+     * @remark 这里是备注信息
+     * @number 12
+     */
    @PostMapping(value = "/addInvoice")
    @ApiOperation(value = "用户发票提交接口", tags = {"用户接口"}, notes = "用户发票提交接口")
   /* @ApiImplicitParams({
@@ -227,7 +259,7 @@ public class RestInvoiceController {
      * @description 用户发票抬头查询接口
      * @method GET
      * @url /nckf-boot/api/v1/invoice/title/queryInvoiceTitle
-     * @param userId 必填 String 用户id
+     * @json_param userId 必填 String 用户id
      * @return {"code": 1,"data": {"bankAccount": "1","companyAddress": "1","companyBank": "1","createBy": "1","createTime": 0,"id": "c73ee7f3d95a74f9970eaac804548f78","invoiceType": "1","status": "1","taxName": "1","taxNo": "1","telephone": "1","updateBy": "1","updateTime": 0,"userId": "c73ee7f3d95a74f9970eaac804548f78"},"msg": "操作成功","time": "1561017271069"}
      * @return_param code String 响应状态
      * @return_param bankAccount String 银行账号
@@ -276,7 +308,7 @@ public class RestInvoiceController {
      * @url /nckf-boot/api/v1/invoice/title/addInvoiceTitle
      * @return {"code": 1,"data": null,"msg": "操作成功","time": "1561017237369"}
      * @return_param code String 响应状态
-     * @return_param data String 没有含义
+     * @return_param data String null
      * @return_param msg String 操作信息
      * @return_param time Date 操作时间
      * @remark 这里是备注信息
