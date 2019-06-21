@@ -72,7 +72,7 @@ public class RestInstructionController {
 
 	/**
 	 * showdoc
-	 * @catalog 个人中心接扣
+	 * @catalog 个人中心接口
 	 * @title 如何购买查询
 	 * @description 如何购买查询
 	 * @method GET
