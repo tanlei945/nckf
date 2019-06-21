@@ -52,6 +52,7 @@ public class RestOrderController {
    private IUserService userService;
    @Autowired
    private IStoreService storeService;
+
    @Autowired
    private IRiderAddressService riderAddressService;
 
