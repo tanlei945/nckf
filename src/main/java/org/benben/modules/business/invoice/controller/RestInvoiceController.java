@@ -19,10 +19,12 @@ import org.benben.modules.business.invoice.entity.Invoice;
 import org.benben.modules.business.invoice.entity.InvoiceTitle;
 import org.benben.modules.business.invoice.service.IInvoiceService;
 import org.benben.modules.business.invoice.service.IInvoiceTitleService;
+import org.benben.modules.business.invoice.vo.InvoiceVo;
 import org.benben.modules.business.order.entity.Order;
 import org.benben.modules.business.order.service.IOrderService;
 import org.benben.modules.business.user.entity.User;
 import org.benben.modules.business.user.service.IUserService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -81,37 +83,37 @@ public class RestInvoiceController {
 
    @PostMapping(value = "/addInvoice")
    @ApiOperation(value = "用户发票提交接口", tags = {"用户接口"}, notes = "用户发票提交接口")
-   @ApiImplicitParams({
-           @ApiImplicitParam(name = "invoice", value = "发票实体"),
-           @ApiImplicitParam(name = "orderIdList", value = "选中订单的id")
-   })
-   public RestResponseBean addInvoice(Invoice invoice,@RequestParam(value = "orderIdList",required = true)List<String> orderIdList) {
+  /* @ApiImplicitParams({
+   })*/
+   public RestResponseBean addInvoice(@RequestBody InvoiceVo invoiceVo) {
        User user = (User) SecurityUtils.getSubject().getPrincipal();
        if(user==null) {
            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
        }
        //从数据库中获取用户所需的实际开票金额
        double sum = 0;
-       for (String s : orderIdList) {
+       for (String s : invoiceVo.getOrderIdList()) {
            Order order = orderService.getById(s);
            if(order.getOrderMoney()!=0){
                sum += order.getOrderMoney();
            }
        }
+       Invoice invoice = new Invoice();
+	   BeanUtils.copyProperties(invoiceVo,invoice);
        //判断用户提交的开票金额是否和数据库中存的实际开票金额相等
-       if(invoice != null){
-           if(invoice.getInvoiceMoney( ) == sum){
+       if(invoiceVo != null){
+           if(invoiceVo.getInvoiceMoney( ) == sum){
                try {
-                   invoice.setUsername(user.getUsername());
+				   invoiceVo.setUsername(user.getUsername());
                    invoiceService.save(invoice);
-                   for (String s : orderIdList) {
+                   for (String s : invoiceVo.getOrderIdList()) {
                        Order order = orderService.getById(s);
                        order.setInvoiceFlag("1");
                        QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
                        queryWrapper.eq("id",s);
                        orderService.update(order,queryWrapper);
                    }
-                   orderService.invoiceOk(orderIdList);
+                   orderService.invoiceOk(invoiceVo.getOrderIdList());
                    return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
                } catch (Exception e) {
                    log.info(e.getMessage());

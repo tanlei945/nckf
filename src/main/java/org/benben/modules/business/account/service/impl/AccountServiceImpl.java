@@ -49,8 +49,13 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
         return account;
     }
 
+	@Override
+	public Account getByUid(String uid) {
+		return accountMapper.queryByUserId(uid);
+	}
 
-    /**
+
+	/**
      * 用户是否设置支付密码
      * @param userId
      * @return

@@ -19,4 +19,6 @@ public interface IAccountService extends IService<Account> {
 
     public Account queryByUserId(String userId);
 
+	Account getByUid(String id);
+
 }
