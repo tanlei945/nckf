@@ -36,14 +36,14 @@ public class RestRiderAddressController {
      * @catalog 骑手位置接口
      * @title 新增和修改骑手位置
      * @description 新增和修改骑手位置
-     * @param id 非必填 String ID
-     * @param lat 必填 Double 经度
-     * @param lng 必填 Double 纬度
-     * @param riderId 必填 String 骑手id
-     * @param createBy 非必填 String 创建人
-     * @param createTime 非必填 Date 创建时间
-     * @param updateBy 非必填 String 修改人
-     * @param updateTime 非必填 Date 修改时间
+     * @json_param id 非必填 String ID
+     * @json_param lat 必填 Double 经度
+     * @json_param lng 必填 Double 纬度
+     * @json_param riderId 必填 String 骑手id
+     * @json_param createBy 非必填 String 创建人
+     * @json_param createTime 非必填 Date 创建时间
+     * @json_param updateBy 非必填 String 修改人
+     * @json_param updateTime 非必填 Date 修改时间
      * @method POST
      * @url /nckf-boot/api/v1/riderAddress/updateRiderAddress
      * @return {"code": 1,"data": null,"msg": "操作成功", "time": "1561013457705"}
