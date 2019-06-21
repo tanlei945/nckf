@@ -36,6 +36,7 @@ public class RestRiderAddressController {
      * @catalog 骑手位置接口
      * @title 新增和修改骑手位置
      * @description 新增和修改骑手位置
+     * @param riderAddress 骑手地址实体
      * @method POST
      * @url /nckf-boot/api/v1/riderAddress/updateRiderAddress
      * @return {"code": 1,"data": null,"msg": "操作成功", "time": "1561013457705"}
