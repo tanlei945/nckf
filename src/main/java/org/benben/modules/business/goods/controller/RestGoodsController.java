@@ -50,6 +50,8 @@ public class RestGoodsController {
      * @catalog 门店管理接口
      * @title 根据门店id查所属商品
      * @description 根据门店id查所属商品
+     * @param belongId 必填 String 所属商家ID
+     * @param categoryType String 商品类型
      * @method POST
      * @url /nckf-boot/api/v1/goods/queryGoodsByCategory
      * @return {"code": 1,"data": [{"belongId": "3ca3980536388ccd81a6b15eab1f703a","categoryType": "2","createBy": "谭磊","createTime": 1555979788000,"description": "没有描述","goodsCount": 100,"goodsName": "火腿肠","id": "4a1cd6c4b494133c12af9f710602bf6c","imgUrl": "user/20190505/1557025800(1)_1557039185258.jpg","linePrice": 11,"price": 11,"status": "0","updateBy": "string","updateTime": 1555979788000}],"msg": "操作成功","time": "1561015746068"}
