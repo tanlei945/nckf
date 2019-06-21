@@ -103,7 +103,7 @@ public class RestUserController {
      * @return_param username String 用户名
      * @return_param msg String 操作信息
      * @return_param time Date 操作时间
-     * @remark 这里是备注信息
+     * @remark 
      * @number 26
      */
     @GetMapping(value = "/queryUserById")
@@ -149,7 +149,7 @@ public class RestUserController {
      * @return_param data String 没有含义
      * @return_param msg String 操作信息
      * @return_param time Date 操作时间
-     * @remark 这里是备注信息
+     * @remark 
      * @number 27
      */
     @PostMapping(value = "/editUser")
@@ -193,7 +193,7 @@ public class RestUserController {
      * @return_param data String 没有含义
      * @return_param msg String 操作信息
      * @return_param time Date 操作时间
-     * @remark 这里是备注信息
+     * @remark 
      * @number 28
      */
     @PostMapping(value = "/changeAvatar")
@@ -235,7 +235,7 @@ public class RestUserController {
      * @return_param data String 没有含义
      * @return_param msg String 操作信息
      * @return_param time Date 操作时间
-     * @remark 这里是备注信息
+     * @remark 
      * @number 29
      */
 	@PostMapping(value = "/changeOldAvatar")
@@ -277,7 +277,7 @@ public class RestUserController {
      * @return_param data String 没有含义
      * @return_param msg String 操作信息
      * @return_param time Date 操作时间
-     * @remark 这里是备注信息
+     * @remark 
      * @number 31
      */
     @PostMapping(value = "/changeUsername")
@@ -324,7 +324,7 @@ public class RestUserController {
      * @return_param data String 没有含义
      * @return_param msg String 操作信息
      * @return_param time Date 操作时间
-     * @remark 这里是备注信息
+     * @remark 
      * @number 32
      */
     @PostMapping(value = "/changeMobile")
@@ -386,7 +386,7 @@ public class RestUserController {
      * @return_param data String 没有含义
      * @return_param msg String 操作信息
      * @return_param time Date 操作时间
-     * @remark 这里是备注信息
+     * @remark 
      * @number 33
      */
 	@PostMapping(value = "/forgetPassword")
@@ -426,8 +426,8 @@ public class RestUserController {
     /**
      * showdoc
      * @catalog 用户接口
-     * @title 修改密码
-     * @description 修改密码
+     * @title 通用-->修改密码
+     * @description 通用-->修改密码
      * @method POST
      * @url /nckf-boot/api/v1/user/forgetPassword
      * @param mobile 必填 String 用户手机号
@@ -440,11 +440,11 @@ public class RestUserController {
      * @return_param data String 没有含义
      * @return_param msg String 操作信息
      * @return_param time Date 操作时间
-     * @remark 这里是备注信息
+     * @remark 
      * @number 34
      */
 	@PostMapping(value = "/changePassword")
-	@ApiOperation(value = "修改密码", tags = {"用户接口"}, notes = "修改密码")
+	@ApiOperation(value = "通用-->修改密码", tags = {"用户接口"}, notes = "通用-->修改密码")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "oldPassword",value = "用户旧密码",dataType = "String"),
 			@ApiImplicitParam(name = "newPassword",value = "用户新密码",dataType = "String"),
@@ -542,7 +542,7 @@ public class RestUserController {
      * @return_param token String 访问权限
      * @return_param msg String 操作信息
      * @return_param time Date 操作时间
-     * @remark 这里是备注信息
+     * @remark 
      * @number 35
      */
     @PostMapping(value = "/userRegister")
@@ -621,7 +621,7 @@ public class RestUserController {
      * @return_param token String 访问权限
      * @return_param msg String 操作信息
      * @return_param time Date 操作时间
-     * @remark 这里是备注信息
+     * @remark 
      * @number 36
      */
     @PostMapping(value = "/riderRegister")
@@ -667,7 +667,7 @@ public class RestUserController {
      * @return_param token String 访问权限
      * @return_param msg String 操作信息
      * @return_param time Date 操作时间
-     * @remark 这里是备注信息
+     * @remark 
      * @number 37
      */
     @PostMapping(value = "/riderlogin")
@@ -726,7 +726,7 @@ public class RestUserController {
 	 * @return_param token String 访问权限
 	 * @return_param msg String 操作信息
 	 * @return_param time Date 操作时间
-	 * @remark 这里是备注信息
+	 * @remark 
 	 * @number 37
 	 */
 	@PostMapping(value = "/userlogin")
@@ -787,7 +787,7 @@ public class RestUserController {
      * @return_param token String 访问权限
      * @return_param msg String 操作信息
      * @return_param time Date 操作时间
-     * @remark 这里是备注信息
+     * @remark 
      * @number 38
      */
     @PostMapping(value = "/mobileLogin")
