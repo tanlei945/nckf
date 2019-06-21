@@ -113,20 +113,20 @@ public class RestAccountController {
     }
 
     /**
-     * showdoc
-     * @catalog 用户接口
-     * @title 是否设置收款账户
-     * @description 是否设置收款账户
-     * @method GET
-     * @url /nckf-boot/api/v1/account/isWithdrawAccount
-     * @param userId 必填 String 用户id
-     * @return {"code": 1,"data": null,"msg": "已设置收款账户","time": "1561014836809"}
-     * @return_param code String 响应状态
-     * @return_param data String 没有含义
-     * @return_param msg String 操作信息
-     * @return_param time Date 操作时间
-     * @remark 这里是备注信息
-     * @number 3
+     *      * showdoc
+     *      * @catalog 用户接口
+     *      * @title 是否设置收款账户
+     *      * @description 是否设置收款账户
+     *      * @method GET
+     *      * @url /nckf-boot/api/v1/account/isWithdrawAccount
+     *      * @param userId 必填 String 用户id
+     *      * @return {"code": 1,"data": null,"msg": "已设置收款账户","time": "1561014836809"}
+     *      * @return_param code String 响应状态
+     *      * @return_param data String 没有含义
+     *      * @return_param msg String 操作信息
+     *      * @return_param time Date 操作时间
+     *      * @remark 这里是备注信息
+     *      * @number 3
      */
     @GetMapping(value = "isWithdrawAccount")
     @ApiOperation(value = "是否设置收款账户", tags = {"用户接口"}, notes = "是否设置收款账户")
@@ -148,8 +148,8 @@ public class RestAccountController {
     /**
      * showdoc
      * @catalog 用户接口
-     * @title 是否设置收款账户
-     * @description 是否设置收款账户
+     * @title 支付密码是否正确
+     * @description 支付密码是否正确
      * @method GET
      * @url /nckf-boot/api/v1/account/checkPayPassword
      * @param payPassword 必填 String 支付密码
