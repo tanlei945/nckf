@@ -60,8 +60,8 @@ public class RestOrderController {
 
 
 
-   @PostMapping(value = "/queryOrder")
-   @ApiOperation(value = "订单多（单）条件查询接口 status:9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价", tags = {"订单购物车接口"}, notes = "订单多（单）条件查询接口 status:9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价")
+   @PostMapping(value = "/queryOrderCount")
+   @ApiOperation(value = "1待付款订单数量 2收货中订单数量 3待评价订单数量", tags = {"订单购物车接口"}, notes = "1待付款订单数量 2收货中订单数量 3待评价订单数量")
    public RestResponseBean queryOrder(@RequestParam(required = true) String status,
                                       @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                       @RequestParam(name="pageSize", defaultValue="10") Integer pageSize) {
@@ -127,7 +127,7 @@ public class RestOrderController {
      * @remark status:9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价
      * @number 10
      */
-    @PostMapping(value = "/queryOrderCount")
+    @PostMapping(value = "/queryOrder")
     @ApiOperation(value = "订单多（单）条件查询接口 status:9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价", tags = {"订单购物车接口"}, notes = "订单多（单）条件查询接口 status:9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价")
     public RestResponseBean queryOrderCount(@RequestParam(required = true) String status) {
         User user = (User) SecurityUtils.getSubject().getPrincipal();
@@ -138,7 +138,7 @@ public class RestOrderController {
         queryWrapper.lambda().eq(Order::getUserId,user.getId()).eq(Order::getStatus,status);
         List<Order> list = orderService.list(queryWrapper);
         if(list != null){
-            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),list.size());
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),list);
         }
         return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
 
