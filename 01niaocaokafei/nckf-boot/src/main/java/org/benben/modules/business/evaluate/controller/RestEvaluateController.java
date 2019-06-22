@@ -108,10 +108,35 @@ public class RestEvaluateController {
     }
 
     /**
-     * 添加
-     *
-     * @param evaluate
-     * @return
+     * showdoc
+     * @catalog 用户接口
+     * @title 用户评论提交接口
+     * @description 用户评论提交接口
+     * @method POST
+     * @url /nckf-boot/api/v1/evaluate/addEvaluate
+     * @param belongId 必填 String 商家id
+     * @param imageUrl 必填 String 评论图片
+     * @param orderId 必填 String 订单id
+     * @param content 选填 String 评论内容
+     * @param createBy 选填 String 创建者
+     * @param createTime 选填 Date 创建时间
+     * @param delFlag 选填 String 是否被删除(0:已删除 1:未删除)
+     * @param evaluateType 选填 String 评论对象(0:评论商家 1:评论骑手)
+     * @param id 选填 String ID
+     * @param imgUrl 选填 String 用户上传图片
+     * @param starCount 选填 String 星级
+     * @param storename 选填 String 门店名称
+     * @param updateBy 选填 String 更新人
+     * @param updateTime 选填 Date 更新时间
+     * @param userId 选填 String 用户id
+     * @param username 选填 String 用户名
+     * @return {"code": 1,"data": null,"msg": "操作成功","time": "1561087089659"}
+     * @return_param code String 响应状态
+     * @return_param data String null
+     * @return_param msg String 操作信息
+     * @return_param time Date 操作时间
+     * @remark 这里是备注信息
+     * @number 15
      */
     @PostMapping(value = "/addEvaluate")
     @ApiOperation(value = "用户评论提交接口", tags = {"用户接口"}, notes = "用户评论提交接口")
