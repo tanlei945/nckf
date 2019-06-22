@@ -7,8 +7,8 @@ import lombok.Data;
 public class UserVo {
 
 	private java.lang.String id;
-	@ApiModelProperty(value = "用户名",name = "username")
-	private java.lang.String username;
+	@ApiModelProperty(value = "用户名",name = "realname")
+	private java.lang.String realname;
 	@ApiModelProperty(value = "用户类型  0/普通用户,1/骑手",name = "userType")
 	private java.lang.String userType;
 	@ApiModelProperty(value = "手机号",name = "mobile")
