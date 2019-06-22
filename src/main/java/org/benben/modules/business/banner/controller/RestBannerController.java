@@ -31,7 +31,7 @@ public class RestBannerController {
 	 * @description 轮播图接口
 	 * @method GET
 	 * @url /nckf-boot/api/v1/banner/queryBanner
-	 * @return { "code": 1, "data": [ "user/20190510/33522_1557479564265.jpg" ], "msg": "操作成功", "time": "1561000377064" }
+	 * @return {"code": 1, "data": [ "user/20190510/33522_1557479564265.jpg" ], "msg": "操作成功", "time": "1561000377064" }
 	 * @return_param code String 响应状态
 	 * @return_param data List 轮播图信息
 	 * @return_param msg String 操作信息
