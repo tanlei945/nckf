@@ -88,6 +88,7 @@ public class ShiroConfig {
 		filterChainDefinitionMap.put("/api/v1/user/riderlogin", "anon");
 		filterChainDefinitionMap.put("/api/v1/user/userlogin", "anon");
 		filterChainDefinitionMap.put("/api/v1/common/uploadImageLocal", "anon");
+		filterChainDefinitionMap.put("/api/v1/systemConfig/queryByTime", "anon");
 
 
 		//性能监控
