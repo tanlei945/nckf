@@ -87,16 +87,16 @@ public class RestInvoiceController {
      * @description 用户发票提交接口
      * @method POST
      * @url /nckf-boot/api/v1/invoice/addInvoice
-     * @json_param invoice 必填 Object 发票对象
-     * @json_param id 必填 String 发票id
-     * @json_param invoiceContent 必填 String 发票内容
-     * @json_param invoiceMoney 必填 Double 开票金额
-     * @json_param invoiceTitileId 必填 String 纳税人名称
-     * @json_param invoiceType 必填 String 发票类型(0:个人 1:公司)
-     * @json_param mailingAddress String 邮寄地址
-     * @json_param orderIdList 必填 String 选中订单的id
-     * @json_param paperFlag 必填 String 纸质发票(0:不是 1:是)
-     * @json_param phone 必填 String 电话
+     * @param invoice 必填 Object 发票对象
+     * @param id 必填 String 发票id
+     * @param invoiceContent 必填 String 发票内容
+     * @param invoiceMoney 必填 Double 开票金额
+     * @param invoiceTitileId 必填 String 纳税人名称
+     * @param invoiceType 必填 String 发票类型(0:个人 1:公司)
+     * @param mailingAddress String 邮寄地址
+     * @param orderIdList 必填 String 选中订单的id
+     * @param paperFlag 必填 String 纸质发票(0:不是 1:是)
+     * @param phone 必填 String 电话
      * @json_param status 必填 String 是否开票成功(0:失败 1:成功)
      * @json_param userId 必填 String 用户id
      * @json_param username 必填 String 用户名
@@ -306,6 +306,7 @@ public class RestInvoiceController {
      * @description 用户发票头提交接口
      * @method POST
      * @url /nckf-boot/api/v1/invoice/title/addInvoiceTitle
+     * @json_param {"messageConstellation": "string","messageHight": 0,"messageWeight": 0,"nickName": "string","sex":0}
      * @return {"code": 1,"data": null,"msg": "操作成功","time": "1561017237369"}
      * @return_param code String 响应状态
      * @return_param data String null
