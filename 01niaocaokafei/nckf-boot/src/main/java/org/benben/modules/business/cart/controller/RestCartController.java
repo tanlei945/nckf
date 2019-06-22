@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.menu.ResultEnum;
 import org.benben.common.util.DateUtils;
@@ -15,6 +16,7 @@ import org.benben.modules.business.cart.vo.CartVo;
 import org.benben.modules.business.cart.vo.ListCartVo;
 import org.benben.modules.business.goods.entity.Goods;
 import org.benben.modules.business.goods.service.IGoodsService;
+import org.benben.modules.business.user.entity.User;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -156,6 +158,22 @@ public class RestCartController {
 //    }
 
 
+    /**
+     * showdoc
+     * @catalog 订单购物车接口
+     * @title 清空购物车
+     * @description 清空购物车
+     * @method POST
+     * @url /nckf-boot/api/v1/cart/deleteCartAll
+     * @param storeId 必填 String 门店id
+     * @return {"code": 0,"data": null,"msg": "购物车是空的","time": "1561169406987"}
+     * @return_param code String 响应状态
+     * @return_param data String
+     * @return_param msg String 操作信息
+     * @return_param time Date 操作时间
+     * @remark 这里是备注信息
+     * @number 1
+     */
     @PostMapping(value = "/deleteCartAll")
     @Transactional
     @ApiOperation(value = "清空购物车", notes = "清空购物车",tags = "订单购物车接口")
@@ -163,10 +181,15 @@ public class RestCartController {
             @ApiImplicitParam(name="userId",value = "用户Id",dataType = "String",required = true),
             @ApiImplicitParam(name="storeId",value = "商店Id",dataType = "String",required = true),
     })
-    public RestResponseBean deleteCartAll(@RequestParam(name="userId",required=true) String userId,@RequestParam(name="storeId",required=true) String storeId) {
+    public RestResponseBean deleteCartAll(@RequestParam(name="storeId",required=true) String storeId) {
+
+        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        if(user==null) {
+            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+        }
 
         QueryWrapper<Cart> cartQueryWrapper = new QueryWrapper<>();
-        cartQueryWrapper.eq("user_id",userId);
+        cartQueryWrapper.eq("user_id",user.getId());
         cartQueryWrapper.and(wrapperT -> wrapperT.eq("store_id",storeId));
         List<Cart> cart = cartService.list(cartQueryWrapper);
         if(cart.size()==0) {
