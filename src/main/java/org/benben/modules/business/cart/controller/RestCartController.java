@@ -91,16 +91,16 @@ public class RestCartController {
      * @url /nckf-boot/api/v1/cart/addCart
      * @param cart 必填 Object 用户购物车实体
      * @param checkedFlag 必填 String 是否选中(0未选中 1:选中)
-     * @param createByS 选填 String 创建者
+     * @param createBy 选填 String 创建者
      * @param createTime 选填 Date 创建时间
      * @param goodsId 选填 String 商品id
      * @param goodsNum 选填 Integer 商品数量
      * @param goodstSpecid 选填 String 商品规格
-     * @param id 选填 String 购物车id
-     * @param storeId 选填 String 商户id
-     * @param updateBy 选填 String 修改者
-     * @param updateTime 选填 Date 修改时间
-     * @param userId 选填 String 用户id
+     * @param id 不填 String 购物车id
+     * @param storeId 不填 String 商户id
+     * @param updateBy 不填 String 修改者
+     * @param updateTime 不填 Date 修改时间
+     * @param userId 不填 String 用户id
      * @return {"code": 1,"data": null,"msg": "操作成功","time": "1561012549542"}
      * @return_param code String 响应状态
      * @return_param data String 没有含义
@@ -113,6 +113,17 @@ public class RestCartController {
     @Transactional
     @ApiOperation(value = "购物车添加商品", notes = "购物车添加商品",tags = "订单购物车接口")
     public RestResponseBean addCart(@RequestBody Cart cart) {
+        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        if(user==null) {
+            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+        }
+        if(cart!=null){
+            Goods goods = goodsService.getById(cart.getGoodsId());
+            if(goods!=null){
+                cart.setStoreId(goods.getBelongId());
+                cart.setUserId(user.getId());
+            }
+        }
 
         try {
             Cart cartResult = cartService.queryByGoodsId(cart);
@@ -130,6 +141,29 @@ public class RestCartController {
         }
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
     }
+
+
+
+
+    @PostMapping(value = "/queryStoreIdByGoodsId")
+    @Transactional
+    @ApiOperation(value = "根据商品id获取门店id", notes = "根据商品id获取门店id",tags = "订单购物车接口")
+    public RestResponseBean queryStoreIdByGoodsId(@RequestParam String goodsId) {
+        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        if(user==null) {
+            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+        }
+
+        Goods goods = goodsService.getById(goodsId);
+        if(goods != null){
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),goods.getBelongId());
+
+        }
+
+        return new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(),ResultEnum.QUERY_NOT_EXIST.getDesc(),null);
+    }
+
+
 
 //    @PostMapping(value = "/adds")
 //    @Transactional
@@ -211,7 +245,7 @@ public class RestCartController {
             @ApiImplicitParam(name="goodsId",value = "商品Id",dataType = "String",required = true),
             @ApiImplicitParam(name="storeId",value = "门店",dataType = "String",required = true)
     })
-    public RestResponseBean deleteStore(@RequestParam(name="goodsId",required=true) String goodsId,@RequestParam(name="storeId",required=true) String storeId) {
+    public RestResponseBean deleteStore(@RequestParam(name="goodsId",required=true) String goodsId) {
         boolean ok;
 
         User user = (User) SecurityUtils.getSubject().getPrincipal();
@@ -222,7 +256,6 @@ public class RestCartController {
         QueryWrapper<Cart> cartQueryWrapper = new QueryWrapper<>();
         cartQueryWrapper.eq("goods_id",goodsId);
         cartQueryWrapper.and(wrapper -> wrapper.eq("user_id", user.getId()));
-        cartQueryWrapper.and(wrapperT -> wrapperT.eq("store_id",storeId));
         Cart cart = cartService.getOne(cartQueryWrapper);
         if(cart.getGoodsNum()>1) {
             cart.setGoodsNum(cart.getGoodsNum()-1);

@@ -39,7 +39,7 @@ public class Cart implements Serializable {
 	@ApiModelProperty(value = "商品id")
 	private java.lang.String goodsId;
 	/**商户id*/
-	@Excel(name = "商户id", width = 15)
+	@Excel(name = "门店id", width = 15)
 	@ApiModelProperty(value = "商户id")
 	private java.lang.String storeId;
 	/**商品规格*/
