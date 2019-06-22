@@ -11,6 +11,8 @@ public enum ResultEnum {
 
     QUERY_NOT_EXIST(0,"查询不存在"),
 
+    CART_NULL(1,"购物车是空的"),
+
     ERROR(0, "系统错误"),
     /**
      * 登陆注册返回code
