@@ -520,8 +520,8 @@ public class RestUserController {
     /**
      * showdoc
      * @catalog 用户接口
-     * @title 通用-->用户注册
-     * @description 通用-->用户注册
+     * @title 用户-->用户注册
+     * @description 用户-->用户注册
      * @method POST
      * @url /nckf-boot/api/v1/user/userRegister
      * @param captcha 必填 String 验证码
@@ -546,7 +546,7 @@ public class RestUserController {
      * @number 35
      */
     @PostMapping(value = "/userRegister")
-    @ApiOperation(value = "通用-->用户注册", tags = {"用户接口"}, notes = "通用-->用户注册")
+    @ApiOperation(value = "用户-->用户注册", tags = {"用户接口"}, notes = "用户-->用户注册")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "mobile",value = "用户手机号",dataType = "String",required = true),
             @ApiImplicitParam(name = "password",value = "用户密码",dataType = "String",required = true),
