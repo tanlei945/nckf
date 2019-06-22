@@ -36,9 +36,30 @@ public class RestAccountController {
 	private ISMSService ismsService;
 
 	/**
-	 * 通过id查询
-	 * @param id
-	 * @return
+	 * showdoc
+	 * @catalog 用户接口
+	 * @title 账单详情
+	 * @description 账单详情
+	 * @method GET
+	 * @url /nckf-boot/api/v1/account/queryAccountBillById
+	 * @return {"code": 1,"data": {"accountNo": null,"accountType": null,"createBy": "benben-boot","createTime": 1560999578000,"id": "03e530a22b6338053b84067fd06483b9","money": 0,"payPassword": null,"salt": null,"updateBy": null,"updateTime": null,"userId": "4b1f0ae074d2d117d0295680523fa9f8","vipFlag": null},"msg": "操作成功","time": "1561172527226"}
+	 * @return_param code String 响应状态
+	 * @return_param accountNo String 支付账号或微信账号或银行卡号
+	 * @return_param accountType String 支付方式
+	 * @return_param id String 用户账户id
+	 * @return_param money Double 余额
+	 * @return_param payPassword String 支付密码
+	 * @return_param salt String 密码盐
+	 * @return_param createBy String 创建者
+	 * @return_param createTime Date 创建时间
+	 * @return_param updateBy String 更新人
+	 * @return_param updateTime Date 更新时间
+	 * @return_param userId String 用户id
+	 * @return_param vipFlag String 是否是Vip(0:非会员 1：会员)
+	 * @return_param msg String 操作信息
+	 * @return_param time Date 操作时间
+	 * @remark 这里是备注信息
+	 * @number 1
 	 */
 	@GetMapping(value = "/queryAccountBillById")
 	@ApiOperation(value = "账单详情", tags = {"用户接口"}, notes = "账单详情")
@@ -86,7 +107,7 @@ public class RestAccountController {
      * @return_param updateTime Date 更新时间
      * @return_param msg String 操作信息
      * @return_param time Date 操作时间
-     * @remark
+     * @remark 这里是备注信息
      * @number 1
      */
     @GetMapping(value = "/queryAccount")
@@ -119,7 +140,7 @@ public class RestAccountController {
      * @return_param data String 没有含义
      * @return_param msg String 操作信息
      * @return_param time Date 操作时间
-     * @remark
+     * @remark 这里是备注信息
      * @number 2
      */
     @GetMapping(value = "/isPayPassword")
@@ -152,7 +173,7 @@ public class RestAccountController {
      * @return_param data String 没有含义
      * @return_param msg String 操作信息
      * @return_param time Date 操作时间
-     * @remark
+     * @remark 这里是备注信息
      * @number 3
      */
     @GetMapping(value = "isWithdrawAccount")
