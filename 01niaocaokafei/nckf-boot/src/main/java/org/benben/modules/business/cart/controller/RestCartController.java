@@ -238,12 +238,11 @@ public class RestCartController {
         return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
     }
 
-    @PostMapping(value = "/deleteStore")
+    @PostMapping(value = "/deleteCartGoods")
     @Transactional
     @ApiOperation(value = "删除购物车商品",notes = "删除购物车商品",tags = "订单购物车接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name="goodsId",value = "商品Id",dataType = "String",required = true),
-            @ApiImplicitParam(name="storeId",value = "门店",dataType = "String",required = true)
     })
     public RestResponseBean deleteStore(@RequestParam(name="goodsId",required=true) String goodsId) {
         boolean ok;
@@ -257,6 +256,9 @@ public class RestCartController {
         cartQueryWrapper.eq("goods_id",goodsId);
         cartQueryWrapper.and(wrapper -> wrapper.eq("user_id", user.getId()));
         Cart cart = cartService.getOne(cartQueryWrapper);
+        if(cart ==null){
+            return new RestResponseBean(ResultEnum.SELECTED_NULL.getValue(),ResultEnum.SELECTED_NULL.getDesc(),null);
+        }
         if(cart.getGoodsNum()>1) {
             cart.setGoodsNum(cart.getGoodsNum()-1);
             ok= cartService.updateById(cart);
