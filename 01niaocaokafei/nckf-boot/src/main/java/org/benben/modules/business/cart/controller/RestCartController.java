@@ -208,15 +208,20 @@ public class RestCartController {
     @Transactional
     @ApiOperation(value = "删除购物车商品",notes = "删除购物车商品",tags = "订单购物车接口")
     @ApiImplicitParams({
-            @ApiImplicitParam(name="userId",value = "用户Id",dataType = "String",required = true),
             @ApiImplicitParam(name="goodsId",value = "商品Id",dataType = "String",required = true),
-            @ApiImplicitParam(name="storeId",value = "商店Id",dataType = "String",required = true)
+            @ApiImplicitParam(name="storeId",value = "门店",dataType = "String",required = true)
     })
-    public RestResponseBean deleteStore(@RequestParam(name="userId",required=true) String userId,@RequestParam(name="goodsId",required=true) String goodsId,@RequestParam(name="storeId",required=true) String storeId) {
+    public RestResponseBean deleteStore(@RequestParam(name="goodsId",required=true) String goodsId,@RequestParam(name="storeId",required=true) String storeId) {
         boolean ok;
+
+        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        if(user==null) {
+            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+        }
+
         QueryWrapper<Cart> cartQueryWrapper = new QueryWrapper<>();
         cartQueryWrapper.eq("goods_id",goodsId);
-        cartQueryWrapper.and(wrapper -> wrapper.eq("user_id", userId));
+        cartQueryWrapper.and(wrapper -> wrapper.eq("user_id", user.getId()));
         cartQueryWrapper.and(wrapperT -> wrapperT.eq("store_id",storeId));
         Cart cart = cartService.getOne(cartQueryWrapper);
         if(cart.getGoodsNum()>1) {
