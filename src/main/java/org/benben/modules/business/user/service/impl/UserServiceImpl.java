@@ -8,6 +8,9 @@ import org.benben.common.util.PasswordUtil;
 import org.benben.common.util.oConvertUtils;
 import org.benben.modules.business.account.entity.Account;
 import org.benben.modules.business.account.mapper.AccountMapper;
+import org.benben.modules.business.store.entity.Store;
+import org.benben.modules.business.store.service.IStoreService;
+import org.benben.modules.business.store.service.impl.StoreServiceImpl;
 import org.benben.modules.business.user.entity.User;
 import org.benben.modules.business.user.entity.UserThird;
 import org.benben.modules.business.user.mapper.UserThirdMapper;
@@ -49,6 +52,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     private UserCouponsMapper userCouponsMapper;
     @Autowired
     private UserStoreMapper userStoreMapper;
+    @Autowired
+	private IStoreService storeService;
 
 //	@Override
 //	@Transactional
@@ -196,7 +201,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 		Account account = accountMapper.queryByUserId(user.getId());
 		List<UserCoupons> list = userCouponsMapper.queryByUserId(user.getId());
 		BeanUtils.copyProperties(user,userVo);
+		Store store = storeService.getById(user.getStoreId());
+		if(store != null){
+			userVo.setStoreName(store.getStoreName());
+		}
 
+		userVo.setWorkFlag("0");
 		userVo.setMoney(account.getMoney());
 		userVo.setCouponsNumber(list.size());
 
@@ -266,4 +276,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 	public String getAuthorizeURL(String response_type, String state, String scope) throws QQConnectException {
         return QQConnectConfig.getValue("authorizeURL").trim() + "?client_id=" + QQConnectConfig.getValue("app_ID").trim() + "&redirect_uri=" + QQConnectConfig.getValue("redirect_URI").trim() + "&response_type=" + response_type + "&state=" + state + "&scope=" + scope;
     }
+
+	@Override
+	public Boolean changeWorkStatus(String status,String userId) {
+		try{
+			userMapper.changeWorkStatus(status,userId);
+			return true;
+		}catch(Exception e){
+			e.printStackTrace();
+			return false;
+		}
+	}
 }

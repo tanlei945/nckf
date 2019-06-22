@@ -64,4 +64,6 @@ public interface IUserService extends IService<User> {
 
     User riderRegister(UserStoreVo userStoreVo);
 
+    Boolean changeWorkStatus(String status,String userId);
+
 }

@@ -21,5 +21,10 @@ public class UserVo {
 	private java.lang.Double money;
 	@ApiModelProperty(value = "优惠券数量",name = "couponsNumber")
 	private java.lang.Integer couponsNumber;
+	@ApiModelProperty(value = "上班状态 0：下班   1：上班",name = "workFlag")
+	private  java.lang.String workFlag;
+	@ApiModelProperty(value = "所属门店")
+	private  java.lang.String storeName;
+
 
 }
