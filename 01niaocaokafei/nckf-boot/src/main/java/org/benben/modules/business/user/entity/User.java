@@ -25,8 +25,8 @@ public class User implements Serializable {
 	@TableId(type = IdType.UUID)
 	private java.lang.String id;
 	/**组别ID*/
-	@Excel(name = "组别ID", width = 15)
-	private java.lang.String groupId;
+	@Excel(name = "门店ID", width = 15)
+	private java.lang.String storeId;
 	/**用户名*/
 	@Excel(name = "用户名", width = 15)
 	private java.lang.String username;
@@ -70,7 +70,7 @@ public class User implements Serializable {
 	private java.util.Date birthday;
 	/**格言*/
 	@Excel(name = "格言", width = 15)
-	private java.lang.String bio;
+	private java.lang.String workFlag;
 	/**余额*/
 	@Excel(name = "余额", width = 15)
 	private java.math.BigDecimal userMoney;

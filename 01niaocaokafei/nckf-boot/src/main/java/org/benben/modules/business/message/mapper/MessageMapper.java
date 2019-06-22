@@ -14,6 +14,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @version： V1.0
  */
 public interface MessageMapper extends BaseMapper<Message> {
-    @Select("SELECT COUNT(*) FROM `user_message` where read_flag='0' and user_id='#{userId}'")
+    @Select("SELECT COUNT(*) FROM `user_message_send` where read_flag='0' and user_id=#{userId}")
     int queryCount(String userId);
 }

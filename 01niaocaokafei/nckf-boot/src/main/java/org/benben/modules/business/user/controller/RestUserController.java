@@ -974,7 +974,6 @@ public class RestUserController {
      * @method GET
      * @url /nckf-boot/api/v1/user/isExistMobile
      * @param mobile 必填 String 用户手机号
-     * @param type 必填 String 验证方式
      * @return {"code": 0,"data": null,"msg": "手机号已注册","time": "1561012507468"}
      * @return_param code String 响应状态
      * @return_param data String 没有含义
@@ -1021,6 +1020,37 @@ public class RestUserController {
 
 
 		return new RestResponseBean(ResultEnum.MOBILE_RIGHT.getValue(),ResultEnum.MOBILE_RIGHT.getDesc(),null);
+
+	}
+
+
+
+
+	@GetMapping(value = "/changeWorkStatus")
+	@ApiOperation(value = "更改上班状态",tags = {"用户接口"},notes = "更改上班状态")
+	@ApiImplicitParam(name = "status",value = "当前上班状态",dataType = "String",required = true)
+	public RestResponseBean changeWorkStatus(@RequestParam(name = "status") String status){
+
+		User user = (User) SecurityUtils.getSubject().getPrincipal();
+
+		if(user == null){
+
+			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+		}
+
+		if("0".equals(status)){
+			boolean ok = userService.changeWorkStatus("1",user.getId());
+			if(ok){
+				return new RestResponseBean(ResultEnum.CHANGE_WORK_STATUS.getValue(),ResultEnum.CHANGE_WORK_STATUS.getDesc(),"1");
+			}
+			return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+		}else{
+			boolean ok = userService.changeWorkStatus("0",user.getId());
+			if(ok){
+				return new RestResponseBean(ResultEnum.CHANGE_WORK_STATUS.getValue(),ResultEnum.CHANGE_WORK_STATUS.getDesc(),"0");
+			}
+			return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+		}
 
 	}
 

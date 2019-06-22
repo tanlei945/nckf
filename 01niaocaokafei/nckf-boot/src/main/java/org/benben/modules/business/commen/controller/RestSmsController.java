@@ -121,14 +121,14 @@ public class RestSmsController {
      * @description 检验短信验证码
      * @method GET
      * @url /nckf-boot/api/v1/sms/checkSend
-     * @param mobile 必填 String 登录手机号
-     * @param event 必填 String 短信事件
+     * @json_param mobile 必填 String 登录手机号
+     * @json_param event 必填 String 短信事件
      * @return {"code": 1,"data": null,"msg": "短信验证通过","time": "1561015747083"}
      * @return_param code String 响应状态
      * @return_param data String 没有含义
      * @return_param msg String 操作信息
      * @return_param time Date 操作时间
-     * @remark 这里是备注信息
+     * @remark 
      * @number 2
      */
     @GetMapping(value = "/checkSend")
@@ -153,7 +153,6 @@ public class RestSmsController {
 
     /**
      * 返回短信调用错误码
-     *
      * @param returncode
      * @return
      */
@@ -189,7 +188,7 @@ public class RestSmsController {
      * @return_param data String 验证码信息
      * @return_param msg String 操作信息
      * @return_param time Date 操作时间
-     * @remark 这里是备注信息
+     * @remark
      * @number 1
      */
     @PostMapping(value = "/testSend")

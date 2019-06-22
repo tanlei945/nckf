@@ -1,6 +1,8 @@
 package org.benben.modules.business.user.mapper;
 
 
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Update;
 import org.benben.modules.business.user.entity.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
@@ -12,4 +14,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface UserMapper extends BaseMapper<User> {
 
+    @Update("update user set work_flag=#{status} where id=#{userId}")
+    void changeWorkStatus(@Param("status") String status, @Param("userId") String userId);
 }
