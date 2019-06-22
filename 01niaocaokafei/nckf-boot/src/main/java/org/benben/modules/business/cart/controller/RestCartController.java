@@ -170,7 +170,7 @@ public class RestCartController {
         cartQueryWrapper.and(wrapperT -> wrapperT.eq("store_id",storeId));
         List<Cart> cart = cartService.list(cartQueryWrapper);
         if(cart.size()==0) {
-            return new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(),ResultEnum.QUERY_NOT_EXIST.getDesc(),null);
+            return new RestResponseBean(ResultEnum.CART_NULL.getValue(),ResultEnum.CART_NULL.getDesc(),null);
         }else {
             boolean ok = cartService.remove(cartQueryWrapper);
             if(ok) {
