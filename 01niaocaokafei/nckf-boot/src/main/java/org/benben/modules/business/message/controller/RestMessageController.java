@@ -36,7 +36,7 @@ public class RestMessageController {
 	 * @return
 	 */
 	@GetMapping(value = "/queryMessage")
-	@ApiOperation(value = "消息详情列表", notes = "消息详情列表", tags = {"首页"})
+	@ApiOperation(value = "用户消息列表", notes = "用户消息列表", tags = {"首页"})
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "pageNo", value = "当前页", dataType = "Integer", defaultValue = "1"),
 			@ApiImplicitParam(name = "pageSize", value = "每页显示条数", dataType = "Integer", defaultValue = "10"),})
