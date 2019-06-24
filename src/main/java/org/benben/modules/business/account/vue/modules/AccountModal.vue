@@ -113,10 +113,10 @@
             console.log(formData)
             httpAction(httpurl,formData,method).then((res)=>{
               if(res.success){
-                that.$message.success(res.message);
+                that.$message.success(org.benben.modules.business.usermessage);
                 that.$emit('ok');
               }else{
-                that.$message.warning(res.message);
+                that.$message.warning(org.benben.modules.business.usermessage);
               }
             }).finally(() => {
               that.confirmLoading = false;

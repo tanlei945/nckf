@@ -147,7 +147,7 @@ public class RestAnnouncementController {
 			listVo.add(announcementVo);
 		}
 
-		return new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(), ResultEnum.QUERY_NOT_EXIST.getDesc(),
+		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(),
 				listVo);
 	}
 

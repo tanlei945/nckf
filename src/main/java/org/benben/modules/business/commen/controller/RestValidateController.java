@@ -106,7 +106,7 @@ public class RestValidateController {
     @GetMapping("/checkEmsCorrect")
     //@ApiOperation(value = "检测邮箱验证码",tags = {"检测接口"},notes = "检测邮箱验证码")
     public RestResponseBean checkEmsCorrect(@RequestParam(name = "email")String email, @RequestParam(name = "captcha")String captcha,
-                                              @RequestParam(name = "event")String event) {
+                                            @RequestParam(name = "event")String event) {
         Boolean aBoolean = validateService.captchaValidate(email,captcha,event);
         if(aBoolean){
             return new RestResponseBean(0, "验证成功", null);
