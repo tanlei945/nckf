@@ -1,8 +1,5 @@
 package org.benben.modules.business.message.mapper;
 
-import java.util.List;
-
-import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.benben.modules.business.message.entity.Message;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;

@@ -1,7 +1,7 @@
 package org.benben.modules.business.message.entity;
 
 import java.io.Serializable;
-import java.util.Date;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -17,28 +17,22 @@ import org.jeecgframework.poi.excel.annotation.Excel;
  * @version： V1.0
  */
 @Data
-@TableName("user_message")
+@TableName("user_message_send")
 public class Message implements Serializable {
     private static final long serialVersionUID = 1L;
     
 	/**id*/
 	@TableId(type = IdType.UUID)
 	private java.lang.String id;
-	/**用户id*/
-	@Excel(name = "标题", width = 15)
-	private java.lang.String userId;
 	/**消息id*/
-	@Excel(name = "内容", width = 15)
+	@Excel(name = "消息id", width = 15)
 	private java.lang.String messageId;
-	/**标题*/
-	@Excel(name = "标题", width = 15)
-	private java.lang.String titile;
-	/**内容*/
-	@Excel(name = "内容", width = 15)
-	private java.lang.String msgContent;
-	/**删除状态（0-已删除 1-未删除）*/
-	@Excel(name = "删除状态（0-已删除 1-未删除）", width = 15)
+	/**删除状态*/
+	@Excel(name = "删除状态", width = 15)
 	private java.lang.String delFlag;
+	/**用户id*/
+	@Excel(name = "用户id", width = 15)
+	private java.lang.String userId;
 	/**阅读状态（0-未读 1-已读）*/
 	@Excel(name = "阅读状态（0-未读 1-已读）", width = 15)
 	private java.lang.String readFlag;
@@ -63,10 +57,5 @@ public class Message implements Serializable {
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	private java.util.Date updateTime;
-	/**图片*/
-	@Excel(name = "图片", width = 15)
-	private java.lang.String imgUrl;
-	/**1:系统消息 2：订单消息*/
-	@Excel(name = "1:系统消息 2：订单消息", width = 15)
-	private java.lang.String messageType;
+
 }
