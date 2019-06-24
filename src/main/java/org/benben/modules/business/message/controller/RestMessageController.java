@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
+
 
 @RestController
 @RequestMapping("/api/v1/message")
@@ -63,6 +65,9 @@ public class RestMessageController {
 	//@ApiImplicitParams({@ApiImplicitParam(name = "id", value = "消息id", dataType = "String", required = true),})
 	public RestResponseBean queryMessageById(@RequestParam(name = "id", required = true) String id) {
 		Message message = messageService.getById(id);
+		message.setReadTime(new Date());
+		message	.setReadFlag("1");
+		messageService.updateById(message);
 		if (message == null) {
 			return new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(), ResultEnum.QUERY_NOT_EXIST.getDesc(),
 					null);
