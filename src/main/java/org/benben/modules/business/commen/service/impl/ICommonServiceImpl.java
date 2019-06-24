@@ -19,6 +19,15 @@ public class ICommonServiceImpl implements ICommonService {
     @Value(value = "${benben.path.upload}")
     private String uploadpath;
 
+	@Value(value = "${local.ip}")
+	private String ip;
+
+	@Value(value = "${server.servlet.context-path}")
+	private String projectName;
+
+	@Value(value = "${server.port}")
+	private String port;
+
     @Override
     public String localUploadImage(HttpServletRequest request) {
         try {
@@ -76,4 +85,15 @@ public class ICommonServiceImpl implements ICommonService {
         }
 
     }
+
+	/**
+	 * 拼接当前系统访问图片路径
+	 * @param str
+	 * @return
+	 */
+	public String getLocalUrl(String str){
+
+		return ip + ":" + port + projectName + "/" + str;
+
+	}
 }
