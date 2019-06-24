@@ -18,7 +18,7 @@ import org.jeecgframework.poi.excel.annotation.Excel;
  * @version： V1.0
  */
 @Data
-@TableName("user_announcement")
+@TableName("user_message")
 public class Announcement implements Serializable {
     private static final long serialVersionUID = 1L;
     
@@ -27,7 +27,7 @@ public class Announcement implements Serializable {
 	private java.lang.String id;
 	/**标题*/
 	@Excel(name = "标题", width = 15)
-	private java.lang.String titile;
+	private java.lang.String title;
 	/**内容*/
 	@Excel(name = "内容", width = 15)
 	private java.lang.Object msgContent;
@@ -81,4 +81,7 @@ public class Announcement implements Serializable {
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	private java.util.Date updateTime;
+	/**1:系统消息 2：订单消息*/
+	@Excel(name = "1:系统消息 2：订单消息", width = 15)
+	private java.lang.String messageType;
 }
