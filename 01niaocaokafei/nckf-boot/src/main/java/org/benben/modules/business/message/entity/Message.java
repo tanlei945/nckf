@@ -37,10 +37,10 @@ public class Message implements Serializable {
 	@Excel(name = "阅读状态（0-未读 1-已读）", width = 15)
 	private java.lang.String readFlag;
 	/**阅读时间*/
-	@Excel(name = "阅读时间", width = 15)
+	@Excel(name = "阅读时间", width = 20, format = "yyyy-MM-dd HH:mm:ss")
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
 	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-	private java.lang.String readTime;
+	private java.util.Date readTime;
 	/**创建人*/
 	@Excel(name = "创建人", width = 15)
 	private java.lang.String createBy;
