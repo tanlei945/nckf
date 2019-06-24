@@ -132,6 +132,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
 	@Override
+	public User queryByMobileAndUserType(String moblie,String userType) {
+
+		QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+		queryWrapper.eq("mobile", moblie);
+		queryWrapper.eq("user_type",userType);
+
+		return userMapper.selectOne(queryWrapper);
+	}
+
+
+	@Override
 	public User queryByMobileAndUserId(String mobile, String userId) {
 
     	QueryWrapper<User> queryWrapper = new QueryWrapper<>();
@@ -170,10 +181,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
      */
     @Override
     @Transactional
-    public int changePassword(String mobile, String password) {
+    public int changePassword(String mobile, String password,String userType) {
 
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("mobile",mobile);
+        queryWrapper.eq("user_type",userType);
 
         User user = userMapper.selectOne(queryWrapper);
         if(user == null){
@@ -228,6 +240,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
 		//保存用户信息
 		user.setMobile(mobile);
+		user.setUserType("0");
 		String salt = oConvertUtils.randomGen(8);
 		user.setSalt(salt);
 		String passwordEncode = PasswordUtil.encrypt(password, password, salt);
@@ -259,7 +272,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 		user.setUserType("1");
 		String salt = oConvertUtils.randomGen(8);
 		user.setSalt(salt);
-		String passwordEncode = PasswordUtil.encrypt(CommonConstant.NCKF_PWD, CommonConstant.NCKF_PWD, salt);
+		String passwordEncode = PasswordUtil.encrypt(userStoreVo.getPassword(), userStoreVo.getPassword(), salt);
 		user.setPassword(passwordEncode);
 		userMapper.insert(user);
 		// 保存骑手信息

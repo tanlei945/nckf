@@ -45,14 +45,8 @@ import java.util.Set;
 @Slf4j
 public class RestUserController {
 
-	@Value(value = "${local.ip}")
-	private String ip;
-
-	@Value(value = "${server.servlet.context-path}")
-	private String projectName;
-
-	@Value(value = "${server.port}")
-	private String port;
+	@Autowired
+	private ICommonService commonService;
 
     @Autowired
     private IUserService userService;
@@ -118,7 +112,7 @@ public class RestUserController {
 
 		UserVo userVo = userService.queryUserVo(user);
         if(StringUtils.isNotBlank(userVo.getAvatar()) && userVo.getAvatar().indexOf("http") == -1){
-        	userVo.setAvatar(ip + ":" + port + projectName + "/" + userVo.getAvatar());
+        	userVo.setAvatar(commonService.getLocalUrl(userVo.getAvatar()));
 		}
         if(userVo == null){
         	return new RestResponseBean(ResultEnum.ERROR.getValue(),ResultEnum.ERROR.getDesc(),null);
@@ -381,6 +375,7 @@ public class RestUserController {
      * @param event 必填 String 事件
      * @param captcha 必填 String 验证码
      * @param password 必填 String 新密码
+     * @param userType 必填 String 用户类型  0/普通用户,1/骑手
      * @return {code": 1,"data": null,"msg": "操作成功","time": "1561012941348"}
      * @return_param code String 响应状态
      * @return_param data String 没有含义
@@ -395,10 +390,11 @@ public class RestUserController {
 			@ApiImplicitParam(name = "mobile",value = "用户手机号",dataType = "String",required = true),
 			@ApiImplicitParam(name = "password",value = "用户新密码",dataType = "String",required = true),
 			@ApiImplicitParam(name = "event",value = "事件",dataType = "String",defaultValue = CommonConstant.SMS_EVENT_FORGET,required = true),
-			@ApiImplicitParam(name = "captcha",value = "验证码",dataType = "String",required = true)
+			@ApiImplicitParam(name = "captcha",value = "验证码",dataType = "String",required = true),
+			@ApiImplicitParam(name = "userType",value = "用户类型  0/普通用户,1/骑手",dataType = "String",required = true)
 	})
 	public RestResponseBean forgetPassword(@RequestParam String mobile, @RequestParam String password,
-			@RequestParam String event,@RequestParam String captcha){
+			@RequestParam String event,@RequestParam String captcha,@RequestParam String userType){
 
 		if(StringUtils.isBlank(mobile)||StringUtils.isBlank(password) || StringUtils.isBlank(event) ||StringUtils.isBlank(captcha)){
 			return new RestResponseBean(ResultEnum.PARAMETER_MISSING.getValue(),ResultEnum.PARAMETER_MISSING.getDesc(),null);
@@ -415,7 +411,7 @@ public class RestUserController {
 				return new RestResponseBean(ResultEnum.SMS_CODE_ERROR.getValue(), ResultEnum.SMS_CODE_ERROR.getDesc(), null);
 		}
 
-		if(userService.changePassword(mobile,password) == 0){
+		if(userService.changePassword(mobile,password,userType) == 0){
 			return new RestResponseBean(ResultEnum.ERROR.getValue(),ResultEnum.ERROR.getDesc(),null);
 		}
 
@@ -435,6 +431,7 @@ public class RestUserController {
      * @param captcha 必填 String 验证码
      * @param newPassword 必填 String 新密码
      * @param oldPassword 必填 String 旧密码
+     * @param userType 必填 String 用户类型  0/普通用户,1/骑手
      * @return {code": 1,"data": null,"msg": "操作成功","time": "1561012941348"}
      * @return_param code String 响应状态
      * @return_param data String 没有含义
@@ -450,10 +447,11 @@ public class RestUserController {
 			@ApiImplicitParam(name = "newPassword",value = "用户新密码",dataType = "String"),
 			@ApiImplicitParam(name = "mobile",value = "用户手机号",dataType = "String"),
 			@ApiImplicitParam(name = "event",value = "事件",dataType = "String",defaultValue = CommonConstant.SMS_EVENT_CHANGE_PWD),
-			@ApiImplicitParam(name = "captcha",value = "验证码",dataType = "String")
+			@ApiImplicitParam(name = "captcha",value = "验证码",dataType = "String"),
+			@ApiImplicitParam(name = "userType",value = "用户类型  0/普通用户,1/骑手",dataType = "String")
 	})
 	public RestResponseBean changePassword(@RequestParam String oldPassword, @RequestParam String newPassword,@RequestParam String mobile,
-			@RequestParam String event,@RequestParam String captcha){
+			@RequestParam String event,@RequestParam String captcha,@RequestParam String userType){
 
 		User user = (User) SecurityUtils.getSubject().getPrincipal();
 
@@ -496,7 +494,7 @@ public class RestUserController {
 
 		}
 
-		if(userService.changePassword(userEntity.getMobile(),newPassword) == 0){
+		if(userService.changePassword(userEntity.getMobile(),newPassword,userType) == 0){
 			return new RestResponseBean(ResultEnum.ERROR.getValue(),ResultEnum.ERROR.getDesc(),null);
 		}
 
@@ -572,7 +570,7 @@ public class RestUserController {
 					return new RestResponseBean(ResultEnum.SMS_CODE_ERROR.getValue(), ResultEnum.SMS_CODE_ERROR.getDesc(), null);
 			}
 
-			User userEntity = userService.queryByMobile(mobile);
+			User userEntity = userService.queryByMobileAndUserType(mobile,"0");
 			if(userEntity != null){
 				return new RestResponseBean(ResultEnum.MOBILE_EXIST_REGISTER.getValue(),ResultEnum.MOBILE_EXIST_REGISTER.getDesc(),null);
 			}
@@ -630,6 +628,12 @@ public class RestUserController {
 
         try {
 
+			User userEntity = userService.queryByMobileAndUserType(userStoreVo.getMobile(),"1");
+
+			if(userEntity != null){
+				return new RestResponseBean(ResultEnum.MOBILE_EXIST_REGISTER.getValue(),ResultEnum.MOBILE_EXIST_REGISTER.getDesc(),null);
+			}
+
 			User user = userService.riderRegister(userStoreVo);
 
 			return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),tokenBuild(user));
@@ -679,7 +683,8 @@ public class RestUserController {
     public RestResponseBean riderlogin(@RequestParam String mobile, @RequestParam String password) {
 
 		Map<String,Object> obj = new HashMap<>();
-        User user = userService.queryByMobile(mobile);
+
+        User user = userService.queryByMobileAndUserType(mobile,"1");
 
         if (user == null) {
             sysBaseAPI.addLog("登录失败，用户名:" + mobile + "不存在！", CommonConstant.LOG_TYPE_1, null);
@@ -738,7 +743,7 @@ public class RestUserController {
 	public RestResponseBean userlogin(@RequestParam String mobile, @RequestParam String password) {
 
 		Map<String,Object> obj = new HashMap<>();
-		User user = userService.queryByMobile(mobile);
+		User user = userService.queryByMobileAndUserType(mobile,"0");
 
 		if (user == null) {
 			sysBaseAPI.addLog("登录失败，用户名:" + mobile + "不存在！", CommonConstant.LOG_TYPE_1, null);
@@ -814,7 +819,7 @@ public class RestUserController {
                 return new RestResponseBean(ResultEnum.SMS_CODE_ERROR.getValue(), ResultEnum.SMS_CODE_ERROR.getDesc(), null);
         }
 
-        User user = userService.queryByMobile(mobile);
+        User user = userService.queryByMobileAndUserType(mobile,"0");
 
         if (user == null) {
             return new RestResponseBean(ResultEnum.USER_NOT_EXIST.getValue(), ResultEnum.USER_NOT_EXIST.getDesc(), null);
@@ -984,10 +989,13 @@ public class RestUserController {
      */
     @GetMapping(value = "/isExistMobile")
     @ApiOperation(value = "通用-->手机号是否存在",tags = {"用户接口"},notes = "通用-->手机号是否存在")
-	@ApiImplicitParam(name = "mobile",value = "手机号",dataType = "String",required = true)
-    public RestResponseBean isExistMobile(@RequestParam String mobile){
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "mobile",value = "手机号",dataType = "String",required = true),
+			@ApiImplicitParam(name = "userType",value = "用户类型  0/普通用户,1/骑手",dataType = "String",required = true)
+	})
+    public RestResponseBean isExistMobile(@RequestParam String mobile,@RequestParam String userType){
 
-        User user = userService.queryByMobile(mobile);
+        User user = userService.queryByMobileAndUserType(mobile,userType);
 
 		if(user == null){
 
@@ -1072,7 +1080,7 @@ public class RestUserController {
             return new RestResponseBean(ResultEnum.ERROR.getValue(), ResultEnum.ERROR.getDesc(), null);
         }
         //查询登录状态
-        User user = userService.queryByMobile(mobile);
+        User user = userService.queryByMobileAndUserType(mobile,"0");
         //查询是否已有账户绑定该微博
         UserThird userThird = userThirdService.queryByOpenid(openid);
         if(userThird != null){
@@ -1128,8 +1136,17 @@ public class RestUserController {
 	private Map tokenBuild(User user) {
 
 		Map<String,Object> map = new HashMap();
-		//生成token
-		String token = JwtUtil.signUser(CommonConstant.SIGN_MEMBER_USER + user.getMobile(), user.getPassword());
+
+		String token = "";
+
+		if(StringUtils.equals(user.getUserType(),"0")){ //普通用户
+			//生成token
+			token = JwtUtil.signUser(CommonConstant.SIGN_MEMBER_USER + user.getId(), user.getPassword());
+		}else{ //骑手
+			//生成token
+			token = JwtUtil.signUser(CommonConstant.SIGN_RIDER_USER + user.getId(), user.getPassword());
+		}
+
 
 		//根据用户ID模糊查询
 		Set<String> keys = stringRedisTemplate.keys("*" + user.getId());

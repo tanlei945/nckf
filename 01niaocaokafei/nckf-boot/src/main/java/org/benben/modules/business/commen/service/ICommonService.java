@@ -11,4 +11,6 @@ public interface ICommonService {
     public String localUploadImage(HttpServletRequest request);
 
     public String localUploadImage(MultipartFile multipartFile);
+
+	public String getLocalUrl(String str);
 }

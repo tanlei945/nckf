@@ -51,6 +51,8 @@ public interface CommonConstant {
 
 	public static String SIGN_MEMBER_USER = "memberUser@";
 
+	public static String SIGN_RIDER_USER = "rider@";
+
 	public static String SMS_EVENT_LOGIN = "login";
 
 	public static String SMS_EVENT_REGISTER = "register";

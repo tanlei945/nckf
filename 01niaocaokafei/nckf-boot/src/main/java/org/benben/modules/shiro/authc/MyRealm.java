@@ -156,7 +156,10 @@ public class MyRealm extends AuthorizingRealm {
             sign = mobile.substring(0, mobile.indexOf("@") + 1);
             mobile = mobile.substring(mobile.indexOf("@") + 1, mobile.length());
             //查询会员信息
-            userInfo = userService.queryByMobile(mobile);
+            userInfo = userService.queryByMobileAndUserType(mobile,"0");
+            if(userInfo == null){ //查询不到普通用户,继续查询骑手信息
+				userInfo = userService.queryByMobileAndUserType(mobile,"1");
+			}
 			userId = userInfo.getId();
             password = userInfo.getPassword();
             status = userInfo.getStatus();
@@ -206,7 +209,7 @@ public class MyRealm extends AuthorizingRealm {
         //缓冲中拿取token
         String cacheToken = String.valueOf(redisUtil.get(CommonConstant.PREFIX_USER_TOKEN + token + userId));
         //若为会员用户,重新规定有效期时长
-        if (StringUtils.equals(CommonConstant.SIGN_MEMBER_USER, sign)) {
+        if (StringUtils.equals(CommonConstant.SIGN_MEMBER_USER, sign)||StringUtils.equals(CommonConstant.SIGN_RIDER_USER, sign)) {
             JwtUtil.EXPIRE_TIME = JwtUtil.APP_EXPIRE_TIME;
         }
 
