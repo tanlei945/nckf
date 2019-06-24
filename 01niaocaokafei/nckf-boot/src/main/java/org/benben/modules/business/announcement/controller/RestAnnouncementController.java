@@ -8,7 +8,6 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.api.vo.Result;
 import org.benben.common.menu.ResultEnum;
@@ -16,8 +15,6 @@ import org.benben.common.system.query.QueryGenerator;
 import org.benben.modules.business.announcement.entity.Announcement;
 import org.benben.modules.business.announcement.service.IAnnouncementService;
 import org.benben.modules.business.announcement.vo.AnnouncementVo;
-import org.benben.modules.business.message.entity.Message;
-import org.benben.modules.business.user.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -146,7 +143,7 @@ public class RestAnnouncementController {
 		AnnouncementVo announcementVo = new AnnouncementVo();
 		for (Announcement announcement : list) {
 			announcementVo.setAnnouncementId(announcement.getId());
-			announcementVo.setTitle(announcement.getTitile());
+			announcementVo.setTitle(announcement.getTitle());
 			listVo.add(announcementVo);
 		}
 
