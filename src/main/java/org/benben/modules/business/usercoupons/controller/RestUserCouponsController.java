@@ -50,7 +50,7 @@ public class RestUserCouponsController {
 	@ApiOperation(value = "个人优惠券查询", notes = "个人优惠券查询", tags = "首页")
 	@ApiImplicitParams({@ApiImplicitParam(name = "pageNo", value = "当前页", dataType = "Integer", defaultValue = "1"),
 			@ApiImplicitParam(name = "pageSize", value = "每页显示条数", dataType = "Integer", defaultValue = "10"),
-			@ApiImplicitParam(name = "status", value = "状态：-1已过期 0 未使用 1已使用", dataType = "String")})
+			@ApiImplicitParam(name = "status", value = "状态：0已过期 1 未过期", dataType = "String")})
 	public RestResponseBean list(@RequestParam(name = "status") String status,
 			@RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
 			@RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
