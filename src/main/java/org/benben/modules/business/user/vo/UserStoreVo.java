@@ -26,10 +26,6 @@ public class UserStoreVo {
     @Excel(name = "手机号", width = 15)
     @ApiModelProperty(value = "手机号",name = "mobile",required = true)
     private java.lang.String mobile;
-    /**密码*/
-    @Excel(name = "密码", width = 15)
-    @ApiModelProperty(value = "密码",name = "password",required = true)
-    private java.lang.String password;
     /**身份证号*/
     @ApiModelProperty(value = "身份证号",name = "idCard",required = true)
     @Excel(name = "身份证号", width = 15)
