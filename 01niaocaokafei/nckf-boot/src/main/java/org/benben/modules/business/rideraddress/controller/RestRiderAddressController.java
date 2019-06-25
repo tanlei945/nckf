@@ -110,10 +110,10 @@ public class RestRiderAddressController {
      */
 
     @PostMapping(value = "/deleteRiderAddress")
-    @ApiOperation(value = "删除骑手位置", tags = {"骑手位置接口"}, notes = "删除骑手位置")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name="id",value = "骑手位置id",dataType = "String",required = true),
-    })
+    //@ApiOperation(value = "删除骑手位置", tags = {"骑手位置接口"}, notes = "删除骑手位置")
+    //@ApiImplicitParams({
+            //@ApiImplicitParam(name="id",value = "骑手位置id",dataType = "String",required = true),
+    //})
     public RestResponseBean deleteRiderAddress(@RequestParam(name="id",required=true) String id) {
         QueryWrapper<RiderAddress> riderAddressQueryWrapper = new QueryWrapper<>();
         riderAddressQueryWrapper.eq("rider_id",id);
