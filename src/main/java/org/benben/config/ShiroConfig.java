@@ -91,6 +91,8 @@ public class ShiroConfig {
 		filterChainDefinitionMap.put("/api/v1/systemConfig/queryByTime", "anon");
 		filterChainDefinitionMap.put("/api/v1/store/query_all_store", "anon");
 		filterChainDefinitionMap.put("/api/v1/category/query_all_store/getCategory", "anon");
+		filterChainDefinitionMap.put("/api/v1/goods/queryGoodsByCategory", "anon");
+		filterChainDefinitionMap.put("/api/v1/category/getCategory", "anon");
 
 
 		//性能监控
