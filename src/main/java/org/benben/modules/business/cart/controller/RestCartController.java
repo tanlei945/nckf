@@ -195,12 +195,10 @@ public class RestCartController {
     /**
      * showdoc
      * @catalog 订单购物车接口
-     * @title 清空购物车
-     * @description 清空购物车
+     * @title 查询购物车
+     * @description 查询购物车
      * @method POST
-     * @url /nckf-boot/api/v1/cart/deleteCartAll
-     * @param storeId 必填 String 门店id
-     * @return {"code": 0,"data": null,"msg": "购物车是空的","time": "1561169406987"}
+     * @url /nckf-boot/api/v1/cart/queryCartGoods
      * @return_param code String 响应状态
      * @return_param data String
      * @return_param msg String 操作信息
@@ -208,6 +206,27 @@ public class RestCartController {
      * @remark 这里是备注信息
      * @number 1
      */
+    @PostMapping(value = "/queryCartGoods")
+    @Transactional
+    @ApiOperation(value = "查询购物车", notes = "查询购物车",tags = "订单购物车接口")
+    public RestResponseBean queryCartGoods() {
+
+        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        if(user==null) {
+            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+        }
+
+        QueryWrapper<Cart> cartQueryWrapper = new QueryWrapper<>();
+        cartQueryWrapper.eq("user_id",user.getId());
+        cartQueryWrapper.and(wrapperT -> wrapperT.eq("user_id",user.getId()));
+        List<Cart> list = cartService.list(cartQueryWrapper);
+
+
+        return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),list);
+    }
+
+
+
     @PostMapping(value = "/deleteCartAll")
     @Transactional
     @ApiOperation(value = "清空购物车", notes = "清空购物车",tags = "订单购物车接口")
