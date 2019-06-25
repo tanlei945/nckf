@@ -6,15 +6,17 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.api.vo.Result;
 import org.benben.common.menu.ResultEnum;
 import org.benben.modules.business.rideraddress.entity.RiderAddress;
 import org.benben.modules.business.rideraddress.service.IRiderAddressService;
+import org.benben.modules.business.user.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-
+import java.util.Date;
 
 
 @RestController
@@ -56,12 +58,20 @@ public class RestRiderAddressController {
      */
     @PostMapping(value = "/updateRiderAddress")
     @ApiOperation(value = "新增和修改骑手位置", tags = {"骑手位置接口"}, notes = "新增和修改骑手位置")
-    public RestResponseBean updateRiderAddress(@RequestBody RiderAddress riderAddress) {
+    public RestResponseBean updateRiderAddress( @RequestParam String lat,@RequestParam String lng) {
+
+        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        if(user==null) {
+            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+        }
+
         QueryWrapper<RiderAddress> riderAddressQueryWrapper = new QueryWrapper<>();
-        riderAddressQueryWrapper.eq("rider_id",riderAddress.getRiderId());
+        riderAddressQueryWrapper.eq("rider_id",user.getId());
         RiderAddress riderAddressEntity = riderAddressService.getOne(riderAddressQueryWrapper);
         if(riderAddressEntity==null) {
-            boolean save = riderAddressService.save(riderAddress);
+            riderAddressEntity.setCreateBy(user.getRealname());
+            riderAddressEntity.setCreateTime(new Date());
+            boolean save = riderAddressService.save(riderAddressEntity);
             if(save){
                 return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
             }
@@ -69,9 +79,12 @@ public class RestRiderAddressController {
             return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
 
         }else {
-            boolean update = riderAddressService.update(riderAddress, riderAddressQueryWrapper);
-
-            if(update) {
+            if(lat!=null || lat !="" && lng !=null || lng != ""){
+                riderAddressEntity.setLat(Double.parseDouble(lat));
+                riderAddressEntity.setLat(Double.parseDouble(lng));
+                riderAddressEntity.setUpdateBy(user.getRealname());
+                riderAddressEntity.setUpdateTime(new Date());
+                riderAddressService.update(riderAddressEntity, riderAddressQueryWrapper);
                 return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
             }
         }
