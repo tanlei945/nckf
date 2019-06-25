@@ -138,8 +138,8 @@ public class MyRealm extends AuthorizingRealm {
 
         // 解密获得username，用于后台和数据库进行对比
         String username = JwtUtil.getUsername(token);
-        // 解密获得mobile，用于IP端和数据库进行对比
-        String mobile = JwtUtil.getMobile(token);
+        // 解密获得userId，用于IP端和数据库进行对比
+        String id = JwtUtil.getUserId(token);
         //判断是后台用户访问还是APP用户访问
         if(username != null){
             //获取标识
@@ -151,15 +151,13 @@ public class MyRealm extends AuthorizingRealm {
             password = sysUser.getPassword();
             status = sysUser.getStatus();
 
-        }else if(mobile !=null){
+        }else if(id !=null){
             //获取标识
-            sign = mobile.substring(0, mobile.indexOf("@") + 1);
-            mobile = mobile.substring(mobile.indexOf("@") + 1, mobile.length());
-            //查询会员信息
-            userInfo = userService.queryByMobileAndUserType(mobile,"0");
-            if(userInfo == null){ //查询不到普通用户,继续查询骑手信息
-				userInfo = userService.queryByMobileAndUserType(mobile,"1");
-			}
+            sign = id.substring(0, id.indexOf("@") + 1);
+			id = id.substring(id.indexOf("@") + 1, id.length());
+            //查询用户信息
+            userInfo = userService.getById(id);
+
 			userId = userInfo.getId();
             password = userInfo.getPassword();
             status = userInfo.getStatus();
