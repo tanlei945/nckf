@@ -597,8 +597,8 @@ public class RestUserController {
     /**
      * showdoc
      * @catalog 用户接口
-     * @title 骑手注册
-     * @description 骑手注册
+     * @title 骑手-->注册
+     * @description 骑手-->注册
      * @method POST
      * @url /nckf-boot/api/v1/user/riderRegister
      * @param userStoreVo 必填 Object 骑手对象
@@ -628,7 +628,7 @@ public class RestUserController {
      * @number 36
      */
     @PostMapping(value = "/riderRegister")
-    @ApiOperation(value = "骑手注册", tags = {"用户接口"}, notes = "骑手注册")
+    @ApiOperation(value = "骑手-->注册", tags = {"用户接口"}, notes = "骑手-->注册")
     public RestResponseBean riderRegister(@RequestBody UserStoreVo userStoreVo) {
 
         try {
