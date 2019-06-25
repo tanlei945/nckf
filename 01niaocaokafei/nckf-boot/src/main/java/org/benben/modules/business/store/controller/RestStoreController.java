@@ -157,10 +157,10 @@ public class RestStoreController {
      */
     @GetMapping("/query_all_store")
     @ApiOperation(value="门店列表", tags = {"门店管理接口"})
-    public RestResponseBean queryAllStore(Store store,@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+    public RestResponseBean queryAllStore(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                           @RequestParam(name="pageSize", defaultValue="10") Integer pageSize){
         try {
-            QueryWrapper<Store> queryWrapper = QueryGenerator.initQueryWrapper(store, null);
+            QueryWrapper<Store> queryWrapper = new QueryWrapper<>();
             Page<Store> page = new Page<Store>(pageNo, pageSize);
             IPage<Store> pageList = storeService.page(page, queryWrapper);
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), pageList);
