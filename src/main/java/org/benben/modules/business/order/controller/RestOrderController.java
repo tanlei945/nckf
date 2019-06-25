@@ -401,7 +401,7 @@ public class RestOrderController {
 
     @GetMapping(value = "/distance")
     @ApiOperation(value = "用户最近订单的骑手距离", tags = {"订单购物车接口"}, notes = "用户最近订单的骑手距离")
-    public RestResponseBean queryDistance(double riderLng,double riderLat){
+    public RestResponseBean queryDistance(@RequestParam(name = "userLat",required = true) String  userLat,@RequestParam(name = "userLng",required = true) String userLng){
         User user = (User) SecurityUtils.getSubject().getPrincipal();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
@@ -426,7 +426,8 @@ public class RestOrderController {
             orderDistanceVo.setLng(riderAddress.getLng());
             orderDistanceVo.setOrderId(newOrder.getId());
 
-            String meter = DistanceUtil.algorithm(riderAddress.getLat(),riderAddress.getLng(),riderLng,riderLat);
+
+            String meter = DistanceUtil.algorithm(riderAddress.getLat(),riderAddress.getLng(),Double.parseDouble(userLat),Double.parseDouble(userLng));
 
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),meter);
 
@@ -442,7 +443,7 @@ public class RestOrderController {
             orderDistanceVo.setLng(riderAddress.getLng());
             orderDistanceVo.setOrderId(newOrder.getId());
 
-            String meter = DistanceUtil.algorithm(riderAddress.getLat(),riderAddress.getLng(),riderLng,riderLat);
+            String meter = DistanceUtil.algorithm(riderAddress.getLat(),riderAddress.getLng(),Double.parseDouble(userLat),Double.parseDouble(userLng));
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),meter);
         }
     }
