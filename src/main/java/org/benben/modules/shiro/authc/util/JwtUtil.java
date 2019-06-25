@@ -85,10 +85,10 @@ public class JwtUtil {
      *
      * @return token中包含的用户名
      */
-    public static String getMobile(String token) {
+    public static String getUserId(String token) {
         try {
             DecodedJWT jwt = JWT.decode(token);
-            return jwt.getClaim("mobile").asString();
+            return jwt.getClaim("userId").asString();
         } catch (JWTDecodeException e) {
             return null;
         }
@@ -97,15 +97,15 @@ public class JwtUtil {
     /**
      * 生成签名,5min后过期
      *
-     * @param mobile 手机号
+     * @param userId 用户ID
      * @param secret   用户的密码
      * @return 加密的token
      */
-    public static String signUser(String mobile, String secret) {
+    public static String signUser(String userId, String secret) {
         Date date = new Date(System.currentTimeMillis() + EXPIRE_TIME);
         Algorithm algorithm = Algorithm.HMAC256(secret);
         // 附带mobile信息
-        return JWT.create().withClaim("mobile", mobile).withExpiresAt(date).sign(algorithm);
+        return JWT.create().withClaim("userId", userId).withExpiresAt(date).sign(algorithm);
 
     }
 

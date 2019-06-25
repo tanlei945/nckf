@@ -436,7 +436,6 @@ public class RestUserController {
      * @param captcha 必填 String 验证码
      * @param newPassword 必填 String 新密码
      * @param oldPassword 必填 String 旧密码
-     * @param userType 必填 String 用户类型  0/普通用户,1/骑手
      * @return {code": 1,"data": null,"msg": "操作成功","time": "1561012941348"}
      * @return_param code String 响应状态
      * @return_param data String 没有含义
@@ -452,11 +451,10 @@ public class RestUserController {
 			@ApiImplicitParam(name = "newPassword",value = "用户新密码",dataType = "String"),
 			@ApiImplicitParam(name = "mobile",value = "用户手机号",dataType = "String"),
 			@ApiImplicitParam(name = "event",value = "事件",dataType = "String",defaultValue = CommonConstant.SMS_EVENT_CHANGE_PWD),
-			@ApiImplicitParam(name = "captcha",value = "验证码",dataType = "String"),
-			@ApiImplicitParam(name = "userType",value = "用户类型  0/普通用户,1/骑手",dataType = "String")
+			@ApiImplicitParam(name = "captcha",value = "验证码",dataType = "String")
 	})
 	public RestResponseBean changePassword(@RequestParam String oldPassword, @RequestParam String newPassword,@RequestParam String mobile,
-			@RequestParam String event,@RequestParam String captcha,@RequestParam String userType){
+			@RequestParam String event,@RequestParam String captcha){
 
 		User user = (User) SecurityUtils.getSubject().getPrincipal();
 
@@ -499,7 +497,7 @@ public class RestUserController {
 
 		}
 
-		if(userService.changePassword(userEntity.getMobile(),newPassword,userType) == 0){
+		if(userService.changePassword(userEntity.getMobile(),newPassword,user.getUserType()) == 0){
 			return new RestResponseBean(ResultEnum.ERROR.getValue(),ResultEnum.ERROR.getDesc(),null);
 		}
 
