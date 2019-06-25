@@ -37,8 +37,8 @@ public enum ResultEnum {
 	/**
 	 * 个人中心
 	 */
-	NOT_EXIST_OLDAVATAR(0,"没有上一个头像"),
-    CHANGE_WORK_STATUS(0,"修改上班状态成功"),
+	NOT_EXIST_OLDAVATAR(1,"没有上一个头像"),
+    CHANGE_WORK_STATUS(1,"修改上班状态成功"),
 
 	/**
      * 权限不足 返回code 值范围
