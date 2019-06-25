@@ -23,6 +23,8 @@ import org.benben.modules.business.user.service.IUserService;
 import org.benben.modules.business.user.service.IUserThirdService;
 import org.benben.modules.business.user.vo.UserStoreVo;
 import org.benben.modules.business.user.vo.UserVo;
+import org.benben.modules.business.userstore.entity.UserStore;
+import org.benben.modules.business.userstore.service.IUserStoreService;
 import org.benben.modules.shiro.authc.util.JwtUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +73,9 @@ public class RestUserController {
 
     @Autowired
     private ISMSService ismsService;
+
+    @Autowired
+    private IUserStoreService userStoreService;
 
 	@Autowired
 	private StringRedisTemplate stringRedisTemplate;
@@ -686,7 +691,17 @@ public class RestUserController {
 
         User user = userService.queryByMobileAndUserType(mobile,"1");
 
-        if (user == null) {
+		UserStore userStore = userStoreService.queryByUserId(user.getId());
+
+		if(StringUtils.equals(userStore.getCompleteFlag(),"0")){
+			return new RestResponseBean(ResultEnum.COMPLETE_UNDER_WAY.getValue(),ResultEnum.COMPLETE_UNDER_WAY.getDesc(),null);
+		}
+
+		if(StringUtils.equals(userStore.getCompleteFlag(),"1")){
+			return new RestResponseBean(ResultEnum.COMPLETE_NOT_PASS.getValue(),ResultEnum.COMPLETE_NOT_PASS.getDesc(),null);
+		}
+
+		if (user == null) {
             sysBaseAPI.addLog("登录失败，用户名:" + mobile + "不存在！", CommonConstant.LOG_TYPE_1, null);
             return new RestResponseBean(ResultEnum.USER_NOT_EXIST.getValue(), ResultEnum.USER_NOT_EXIST.getDesc(), null);
         } else {

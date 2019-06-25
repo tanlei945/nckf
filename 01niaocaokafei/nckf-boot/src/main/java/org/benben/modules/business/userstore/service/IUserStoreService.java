@@ -11,4 +11,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IUserStoreService extends IService<UserStore> {
 
+	UserStore queryByUserId(String userId);
+
 }

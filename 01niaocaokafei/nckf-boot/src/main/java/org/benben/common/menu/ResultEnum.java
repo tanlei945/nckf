@@ -40,6 +40,13 @@ public enum ResultEnum {
 	NOT_EXIST_OLDAVATAR(1,"没有上一个头像"),
     CHANGE_WORK_STATUS(1,"修改上班状态成功"),
 
+
+	/**
+	 * 骑手
+	 */
+	COMPLETE_UNDER_WAY(0,"审核进行中"),
+	COMPLETE_NOT_PASS(0,"审核未通过"),
+
 	/**
      * 权限不足 返回code 值范围
      */
