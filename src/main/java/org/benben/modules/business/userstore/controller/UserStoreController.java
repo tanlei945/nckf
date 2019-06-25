@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.benben.common.api.vo.Result;
 import org.benben.common.system.query.QueryGenerator;
 import org.benben.common.util.oConvertUtils;
+import org.benben.modules.business.user.entity.User;
 import org.benben.modules.business.userstore.entity.UserStore;
 import org.benben.modules.business.userstore.service.IUserStoreService;
 
@@ -109,6 +110,47 @@ public class UserStoreController {
 		
 		return result;
 	}
+
+
+
+	 //修改审核状态为成功接口
+	 @GetMapping(value = "/changeRiderStatusOk")
+	 public Result<UserStore> changeRiderStatus(@RequestParam(name = "riderId") String riderId){
+		 Result<UserStore> result = new Result<UserStore>();
+		 QueryWrapper<UserStore> queryWrapper = new QueryWrapper<>();
+		 queryWrapper.eq("user_id",riderId);
+		 UserStore userStore = new UserStore();
+		 userStore.setCompleteFlag("2");
+		 boolean ok = userStoreService.update(userStore,queryWrapper);
+		 if(ok){
+			 result.success("修改成功");
+		 }else{
+		 	result.error500("修改失败");
+		 }
+
+		 return result;
+	 }
+
+
+
+
+	 //修改审核状态为未通过审核接口
+	 @GetMapping(value = "/changeRiderStatusNo")
+	 public Result<UserStore> changeRiderStatusNo(@RequestParam(name = "riderId") String riderId){
+		 Result<UserStore> result = new Result<UserStore>();
+		 QueryWrapper<UserStore> queryWrapper = new QueryWrapper<>();
+		 queryWrapper.eq("user_id",riderId);
+		 UserStore userStore = new UserStore();
+		 userStore.setCompleteFlag("1");
+		 boolean ok = userStoreService.update(userStore,queryWrapper);
+		 if(ok){
+			 result.success("修改成功");
+		 }else{
+			 result.error500("修改失败");
+		 }
+
+		 return result;
+	 }
 	
 	/**
 	  *   通过id删除
