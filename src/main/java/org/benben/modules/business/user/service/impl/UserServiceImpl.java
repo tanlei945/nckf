@@ -269,10 +269,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
 		BeanUtils.copyProperties(userStoreVo,user);
 		BeanUtils.copyProperties(userStoreVo,userStore);
+		String idCard = userStoreVo.getIdCard();
+		idCard = idCard.substring(idCard.length() - 6);
+
 		user.setUserType("1");
 		String salt = oConvertUtils.randomGen(8);
 		user.setSalt(salt);
-		String passwordEncode = PasswordUtil.encrypt(userStoreVo.getPassword(), userStoreVo.getPassword(), salt);
+		String passwordEncode = PasswordUtil.encrypt(idCard, idCard, salt);
 		user.setPassword(passwordEncode);
 		userMapper.insert(user);
 		// 保存骑手信息
