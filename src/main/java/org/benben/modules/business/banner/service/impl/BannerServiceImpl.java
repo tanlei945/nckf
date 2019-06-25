@@ -5,6 +5,7 @@ import org.benben.common.api.vo.Result;
 import org.benben.modules.business.banner.entity.Banner;
 import org.benben.modules.business.banner.mapper.BannerMapper;
 import org.benben.modules.business.banner.service.IBannerService;
+import org.benben.modules.business.commen.service.ICommonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,8 @@ import java.util.List;
 public class BannerServiceImpl extends ServiceImpl<BannerMapper, Banner> implements IBannerService {
     @Autowired
     private BannerMapper bannerMapper;
+    @Autowired
+    private ICommonService commonService;
 
     @Override
     public List<String> queryImageList() {
@@ -32,7 +35,7 @@ public class BannerServiceImpl extends ServiceImpl<BannerMapper, Banner> impleme
         List<Banner> list = bannerMapper.selectList(queryWrapper);
         ArrayList<String> imageList = new ArrayList<>();
         for (Banner ban:list){
-
+            ban.setImgUrl(commonService.getLocalUrl(ban.getImgUrl()));
             imageList.add(ban.getImgUrl());
         }
         return imageList;
