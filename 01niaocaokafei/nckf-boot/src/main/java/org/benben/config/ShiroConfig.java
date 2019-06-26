@@ -93,8 +93,25 @@ public class ShiroConfig {
 		filterChainDefinitionMap.put("/api/v1/category/query_all_store/getCategory", "anon");
 		filterChainDefinitionMap.put("/api/v1/goods/queryGoodsByCategory", "anon");
 		filterChainDefinitionMap.put("/api/v1/category/getCategory", "anon");
-
-
+		filterChainDefinitionMap.put("/api/v1/rechargeConfig/queryHowToBuy", "anon");
+		filterChainDefinitionMap.put("/api/v1/rechargeConfig/queryHowToRecharge", "anon");
+		filterChainDefinitionMap.put("/api/v1/rechargeConfig/queryInvoiceIssued", "anon");
+		filterChainDefinitionMap.put("/api/v1/rechargeConfig/queryOtherProblems", "anon");
+		filterChainDefinitionMap.put("/api/v1/rechargeConfig/queryRechargeDictionary", "anon");
+		filterChainDefinitionMap.put("/api/v1/feedback/addFeedBack", "anon");
+		filterChainDefinitionMap.put("/api/v1/feedback/queryFeedBackList", "anon");
+		filterChainDefinitionMap.put("/api/v1/common/uploadImageLocal", "anon");
+		filterChainDefinitionMap.put("/api/v1/category/getCategory", "anon");
+		filterChainDefinitionMap.put("/api/v1/goods/queryGoodsByCategory", "anon");
+		filterChainDefinitionMap.put("/api/v1/goods/queryGoodsSpec", "anon");
+		filterChainDefinitionMap.put("/api/v1/store/queryStoreByDistance", "anon");
+		filterChainDefinitionMap.put("/api/v1/store/query_all_store", "anon");
+		filterChainDefinitionMap.put("/api/v1/announcement/queryAnnouncementById", "anon");
+		filterChainDefinitionMap.put("/api/v1/announcement/queryAnnouncementTitle", "anon");
+		filterChainDefinitionMap.put("/api/v1/coupons/queryCoupons", "anon");
+		filterChainDefinitionMap.put("/api/v1/systemConfig/queryByTime", "anon");
+		filterChainDefinitionMap.put("/api/v1/announcement/queryAnnouncementTitle", "anon");
+		filterChainDefinitionMap.put("/api/v1/announcement/queryAnnouncementTitle", "anon");
 		//性能监控
 		filterChainDefinitionMap.put("/actuator/metrics/**", "anon");
 		filterChainDefinitionMap.put("/actuator/httptrace/**", "anon");
