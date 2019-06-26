@@ -89,6 +89,11 @@ public class Store implements Serializable {
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	private java.util.Date updateTime;
-	/**所属用户*/
+	@Excel(name = "管理员id", width = 15)
+	/**管理员id*/
 	private String belongId;
+	@Excel(name = "图片路径", width = 64)
+	/**门店图片*/
+	private String imgUrl;
+
 }

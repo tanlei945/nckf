@@ -1,5 +1,6 @@
 package org.benben.modules.business.announcement.controller;
 
+import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -17,6 +18,7 @@ import org.benben.modules.business.announcement.service.IAnnouncementService;
 import org.benben.modules.business.announcement.vo.AnnouncementVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.spring.web.json.Json;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -144,6 +146,8 @@ public class RestAnnouncementController {
 		for (Announcement announcement : list) {
 			announcementVo.setAnnouncementId(announcement.getId());
 			announcementVo.setTitle(announcement.getTitle());
+			announcementVo.setImgUrl(announcement.getImgUrl());
+			announcementVo.setSendTime(announcement.getSendTime());
 			listVo.add(announcementVo);
 		}
 
