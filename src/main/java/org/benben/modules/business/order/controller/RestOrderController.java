@@ -399,6 +399,32 @@ public class RestOrderController {
         return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
     }
 
+
+    /**
+     * 通过id查询
+     * @return
+     */
+    @GetMapping(value = "/queryNewOrder")
+    @ApiOperation(value = "首页查询未完成订单接口", tags = {"首页"}, notes = "首页查询未完成订单接口")
+    public RestResponseBean queryNewOrder() {
+        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        if(user==null) {
+            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+        }
+        QueryWrapper<OrderGoods> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id",user.getId()).eq("status","2");
+
+        List<OrderGoods> orderGoodsList = orderGoodsService.list(queryWrapper);
+        if(orderGoodsList!=null){
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),orderGoodsList);
+        }
+        return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+    }
+
+
+
+
+
     @GetMapping(value = "/distance")
     @ApiOperation(value = "用户最近订单的骑手距离", tags = {"订单购物车接口"}, notes = "用户最近订单的骑手距离")
     public RestResponseBean queryDistance(@RequestParam(name = "userLat",required = true) String  userLat,@RequestParam(name = "userLng",required = true) String userLng){
@@ -414,6 +440,7 @@ public class RestOrderController {
         }
 
         Order newOrder = new Order();
+
         if(list.size()==1){
             newOrder = list.get(0);
             //计算距离
@@ -432,16 +459,23 @@ public class RestOrderController {
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),meter);
 
         }else{
-            newOrder = selectLastOne(list);
+            Order lastOrder = list.get(0);
+            for (int i = 0; i <list.size()-1 ; i++) {
+                if(list.get(i+1).getCreateTime().after(lastOrder.getCreateTime())){
+                    lastOrder = list.get(i+1);
+                }
+
+            }
+            //newOrder = selectLastOne(list);
             //计算距离
             QueryWrapper<RiderAddress> queryWrapper1 = new QueryWrapper<>();
-            queryWrapper1.lambda().eq(RiderAddress::getRiderId,newOrder.getRiderId());
+            queryWrapper1.lambda().eq(RiderAddress::getRiderId,lastOrder.getRiderId());
             RiderAddress riderAddress = riderAddressService.getOne(queryWrapper1);
 
             OrderDistanceVo orderDistanceVo = new OrderDistanceVo();
             orderDistanceVo.setLat(riderAddress.getLat());
             orderDistanceVo.setLng(riderAddress.getLng());
-            orderDistanceVo.setOrderId(newOrder.getId());
+            orderDistanceVo.setOrderId(lastOrder.getId());
 
             String meter = DistanceUtil.algorithm(riderAddress.getLat(),riderAddress.getLng(),Double.parseDouble(userLat),Double.parseDouble(userLng));
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),meter);

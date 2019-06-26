@@ -55,6 +55,32 @@ public class RestMessageController {
 	}
 
 
+
+
+	/**
+	 *
+	 * @return
+	 */
+	@GetMapping(value = "/changeMessageStatus")
+	@ApiOperation(value = "用户阅读系统消息（改变状态为已读）", notes = "用户阅读系统消息（改变状态为已读）", tags = {"首页"})
+	public RestResponseBean changeMessageStatus(@RequestParam(name = "messageId",required = true)String messageId){
+
+		Message message = new Message();
+		message.setId(messageId);
+		message.setReadTime(new Date());
+		message.setReadFlag("1");
+		boolean ok = messageService.updateById(message);
+		if(ok){
+			return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
+		}
+
+		return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(),null);
+
+	}
+
+
+
+
 /**
 	 * 通过id查询
 	 * @param id
