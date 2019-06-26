@@ -31,10 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @RestController
@@ -411,11 +408,15 @@ public class RestOrderController {
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
-        QueryWrapper<OrderGoods> queryWrapper = new QueryWrapper<>();
+        QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id",user.getId()).eq("status","2");
 
-        List<OrderGoods> orderGoodsList = orderGoodsService.list(queryWrapper);
-        if(orderGoodsList!=null){
+        List<Order> orderList = orderService.list(queryWrapper);
+        if(orderList!=null){
+            List<OrderGoods> orderGoodsList = new ArrayList<>();
+            for (Order order : orderList) {
+                orderGoodsList.add(orderGoodsService.getById(order.getId()));
+            }
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),orderGoodsList);
         }
         return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
