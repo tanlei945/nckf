@@ -49,8 +49,7 @@ public class RestMessageController {
 		queryWrapper.lambda().eq(Message::getDelFlag,"1");
 		Page<Message> page = new Page<Message>(pageNo, pageSize);
 		IPage<Message> pageList = messageService.page(page, queryWrapper);
-		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(),
-				pageList);
+		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), pageList);
 
 	}
 

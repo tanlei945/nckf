@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.menu.ResultEnum;
+import org.benben.modules.business.commen.service.ICommonService;
 import org.benben.modules.business.goods.entity.Goods;
 import org.benben.modules.business.goods.service.IGoodsService;
 import org.benben.modules.system.service.ISysUserService;
@@ -36,6 +37,9 @@ public class RestGoodsController {
 
    @Autowired
    private ISysUserService sysUserService;
+
+   @Autowired
+   private ICommonService commonService;
 
 
 
@@ -81,8 +85,11 @@ public class RestGoodsController {
                                          @RequestParam(name="belongId")String belongId)
  {
      try {
-         List<Goods> goods = goodsService.queryByCotegory(categoryType, belongId);
-         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), goods);
+         List<Goods> goodsList = goodsService.queryByCotegory(categoryType, belongId);
+         for (Goods good : goodsList) {
+             good.setImgUrl(commonService.getLocalUrl(good.getImgUrl()));
+         }
+         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), goodsList);
      } catch (Exception e) {
          e.printStackTrace();
          return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
@@ -98,8 +105,7 @@ public class RestGoodsController {
      * @description 根据商品id查商品规格
      * @param goodId 必填 String 商品ID
      * @method POST
-     * @url /nckf-boot/api/v1/goods/queryGoodsByCategory
-     * @return {"code": 1,"data": {"商品温度": ["热","冰","常温"],"规格": ["小","大","中"],"商品加糖": ["加糖","不加糖"]},"msg": "操作成功","time": "1561017610898"}
+1     * @return {"code": 1,"data": {"商品温度": ["热","冰","常温"],"规格": ["小","大","中"],"商品加糖": ["加糖","不加糖"]},"msg": "操作成功","time": "1561017610898"}
      * @return_param code String 响应状态
      * @return_param msg String 操作信息
      * @return_param time Date 操作时间

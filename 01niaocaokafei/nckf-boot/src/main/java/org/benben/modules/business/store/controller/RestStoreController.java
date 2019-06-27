@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.menu.ResultEnum;
 import org.benben.common.system.query.QueryGenerator;
+import org.benben.modules.business.commen.service.ICommonService;
 import org.benben.modules.business.store.entity.Store;
 import org.benben.modules.business.store.service.IStoreService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,8 @@ import java.util.List;
 public class RestStoreController {
    @Autowired
    private IStoreService storeService;
+   @Autowired
+   private ICommonService commonService;
 
 
 
@@ -162,12 +165,31 @@ public class RestStoreController {
             QueryWrapper<Store> queryWrapper = new QueryWrapper<>();
             Page<Store> page = new Page<Store>(pageNo, pageSize);
             IPage<Store> pageList = storeService.page(page, queryWrapper);
+
+            List<Store> list = pageList.getRecords();
+            for (Store store : list) {
+                store.setImgUrl(commonService.getLocalUrl(store.getImgUrl()));
+            }
+
+            pageList.setRecords(list);
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), pageList);
         } catch (Exception e) {
             e.printStackTrace();
             return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
         }
 
+    }
+
+
+
+    @GetMapping("/queryStoreById")
+    @ApiOperation(value="根据id查询商家", tags = {"门店管理接口"})
+    public RestResponseBean queryStoreById(@RequestParam(name = "id",required = true) String id){
+        Store store = storeService.getById(id);
+        if(store != null){
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), store);
+        }
+        return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
     }
 
 }
