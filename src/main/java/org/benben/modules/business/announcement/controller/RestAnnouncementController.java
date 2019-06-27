@@ -142,15 +142,14 @@ public class RestAnnouncementController {
 		queryWrapper.lambda().eq(Announcement::getDelFlag,"1");
 		List<Announcement> list = announcementService.list(queryWrapper);
 		List<AnnouncementVo> listVo = new ArrayList<>();
-		AnnouncementVo announcementVo = new AnnouncementVo();
 		for (Announcement announcement : list) {
+			AnnouncementVo announcementVo = new AnnouncementVo();
 			announcementVo.setAnnouncementId(announcement.getId());
 			announcementVo.setTitle(announcement.getTitle());
 			announcementVo.setImgUrl(announcement.getImgUrl());
 			announcementVo.setSendTime(announcement.getSendTime());
 			listVo.add(announcementVo);
 		}
-
 		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(),
 				listVo);
 	}
