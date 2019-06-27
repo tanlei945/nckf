@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: dev
+    active: mac
 
 #三方短信
 sms:
@@ -38,4 +38,4 @@ mail:
 
 #本地ip
 local :
-  ip : http://192.168.1.119
+  ip : http://122.114.149.52
