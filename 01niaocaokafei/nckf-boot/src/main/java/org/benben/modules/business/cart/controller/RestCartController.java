@@ -12,10 +12,13 @@ import org.benben.common.menu.ResultEnum;
 import org.benben.common.util.DateUtils;
 import org.benben.modules.business.cart.entity.Cart;
 import org.benben.modules.business.cart.service.ICartService;
+import org.benben.modules.business.cart.vo.CartAddVo;
 import org.benben.modules.business.cart.vo.CartVo;
 import org.benben.modules.business.cart.vo.ListCartVo;
 import org.benben.modules.business.goods.entity.Goods;
 import org.benben.modules.business.goods.service.IGoodsService;
+import org.benben.modules.business.store.entity.Store;
+import org.benben.modules.business.store.service.IStoreService;
 import org.benben.modules.business.user.entity.User;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/v1/cart")
@@ -37,49 +39,10 @@ public class RestCartController {
     private ICartService cartService;
     @Autowired
     private IGoodsService goodsService;
-
-    /**
-     * showdoc
-     * @catalog 订单购物车接口
-     * @title 清空购物车
-     * @description 清空购物车
-     * @method GET
-     * @url /nckf-boot/api/v1/cart/queryCart
-     * @param storeId 必填 String 商户id
-     * @param userId 必填 String 用户id
-     * @return {"code": 1,"data": [],"msg": "操作成功","time": "1561012911038"}
-     * @return_param code String 响应状态
-     * @return_param data List 购物车商品信息
-     * @return_param msg String 操作信息
-     * @return_param time Date 操作时间
-     * @remark 这里是备注信息
-     * @number 4
-     */
-    @GetMapping(value = "/queryCart")
-    @ApiOperation(value = "当前购物车查询", notes = "当前购物车查询",tags = "订单购物车接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name="userId",value = "用户Id",dataType = "String",required = true),
-            @ApiImplicitParam(name="storeId",value = "商店Id",dataType = "String",required = true),
-    })
-    public RestResponseBean queryCart(@RequestParam(value = "userId",required = true) String userId,@RequestParam(value = "userId",required = true) String storeId) {
-        QueryWrapper<Cart> cartQueryWrapper = new QueryWrapper<>();
-        cartQueryWrapper.eq("user_id",userId).eq("store_id",storeId).eq("checked_flag",1);
-        List<Cart> cartlist = cartService.list(cartQueryWrapper);
-        ArrayList<ListCartVo> listCartVos = new ArrayList<>();
-        for(Cart cart :cartlist){
-            QueryWrapper<Goods> goodsQueryWrapper = new QueryWrapper<>();
-            goodsQueryWrapper.eq("id", cart.getGoodsId());
-            Goods goods = goodsService.getOne(goodsQueryWrapper);
-            ListCartVo listCartVo = new ListCartVo();
-            BeanUtils.copyProperties(cart,listCartVo);
-            listCartVo.setPrice(goods.getPrice());
-            listCartVos.add(listCartVo);
-        }
-
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),listCartVos);
+    @Autowired
+    private IStoreService storeService;
 
 
-    }
 
 
     /**
@@ -112,17 +75,19 @@ public class RestCartController {
     @PostMapping(value = "/addCart")
     @Transactional
     @ApiOperation(value = "购物车添加商品", notes = "购物车添加商品",tags = "订单购物车接口")
-    public RestResponseBean addCart(@RequestBody Cart cart) {
+    public RestResponseBean addCart(@RequestBody CartAddVo cartAddVo) {
         User user = (User) SecurityUtils.getSubject().getPrincipal();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
-        if(cart!=null){
-            Goods goods = goodsService.getById(cart.getGoodsId());
-            if(goods!=null){
-                cart.setStoreId(goods.getBelongId());
-                cart.setUserId(user.getId());
-            }
+        Cart cart = new Cart();
+        BeanUtils.copyProperties(cartAddVo,cart);
+        Goods goods = goodsService.getById(cartAddVo.getGoodsId());
+        if(goods!=null){
+            cart.setStoreId(goods.getBelongId());
+            cart.setUserId(user.getId());
+            cart.setCreateBy(user.getRealname());
+            cart.setCreateTime(new Date());
         }
 
         try {
@@ -221,8 +186,34 @@ public class RestCartController {
         cartQueryWrapper.and(wrapperT -> wrapperT.eq("user_id",user.getId()));
         List<Cart> list = cartService.list(cartQueryWrapper);
 
+        //购物车中的不同门店id进行分类，存放到Set集合中
+        Set<String> set = new HashSet<>();
+        for (Cart cart : list) {
+            set.add(cart.getStoreId());
+        }
 
-        return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),list);
+        Map<Store,List<Goods>> map = new HashMap<>();
+
+        //把不同的商品分别分别放入到各自的门店下
+        for (String s : set) {
+            List<Goods> listGoods = new ArrayList<>();
+            for (Cart cart : list) {
+                if(cart.getStoreId().equals(s)){
+                    listGoods.add(goodsService.getById(cart.getGoodsId()));
+                }
+            }
+            Store store = storeService.getById(s);
+            map.put(store,listGoods);
+
+        }
+        /*log.info(map.toString());
+        Map<String,String> map1 = new HashMap<String,String>(){{
+            put("1","1");
+            put("2","2");
+        }};
+*/
+
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),map);
     }
 
 
@@ -291,26 +282,5 @@ public class RestCartController {
         return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
     }
 
-//    @PostMapping(value = "/deletes")
-//    @Transactional
-//    @ApiOperation(value = "同时删除多个购物车商品",notes = "同时删除多个删除购物车商品",tags = "购物车接口")
-//    public RestResponseBean deletes(@RequestBody DeletesVo deletes) {
-//        boolean ok;
-//        for(int i=0;i<deletes.getGoodsId().size();i++) {
-//            QueryWrapper<Cart> cartQueryWrapper = new QueryWrapper<>();
-//            cartQueryWrapper.eq("goods_id", deletes.getGoodsId().get(i)).eq("user_id", deletes.getUserId()).eq("store_id", deletes.getStoreId());
-//            Cart cart = cartService.getOne(cartQueryWrapper);
-//            if (cart.getGoodsNum() > 1) {
-//                cart.setGoodsNum(cart.getGoodsNum() - 1);
-//                ok = cartService.updateById(cart);
-//            } else {
-//                ok = cartService.remove(cartQueryWrapper);
-//            }
-//            if (!ok) {
-//                return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
-//            }
-//        }
-//        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
-//
-//    }
+
 }

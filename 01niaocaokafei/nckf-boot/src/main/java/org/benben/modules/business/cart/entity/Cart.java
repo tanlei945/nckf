@@ -30,10 +30,6 @@ public class Cart implements Serializable {
 	/**用户id*/
 	@Excel(name = "用户id", width = 15)
 	private java.lang.String userId;
-	/**是否选中*/
-	@Excel(name = "是否选中", width = 15)
-	@ApiModelProperty(value = "是否选中 0未选中 1选中",required = true)
-	private java.lang.String checkedFlag;
 	/**商品id*/
 	@Excel(name = "商品id", width = 15)
 	@ApiModelProperty(value = "商品id")
@@ -45,7 +41,7 @@ public class Cart implements Serializable {
 	/**商品规格*/
 	@Excel(name = "商品规格", width = 15)
 	@ApiModelProperty(value = "商品规格")
-	private java.lang.String goodstSpecid;
+	private java.lang.String goodsSpecids;
 	/**商品数量*/
 	@Excel(name = "商品数量", width = 15)
 	@ApiModelProperty(value = "商品数量")
