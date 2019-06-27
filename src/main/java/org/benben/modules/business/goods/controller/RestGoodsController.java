@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.menu.ResultEnum;
 import org.benben.modules.business.commen.service.ICommonService;
+import org.benben.modules.business.goods.GoodsSpec;
 import org.benben.modules.business.goods.entity.Goods;
 import org.benben.modules.business.goods.service.IGoodsService;
 import org.benben.modules.system.service.ISysUserService;
@@ -17,8 +18,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
 * @Title: Controller
@@ -52,8 +55,8 @@ public class RestGoodsController {
     /**
      * showdoc
      * @catalog 门店管理接口
-     * @title 根据门店id查所属商品
-     * @description 根据门店id查所属商品
+     * @title 根据门店，类别查商品
+     * @description 根据门店，类别查商品
      * @param belongId 必填 String 所属商家ID
      * @param categoryType String 商品类型
      * @method POST
@@ -76,7 +79,7 @@ public class RestGoodsController {
      * @number 1
      */
  @GetMapping("queryGoodsByCategory")
- @ApiOperation(value="根据门店id查所属商品",tags = {"门店管理接口"})
+ @ApiOperation(value="根据门店，类别查商品",tags = {"门店管理接口"})
  @ApiImplicitParams({
          @ApiImplicitParam(name="belongId",value="所属商家id",dataType = "String",required = true),
          @ApiImplicitParam(name="categoryType",value="商品类别",dataType = "String",required = true)
@@ -86,10 +89,19 @@ public class RestGoodsController {
  {
      try {
          List<Goods> goodsList = goodsService.queryByCotegory(categoryType, belongId);
-         for (Goods good : goodsList) {
-             good.setImgUrl(commonService.getLocalUrl(good.getImgUrl()));
+         List<GoodsSpec> list = new ArrayList<>();
+         Map<String, List<String>> map = new HashMap<>();
+         for (Goods goods : goodsList) {
+             goods.setImgUrl(commonService.getLocalUrl(goods.getImgUrl()));
+             map = goodsService.querySpec(goods.getId());
+             GoodsSpec goodsSpec = new GoodsSpec();
+             goodsSpec.setGoods(goods);
+             goodsSpec.setMap(map);
+             list.add(goodsSpec);
          }
-         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), goodsList);
+
+
+         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), list);
      } catch (Exception e) {
          e.printStackTrace();
          return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);

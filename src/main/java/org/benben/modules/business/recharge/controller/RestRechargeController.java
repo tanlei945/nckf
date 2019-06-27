@@ -39,7 +39,6 @@ public class RestRechargeController {
      * @description 充值记录
      * @method GET
      * @url /nckf-boot/api/v1/recharge/queryRecharge
-     * @param rechargeType 必填 String 支付类型（1:支付宝 2:微信)
      * @return {"code": 1,"data": {"current": 1,"pages": 0,"records": [],"searchCount": true,"size": 10,"total": 0},"msg": "操作成功","time": "1561013320530"}
      * @return_param code String 响应状态
      * @return_param data List 充值信息
@@ -51,8 +50,7 @@ public class RestRechargeController {
     @GetMapping(value = "/queryRecharge")
     @ApiOperation(value = "充值记录", tags = {"用户接口"}, notes = "充值记录")
 	@ApiImplicitParam(name = "rechargeType",value = "1：支付宝 2：微信",dataType = "String",required = true)
-    public RestResponseBean queryRecharge(@RequestParam(name = "rechargeType", required = true)String rechargeType,
-                                          @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+    public RestResponseBean queryRecharge(@RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
                                           @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
 
 		User user = (User) SecurityUtils.getSubject().getPrincipal();
@@ -62,7 +60,7 @@ public class RestRechargeController {
 		}
 
         QueryWrapper<Recharge> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(Recharge::getUserId,user.getId()).eq(Recharge::getRechargeType,rechargeType);
+        queryWrapper.lambda().eq(Recharge::getUserId,user.getId());
         Page<Recharge> page = new Page<Recharge>(pageNo, pageSize);
         IPage<Recharge> pageList = rechargeService.page(page, queryWrapper);
 

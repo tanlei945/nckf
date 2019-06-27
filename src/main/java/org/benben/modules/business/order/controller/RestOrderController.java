@@ -14,6 +14,8 @@ import org.benben.common.api.vo.Result;
 import org.benben.common.menu.ResultEnum;
 import org.benben.common.system.query.QueryGenerator;
 import org.benben.common.util.DistanceUtil;
+import org.benben.modules.business.cart.entity.Cart;
+import org.benben.modules.business.cart.service.ICartService;
 import org.benben.modules.business.order.entity.Order;
 import org.benben.modules.business.order.entity.OrderGoods;
 import org.benben.modules.business.order.service.IOrderGoodsService;
@@ -49,9 +51,10 @@ public class RestOrderController {
    private IUserService userService;
    @Autowired
    private IStoreService storeService;
-
    @Autowired
    private IRiderAddressService riderAddressService;
+   @Autowired
+   private ICartService cartService;
 
 
 
@@ -315,12 +318,24 @@ public class RestOrderController {
      */
    @PostMapping(value = "/addOrder")
    @ApiOperation(value = "用户新增订单接口", tags = {"订单购物车接口"}, notes = "用户新增订单接口")
-   public RestResponseBean addOrder(OrderPage orderPage) {
+   public RestResponseBean addOrder() {
        User user = (User) SecurityUtils.getSubject().getPrincipal();
        if(user==null) {
            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
        }
-       Order order = orderService.add(orderPage);
+
+       QueryWrapper<Cart> queryWrapper = new QueryWrapper<>();
+       queryWrapper.eq("user_id",user.getId()).eq("checked_flag","1");
+       List<Cart> cartList = cartService.list(queryWrapper);
+
+
+       for (Cart cart : cartList) {
+
+       }
+       Order order = new Order();
+
+
+       //Order order = orderService.add();
        if(order!=null){
            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),order);
        }
