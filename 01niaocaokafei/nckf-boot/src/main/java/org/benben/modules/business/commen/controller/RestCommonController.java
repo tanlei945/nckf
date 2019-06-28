@@ -36,15 +36,26 @@ public class RestCommonController {
 
     @PostMapping(value = "/uploadImageLocal")
     @ApiOperation(value = "上传图片到本地",tags = {"通用接口"}, notes = "上传图片到本地")
-    public RestResponseBean uploadImageLocal(@RequestParam(value = "file") MultipartFile file) {
+    public RestResponseBean uploadImageLocal(@RequestParam(value = "files") MultipartFile[] files) {
 
-        String dbpath =commonService.localUploadImage(file);
+		String images[] = new String[files.length];
 
-        if(StringUtils.isBlank(dbpath)){
-            return new RestResponseBean(ResultEnum.UPLOAD_FAILURE.getValue(),ResultEnum.UPLOAD_FAILURE.getDesc(),null);
-        }
+		int num = 0;
 
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),dbpath);
+    	if(files.length == 0){
+			return new RestResponseBean(ResultEnum.PARAMETER_MISSING.getValue(),ResultEnum.PARAMETER_MISSING.getDesc(),null);
+		}
+
+		for(MultipartFile file : files){
+
+			String dbpath =commonService.localUploadImage(file);
+
+			images[num] = dbpath;
+
+			num++;
+		}
+
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),images);
 
     }
 
