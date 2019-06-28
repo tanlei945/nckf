@@ -7,6 +7,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
@@ -19,6 +20,7 @@ import org.benben.modules.business.invoice.entity.Invoice;
 import org.benben.modules.business.invoice.entity.InvoiceTitle;
 import org.benben.modules.business.invoice.service.IInvoiceService;
 import org.benben.modules.business.invoice.service.IInvoiceTitleService;
+import org.benben.modules.business.invoice.vo.InvoiceTitleVo;
 import org.benben.modules.business.invoice.vo.InvoiceVo;
 import org.benben.modules.business.order.entity.Order;
 import org.benben.modules.business.order.service.IOrderService;
@@ -30,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -283,7 +286,6 @@ public class RestInvoiceController {
      */
     @GetMapping(value = "/title/queryInvoiceTitle")
     @ApiOperation(value = "用户发票抬头查询接口", tags = {"用户接口"}, notes = "用户发票抬头查询接口")
-    @ApiImplicitParam(name = "userId", value = "用户id")
     public RestResponseBean queryInvoiceTitle() {
         User user = (User) SecurityUtils.getSubject().getPrincipal();
         if(user==null) {
@@ -292,10 +294,8 @@ public class RestInvoiceController {
         QueryWrapper<InvoiceTitle> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id", user.getId());
         InvoiceTitle invoiceTitle = invoiceTitleService.getOne(queryWrapper);
-        if(invoiceTitle != null){
-            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),invoiceTitle);
-        }
-        return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),invoiceTitle);
+
 
     }
 
@@ -317,15 +317,20 @@ public class RestInvoiceController {
      */
     @PostMapping(value = "/title/addInvoiceTitle")
     @ApiOperation(value = "用户发票头提交接口", tags = {"用户接口"}, notes = "用户发票头提交接口")
-    public RestResponseBean addInvoiceTitle(@RequestBody InvoiceTitle invoiceTitle) {
+    public RestResponseBean addInvoiceTitle(@RequestBody InvoiceTitleVo invoiceTitleVo) {
         User user = (User) SecurityUtils.getSubject().getPrincipal();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
         QueryWrapper<InvoiceTitle> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("user_id", invoiceTitle.getUserId());
+        queryWrapper.eq("user_id", user.getId());
         InvoiceTitle invoiceTitlebyDB = invoiceTitleService.getOne(queryWrapper);
         if (invoiceTitlebyDB == null) {
+            InvoiceTitle invoiceTitle = new InvoiceTitle();
+            BeanUtils.copyProperties(invoiceTitleVo,invoiceTitle);
+            invoiceTitle.setCreateBy(user.getRealname());
+            invoiceTitle.setCreateTime(new Date());
+            invoiceTitle.setUserId(user.getId());
             boolean flag = invoiceTitleService.save(invoiceTitle);
             if (flag) {
                 return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
@@ -334,8 +339,13 @@ public class RestInvoiceController {
             }
         } else {
             QueryWrapper<InvoiceTitle> wrapper = new QueryWrapper<>();
-            wrapper.eq("user_id", invoiceTitle.getUserId());
-            boolean flag = invoiceTitleService.update(invoiceTitle, wrapper);
+            wrapper.eq("user_id", user.getId());
+            InvoiceTitle invoiceTitle = new InvoiceTitle();
+            BeanUtils.copyProperties(invoiceTitleVo,invoiceTitle);
+            invoiceTitle.setUpdateBy(user.getRealname());
+            invoiceTitle.setUpdateTime(new Date());
+            invoiceTitle.setId(invoiceTitlebyDB.getId());
+            boolean flag = invoiceTitleService.updateById(invoiceTitle);
             if (flag) {
                 return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
             } else {
