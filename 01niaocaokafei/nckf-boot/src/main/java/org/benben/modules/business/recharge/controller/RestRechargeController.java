@@ -49,7 +49,6 @@ public class RestRechargeController {
      */
     @GetMapping(value = "/queryRecharge")
     @ApiOperation(value = "充值记录", tags = {"用户接口"}, notes = "充值记录")
-	@ApiImplicitParam(name = "rechargeType",value = "1：支付宝 2：微信",dataType = "String",required = true)
     public RestResponseBean queryRecharge(@RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
                                           @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
 
