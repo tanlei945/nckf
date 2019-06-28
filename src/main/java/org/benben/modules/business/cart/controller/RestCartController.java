@@ -33,18 +33,12 @@ import java.util.*;
 @Slf4j
 @Api(tags = "订单购物车接口")
 public class RestCartController {
-
-
     @Autowired
     private ICartService cartService;
     @Autowired
     private IGoodsService goodsService;
     @Autowired
     private IStoreService storeService;
-
-
-
-
     /**
      * showdoc
      * @catalog 订单购物车接口
@@ -89,20 +83,12 @@ public class RestCartController {
             cart.setCreateBy(user.getRealname());
             cart.setCreateTime(new Date());
         }
-
-        try {
-            Cart cartResult = cartService.queryByGoodsId(cart);
-            if(cartResult!=null){
-                cartResult.setGoodsNum(cartResult.getGoodsNum()+1);
-                cartService.updateById(cartResult);
-            }else {
-                cartService.save(cart);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.info(e.getMessage());
-            return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+        Cart cartResult = cartService.queryByGoodsId(cart);
+        if(cartResult!=null){
+            cartResult.setGoodsNum(cartResult.getGoodsNum()+1);
+            cartService.updateById(cartResult);
+        }else {
+            cartService.save(cart);
         }
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
     }
@@ -186,24 +172,30 @@ public class RestCartController {
         cartQueryWrapper.and(wrapperT -> wrapperT.eq("user_id",user.getId()));
         List<Cart> list = cartService.list(cartQueryWrapper);
 
+        if(list == null){
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
+        }
+
         //购物车中的不同门店id进行分类，存放到Set集合中
         Set<String> set = new HashSet<>();
         for (Cart cart : list) {
             set.add(cart.getStoreId());
         }
 
-        Map<Store,List<Goods>> map = new HashMap<>();
+
+
+        Map<String,List<Goods>> map = new HashMap<>();
 
         //把不同的商品分别分别放入到各自的门店下
+
         for (String s : set) {
             List<Goods> listGoods = new ArrayList<>();
             for (Cart cart : list) {
-                if(cart.getStoreId().equals(s)){
+                if(s.equals(cart.getStoreId())){
                     listGoods.add(goodsService.getById(cart.getGoodsId()));
                 }
             }
-            Store store = storeService.getById(s);
-            map.put(store,listGoods);
+            map.put(s,listGoods);
 
         }
         /*log.info(map.toString());
@@ -211,7 +203,7 @@ public class RestCartController {
             put("1","1");
             put("2","2");
         }};
-*/
+        */
 
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),map);
     }
