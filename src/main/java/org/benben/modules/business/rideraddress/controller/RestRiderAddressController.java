@@ -68,28 +68,25 @@ public class RestRiderAddressController {
         QueryWrapper<RiderAddress> riderAddressQueryWrapper = new QueryWrapper<>();
         riderAddressQueryWrapper.eq("rider_id",user.getId());
         RiderAddress riderAddressEntity = riderAddressService.getOne(riderAddressQueryWrapper);
-        if(riderAddressEntity==null) {
+        if(riderAddressEntity != null) {
             riderAddressEntity.setCreateBy(user.getRealname());
             riderAddressEntity.setCreateTime(new Date());
-            boolean save = riderAddressService.save(riderAddressEntity);
-            if(save){
+            boolean ok = riderAddressService.save(riderAddressEntity);
+            if(ok){
                 return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
             }
-
             return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
-
         }else {
-            if(lat!=null || lat !="" && lng !=null || lng != ""){
-                riderAddressEntity.setLat(Double.parseDouble(lat));
-                riderAddressEntity.setLat(Double.parseDouble(lng));
-                riderAddressEntity.setUpdateBy(user.getRealname());
-                riderAddressEntity.setUpdateTime(new Date());
-                riderAddressService.update(riderAddressEntity, riderAddressQueryWrapper);
-                return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
-            }
+            RiderAddress riderAddress = new RiderAddress();
+            riderAddress.setRiderId(user.getId());
+            riderAddress.setLat(Double.parseDouble(lat));
+            riderAddress.setLat(Double.parseDouble(lng));
+            riderAddress.setUpdateBy(user.getRealname());
+            riderAddress.setUpdateTime(new Date());
+            riderAddressService.update(riderAddressEntity, riderAddressQueryWrapper);
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
         }
 
-        return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
     }
 
 

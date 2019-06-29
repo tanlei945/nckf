@@ -14,6 +14,6 @@ import java.util.List;
  */
 public interface ICartService extends IService<Cart> {
     public Cart queryByGoodsId(Cart cart);
-    public List<CartVo> getCartVo(List<Cart> carts);
+    //public List<CartVo> getCartVo(List<Cart> carts);
 
 }

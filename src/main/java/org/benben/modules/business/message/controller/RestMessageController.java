@@ -11,8 +11,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.menu.ResultEnum;
+import org.benben.modules.business.announcement.entity.Announcement;
+import org.benben.modules.business.announcement.service.IAnnouncementService;
 import org.benben.modules.business.message.entity.Message;
 import org.benben.modules.business.message.service.IMessageService;
+import org.benben.modules.business.message.vo.MessageVo;
 import org.benben.modules.business.user.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +23,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 @RestController
@@ -30,6 +35,8 @@ import java.util.Date;
 public class RestMessageController {
 	@Autowired
 	private IMessageService messageService;
+	@Autowired
+	private IAnnouncementService announcementService;
 
 	/**
 	 * 分页列表查询
@@ -49,7 +56,20 @@ public class RestMessageController {
 		queryWrapper.lambda().eq(Message::getDelFlag,"1");
 		Page<Message> page = new Page<Message>(pageNo, pageSize);
 		IPage<Message> pageList = messageService.page(page, queryWrapper);
-		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), pageList);
+
+		IPage<Announcement> pageListAnno = null;
+
+		List<Message> records = pageList.getRecords();
+		for (Message record : records) {
+			Page<Announcement> pageAnno = new Page<Announcement>(pageNo, pageSize);
+			pageListAnno = announcementService.page(pageAnno,null);
+
+		}
+
+
+
+
+		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), pageListAnno);
 
 	}
 

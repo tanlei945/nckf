@@ -50,6 +50,25 @@ public class RestInvoiceController {
     private IUserService userService;
 
 
+
+    @GetMapping(value = "/queryInvoiceOrder")
+    @ApiOperation(value = "用户可开发票订单查询接口", tags = {"用户接口"}, notes = "用户可开发票订单查询接口")
+    public RestResponseBean queryInvoiceOrder(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo, @RequestParam(name="pageSize", defaultValue="10") Integer pageSize) {
+        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        if(user==null) {
+            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+        }
+        Result<IPage<Order>> result = new Result<IPage<Order>>();
+        QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
+        //queryWrapper.eq("user_id",user.getId());
+        Page<Order> page = new Page<Order>(pageNo, pageSize);
+        IPage<Order> pageList = orderService.page(page, queryWrapper);
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
+
+    }
+
+
+
     /**
      * showdoc
      * @catalog 用户接口
