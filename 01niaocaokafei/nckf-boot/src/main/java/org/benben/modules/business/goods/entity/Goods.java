@@ -32,12 +32,15 @@ public class Goods implements Serializable {
 	/**商品名称*/
 	@Excel(name = "商品名称", width = 15)
 	private java.lang.String goodsName;
-	/**单价*/
-	@Excel(name = "单价", width = 15)
-	private java.lang.Double price;
-	/**划线价*/
-	@Excel(name = "划线价", width = 15)
-	private java.lang.Double linePrice;
+	/**小杯价格*/
+	@Excel(name = "小杯价格", width = 15)
+	private java.lang.Double smallPrice;
+	/**中杯价格*/
+	@Excel(name = "中杯价格", width = 15)
+	private java.lang.Double middlePrice;
+	/**大杯价格*/
+	@Excel(name = "大杯价格", width = 15)
+	private java.lang.Double bigPrice;
 	/**库存*/
 	@Excel(name = "库存", width = 15)
 	private java.lang.Integer goodsCount;

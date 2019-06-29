@@ -33,14 +33,14 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
     @Override
     public Cart queryByGoodsId(Cart cart) {
         QueryWrapper<Cart> Cart = new QueryWrapper<>();
-        Cart.eq("user_id",cart.getUserId()).eq("goods_id",cart.getGoodsId());
+        Cart.eq("user_id",cart.getUserId()).eq("goods_id",cart.getGoodsId()).eq("goods_spec_values",cart.getGoodsSpecValues());
         Cart cartResult = cartMapper.selectOne(Cart);
         return cartResult;
     }
 
-    @Override
+    /*@Override
     public List<CartVo> getCartVo(List<Cart> carts) {
-        ArrayList<CartVo> cartVos = new ArrayList<>();
+        List<CartVo> cartVos = new ArrayList<>();
 
         for(Cart cart:carts) {
             QueryWrapper<Goods> goodsQueryWrapper = new QueryWrapper<>();
@@ -51,5 +51,5 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
         }
 
         return cartVos;
-    }
+    }*/
 }

@@ -1,5 +1,4 @@
 package org.benben.modules.business.cart.controller;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -75,7 +74,10 @@ public class RestCartController {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
         Cart cart = new Cart();
-        BeanUtils.copyProperties(cartAddVo,cart);
+        cart.setGoodsNum(cartAddVo.getGoodsNum());
+        cart.setGoodsId(cartAddVo.getGoodsId());
+        cart.setGoodsSpecValues(cartAddVo.getGoodsSpecValues());
+        cart.setSelectedPrice(cartAddVo.getSelectedPrice());
         Goods goods = goodsService.getById(cartAddVo.getGoodsId());
         if(goods!=null){
             cart.setStoreId(goods.getBelongId());
@@ -210,7 +212,7 @@ public class RestCartController {
 
 
 
-    @PostMapping(value = "/deleteCartAll")
+    /*@PostMapping(value = "/deleteCartAll")
     @Transactional
     @ApiOperation(value = "清空购物车", notes = "清空购物车",tags = "订单购物车接口")
     @ApiImplicitParams({
@@ -238,7 +240,7 @@ public class RestCartController {
         }
 
         return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
-    }
+    }*/
 
     @PostMapping(value = "/deleteCartGoods")
     @Transactional
@@ -246,7 +248,7 @@ public class RestCartController {
     @ApiImplicitParams({
             @ApiImplicitParam(name="goodsId",value = "商品Id",dataType = "String",required = true),
     })
-    public RestResponseBean deleteStore(@RequestParam(name="goodsId",required=true) String goodsId) {
+    public RestResponseBean deleteStore(@RequestParam(name="goodsId",required=true) String goodsId,@RequestParam(name = "goodsSpecValues") String goodsSpecValues) {
         boolean ok;
 
         User user = (User) SecurityUtils.getSubject().getPrincipal();
@@ -255,8 +257,7 @@ public class RestCartController {
         }
 
         QueryWrapper<Cart> cartQueryWrapper = new QueryWrapper<>();
-        cartQueryWrapper.eq("goods_id",goodsId);
-        cartQueryWrapper.and(wrapper -> wrapper.eq("user_id", user.getId()));
+        cartQueryWrapper.eq("goods_id",goodsId).eq("user_id", user.getId()).eq("goods_spec_values",goodsSpecValues);
         Cart cart = cartService.getOne(cartQueryWrapper);
         if(cart ==null){
             return new RestResponseBean(ResultEnum.SELECTED_NULL.getValue(),ResultEnum.SELECTED_NULL.getDesc(),null);
