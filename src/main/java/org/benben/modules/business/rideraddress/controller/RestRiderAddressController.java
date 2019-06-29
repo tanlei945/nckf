@@ -68,21 +68,23 @@ public class RestRiderAddressController {
         QueryWrapper<RiderAddress> riderAddressQueryWrapper = new QueryWrapper<>();
         riderAddressQueryWrapper.eq("rider_id",user.getId());
         RiderAddress riderAddressEntity = riderAddressService.getOne(riderAddressQueryWrapper);
-        if(riderAddressEntity != null) {
+        if(riderAddressEntity == null) {
+            riderAddressEntity = new RiderAddress();
             riderAddressEntity.setCreateBy(user.getRealname());
             riderAddressEntity.setCreateTime(new Date());
+            riderAddressEntity.setRiderId(user.getId());
+            riderAddressEntity.setLat(Double.parseDouble(lat));
+            riderAddressEntity.setLng(Double.parseDouble(lng));
             boolean ok = riderAddressService.save(riderAddressEntity);
             if(ok){
                 return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
             }
             return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
         }else {
-            RiderAddress riderAddress = new RiderAddress();
-            riderAddress.setRiderId(user.getId());
-            riderAddress.setLat(Double.parseDouble(lat));
-            riderAddress.setLat(Double.parseDouble(lng));
-            riderAddress.setUpdateBy(user.getRealname());
-            riderAddress.setUpdateTime(new Date());
+            riderAddressEntity.setLat(Double.parseDouble(lat));
+            riderAddressEntity.setLat(Double.parseDouble(lng));
+            riderAddressEntity.setUpdateBy(user.getRealname());
+            riderAddressEntity.setUpdateTime(new Date());
             riderAddressService.update(riderAddressEntity, riderAddressQueryWrapper);
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
         }
