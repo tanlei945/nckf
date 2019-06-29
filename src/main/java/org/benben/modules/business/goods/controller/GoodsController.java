@@ -60,7 +60,7 @@ public class GoodsController {
 			String s = sysUserService.querySuperAdmin();
 			if(s!=null&&!"".equals(s)){
 				queryWrapper.eq("belong_id",s);
-		}
+			}
 		Page<Goods> page = new Page<Goods>(pageNo, pageSize);
 		IPage<Goods> pageList = goodsService.page(page, queryWrapper);
 		result.setSuccess(true);
@@ -70,13 +70,19 @@ public class GoodsController {
 
 
 	@PostMapping(value = "/add")
-	public Result<Goods> add(@RequestBody Goods goods) {
+	public Result<Goods> add(@RequestBody JSONObject jsonObject) {
 		Result<Goods> result = new Result<Goods>();
-		SysUser sysuser = (SysUser) SecurityUtils.getSubject().getPrincipal();
 		try {
-			goods.setBelongId(sysuser.getId());
-			goodsService.save(goods);
-			result.success("添加成功！");
+		SysUser sysuser = (SysUser) SecurityUtils.getSubject().getPrincipal();
+		Goods goods = JSON.parseObject(jsonObject.toJSONString(), Goods.class);
+		goods.setBelongId(sysuser.getId());
+		goodsService.save(goods);
+
+		Object selectedRole = jsonObject.get("selectedroles");
+		List<String> selectedRole1 = (List<String>) selectedRole;
+		//保存到规格商品表
+		goodsService.editGoodsWithSpec(selectedRole1,goods.getId());
+		result.success("添加成功！");
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.info(e.getMessage());
@@ -89,12 +95,10 @@ public class GoodsController {
 	@PutMapping(value = "/edit")
 	public Result<Goods> edit(@RequestBody JSONObject jsonObject) {
 		Object selectedRole = jsonObject.get("selectedroles");
-		System.out.println(selectedRole.toString());
 		List<String> selectedRole1 = (List<String>) selectedRole;
 		Goods goods = JSON.parseObject(jsonObject.toJSONString(), Goods.class);
-		System.out.println(goods);
+		//保存到规格商品表
 		goodsService.editGoodsWithSpec(selectedRole1,goods.getId());
-
 		Result<Goods> result = new Result<Goods>();
 		Goods goodsEntity = goodsService.getById(goods.getId());
 		if(goodsEntity==null) {
@@ -119,6 +123,7 @@ public class GoodsController {
 			result.error500("未找到对应实体");
 		}else {
 			boolean ok = goodsService.removeById(id);
+			goodsService.deleteGoodSpect(id);
 			if(ok) {
 				result.success("删除成功!");
 			}
@@ -222,4 +227,11 @@ public class GoodsController {
 			 return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
 		 }
 	 }
+
+	@GetMapping("queryGoodCategory")
+	public Result queryGoodCategory(@RequestParam(name="id",required=true) String id){
+		Result result = new Result<>();
+
+		return result;
+	}
 }

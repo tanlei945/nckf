@@ -66,4 +66,9 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
             });
         }
     }
+
+    @Override
+    public void deleteGoodSpect(String goodId) {
+        int i = GoodsMapper.deleteGoodSpec(goodId);
+    }
 }
