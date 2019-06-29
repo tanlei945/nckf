@@ -98,7 +98,6 @@ public class ShiroConfig {
 		filterChainDefinitionMap.put("/api/v1/rechargeConfig/queryInvoiceIssued", "anon");
 		filterChainDefinitionMap.put("/api/v1/rechargeConfig/queryOtherProblems", "anon");
 		filterChainDefinitionMap.put("/api/v1/rechargeConfig/queryRechargeDictionary", "anon");
-		filterChainDefinitionMap.put("/api/v1/feedback/addFeedBack", "anon");
 		filterChainDefinitionMap.put("/api/v1/feedback/queryFeedBackList", "anon");
 		filterChainDefinitionMap.put("/api/v1/common/uploadImageLocal", "anon");
 		filterChainDefinitionMap.put("/api/v1/category/getCategory", "anon");
@@ -112,6 +111,7 @@ public class ShiroConfig {
 		filterChainDefinitionMap.put("/api/v1/systemConfig/queryByTime", "anon");
 		filterChainDefinitionMap.put("/api/v1/announcement/queryAnnouncementTitle", "anon");
 		filterChainDefinitionMap.put("/api/v1/announcement/queryAnnouncementTitle", "anon");
+		//filterChainDefinitionMap.put("/api/v1/riderAddress/updateRiderAddress", "anon");
 		//性能监控
 		filterChainDefinitionMap.put("/actuator/metrics/**", "anon");
 		filterChainDefinitionMap.put("/actuator/httptrace/**", "anon");
