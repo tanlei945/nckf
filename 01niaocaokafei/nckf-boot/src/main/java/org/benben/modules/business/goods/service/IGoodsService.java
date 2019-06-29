@@ -18,4 +18,5 @@ public interface IGoodsService extends IService<Goods> {
     HashMap<String, List<String>> querySpec(String goodId);
     List<SpecDict> queryallspec();
     void editGoodsWithSpec(List<String> list,String id);
+    void deleteGoodSpect(String goodId);
 }
