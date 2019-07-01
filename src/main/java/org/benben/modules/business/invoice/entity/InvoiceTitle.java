@@ -36,21 +36,12 @@ public class InvoiceTitle implements Serializable {
 	/**发票类型（个人:0  公司:1）*/
 	@Excel(name = "发票类型（个人:0  公司:1）", width = 15)
 	private java.lang.String invoiceType;
-	/**开户行名称*/
-	@Excel(name = "开户行名称", width = 15)
-	private java.lang.String companyBank;
-	/**公司地址*/
-	@Excel(name = "公司地址", width = 15)
-	private java.lang.String companyAddress;
-	/**银行账号*/
-	@Excel(name = "银行账号", width = 15)
-	private java.lang.String bankAccount;
-	/**电话号码*/
-	@Excel(name = "电话号码", width = 15)
-	private java.lang.String telephone;
-	/**0：失败 1 成功*/
-	@Excel(name = "0：失败 1 成功", width = 15)
-	private java.lang.String status;
+	/**是否为纸质发票*/
+	@Excel(name = "是否为纸质发票 1：纸质  0：非纸质", width = 15)
+	private java.lang.String paperFlag;
+	/**电子邮箱*/
+	@Excel(name = "电子邮箱", width = 15)
+	private java.lang.String email;
 	/**创建者*/
 	@Excel(name = "创建者", width = 15)
 	private java.lang.String createBy;
