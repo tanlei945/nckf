@@ -15,6 +15,8 @@ public interface IAccountService extends IService<Account> {
 
     public boolean isWithdrawAccount(String userId);
 
+    public boolean setWithdrawAccount(String userId,String accountType,String accountNo);
+
     public boolean resetPayPassword(String userId,String payPassword);
 
     public Account queryByUserId(String userId);
