@@ -158,7 +158,10 @@ public class RestInvoiceController {
        if(invoiceVo != null){
            if(invoiceVo.getInvoiceMoney( ) == sum){
                try {
-				   invoiceVo.setUsername(user.getUsername());
+                   invoice.setUsername(user.getRealname());
+				   invoice.setUsername(user.getUsername());
+				   invoice.setCreateBy(user.getRealname());
+				   invoice.setCreateTime(new Date());
                    invoiceService.save(invoice);
                    for (String s : invoiceVo.getOrderIdList()) {
                        Order order = orderService.getById(s);
