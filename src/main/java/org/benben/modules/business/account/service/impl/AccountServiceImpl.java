@@ -89,7 +89,29 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
         return true;
     }
 
-    /**
+	/**
+	 * 骑手设置收款账户
+	 * @param accountType
+	 * @param accountNo
+	 * @return
+	 */
+	@Override
+	public boolean setWithdrawAccount(String userId, String accountType, String accountNo) {
+
+		Account account = this.queryByUserId(userId);
+
+		account.setAccountType(accountType);
+		account.setAccountNo(accountNo);
+		int result = accountMapper.updateById(account);
+
+		if(result == 0){
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
      * 重置支付密码
      * @param userId
      * @return

@@ -435,7 +435,6 @@ public class RestUserController {
      * @param event 必填 String 事件
      * @param captcha 必填 String 验证码
      * @param newPassword 必填 String 新密码
-     * @param oldPassword 必填 String 旧密码
      * @return {code": 1,"data": null,"msg": "操作成功","time": "1561012941348"}
      * @return_param code String 响应状态
      * @return_param data String 没有含义
@@ -447,13 +446,12 @@ public class RestUserController {
 	@PostMapping(value = "/changePassword")
 	@ApiOperation(value = "通用-->修改密码", tags = {"用户接口"}, notes = "通用-->修改密码")
 	@ApiImplicitParams({
-			@ApiImplicitParam(name = "oldPassword",value = "用户旧密码",dataType = "String"),
 			@ApiImplicitParam(name = "newPassword",value = "用户新密码",dataType = "String"),
 			@ApiImplicitParam(name = "mobile",value = "用户手机号",dataType = "String"),
 			@ApiImplicitParam(name = "event",value = "事件",dataType = "String",defaultValue = CommonConstant.SMS_EVENT_CHANGE_PWD),
 			@ApiImplicitParam(name = "captcha",value = "验证码",dataType = "String")
 	})
-	public RestResponseBean changePassword(@RequestParam String oldPassword, @RequestParam String newPassword,@RequestParam String mobile,
+	public RestResponseBean changePassword(@RequestParam String newPassword,@RequestParam String mobile,
 			@RequestParam String event,@RequestParam String captcha){
 
 		User user = (User) SecurityUtils.getSubject().getPrincipal();
@@ -465,36 +463,19 @@ public class RestUserController {
 
 		User userEntity = userService.getById(user.getId()); //如果修改密码前端不设置重新登录,避免取到jwt中旧数据,应再次查询对象
 
-		if(StringUtils.isBlank(mobile)){ //旧密码修改密码
+		if(StringUtils.isBlank(mobile)||StringUtils.isBlank(newPassword) || StringUtils.isBlank(event) ||StringUtils.isBlank(captcha)){
+			return new RestResponseBean(ResultEnum.PARAMETER_MISSING.getValue(),ResultEnum.PARAMETER_MISSING.getDesc(),null);
+		}
 
-			if(StringUtils.isBlank(oldPassword) || StringUtils.isBlank(newPassword)){
-				return new RestResponseBean(ResultEnum.PARAMETER_MISSING.getValue(),ResultEnum.PARAMETER_MISSING.getDesc(),null);
-			}
+		if(!StringUtils.equals(CommonConstant.SMS_EVENT_CHANGE_PWD,event)){
+			return new RestResponseBean(ResultEnum.SMS_CODE_ERROR.getValue(),ResultEnum.SMS_CODE_ERROR.getDesc(),null);
+		}
 
-			String passwordEncode = PasswordUtil.encrypt(oldPassword, oldPassword, userEntity.getSalt()); //输入的密码加密后
-
-			if(!StringUtils.equals(userEntity.getPassword(),passwordEncode)){
-				return new RestResponseBean(ResultEnum.PASSWORD_ERROR.getValue(),ResultEnum.PASSWORD_ERROR.getDesc(),null);
-			}
-
-
-		} else { //手机号修改密码
-
-			if(StringUtils.isBlank(mobile)||StringUtils.isBlank(newPassword) || StringUtils.isBlank(event) ||StringUtils.isBlank(captcha)){
-				return new RestResponseBean(ResultEnum.PARAMETER_MISSING.getValue(),ResultEnum.PARAMETER_MISSING.getDesc(),null);
-			}
-
-			if(!StringUtils.equals(CommonConstant.SMS_EVENT_CHANGE_PWD,event)){
-				return new RestResponseBean(ResultEnum.SMS_CODE_ERROR.getValue(),ResultEnum.SMS_CODE_ERROR.getDesc(),null);
-			}
-
-			switch (ismsService.check(mobile, event, captcha)) {
-				case 1:
-					return new RestResponseBean(ResultEnum.SMS_CODE_OVERTIME.getValue(), ResultEnum.SMS_CODE_OVERTIME.getDesc(), null);
-				case 2:
-					return new RestResponseBean(ResultEnum.SMS_CODE_ERROR.getValue(), ResultEnum.SMS_CODE_ERROR.getDesc(), null);
-			}
-
+		switch (ismsService.check(mobile, event, captcha)) {
+			case 1:
+				return new RestResponseBean(ResultEnum.SMS_CODE_OVERTIME.getValue(), ResultEnum.SMS_CODE_OVERTIME.getDesc(), null);
+			case 2:
+				return new RestResponseBean(ResultEnum.SMS_CODE_ERROR.getValue(), ResultEnum.SMS_CODE_ERROR.getDesc(), null);
 		}
 
 		if(userService.changePassword(userEntity.getMobile(),newPassword,user.getUserType()) == 0){

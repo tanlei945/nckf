@@ -178,7 +178,7 @@ public class RestAccountController {
      */
     @GetMapping(value = "isWithdrawAccount")
     @ApiOperation(value = "是否设置收款账户", tags = {"用户接口"}, notes = "是否设置收款账户")
-    public RestResponseBean isWithdrawAccount(String userId){
+    public RestResponseBean isWithdrawAccount(@RequestParam String userId){
 
 		User user = (User) SecurityUtils.getSubject().getPrincipal();
 
@@ -212,7 +212,7 @@ public class RestAccountController {
     @GetMapping("/checkPayPassword")
     @ApiOperation(value = "支付密码是否正确",tags = {"用户接口"},notes = "支付密码是否正确")
 	@ApiImplicitParam(name = "payPassword",value = "支付密码",dataType = "String",required = true)
-    public RestResponseBean checkPayPassword(String payPassword){
+    public RestResponseBean checkPayPassword(@RequestParam String payPassword){
 
 		User user = (User) SecurityUtils.getSubject().getPrincipal();
 
@@ -294,6 +294,50 @@ public class RestAccountController {
 
         return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
     }
+
+
+	/**
+	 * showdoc
+	 * @catalog 用户接口
+	 * @title 设置收款账户
+	 * @description 设置收款账户
+	 * @method GET
+	 * @url /nckf-boot/api/v1/account/setWithdrawAccount
+	 * @param accountType 必填 String 账户类型 1支付宝 2微信
+	 * @param accountNo 必填 String 账号 支付账号或微信账号
+	 * @return {"code": 1,"data": null,"msg": "操作成功","time": "1561015116988"}
+	 * @return_param code String 响应状态
+	 * @return_param data String 没有含义
+	 * @return_param msg String 操作信息
+	 * @return_param time Date 操作时间
+	 * @remark 这里是备注信息
+	 * @number 6
+	 */
+	@PostMapping(value = "/setWithdrawAccount")
+	@ApiOperation(value = "设置收款账户", tags = {"用户接口"}, notes = "设置收款账户")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "accountType",value = "账户类型 1支付宝 2微信",dataType = "String",required = true),
+			@ApiImplicitParam(name = "accountNo",value = "账号 支付账号或微信账号",dataType = "String",required = true)
+	})
+	public RestResponseBean setWithdrawAccount(@RequestParam String accountType,@RequestParam String accountNo){
+
+		User user = (User) SecurityUtils.getSubject().getPrincipal();
+
+		if(user == null){
+			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+		}
+
+		if(StringUtils.isBlank(accountType)||StringUtils.isBlank(accountNo)){
+			return new RestResponseBean(ResultEnum.PARAMETER_MISSING.getValue(),ResultEnum.PARAMETER_MISSING.getDesc(),null);
+		}
+
+		if(accountService.setWithdrawAccount(user.getId(),accountType,accountNo)){
+			return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+		}
+
+		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
+
+	}
 
 
 }
