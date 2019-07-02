@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.shiro.SecurityUtils;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.menu.ResultEnum;
@@ -77,22 +78,35 @@ public class RestCartController {
         cart.setGoodsNum(cartAddVo.getGoodsNum());
         cart.setGoodsId(cartAddVo.getGoodsId());
         cart.setGoodsSpecValues(cartAddVo.getGoodsSpecValues());
-        cart.setSelectedPrice(cartAddVo.getSelectedPrice());
+
         Goods goods = goodsService.getById(cartAddVo.getGoodsId());
-        if(goods!=null){
+        if(goods != null){
+            switch (cartAddVo.getSelectedCupSpecIndex()) {
+                case "0":
+                    cart.setSelectedPrice(goods.getBigPrice());
+                    break;
+                case "1":
+                    cart.setSelectedPrice(goods.getMiddlePrice());
+                    break;
+                case "2":
+                    cart.setSelectedPrice(goods.getSmallPrice());
+                    break;
+            }
             cart.setStoreId(goods.getBelongId());
             cart.setUserId(user.getId());
             cart.setCreateBy(user.getRealname());
             cart.setCreateTime(new Date());
+            Cart cartResult = cartService.queryByGoodsId(cart);
+            if(cartResult!=null){
+                cartResult.setGoodsNum(cartResult.getGoodsNum()+1);
+                cartService.updateById(cartResult);
+            }else {
+                cartService.save(cart);
+            }
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
         }
-        Cart cartResult = cartService.queryByGoodsId(cart);
-        if(cartResult!=null){
-            cartResult.setGoodsNum(cartResult.getGoodsNum()+1);
-            cartService.updateById(cartResult);
-        }else {
-            cartService.save(cart);
-        }
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
+        return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+
     }
 
 
@@ -106,43 +120,17 @@ public class RestCartController {
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
-
         Goods goods = goodsService.getById(goodsId);
         if(goods != null){
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),goods.getBelongId());
 
         }
-
         return new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(),ResultEnum.QUERY_NOT_EXIST.getDesc(),null);
     }
 
 
 
-//    @PostMapping(value = "/adds")
-//    @Transactional
-//    @ApiOperation(value = "购物车批量添加商品", notes = "购物车批量添加商品",tags = "购物车接口")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(name="carts",value = "添加的商品",dataType = " List<Cart>"),
-//
-//    })
-//    public RestResponseBean adds(@RequestBody List<Cart> carts) {
-//         for(Cart cart:carts) {
-//             try {
-//                 Cart cartResult = cartService.queryByGoodsId(cart);
-//                 if (cartResult != null) {
-//                     cartResult.setGoodsNum(cartResult.getGoodsNum() + 1);
-//                     cartService.updateById(cartResult);
-//                 } else {
-//                     cartService.save(cart);
-//                 }
-//             } catch (Exception e) {
-//                 e.printStackTrace();
-//                 log.info(e.getMessage());
-//                 return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
-//             }
-//         }
-//        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
-//    }
+
 
 
     /**
@@ -156,7 +144,6 @@ public class RestCartController {
      * @return_param data String
      * @return_param msg String 操作信息
      * @return_param time Date 操作时间
-     * @remark 这里是备注信息
      * @number 1
      */
     @PostMapping(value = "/queryCartGoods")
@@ -184,14 +171,11 @@ public class RestCartController {
             set.add(cart.getStoreId());
         }
 
-
-
         Map<String,List<Goods>> map = new HashMap<>();
 
         //把不同的商品分别分别放入到各自的门店下
-
+        List<Goods> listGoods = new ArrayList<>();
         for (String s : set) {
-            List<Goods> listGoods = new ArrayList<>();
             for (Cart cart : list) {
                 if(s.equals(cart.getStoreId())){
                     listGoods.add(goodsService.getById(cart.getGoodsId()));
@@ -200,26 +184,21 @@ public class RestCartController {
             map.put(s,listGoods);
 
         }
-        /*log.info(map.toString());
-        Map<String,String> map1 = new HashMap<String,String>(){{
-            put("1","1");
-            put("2","2");
-        }};
-        */
+
 
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),map);
     }
 
 
 
-    /*@PostMapping(value = "/deleteCartAll")
+
+
+
+
+    @PostMapping(value = "/queryCartGoodsByStore")
     @Transactional
-    @ApiOperation(value = "清空购物车", notes = "清空购物车",tags = "订单购物车接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name="userId",value = "用户Id",dataType = "String",required = true),
-            @ApiImplicitParam(name="storeId",value = "商店Id",dataType = "String",required = true),
-    })
-    public RestResponseBean deleteCartAll(@RequestParam(name="storeId",required=true) String storeId) {
+    @ApiOperation(value = "单门店查询购物车", notes = "查询购物车",tags = "单订单购物车接口")
+    public RestResponseBean queryCartGoodsByStore(@RequestParam(name = "storeId",required = true) String storeId) {
 
         User user = (User) SecurityUtils.getSubject().getPrincipal();
         if(user==null) {
@@ -228,19 +207,27 @@ public class RestCartController {
 
         QueryWrapper<Cart> cartQueryWrapper = new QueryWrapper<>();
         cartQueryWrapper.eq("user_id",user.getId());
-        cartQueryWrapper.and(wrapperT -> wrapperT.eq("store_id",storeId));
-        List<Cart> cart = cartService.list(cartQueryWrapper);
-        if(cart.size()==0) {
-            return new RestResponseBean(ResultEnum.CART_NULL.getValue(),ResultEnum.CART_NULL.getDesc(),null);
-        }else {
-            boolean ok = cartService.remove(cartQueryWrapper);
-            if(ok) {
-                return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
+        List<Cart> list = cartService.list(cartQueryWrapper);
+
+        if(list == null){
+            return new RestResponseBean(ResultEnum.SELECTED_NULL.getValue(),ResultEnum.CART_NULL.getDesc(),null);
+        }
+        List<Cart> cartList = new ArrayList<>();
+
+        for (Cart cart : list) {
+            Goods goods = goodsService.getById(cart.getGoodsId());
+            if(goods!= null){
+                String storeIdDb = goods.getBelongId();
+                if(storeId.equals(storeIdDb)){
+                    cartList.add(cart);
+                }
             }
         }
 
-        return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
-    }*/
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),cartList);
+    }
+
+
 
     @PostMapping(value = "/deleteCartGoods")
     @Transactional
@@ -259,8 +246,8 @@ public class RestCartController {
         QueryWrapper<Cart> cartQueryWrapper = new QueryWrapper<>();
         cartQueryWrapper.eq("goods_id",goodsId).eq("user_id", user.getId()).eq("goods_spec_values",goodsSpecValues);
         Cart cart = cartService.getOne(cartQueryWrapper);
-        if(cart ==null){
-            return new RestResponseBean(ResultEnum.SELECTED_NULL.getValue(),ResultEnum.SELECTED_NULL.getDesc(),null);
+        if(cart == null){
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
         }
         if(cart.getGoodsNum()>1) {
             cart.setGoodsNum(cart.getGoodsNum()-1);

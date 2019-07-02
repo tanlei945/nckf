@@ -255,13 +255,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 	//骑手接单
 	public synchronized boolean riderOrder(String riderId, String orderId) {
 		Order order = orderService.getById(orderId);
-		if(order!=null&& StringUtils.isBlank(order.getOrderId())){
+		if(order!=null){
 			//给订单的骑手id赋上值
 			order.setRiderId(riderId);
+			//id给上值
+			order.setId(orderId);
 			//给订单的rider  name 赋上值
-			QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-			queryWrapper.eq("id",riderId);
-			User user = userService.getOne(queryWrapper);
+			User user = userService.getById(riderId);
 			order.setRidername(user.getUsername());
 			//订单修改时间
 			order.setUpdateTime(new Date());

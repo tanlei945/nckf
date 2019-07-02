@@ -25,6 +25,8 @@ public class UserVo {
 	private  java.lang.String workFlag;
 	@ApiModelProperty(value = "所属门店")
 	private  java.lang.String storeName;
+	@ApiModelProperty(value = "门店id")
+	private  java.lang.String storeId;
 
 
 }

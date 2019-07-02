@@ -213,12 +213,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 		Account account = accountMapper.queryByUserId(user.getId());
 		List<UserCoupons> list = userCouponsMapper.queryByUserId(user.getId());
 		BeanUtils.copyProperties(user,userVo);
+		userVo.setWorkFlag(user.getWorkFlag());
 		Store store = storeService.getById(user.getStoreId());
 		if(store != null){
 			userVo.setStoreName(store.getStoreName());
 		}
 
-		userVo.setWorkFlag("0");
+		//userVo.setWorkFlag("0");
 		userVo.setMoney(account.getMoney());
 		userVo.setCouponsNumber(list.size());
 

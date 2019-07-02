@@ -1142,10 +1142,10 @@ public class RestUserController {
 		}
 
 
-		//根据用户ID模糊查询
+/*		//根据用户ID模糊查询
 		Set<String> keys = stringRedisTemplate.keys("*" + user.getId());
 		//清除redis中存在此手机号的token记录
-		stringRedisTemplate.delete(keys);
+		stringRedisTemplate.delete(keys);*/
 
 		redisUtil.set(CommonConstant.PREFIX_USER_TOKEN + token + user.getId(), token);
 		//设置超时时间
