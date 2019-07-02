@@ -42,8 +42,7 @@ public class RestWithdrawController {
      * @description 提现记录
      * @method GET
      * @url /nckf-boot/api/v1/withdraw/queryWithdraw
-     * @param status 必填 String 优惠券状态(-1已过期 0 未使用 1已使用)
-     * @return {"code": 1,"data": {"current": 1,"pages": 0,"records": [],"searchCount": true,"size": 10,"total": 0},"msg": "操作成功","time": "1561016605235"}
+     * @return {"code": 1,"data": {"c     * @return {"code": 1,"data": {"current": 1,"pages": 0,"records": [],"searchCount": true,"size": 10,"total": 0},"msg": "操作成功","time": "1561016605235"}urrent": 1,"pages": 0,"records": [],"searchCount": true,"size": 10,"total": 0},"msg": "操作成功","time": "1561016605235"}
      * @return_param code String 响应状态
      * @return_param data List 提现信息
      * @return_param msg String 操作信息
@@ -54,15 +53,10 @@ public class RestWithdrawController {
     @GetMapping(value = "/queryWithdraw")
     @ApiOperation(value = "提现记录", tags = {"用户接口"}, notes = "提现记录")
 	@ApiImplicitParams({@ApiImplicitParam(name = "pageNo", value = "当前页", dataType = "Integer", defaultValue = "1"),
-			@ApiImplicitParam(name = "pageSize", value = "每页显示条数", dataType = "Integer", defaultValue = "10"),
-			@ApiImplicitParam(name = "status", value = "0-未审核 1-审核未通过 2-审核已通过", dataType = "String")})
-    public RestResponseBean queryWithdraw(@RequestParam(name = "status") String status,
-                                          @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+			            @ApiImplicitParam(name = "pageSize", value = "每页显示条数", dataType = "Integer", defaultValue = "10")})
+    public RestResponseBean queryWithdraw(
+            @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
                                           @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
-
-		if(StringUtils.isBlank(status)){
-			return new RestResponseBean(ResultEnum.PARAMETER_MISSING.getValue(),ResultEnum.PARAMETER_MISSING.getDesc(),null);
-		}
 
 		User user = (User) SecurityUtils.getSubject().getPrincipal();
 
@@ -71,7 +65,7 @@ public class RestWithdrawController {
 		}
 
         QueryWrapper<Withdraw> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(Withdraw::getUserId,user.getId()).eq(Withdraw::getStatus,status);
+        queryWrapper.lambda().eq(Withdraw::getUserId,user.getId());
         Page<Withdraw> page = new Page<Withdraw>(pageNo, pageSize);
         IPage<Withdraw> pageList = withdrawService.page(page, queryWrapper);
 

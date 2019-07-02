@@ -146,18 +146,14 @@ public class RestOrderController {
 
     @PostMapping(value = "/rider/queryRiderOrder")
     @ApiOperation(value = "骑手查询可接订单接口", tags = {"订单购物车接口"}, notes = "骑手查询可接订单接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "riderId", value = "骑手的id"),
-            @ApiImplicitParam(name = "storeId", value = "商店的id")
-    })
-    public RestResponseBean queryRiderOrder(@RequestParam(name = "riderId",required = true) String riderId,
-                                            @RequestParam(name = "storeId",required = true) String storeId){
+    @ApiImplicitParam(name = "riderId", value = "骑手的id")
+    public RestResponseBean queryRiderOrder(@RequestParam(name = "riderId",required = true) String riderId){
         User user = (User) SecurityUtils.getSubject().getPrincipal();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
         QueryWrapper<Order> wrapper = new QueryWrapper<>();
-        wrapper.eq("store_id",storeId).eq("status","2").eq("rider_id",riderId);
+        wrapper.eq("store_id",user.getStoreId()).eq("status","2").eq("rider_id",riderId);
         List<Order> list = orderService.list(wrapper);
 
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),list);
@@ -170,8 +166,7 @@ public class RestOrderController {
      * @description 骑手接单接口
      * @method POST
      * @url /nckf-boot/api/v1/order/rider/queryRiderOrder
-     * @param riderId 选填 String 骑手id
-     * @param storeId 选填 String 商店id
+     * @param orderId 选填 String 订单id
      * @return {"code": 1,"data": [],"msg": "操作成功","time": "1561013848081"}
      * @return_param code String 响应状态
      * @return_param data List 订单信息
@@ -182,13 +177,12 @@ public class RestOrderController {
      */
     @PostMapping(value = "/rider/riderOrder")
     @ApiOperation(value = "骑手接单接口", tags = {"订单购物车接口"}, notes = "骑手接单接口")
-    public RestResponseBean riderOrder(@RequestParam(name = "riderId",required = true) String riderId,
-                                       @RequestParam(name = "orderId",required = true) String orderId){
+    public RestResponseBean riderOrder(@RequestParam(name = "orderId",required = true) String orderId){
         User user = (User) SecurityUtils.getSubject().getPrincipal();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
-       boolean flag = orderService.riderOrder(riderId,orderId);
+       boolean flag = orderService.riderOrder(user.getId(),orderId);
         if(flag){
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
         }
@@ -294,10 +288,7 @@ public class RestOrderController {
            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
        }
        Order order = orderService.queryByOrderId(orderId);
-       if(order!=null){
-           return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),order);
-       }
-       return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+       return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),order);
    }
 
     /**
