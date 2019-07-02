@@ -90,7 +90,7 @@ public class RestGoodsController {
      try {
          List<Goods> goodsList = goodsService.queryByCotegory(categoryType, belongId);
          List<GoodsSpec> list = new ArrayList<>();
-         Map<String, List<String>> map = new HashMap<>();
+         Map<String, ArrayList<String>> map = new HashMap<>();
          for (Goods goods : goodsList) {
              goods.setImgUrl(commonService.getLocalUrl(goods.getImgUrl()));
              map = goodsService.querySpec(goods.getId());
@@ -129,9 +129,9 @@ public class RestGoodsController {
     @ApiImplicitParams({@ApiImplicitParam(name="goodId",value="商品id",dataType = "String",required = true)
     })
    public RestResponseBean querySpec(@RequestParam(name="goodId")String goodId){
-       HashMap<String, List<String>> stringListMap = new HashMap<>();
+        HashMap<String, ArrayList<String>> stringListMap = new HashMap<>();
        try {
-           stringListMap = goodsService.querySpec(goodId);
+           stringListMap= goodsService.querySpec(goodId);
            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), stringListMap);
        } catch (Exception e) {
            e.printStackTrace();

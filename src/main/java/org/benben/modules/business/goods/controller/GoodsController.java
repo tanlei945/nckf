@@ -99,7 +99,18 @@ public class GoodsController {
 		Goods goods = JSON.parseObject(jsonObject.toJSONString(), Goods.class);
 		//保存到规格商品表
 		goodsService.editGoodsWithSpec(selectedRole1,goods.getId());
+
+		List<String> selectedCategory = (List<String>)jsonObject.get("selectedCategorys");
+		String categoryType = "";
+		for (int i=0;i<selectedCategory.size();i++) {
+			if(i!=selectedCategory.size()-1){
+				categoryType+=selectedCategory.get(i)+",";
+			}else{
+				categoryType+=selectedCategory.get(i);
+			}
+		}
 		Result<Goods> result = new Result<Goods>();
+		goods.setCategoryType(categoryType);
 		Goods goodsEntity = goodsService.getById(goods.getId());
 		if(goodsEntity==null) {
 			result.error500("未找到对应实体");
@@ -229,9 +240,12 @@ public class GoodsController {
 	 }
 
 	@GetMapping("queryGoodCategory")
-	public Result queryGoodCategory(@RequestParam(name="id",required=true) String id){
+	public Result queryGoodCategory(@RequestParam(name="goodId")String goodId){
 		Result result = new Result<>();
-
+		Goods byId = goodsService.getById(goodId);
+		String categoryType = byId.getCategoryType();
+		String[] split = categoryType.split(",");
+		result.setResult(split);
 		return result;
 	}
 }
