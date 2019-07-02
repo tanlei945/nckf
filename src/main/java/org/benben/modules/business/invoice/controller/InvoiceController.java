@@ -1,6 +1,7 @@
 package org.benben.modules.business.invoice.controller;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.io.IOException;
@@ -99,6 +100,7 @@ public class InvoiceController {
 		if(invoiceEntity==null) {
 			result.error500("未找到对应实体");
 		}else {
+			invoice.setUpdateTime(new Date());
 			boolean ok = invoiceService.updateById(invoice);
 			//TODO 返回false说明什么？
 			if(ok) {
