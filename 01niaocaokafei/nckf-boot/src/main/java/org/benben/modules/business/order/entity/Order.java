@@ -51,9 +51,6 @@ public class Order implements Serializable {
 	/**订单编号*/
 	@Excel(name = "订单编号", width = 15)
 	private String orderId;
-	/**商品总金额*/
-	@Excel(name = "商品总金额", width = 15)
-	private Double goodsMoney;
 	/**订单总金额*/
 	@Excel(name = "订单总金额", width = 15)
 	private Double orderMoney;
@@ -62,10 +59,6 @@ public class Order implements Serializable {
 	@Dict(dicCode = "orderType")
 	@ApiModelProperty(required = true)
 	private String orderType;
-	/**送餐地址id*/
-	@ApiModelProperty(required = true)
-	@Excel(name = "送餐地址id", width = 15)
-	private String userAddressId;
 	/**送餐地址*/
 	@Excel(name = "送餐地址", width = 15)
 	private String userAddress;
@@ -88,7 +81,7 @@ public class Order implements Serializable {
 	@Excel(name = "订单来源(0:微信1:安卓app 2:苹果app 3:)", width = 15)
 	private String orderSrc;
 	/**发票是否已开*/
-	@Excel(name = "发票是否已开", width = 15)
+	@Excel(name = "发票是否已开 0:未开  1：已开", width = 15)
 	private String invoiceOpen;
 	/**订单备注*/
 	@Excel(name = "订单备注", width = 15)
@@ -103,9 +96,6 @@ public class Order implements Serializable {
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
 	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	private Date overTime;
-	/**最小配送金额*/
-	@Excel(name = "最小配送金额", width = 15)
-	private Double createMinMoney;
 	/**配送费*/
 	@Excel(name = "配送费", width = 15)
 	private Double deliveryMoney;
@@ -113,7 +103,7 @@ public class Order implements Serializable {
 	@Excel(name = "第三方流水号", width = 15)
 	private String tradeNo;
 	/**9:已取消 0:全部 1待付款 2收货中 3待评价 4已评价  */
-	@Excel(name = "9:已取消 0:全部 1待付款 2收货中 3待评价 4已评价  ", width = 15,dicCode = "orderStatus")
+	@Excel(name = "9:已取消 0:全部 1待付款 2收货中 3待评价 4已评价   ", width = 15,dicCode = "orderStatus")
 	@Dict(dicCode = "orderStatus")
 	private String status;
 	/**创建者*/
