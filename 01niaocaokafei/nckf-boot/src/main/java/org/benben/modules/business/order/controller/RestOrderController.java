@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import lombok.var;
 import org.apache.shiro.SecurityUtils;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.api.vo.Result;
@@ -61,31 +62,19 @@ public class RestOrderController {
 
 
    @PostMapping(value = "/queryOrderCount")
-   @ApiOperation(value = "1待付款订单数量 2收货中订单数量 3待评价订单数量", tags = {"订单购物车接口"}, notes = "1待付款订单数量 2收货中订单数量 3待评价订单数量")
-   public RestResponseBean queryOrder(@RequestParam(required = true) String status,
-                                      @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-                                      @RequestParam(name="pageSize", defaultValue="10") Integer pageSize) {
+   @ApiOperation(value = "0全部订单数量 1待付款订单数量 2收货中订单数量 3待评价订单数量", tags = {"订单购物车接口"}, notes = "0全部订单数量 1待付款订单数量 2收货中订单数量 3待评价订单数量")
+   public RestResponseBean queryOrder() {
        User user = (User) SecurityUtils.getSubject().getPrincipal();
        if(user==null) {
            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
        }
 
-       IPage<Order> orderPageList = null;
-       QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
-       Page<Order> page = new Page<Order>(pageNo, pageSize);
-       //查询当前用户所有不包括已取消订单
-       if("0".equals(status)){
-           queryWrapper.lambda().eq(Order::getUserId,user.getId()).ne(Order::getStatus,"9");
-           orderPageList = orderService.page(page,queryWrapper);
-       }
-
-       queryWrapper.eq("user_id",user.getId()).eq("status",status);
 
        //获取所需状态的订单
-       orderPageList = orderService.page(page,queryWrapper);
+       //orderPageList = orderService.page(page,queryWrapper);
        Map<String,Object> map = new HashMap<>();
        //放入map中
-       map.put("orderList",orderPageList);
+       //map.put("orderList",orderPageList);
        //获取各种状态的订单数量
 
        //代付款订单的数量
@@ -106,6 +95,12 @@ public class RestOrderController {
        List<Order> list3 = orderService.list(queryWrapper3);
        map.put("3",list3.size());
 
+       //已完成订单的数量
+       QueryWrapper<Order> queryWrapper0 = new QueryWrapper<>();
+       queryWrapper0.lambda().eq(Order::getUserId,user.getId()).eq(Order::getStatus,"4");
+       List<Order> list0 = orderService.list(queryWrapper3);
+       map.put("0",list0.size()+list1.size()+list2.size()+list3.size());
+
        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),map);
 
 
@@ -114,11 +109,10 @@ public class RestOrderController {
     /**
      * showdoc
      * @catalog 订单购物车接口
-     * @title 订单多（单）条件查询接口
-     * @description 订单多（单）条件查询接口
+     * @title 用户订单列表-->全部订单
+     * @description 用户订单列表-->全部订单
      * @method POST
-     * @url /nckf-boot/api/v1/order/queryOrderCount
-     * @param status 必填 String 订单状态
+     * @url /nckf-boot/api/v1/order/queryAllOrder
      * @return {"code": 1,"data": 0,"msg": "操作成功","time": "1561013429415"}
      * @return_param code String 响应状态
      * @return_param data String 订单状态
@@ -127,22 +121,133 @@ public class RestOrderController {
      * @remark status:9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价
      * @number 10
      */
-    @PostMapping(value = "/queryOrder")
-    @ApiOperation(value = "订单多（单）条件查询接口 status:9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价", tags = {"订单购物车接口"}, notes = "订单多（单）条件查询接口 status:9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价")
-    public RestResponseBean queryOrderCount(@RequestParam(required = true) String status) {
+    @PostMapping(value = "/queryAllOrder")
+    @ApiOperation(value = "用户订单列表-->全部订单", tags = {"订单购物车接口"}, notes = "用户订单列表-->全部订单")
+    public RestResponseBean queryAllOrder(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+                                          @RequestParam(name="pageSize", defaultValue="10") Integer pageSize) {
+        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        if(user==null) {
+            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+        }
+        IPage<Order> orderPageList = null;
+        QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id",user.getId()).in("status","2","3","4","5");
+        Page<Order> page = new Page<Order>(pageNo, pageSize);
+
+        IPage<Order> pageList = orderService.page(page, queryWrapper);
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
+    }
+
+
+
+    /**
+     * showdoc
+     * @catalog 订单购物车接口
+     * @title 用户订单列表-->待付款订单
+     * @description 用户订单列表-->待付款订单
+     * @method POST
+     * @url /nckf-boot/api/v1/order/queryOrderDfk
+     * @return {"code": 1,"data": 0,"msg": "操作成功","time": "1561013429415"}
+     * @return_param code String 响应状态
+     * @return_param data String 订单状态
+     * @return_param msg String 操作信息
+     * @return_param time Date 操作时间
+     * @remark status:9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价
+     * @number 10
+     */
+    @PostMapping(value = "/queryOrderDfk")
+    @ApiOperation(value = "用户订单列表-->待付款订单", tags = {"订单购物车接口"}, notes = "用户订单列表-->待付款订单")
+    public RestResponseBean queryOrderDfk(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+                                          @RequestParam(name="pageSize", defaultValue="10") Integer pageSize) {
         User user = (User) SecurityUtils.getSubject().getPrincipal();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
         QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(Order::getUserId,user.getId()).eq(Order::getStatus,status);
-        List<Order> list = orderService.list(queryWrapper);
-        if(list != null){
-            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),list);
-        }
-        return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+        queryWrapper.eq("user_id",user.getId()).eq("status","1");
+        Page<Order> page = new Page<Order>(pageNo, pageSize);
 
+        //queryWrapper.lambda().eq(Order::getUserId,user.getId()).in(Order::getStatus,);
+        IPage<Order> pageList = orderService.page(page, queryWrapper);
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
     }
+
+
+
+
+    /**
+     * showdoc
+     * @catalog 订单购物车接口
+     * @title 用户订单列表-->收货中订单
+     * @description 用户订单列表-->收货中订单
+     * @method POST
+     * @url /nckf-boot/api/v1/order/queryOrderShz
+     * @return {"code": 1,"data": 0,"msg": "操作成功","time": "1561013429415"}
+     * @return_param code String 响应状态
+     * @return_param data String 订单状态
+     * @return_param msg String 操作信息
+     * @return_param time Date 操作时间
+     * @remark status:9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价
+     * @number 10
+     */
+    @PostMapping(value = "/queryOrderShz")
+    @ApiOperation(value = "用户订单列表-->收货中订单", tags = {"订单购物车接口"}, notes = "用户订单列表-->收货中订单")
+    public RestResponseBean queryOrderShz(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+                                          @RequestParam(name="pageSize", defaultValue="10") Integer pageSize) {
+        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        if(user==null) {
+            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+        }
+        QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id",user.getId()).eq("status","2");
+        Page<Order> page = new Page<Order>(pageNo, pageSize);
+
+        //queryWrapper.lambda().eq(Order::getUserId,user.getId()).in(Order::getStatus,);
+        IPage<Order> pageList = orderService.page(page, queryWrapper);
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
+    }
+
+
+
+
+    /**
+     * showdoc
+     * @catalog 订单购物车接口
+     * @title 用户订单列表-->收货中订单
+     * @description 用户订单列表-->收货中订单
+     * @method POST
+     * @url /nckf-boot/api/v1/order/queryOrderShz
+     * @return {"code": 1,"data": 0,"msg": "操作成功","time": "1561013429415"}
+     * @return_param code String 响应状态
+     * @return_param data String 订单状态
+     * @return_param msg String 操作信息
+     * @return_param time Date 操作时间
+     * @remark status:9:已取消 0:全部（不包括已取消） 1待付款 2收货中 3待评价
+     * @number 10
+     */
+    @PostMapping(value = "/queryOrderDpj")
+    @ApiOperation(value = "用户订单列表-->待评价订单", tags = {"订单购物车接口"}, notes = "用户订单列表-->待评价订单")
+    public RestResponseBean queryOrderDpj(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+                                          @RequestParam(name="pageSize", defaultValue="10") Integer pageSize) {
+        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        if(user==null) {
+            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+        }
+        QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id",user.getId()).eq("status","3");
+        Page<Order> page = new Page<Order>(pageNo, pageSize);
+
+        //queryWrapper.lambda().eq(Order::getUserId,user.getId()).in(Order::getStatus,);
+        IPage<Order> pageList = orderService.page(page, queryWrapper);
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
+    }
+
+
+
+
+
+
+
 
     @PostMapping(value = "/rider/queryRiderOrder")
     @ApiOperation(value = "骑手查询可接订单接口", tags = {"订单购物车接口"}, notes = "骑手查询可接订单接口")
@@ -153,7 +258,7 @@ public class RestOrderController {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
         QueryWrapper<Order> wrapper = new QueryWrapper<>();
-        wrapper.eq("store_id",user.getStoreId()).eq("status","2").eq("rider_id",riderId);
+        wrapper.eq("store_id",user.getStoreId()).eq("status","5");
         List<Order> list = orderService.list(wrapper);
 
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),list);
@@ -179,7 +284,7 @@ public class RestOrderController {
     @ApiOperation(value = "骑手接单接口", tags = {"订单购物车接口"}, notes = "骑手接单接口")
     public RestResponseBean riderOrder(@RequestParam(name = "orderId",required = true) String orderId){
         User user = (User) SecurityUtils.getSubject().getPrincipal();
-        if(user==null) {
+        if(user == null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
        boolean flag = orderService.riderOrder(user.getId(),orderId);
@@ -218,9 +323,7 @@ public class RestOrderController {
         }
         QueryWrapper<RiderAddress> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("status","3");
-        Order order = new Order();
-        order.setId(orderId);
-        order.setStatus("3");
+        Order order = orderService.getById(orderId);
         order.setOverTime(new Date());
         boolean b = orderService.updateById(order);
         if(b){
@@ -309,21 +412,30 @@ public class RestOrderController {
      */
    @PostMapping(value = "/addOrder")
    @ApiOperation(value = "用户新增订单接口", tags = {"订单购物车接口"}, notes = "用户新增订单接口")
-   public RestResponseBean addOrder() {
+   public RestResponseBean addOrder(@RequestParam(name = "cartIds") String[] cartIds,
+                                    @RequestParam(name = "userAddress") String userAddress,
+                                    @RequestParam(name = "couponseId") String couponseId) {
        User user = (User) SecurityUtils.getSubject().getPrincipal();
        if(user==null) {
            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
        }
 
        QueryWrapper<Cart> queryWrapper = new QueryWrapper<>();
-       queryWrapper.eq("user_id",user.getId()).eq("checked_flag","1");
+       queryWrapper.eq("user_id",user.getId());
        List<Cart> cartList = cartService.list(queryWrapper);
 
 
+       double money = 0;
        for (Cart cart : cartList) {
-
+            money += cart.getSelectedPrice()*cart.getGoodsNum();
        }
        Order order = new Order();
+       order.setUsername(user.getRealname());
+       order.setStatus("1");
+       order.setUserId(user.getId());
+       order.setInvoiceFlag("0");
+       //order.setStoreId();
+       //order.set
 
 
        //Order order = orderService.add();
