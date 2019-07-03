@@ -192,4 +192,19 @@ public class RestStoreController {
         return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
     }
 
+
+    @GetMapping("/queryStoreByName")
+    @ApiOperation(value="根据关键字模糊查询商家", tags = {"门店管理接口"})
+    public RestResponseBean queryStoreByName(@RequestParam(name = "keywords",required = true) String  keywords){
+        QueryWrapper<Store> storeQueryWrapper = new QueryWrapper<>();
+        storeQueryWrapper.like("address_desc", keywords);
+        List<Store> store = null;
+        try {
+            store = storeService.list(storeQueryWrapper);
+                return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), store);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
+        }
+    }
 }
