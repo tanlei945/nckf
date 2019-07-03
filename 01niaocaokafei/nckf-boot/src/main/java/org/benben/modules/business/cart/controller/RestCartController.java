@@ -197,7 +197,7 @@ public class RestCartController {
 
     @PostMapping(value = "/queryCartGoodsByStore")
     @Transactional
-    @ApiOperation(value = "单门店查询购物车", notes = "查询购物车",tags = "单订单购物车接口")
+    @ApiOperation(value = "单门店查询购物车", notes = "查询购物车",tags = "订单购物车接口")
     public RestResponseBean queryCartGoodsByStore(@RequestParam(name = "storeId",required = true) String storeId) {
 
         User user = (User) SecurityUtils.getSubject().getPrincipal();
