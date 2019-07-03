@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import org.benben.modules.business.goods.entity.Goods;
 import org.benben.modules.business.goods.entity.SpecDict;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
  */
 public interface IGoodsService extends IService<Goods> {
     List<Goods> queryByCotegory(String categoryType,String belongId);
-    HashMap<String, List<String>> querySpec(String goodId);
+    HashMap<String, ArrayList<String>> querySpec(String goodId);
     List<SpecDict> queryallspec();
     void editGoodsWithSpec(List<String> list,String id);
     void deleteGoodSpect(String goodId);
