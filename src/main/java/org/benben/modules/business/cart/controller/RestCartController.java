@@ -233,32 +233,28 @@ public class RestCartController {
     @Transactional
     @ApiOperation(value = "删除购物车商品",notes = "删除购物车商品",tags = "订单购物车接口")
     @ApiImplicitParams({
-            @ApiImplicitParam(name="goodsId",value = "商品Id",dataType = "String",required = true),
+            @ApiImplicitParam(name="cartId",value = "购物车Id",dataType = "String",required = true),
     })
-    public RestResponseBean deleteStore(@RequestParam(name="goodsId",required=true) String goodsId,@RequestParam(name = "goodsSpecValues") String goodsSpecValues) {
+    public RestResponseBean deleteStore(@RequestParam(name="cartId") String cartId) {
         boolean ok;
 
         User user = (User) SecurityUtils.getSubject().getPrincipal();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
-
-        QueryWrapper<Cart> cartQueryWrapper = new QueryWrapper<>();
-        cartQueryWrapper.eq("goods_id",goodsId).eq("user_id", user.getId()).eq("goods_spec_values",goodsSpecValues);
-        Cart cart = cartService.getOne(cartQueryWrapper);
+        Cart cart = cartService.getById(cartId);
         if(cart == null){
-            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
+            return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
         }
         if(cart.getGoodsNum()>1) {
             cart.setGoodsNum(cart.getGoodsNum()-1);
             ok= cartService.updateById(cart);
         }else {
-            ok = cartService.remove(cartQueryWrapper);
+            ok = cartService.removeById(cartId);
         }
         if(ok) {
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
         }
-
         return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
     }
 
