@@ -65,7 +65,19 @@ public class StoreController {
 		return result;
 	}
 
-
+	@GetMapping(value="/queryAllList")
+	public RestResponseBean queryAllList(){
+		List<Store> list = null;
+		RestResponseBean restResponseBean=null;
+		try {
+			list = storeService.list();
+			 restResponseBean = new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), list);
+		} catch (Exception e) {
+			e.printStackTrace();
+			 restResponseBean = new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
+		}
+		return restResponseBean;
+	}
 
 	@PostMapping(value = "/add")
 	public Result<Store> add(@RequestBody Store store) {
