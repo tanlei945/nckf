@@ -37,13 +37,19 @@ public class SystemConfigServiceImpl extends ServiceImpl<SystemConfigMapper, Sys
         if(date.after(sim.parse("3:59"))&&date.before(sim.parse("7:01"))){
             systemConfigWrapper.eq("config_name","time_morning");
             SystemConfig systemConfigone = systemConfigMapper.selectOne(systemConfigWrapper);
-            words=(String)systemConfigone.getConfigValue();
+            if(systemConfigone != null){
+                words=(String)systemConfigone.getConfigValue();
+            }
+
 
         }
         if(date.after(sim.parse("7:00"))&&date.before(sim.parse("12:01"))){
             systemConfigWrapper.eq("config_name","time_noon");
             SystemConfig systemConfigone = systemConfigMapper.selectOne(systemConfigWrapper);
-            words=(String)systemConfigone.getConfigValue();
+            if(systemConfigone != null){
+                words=(String)systemConfigone.getConfigValue();
+            }
+
 
         }
 
@@ -51,19 +57,27 @@ public class SystemConfigServiceImpl extends ServiceImpl<SystemConfigMapper, Sys
         if(date.after(sim.parse("12:00"))&&date.before(sim.parse("13:01"))){
             systemConfigWrapper.eq("config_name","time_midday");
             SystemConfig systemConfigone = systemConfigMapper.selectOne(systemConfigWrapper);
-            words=(String)systemConfigone.getConfigValue();
+            if(systemConfigone != null){
+                words=(String)systemConfigone.getConfigValue();
+            }
 
         }
         if(date.after(sim.parse("13:00"))&&date.before(sim.parse("18:01"))){
             systemConfigWrapper.eq("config_name","time_afternoon");
             SystemConfig systemConfigone = systemConfigMapper.selectOne(systemConfigWrapper);
-            words=(String)systemConfigone.getConfigValue();
+            if(systemConfigone != null){
+                words=(String)systemConfigone.getConfigValue();
+            }
+
 
         }
         if(date.after(sim.parse("18:00"))&&date.before(sim.parse("24:00"))||date.after(sim.parse("0:00"))&&date.before(sim.parse("4:00"))||"0:00".equals(dateformat)){
             systemConfigWrapper.eq("config_name","time_night");
             SystemConfig systemConfigone = systemConfigMapper.selectOne(systemConfigWrapper);
-            words=(String)systemConfigone.getConfigValue();
+            if(systemConfigone != null){
+                words=(String)systemConfigone.getConfigValue();
+            }
+
 
         }
 
