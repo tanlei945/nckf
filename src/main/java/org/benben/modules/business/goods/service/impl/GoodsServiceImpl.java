@@ -29,14 +29,14 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     }
 
     @Override
-    public HashMap<String, List<String>> querySpec(String goodId) {
+    public HashMap<String, ArrayList<String>> querySpec(String goodId) {
         List<SpecDict> specDicts = GoodsMapper.querySpec(goodId);
-        HashMap<String, List<String>> hashMap = new HashMap<>();
+        HashMap<String, ArrayList<String>> hashMap = new HashMap<>();
         specDicts.forEach(specDict->{
                 if(hashMap.containsKey(specDict.getDictName())){
                     hashMap.get(specDict.getDictName()).add(specDict.getItemText());
                 }else {//map中不存在，新建key，用来存放数据
-                    List<String> tmpList = new ArrayList<>();
+                    ArrayList<String> tmpList = new ArrayList<>();
                     tmpList.add(specDict.getItemText());
                     hashMap.put(specDict.getDictName(), tmpList);
                 }
