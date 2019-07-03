@@ -64,15 +64,15 @@ public class Order implements Serializable {
 	private String userAddress;
 	/**用户电话*/
 	@Excel(name = "用户电话", width = 15)
-	private String usedPhone;
+	private String userPhone;
 	/**骑手电话*/
 	@Excel(name = "骑手电话", width = 15)
 	private String riderPhone;
 	/**用户优惠券id*/
 	@Excel(name = "用户优惠券id", width = 15)
 	private String userCouponsId;
-	/**是否需要发票(0:不开票 1:已开票)*/
-	@Excel(name = "是否需要发票(0:不开票 1:已开票)", width = 15)
+	/**是否已开发票(0:未开 1:已开)*/
+	@Excel(name = "是否已开发票(0:未开 1:已开)", width = 15)
 	private String invoiceFlag;
 	/**发票id*/
 	@Excel(name = "发票id", width = 15)
@@ -80,9 +80,6 @@ public class Order implements Serializable {
 	/**订单来源(0:微信1:安卓app 2:苹果app 3:)*/
 	@Excel(name = "订单来源(0:微信1:安卓app 2:苹果app 3:)", width = 15)
 	private String orderSrc;
-	/**发票是否已开*/
-	@Excel(name = "发票是否已开 0:未开  1：已开", width = 15)
-	private String invoiceOpen;
 	/**订单备注*/
 	@Excel(name = "订单备注", width = 15)
 	private String orderRemark;
