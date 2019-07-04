@@ -103,7 +103,7 @@ public class EvaluateController {
             return result;
         }else{
             Result<IPage<Evaluate>> result = new Result<IPage<Evaluate>>();
-            evaluate.setBelongId(storeId);
+            evaluate.setStoreId(storeId);
 			QueryWrapper<Evaluate> queryWrapper = QueryGenerator.initQueryWrapper(evaluate, req.getParameterMap());
             queryWrapper.eq("belong_id",storeId);
             Page<Evaluate> page = new Page<Evaluate>(pageNo, pageSize);
@@ -144,7 +144,7 @@ public class EvaluateController {
 	public Result<Evaluate> add(@RequestBody Evaluate evaluate) {
 		Result<Evaluate> result = new Result<Evaluate>();
 		try {
-		    String storeId = evaluate.getBelongId();
+		    String storeId = evaluate.getStoreId();
 		    Store store = storeService.getById(storeId);
 		    evaluate.setStorename(store.getStoreName());
 			evaluateService.save(evaluate);

@@ -101,9 +101,10 @@ public class RestEvaluateController {
         }
         Result<IPage<Evaluate>> result = new Result<IPage<Evaluate>>();
         QueryWrapper<Evaluate> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("belong_id", storeId);
+        queryWrapper.eq("belong_id", storeId).eq("evaluate_type","0");
         Page<Evaluate> page = new Page<Evaluate>(pageNo, pageSize);
         IPage<Evaluate> pageList = evaluateService.page(page, queryWrapper);
+
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), pageList);
     }
 
@@ -114,22 +115,11 @@ public class RestEvaluateController {
      * @description 用户评论提交接口
      * @method POST
      * @url /nckf-boot/api/v1/evaluate/addEvaluate
-     * @param belongId 必填 String 商家id
-     * @param imageUrl 必填 String 评论图片
+     * @param imgUrl 必填 String 评论图片
      * @param orderId 必填 String 订单id
      * @param content 选填 String 评论内容
-     * @param createBy 选填 String 创建者
-     * @param createTime 选填 Date 创建时间
-     * @param delFlag 选填 String 是否被删除(0:已删除 1:未删除)
      * @param evaluateType 选填 String 评论对象(0:评论商家 1:评论骑手)
-     * @param id 选填 String ID
-     * @param imgUrl 选填 String 用户上传图片
      * @param starCount 选填 String 星级
-     * @param storename 选填 String 门店名称
-     * @param updateBy 选填 String 更新人
-     * @param updateTime 选填 Date 更新时间
-     * @param userId 选填 String 用户id
-     * @param username 选填 String 用户名
      * @return {"code": 1,"data": null,"msg": "操作成功","time": "1561087089659"}
      * @return_param code String 响应状态
      * @return_param data String null
@@ -140,37 +130,54 @@ public class RestEvaluateController {
      */
     @PostMapping(value = "/addEvaluate")
     @ApiOperation(value = "用户评论提交接口", tags = {"用户接口"}, notes = "用户评论提交接口")
-    public RestResponseBean add(@RequestParam(name = "orderId", required = true)
-                                        String orderId, Evaluate evaluate,
-                                @RequestParam(name = "imageUrl") String imageUrl) {
+    public RestResponseBean add(@RequestParam(name = "orderId", required = true) String orderId,
+                                @RequestParam(name = "content") String content,
+                                @RequestParam(name ="evaluateType",required = true) String evaluateType,
+                                @RequestParam(name = "starCount") String starCount,
+                                @RequestParam(name = "imgUrl") String imgUrl) {
         User user = (User) SecurityUtils.getSubject().getPrincipal();
         if (user == null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(), ResultEnum.TOKEN_OVERDUE.getDesc(), null);
         }
-        String storeId = evaluate.getBelongId();
-        if (storeId != null) {
-            Store store = storeService.getById(storeId);
-            evaluate.setStorename(store.getStoreName());
+        Evaluate evaluate = new Evaluate();
+        Order order = orderService.getById(orderId);
+        Store store = storeService.getById(order.getStoreId());
+        double totalmark = store.getMark()*store.getMarkCount();
+        if(starCount != null && starCount != ""){
+            totalmark += Integer.parseInt(starCount);
         }
-        evaluate.setImgUrl(imageUrl);
+
+        double mark = totalmark/(store.getMarkCount()+1);
+        store.setMark(mark);
+        store.setMarkCount(store.getMarkCount()+1);
+        storeService.updateById(store);
+
+        evaluate.setStoreId(store.getId());
+        evaluate.setStorename(store.getStoreName());
+        evaluate.setImgUrl(imgUrl);
         evaluate.setUserId(user.getId());
-        evaluate.setUsername(user.getUsername());
-        evaluate.setCreateBy(user.getUsername());
+        evaluate.setRealname(user.getRealname());
+        evaluate.setCreateBy(user.getRealname());
         evaluate.setCreateTime(new Date());
         evaluate.setDelFlag("1");
+        evaluate.setRiderId(order.getRiderId());
+        if(starCount != null && starCount != ""){
+            evaluate.setStarCount(Integer.parseInt(starCount));
+        }
+        evaluate.setEvaluateType(evaluateType);
+        evaluate.setContent(content);
         evaluateService.save(evaluate);
 
 
-		Order order = orderService.getById(orderId);
+
+
         order.setStatus("4");
         order.setUpdateTime(new Date());
         order.setUpdateBy(user.getUsername());
-        if (orderService.updateById(order)) {
-            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
-        } else {
-            return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
-        }
+        orderService.updateById(order);
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
     }
+
 
     /**
      * 编辑

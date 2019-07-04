@@ -38,7 +38,7 @@ public class Store implements Serializable {
 	private java.lang.Double lat;
 	/**评分*/
 	@Excel(name = "评分", width = 15)
-	private java.lang.Integer mark;
+	private java.lang.Double mark;
 	/**位置描述*/
 	@Excel(name = "位置描述", width = 15)
 	private java.lang.String addressDesc;
@@ -46,23 +46,17 @@ public class Store implements Serializable {
 	@Excel(name = "商家电话", width = 15)
 	private java.lang.String phone;
 	/**商家距离*/
-	@Excel(name = "商家距离", width = 15)
+	@Excel(name = "商家配送距离", width = 15)
 	private java.lang.String distance;
 	/**商家公告*/
 	@Excel(name = "商家公告", width = 15)
 	private java.lang.Object notice;
-	/**月销量*/
-	@Excel(name = "月销量", width = 15)
-	private java.lang.Integer salesCountMonth;
 	/**最小配送金额*/
 	@Excel(name = "最小配送金额", width = 15)
-	private java.lang.Double minDeliveryMoney;
+	private java.lang.Integer minDeliveryMoney;
 	/**配送费*/
 	@Excel(name = "配送费", width = 15)
 	private java.lang.Double freight;
-	/**配送范围*/
-	@Excel(name = "配送范围", width = 15)
-	private java.lang.Double storeScope;
 	/**营业时间*/
 	@Excel(name = "营业时间", width = 20, format = "yyyy-MM-dd HH:mm:ss")
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
@@ -95,5 +89,12 @@ public class Store implements Serializable {
 	@Excel(name = "图片路径", width = 64)
 	/**门店图片*/
 	private String imgUrl;
+	@Excel(name = "商家简介", width = 64)
+	/**商家简介*/
+	private String storeDesc;
+
+	@Excel(name = "商家评价人数", width = 64)
+	/**商家评价人数*/
+	private int markCount;
 
 }

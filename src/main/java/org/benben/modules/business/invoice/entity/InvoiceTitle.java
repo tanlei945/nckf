@@ -33,12 +33,12 @@ public class InvoiceTitle implements Serializable {
 	/**税号*/
 	@Excel(name = "税号", width = 15)
 	private java.lang.String taxNo;
-	/**发票类型（个人:0  公司:1）*/
-	@Excel(name = "发票类型（个人:0  公司:1）", width = 15)
+	/**发票类型（电子:0  纸质:1）*/
+	@Excel(name = " //", width = 15)
 	private java.lang.String invoiceType;
-	/**是否为纸质发票*/
-	@Excel(name = "是否为纸质发票 1：纸质  0：非纸质", width = 15)
-	private java.lang.String paperFlag;
+	/**抬头类型（个人:0  企业:1）*/
+	@Excel(name = "抬头类型（个人:0  企业:1）", width = 15)
+	private java.lang.String titleType;
 	/**电子邮箱*/
 	@Excel(name = "电子邮箱", width = 15)
 	private java.lang.String email;

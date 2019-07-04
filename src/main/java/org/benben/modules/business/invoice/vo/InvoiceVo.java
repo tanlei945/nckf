@@ -12,33 +12,32 @@ import java.util.List;
 
 @Data
 public class InvoiceVo {
-	private static final long serialVersionUID = 1L;
 	/**纳税人名称*/
 	@Excel(name = "纳税人名称", width = 15)
-	private java.lang.String invoiceTitileId;
-	/**发票类型（个人:0  公司:1）*/
-	@Excel(name = "发票类型（个人:0  公司:1）", width = 15,dicCode = "invoiceType")
-	@Dict(dicCode = "invoiceType")
+	private java.lang.String taxName;
+	/**税号*/
+	@Excel(name = "税号", width = 15)
+	private java.lang.String taxNo;
+	/**发票类型（电子:0  纸质:1）*/
+	@Excel(name = "发票类型（电子:0  纸质:1）", width = 15)
 	private java.lang.String invoiceType;
+	/**抬头类型（个人:0  企业:1）*/
+	@Excel(name = "抬头类型（个人:0  企业:1）", width = 15)
+	private java.lang.String titleType;
+	/**电子邮箱*/
+	@Excel(name = "电子邮箱", width = 15)
+	private java.lang.String email;
+
 	/**开票金额*/
 	@Excel(name = "开票金额", width = 15)
 	private java.lang.Double invoiceMoney;
 	/**发票内容*/
 	@Excel(name = "发票内容", width = 15)
-	private java.lang.String invoiceContent;
-	/**电话*/
-	@Excel(name = "电话", width = 15)
-	private java.lang.String phone;
+	private java.lang.String content;
 	/**邮寄地址*/
 	@Excel(name = "邮寄地址", width = 15)
 	private java.lang.String mailingAddress;
-	/**0：不是纸质发票 1：是*/
-	@Excel(name = "0：不是纸质发票 1：是", width = 15,dicCode = "paperFlag")
-	@Dict(dicCode = "paperFlag")
-	private java.lang.String paperFlag;
-	/**邮箱*/
-	@Excel(name = "邮箱", width = 15)
-	private java.lang.String email;
+	/**状态*/
 
 	private List<String> orderIdList;
 }
