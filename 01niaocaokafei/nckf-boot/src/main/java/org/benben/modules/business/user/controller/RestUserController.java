@@ -270,7 +270,7 @@ public class RestUserController {
      * @description 通用-->修改用户名
      * @method POST
      * @url /nckf-boot/api/v1/user/changeUsername
-     * @param username 必填 String 用户名
+     * @param realname 必填 String 用户名
      * @return {"code": 1,"data": null,"msg": "操作成功","time": "1561013076472"}
      * @return_param code String 响应状态
      * @return_param data String 没有含义
@@ -279,10 +279,10 @@ public class RestUserController {
      * @remark 
      * @number 31
      */
-    @PostMapping(value = "/changeUsername")
+    @PostMapping(value = "/changeRealname")
     @ApiOperation(value = "通用-->修改用户名", tags = {"用户接口"}, notes = "通用-->修改用户名")
 	@ApiImplicitParam(name = "username",value = "用户名",dataType = "String",defaultValue = "1",required = true)
-    public RestResponseBean changeUsername(@RequestParam String username){
+    public RestResponseBean changeUsername(@RequestParam String realname){
 
 		User user = (User) SecurityUtils.getSubject().getPrincipal();
 
@@ -290,7 +290,7 @@ public class RestUserController {
 			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
 		}
 
-		if(StringUtils.isBlank(username)){
+		if(StringUtils.isBlank(realname)){
             return new RestResponseBean(ResultEnum.PARAMETER_MISSING.getValue(),ResultEnum.PARAMETER_MISSING.getDesc(),null);
         }
 
@@ -298,7 +298,7 @@ public class RestUserController {
         if(userEntity == null){
             return new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(),ResultEnum.QUERY_NOT_EXIST.desc(),null);
         }
-		userEntity.setUsername(username);
+		userEntity.setUsername(realname);
 
         if(userService.updateById(userEntity)){
 

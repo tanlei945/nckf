@@ -73,7 +73,7 @@ public class RestStoreController {
    public RestResponseBean queryStoreByDistance(@RequestParam(name="lng")double lng, @RequestParam(name="lat")double lat){
      List<Store> storeList = null;
      try {
-             storeList = storeService.queryByDistance(lng, lat);
+         storeList = storeService.queryByDistance(lng, lat);
          return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), storeList);
      } catch (Exception e) {
          e.printStackTrace();
@@ -186,10 +186,9 @@ public class RestStoreController {
     @ApiOperation(value="根据id查询商家", tags = {"门店管理接口"})
     public RestResponseBean queryStoreById(@RequestParam(name = "id",required = true) String id){
         Store store = storeService.getById(id);
-        if(store != null){
-            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), store);
-        }
-        return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
+
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), store);
+
     }
 
 

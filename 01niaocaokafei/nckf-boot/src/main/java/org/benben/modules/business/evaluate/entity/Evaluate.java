@@ -33,11 +33,11 @@ public class Evaluate implements Serializable {
 	private java.lang.String userId;
 	/**用户id*/
 	@Excel(name = "用户名", width = 15)
-	private java.lang.String username;
+	private java.lang.String realname;
 	/**商家id*/
 	@Excel(name = "门店id", width = 15)
 	@ApiModelProperty(required = true)
-	private java.lang.String belongId;
+	private java.lang.String storeId;
 	/**商家id*/
 	@Excel(name = "门店名称", width = 15)
 	private java.lang.String storename;
@@ -72,6 +72,11 @@ public class Evaluate implements Serializable {
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	private java.util.Date updateTime;
 	/**星级*/
-	@Excel(name = "星级", width = 15)
-	private java.lang.String starCount;
+	@Excel(name = "星星数", width = 15)
+	private int starCount;
+
+	/**骑手id*/
+	@Excel(name = "骑手id", width = 15)
+	private java.lang.String riderId;
+
 }

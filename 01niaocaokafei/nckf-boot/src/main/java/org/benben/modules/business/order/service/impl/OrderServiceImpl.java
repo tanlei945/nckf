@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.benben.common.api.vo.Result;
 import org.benben.common.util.DateUtils;
+import org.benben.common.util.UUIDGenerator;
 import org.benben.modules.business.goods.entity.Goods;
 import org.benben.modules.business.goods.service.IGoodsService;
 import org.benben.modules.business.order.entity.Order;
@@ -62,9 +63,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
 	public void saveMain(Order order, List<OrderGoods> orderGoodsList) {
 		orderMapper.insert(order);
+		log.info(order.toString());
 		for(OrderGoods entity:orderGoodsList) {
 			//外键设置
 			entity.setOrderId(order.getId());
+			entity.setId(UUIDGenerator.generate());
+			log.info(entity.toString());
 			orderGoodsMapper.insert(entity);
 		}
 	}
@@ -111,7 +115,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
 
 
-	@Override
+	/*@Override
 	public Order add(OrderPage orderPage) {
 		//给订单的商品数量赋值
 		int count = 0;
@@ -184,7 +188,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 		}
 		return null;
 
-	}
+	}*/
 
 	@Override
 	@Transactional
@@ -258,11 +262,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 		if(order!=null){
 			//给订单的骑手id赋上值
 			order.setRiderId(riderId);
-			//id给上值
-			order.setId(orderId);
 			//给订单的rider  name 赋上值
 			User user = userService.getById(riderId);
 			order.setRidername(user.getUsername());
+			order.setRiderOk("1");
+			order.setGetTime(new Date());
+			order.setRiderPhone(user.getMobile());
 			//订单修改时间
 			order.setUpdateTime(new Date());
 			if(orderService.updateById(order)){
@@ -272,5 +277,17 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 			}
 		}
 		return false;
+	}
+
+
+	@Override
+	public boolean riderGetOrder(String riderId, String orderId) {
+		Order order = orderService.getById(orderId);
+		order.setRiderOk("2");
+		if(orderService.updateById(order)){
+			return true;
+		}else{
+			return false;
+		}
 	}
 }

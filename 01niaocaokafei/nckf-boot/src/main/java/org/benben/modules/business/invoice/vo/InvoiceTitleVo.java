@@ -10,8 +10,9 @@ public class InvoiceTitleVo {
     private java.lang.String taxName;
     private java.lang.String taxNo;
     private java.lang.String invoiceType;
-    private java.lang.String paperFlag;
+    private java.lang.String titleType;
     private java.lang.String email;
+
 
 
 

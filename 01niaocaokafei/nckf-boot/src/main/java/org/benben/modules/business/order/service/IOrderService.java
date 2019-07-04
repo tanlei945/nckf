@@ -44,7 +44,7 @@ public interface IOrderService extends IService<Order> {
 	public Order queryByOrderId( String orderId);
 
 	//用户新增订单
-	public Order add(OrderPage orderPage);
+	//public Order add(OrderPage orderPage);
 
 	//取消订单
 	public boolean cancel(String id);
@@ -55,7 +55,10 @@ public interface IOrderService extends IService<Order> {
 	//开发票后修改订单状态
 	public boolean invoiceOk(List<String> orderIdList);
 
-	//骑手接单
+	//骑手确认接单
 	public boolean riderOrder(String riderId, String orderId);
+	//骑手取货
+	public boolean riderGetOrder (String riderId, String orderId);
+
 
 }

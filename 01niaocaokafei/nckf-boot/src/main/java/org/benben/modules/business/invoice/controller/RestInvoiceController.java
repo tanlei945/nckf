@@ -38,7 +38,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/invoice")
 @Slf4j
-@Api(tags = {"用户接口"})
+@Api(tags = {"用户发票"})
 public class RestInvoiceController {
     @Autowired
     private IInvoiceService invoiceService;
@@ -52,7 +52,7 @@ public class RestInvoiceController {
 
 
     @GetMapping(value = "/queryInvoiceOrder")
-    @ApiOperation(value = "用户可开发票订单查询接口", tags = {"用户接口"}, notes = "用户可开发票订单查询接口")
+    @ApiOperation(value = "用户可开发票订单查询接口", tags = {"用户发票"}, notes = "用户可开发票订单查询接口")
     public RestResponseBean queryInvoiceOrder(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo, @RequestParam(name="pageSize", defaultValue="10") Integer pageSize) {
         User user = (User) SecurityUtils.getSubject().getPrincipal();
         if(user==null) {
@@ -84,13 +84,12 @@ public class RestInvoiceController {
      * @number 12
      */
    @GetMapping(value = "/queryInvoice")
-   @ApiOperation(value = "用户发票查询接口", tags = {"用户接口"}, notes = "用户发票查询接口")
+   @ApiOperation(value = "用户发票查询接口", tags = {"用户发票"}, notes = "用户发票查询接口")
    public RestResponseBean queryInvoice(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo, @RequestParam(name="pageSize", defaultValue="10") Integer pageSize) {
        User user = (User) SecurityUtils.getSubject().getPrincipal();
        if(user==null) {
            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
        }
-       Result<IPage<Invoice>> result = new Result<IPage<Invoice>>();
        QueryWrapper<Invoice> queryWrapper = new QueryWrapper<>();
        queryWrapper.eq("user_id",user.getId());
        Page<Invoice> page = new Page<Invoice>(pageNo, pageSize);
@@ -135,14 +134,36 @@ public class RestInvoiceController {
      * @number 12
      */
    @PostMapping(value = "/addInvoice")
-   @ApiOperation(value = "用户发票提交接口", tags = {"用户接口"}, notes = "用户发票提交接口")
+   @ApiOperation(value = "用户发票提交接口", tags = {"用户发票"}, notes = "用户发票提交接口")
   /* @ApiImplicitParams({
    })*/
-   public RestResponseBean addInvoice(@RequestBody InvoiceVo invoiceVo) {
+   public RestResponseBean addInvoice(@RequestParam(name = "content") String content,
+                                      @RequestParam(name = "email") String email,
+                                      @RequestParam(name = "invoiceMoney") String invoiceMoney,
+                                      @RequestParam(name = "invoiceType") String invoiceType,
+                                      @RequestParam(name = "mailingAddress") String mailingAddress,
+                                      @RequestParam(name = "orderIdList") List<String> orderIdList,
+                                      @RequestParam(name = "taxName") String taxName,
+                                      @RequestParam(name = "taxNo") String taxNo,
+                                      @RequestParam(name = "titleType") String titleType) {
        User user = (User) SecurityUtils.getSubject().getPrincipal();
        if(user==null) {
            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
        }
+
+       InvoiceVo invoiceVo = new InvoiceVo();
+       invoiceVo.setContent(content);
+       invoiceVo.setEmail(email);
+       invoiceVo.setInvoiceMoney(Double.parseDouble(invoiceMoney));
+       invoiceVo.setInvoiceType(invoiceType);
+       invoiceVo.setMailingAddress(mailingAddress);
+       invoiceVo.setOrderIdList(orderIdList);
+       invoiceVo.setTaxName(taxName);
+       invoiceVo.setTaxNo(taxNo);
+       invoiceVo.setTitleType(titleType);
+
+
+
        //从数据库中获取用户所需的实际开票金额
        double sum = 0;
        for (String s : invoiceVo.getOrderIdList()) {
@@ -157,14 +178,17 @@ public class RestInvoiceController {
        if(invoiceVo != null){
            if(invoiceVo.getInvoiceMoney( ) == sum){
                try {
-                   invoice.setUsername(user.getRealname());
-				   invoice.setUsername(user.getUsername());
+                   invoice.setRealname(user.getRealname());
+				   invoice.setUserId(user.getId());
 				   invoice.setCreateBy(user.getRealname());
 				   invoice.setCreateTime(new Date());
+				   invoice.setStatus("0");
                    invoiceService.save(invoice);
                    for (String s : invoiceVo.getOrderIdList()) {
                        Order order = orderService.getById(s);
                        order.setInvoiceFlag("1");
+                       order.setInvoiceId(invoice.getId());
+
                        QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
                        queryWrapper.eq("id",s);
                        orderService.update(order,queryWrapper);
@@ -260,7 +284,7 @@ public class RestInvoiceController {
     * @return
     */
    @GetMapping(value = "/queryInvoiceById")
-   @ApiOperation(value = "用户查询发票详情接口", tags = {"用户接口"}, notes = "用户查询发票详情接口")
+   @ApiOperation(value = "用户查询发票详情接口", tags = {"用户发票"}, notes = "用户查询发票详情接口")
    public RestResponseBean queryInvoiceById(@RequestParam(name="id",required=true) String id) {
        User user = (User) SecurityUtils.getSubject().getPrincipal();
        if(user==null) {
@@ -306,7 +330,7 @@ public class RestInvoiceController {
      * @number 13
      */
     @GetMapping(value = "/title/queryInvoiceTitle")
-    @ApiOperation(value = "用户发票抬头查询接口", tags = {"用户接口"}, notes = "用户发票抬头查询接口")
+    @ApiOperation(value = "用户发票抬头查询接口", tags = {"用户发票"}, notes = "用户发票抬头查询接口")
     public RestResponseBean queryInvoiceTitle() {
         User user = (User) SecurityUtils.getSubject().getPrincipal();
         if(user==null) {
@@ -337,7 +361,7 @@ public class RestInvoiceController {
      * @number 14
      */
     @PostMapping(value = "/title/addInvoiceTitle")
-    @ApiOperation(value = "用户发票头提交接口", tags = {"用户接口"}, notes = "用户发票头提交接口")
+    @ApiOperation(value = "用户发票头提交接口", tags = {"用户发票"}, notes = "用户发票头提交接口")
     public RestResponseBean addInvoiceTitle(@RequestBody InvoiceTitleVo invoiceTitleVo) {
         User user = (User) SecurityUtils.getSubject().getPrincipal();
         if(user==null) {
@@ -382,7 +406,7 @@ public class RestInvoiceController {
      */
     @PostMapping(value = "/title/deleteInvoiceTitle")
    /* @ApiOperation(value = "用户发票头根据id删除接口", tags = {"用户接口"}, notes = "用户发票头根据id删除接口")*/
-    @ApiImplicitParam(name = "id", value = "发票头id",required = true )
+    //@ApiImplicitParam(name = "id", value = "发票头id",required = true )
     public RestResponseBean deleteInvoiceTitle(@RequestParam(name="id",required=true) String id) {
         User user = (User) SecurityUtils.getSubject().getPrincipal();
         if(user==null) {
@@ -417,7 +441,7 @@ public class RestInvoiceController {
             String userId = record.getUserId();
             User user = userService.getById(userId);
             if(user != null){
-                record.setUsername(user.getUsername());
+                record.setRealname(user.getRealname());
             }
         }
         pageList.setRecords(records);

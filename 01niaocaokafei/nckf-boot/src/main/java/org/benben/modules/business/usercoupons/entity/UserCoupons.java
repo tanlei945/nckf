@@ -40,9 +40,6 @@ public class UserCoupons implements Serializable {
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	private java.util.Date useTime;
-	/**是否被使用：0-未使用  1-使用*/
-	@Excel(name = "是否被使用：0-未使用  1-已使用", width = 15)
-	private java.lang.String usedFlag;
 	/**使用条件*/
 	@Excel(name = "使用条件", width = 15)
 	private java.lang.Double useCondition;
