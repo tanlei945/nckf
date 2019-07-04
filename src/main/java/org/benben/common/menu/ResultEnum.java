@@ -9,6 +9,8 @@ public enum ResultEnum {
 
     OPERATION_FAIL(0,"操作失败"),
 
+    ORDER_MONEY_FAIL(0,"订单金额异常"),
+
     QUERY_NOT_EXIST(0,"查询不存在"),
 
     SELECTED_NULL(1,"购物车商品不见了"),
