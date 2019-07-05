@@ -81,7 +81,7 @@ public class Store implements Serializable {
 	/**更新时间*/
 	@Excel(name = "更新时间", width = 20, format = "yyyy-MM-dd HH:mm:ss")
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	private java.util.Date updateTime;
 	@Excel(name = "管理员id", width = 15)
 	/**管理员id*/
@@ -92,7 +92,6 @@ public class Store implements Serializable {
 	@Excel(name = "商家简介", width = 64)
 	/**商家简介*/
 	private String storeDesc;
-
 	@Excel(name = "商家评价人数", width = 64)
 	/**商家评价人数*/
 	private int markCount;
