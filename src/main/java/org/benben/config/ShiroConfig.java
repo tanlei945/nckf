@@ -104,14 +104,19 @@ public class ShiroConfig {
 		filterChainDefinitionMap.put("/api/v1/goods/queryGoodsByCategory", "anon");
 		filterChainDefinitionMap.put("/api/v1/goods/queryGoodsSpec", "anon");
 		filterChainDefinitionMap.put("/api/v1/store/queryStoreByDistance", "anon");
+		filterChainDefinitionMap.put("/api/v1/store/queryStoreById", "anon");
 		filterChainDefinitionMap.put("/api/v1/store/query_all_store", "anon");
 		filterChainDefinitionMap.put("/api/v1/announcement/queryAnnouncementById", "anon");
 		filterChainDefinitionMap.put("/api/v1/announcement/queryAnnouncementTitle", "anon");
 		filterChainDefinitionMap.put("/api/v1/coupons/queryCoupons", "anon");
 		filterChainDefinitionMap.put("/api/v1/systemConfig/queryByTime", "anon");
 		filterChainDefinitionMap.put("/api/v1/announcement/queryAnnouncementTitle", "anon");
-		filterChainDefinitionMap.put("/api/v1/announcement/queryAnnouncementTitle", "anon");
-		//filterChainDefinitionMap.put("/api/v1/riderAddress/updateRiderAddress", "anon");
+		filterChainDefinitionMap.put("/api/v1/region/list", "anon");
+		filterChainDefinitionMap.put("/api/v1/store/queryStoreByName", "anon");
+		filterChainDefinitionMap.put("/api/v1/store/queryScopeById", "anon");
+		filterChainDefinitionMap.put("/api/v1/store/queryStoreByDistance", "anon");
+		filterChainDefinitionMap.put("/api/v1/store/queryStoreById", "anon");
+		filterChainDefinitionMap.put("/api/v1/store/query_all_store", "anon");
 		//性能监控
 		filterChainDefinitionMap.put("/actuator/metrics/**", "anon");
 		filterChainDefinitionMap.put("/actuator/httptrace/**", "anon");
