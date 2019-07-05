@@ -369,11 +369,12 @@ public class RestOrderController {
                                     @RequestParam(name = "orderType") String orderType,
                                     @RequestParam(name = "deliveryMoney") String deliveryMoney,
                                     @RequestParam(name = "appOrderMoney") String appOrderMoney){
+       //判断用户是否登陆
        User user = (User) SecurityUtils.getSubject().getPrincipal();
        if(user==null) {
            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
        }
-
+       //查询选中购物车的商品详情
        QueryWrapper<Cart> queryWrapper = new QueryWrapper<>();
        queryWrapper.eq("user_id",user.getId());
        List<Cart> cartList = cartService.list(queryWrapper);

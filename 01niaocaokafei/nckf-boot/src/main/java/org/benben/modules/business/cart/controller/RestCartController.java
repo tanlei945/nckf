@@ -78,6 +78,7 @@ public class RestCartController {
         cart.setGoodsNum(cartAddVo.getGoodsNum());
         cart.setGoodsId(cartAddVo.getGoodsId());
         cart.setGoodsSpecValues(cartAddVo.getGoodsSpecValues());
+        cart.setGoodsName(cartAddVo.getGoodsName());
 
         Goods goods = goodsService.getById(cartAddVo.getGoodsId());
         if(goods != null){
@@ -171,21 +172,19 @@ public class RestCartController {
             set.add(cart.getStoreId());
         }
 
-        Map<String,List<Goods>> map = new HashMap<>();
+        Map<String,List<Cart>> map = new HashMap<>();
 
         //把不同的商品分别分别放入到各自的门店下
-        List<Goods> listGoods = new ArrayList<>();
+        List<Cart> cartList = new ArrayList<>();
         for (String s : set) {
             for (Cart cart : list) {
                 if(s.equals(cart.getStoreId())){
-                    listGoods.add(goodsService.getById(cart.getGoodsId()));
+                    cartList.add(cart);
                 }
             }
-            map.put(s,listGoods);
+            map.put(s,cartList);
 
         }
-
-
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),map);
     }
 

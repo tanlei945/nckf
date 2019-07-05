@@ -34,13 +34,23 @@ public class Cart implements Serializable {
 	@Excel(name = "商品id", width = 15)
 	@ApiModelProperty(value = "商品id")
 	private java.lang.String goodsId;
+
+	/**商品名称*/
+	@Excel(name = "商品名称", width = 15)
+	@ApiModelProperty(value = "商品名称")
+	private java.lang.String goodsName;
+
+	/**是否有效*/
+	@Excel(name = "是否有效", width = 15)
+	@ApiModelProperty(value = "是否有效")
+	private java.lang.String status;
 	/**商户id*/
 	@Excel(name = "门店id", width = 15)
-	@ApiModelProperty(value = "商户id")
+	@ApiModelProperty(value = "门店id")
 	private java.lang.String storeId;
 	/**商品规格*/
 	@Excel(name = "商品规格值", width = 15)
-	@ApiModelProperty(value = "商品规格")
+	@ApiModelProperty(value = "商品规格值")
 	private java.lang.String goodsSpecValues;
 	/**商品规格*/
 	@Excel(name = "选中商品规格的价格", width = 15)

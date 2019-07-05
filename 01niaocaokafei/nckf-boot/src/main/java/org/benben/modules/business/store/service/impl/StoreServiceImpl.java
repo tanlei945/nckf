@@ -25,6 +25,8 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store> implements
 
     @Autowired
     private StoreMapper storeMapper;
+    @Autowired
+    private IStoreService storeService;
     @Override
     public List<Store> queryByDistance(double longitude,double latitude) {
         List<Store> stores = storeMapper.queryByDistance();
@@ -56,11 +58,10 @@ public class StoreServiceImpl extends ServiceImpl<StoreMapper, Store> implements
 
     @Override
     public Boolean queryScopeById(String id,double lng,double lat) {
-        String str = storeMapper.queryScopeById(id);
-        Store store = getById(id);
+
+        Store store = storeService.getById(id);
+        String distance = store.getDistance();
         String algorithm = DistanceUtil.algorithm(store.getLng(), store.getLat(), lng, lat);
-        return Double.parseDouble(str)>Double.parseDouble(algorithm);
+        return Double.parseDouble(distance)>Double.parseDouble(algorithm);
     }
-
-
 }
