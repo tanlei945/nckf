@@ -95,13 +95,10 @@ public class RestEvaluateController {
     public RestResponseBean queryEvaluateList(@RequestParam(name = "storeId", required = true) String storeId,
                                               @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
                                               @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
-        if (user == null) {
-            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(), ResultEnum.TOKEN_OVERDUE.getDesc(), null);
-        }
-        Result<IPage<Evaluate>> result = new Result<IPage<Evaluate>>();
+
+        //Result<IPage<Evaluate>> result = new Result<IPage<Evaluate>>();
         QueryWrapper<Evaluate> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("belong_id", storeId).eq("evaluate_type","0");
+        queryWrapper.eq("store_id", storeId).eq("evaluate_type","0");
         Page<Evaluate> page = new Page<Evaluate>(pageNo, pageSize);
         IPage<Evaluate> pageList = evaluateService.page(page, queryWrapper);
 
@@ -161,6 +158,7 @@ public class RestEvaluateController {
         evaluate.setCreateTime(new Date());
         evaluate.setDelFlag("1");
         evaluate.setRiderId(order.getRiderId());
+        evaluate.setAvatar(user.getAvatar());
         if(starCount != null && starCount != ""){
             evaluate.setStarCount(Integer.parseInt(starCount));
         }

@@ -115,8 +115,9 @@ public class RestStoreController {
             @ApiImplicitParam(name="lng",value="收货地址经度",dataType = "double",required = true),
             @ApiImplicitParam(name="lat",value="收货地址纬度",dataType = "double",required = true)
     })
-    public RestResponseBean queryScopeById(@RequestParam(name="storeId")String storeId, @RequestParam(name="lng")
-            double lng,@RequestParam(name="lat") double lat){
+    public RestResponseBean queryScopeById(@RequestParam(name="storeId")String storeId,
+                                           @RequestParam(name="lng") double lng,
+                                           @RequestParam(name="lat") double lat){
         Boolean aBoolean = null;
         try {
             aBoolean = storeService.queryScopeById(storeId,lng,lat);
