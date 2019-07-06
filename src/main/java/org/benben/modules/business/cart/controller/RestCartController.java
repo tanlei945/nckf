@@ -173,10 +173,10 @@ public class RestCartController {
 
 
         //把不同的购物车分别分别放入到各自的门店下
-        CartListVo cartVo = new CartListVo();
         List<CartListVo> listVos = new ArrayList<>();
 
-        for (String s : set) {
+        for (String  s : set) {
+            CartListVo cartVo = new CartListVo();
             Store store = storeService.getById(s);
             List<Cart> listCart = new ArrayList<>();
             for (Cart cart : list) {
@@ -190,6 +190,9 @@ public class RestCartController {
             cartVo.setCartList(listCart);
             listVos.add(cartVo);
         }
+
+        log.info(listVos.toString());
+
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),listVos);
     }
 
