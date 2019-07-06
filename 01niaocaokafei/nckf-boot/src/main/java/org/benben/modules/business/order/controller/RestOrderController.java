@@ -384,11 +384,15 @@ public class RestOrderController {
            cartList.add(cart);
        }
 
-
+       //验证购物车id是否有无
+        if(cartList == null){
+            return new RestResponseBean(ResultEnum.CART_NULL.getValue(),ResultEnum.CART_NULL.getDesc(),null);
+        }
        double money = 0;
        int count = 0;
        List<OrderGoods> list =new ArrayList<>();
        OrderGoods orderGoods = new OrderGoods();
+       //遍历给orderGoods值
        for (Cart cart : cartList) {
            orderGoods.setCreateBy(user.getRealname());
            orderGoods.setGoodsCount(cart.getGoodsNum());
@@ -405,6 +409,7 @@ public class RestOrderController {
            count += cart.getGoodsNum();
        }
 
+       //如果此订单使用优惠券，得到数据库查询到的订单金额减去优惠金额
        if(couponseId != null && couponseId != ""){
            UserCoupons userCoupons = userCouponsService.getById(couponseId);
            if(userCoupons != null){
@@ -414,15 +419,17 @@ public class RestOrderController {
             }
        }
 
-       //商品金额
+       //得到数据库订单金额减去加上配送费
        if(deliveryMoney != null && deliveryMoney != ""){
            money += Double.parseDouble(deliveryMoney);
        }
 
+       //比较db金额与app传过来的金额
        if(money  != Double.parseDouble(appOrderMoney)){
            return new RestResponseBean(ResultEnum.ORDER_MONEY_FAIL.getValue(),ResultEnum.ORDER_MONEY_FAIL.getDesc(),null);
        }
 
+       //给order值
        Order order = new Order();
        order.setDeliveryMoney(Double.parseDouble(deliveryMoney));
        order.setUsername(user.getRealname());
@@ -433,6 +440,7 @@ public class RestOrderController {
        order.setGoodsCount(count);
        order.setOrderId(user.getId()+System.currentTimeMillis());
        order.setCreateBy(user.getRealname());
+
 
        if(cartIds != null){
            Cart cart = cartService.getById(cartIds[0]);
@@ -447,8 +455,10 @@ public class RestOrderController {
        order.setOrderType(orderType);
        order.setUserPhone(user.getMobile());
 
+       //保存order
        orderService.saveMain(order,list);
 
+       //订单临时表添加数据
        OrderNoPay orderNoPay = new OrderNoPay();
        BeanUtils.copyProperties(order,orderNoPay);
        orderNoPayService.insert(orderNoPay);
@@ -456,6 +466,35 @@ public class RestOrderController {
        //清除生成订单的购物车记录
        for (String cartId : cartIds) {
            cartService.removeById(cartId);
+       }
+
+       //如果不用钱包支付
+       if(accountFlag.equals("0")){
+           //调用三方支付
+           switch(thirdPay){
+               case "1":
+                   //调用微信
+               case "2":
+                   //调用支付宝
+           }
+       }else{
+           //如果使用使用钱包支付并且钱包余额大于订单余额，使用钱包付款并且更新余额
+           if(user.getUserMoney()>=Double.parseDouble(appOrderMoney)){
+               user.setUserMoney(user.getUserMoney()-Double.parseDouble(appOrderMoney));
+               userService.updateById(user);
+           }else{
+               user.setUserMoney(0.0);
+               userService.updateById(user);
+               //三方需支付金额
+               double trueMoney = Double.parseDouble(appOrderMoney)-user.getUserMoney();
+               //调用三方支付
+               switch(thirdPay){
+                   case "1":
+                       //调用微信
+                   case "2":
+                       //调用支付宝
+               }
+           }
        }
 
        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),order);
