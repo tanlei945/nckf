@@ -73,7 +73,7 @@ public class User implements Serializable {
 	private java.lang.String workFlag;
 	/**余额*/
 	@Excel(name = "余额", width = 15)
-	private java.math.BigDecimal userMoney;
+	private java.lang.Double userMoney;
 	/**积分*/
 	@Excel(name = "积分", width = 15)
 	private java.lang.Integer score;
