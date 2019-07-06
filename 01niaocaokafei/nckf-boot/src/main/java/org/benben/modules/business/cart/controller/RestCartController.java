@@ -5,22 +5,20 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apache.shiro.SecurityUtils;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.menu.ResultEnum;
-import org.benben.common.util.DateUtils;
 import org.benben.modules.business.cart.entity.Cart;
 import org.benben.modules.business.cart.service.ICartService;
 import org.benben.modules.business.cart.vo.CartAddVo;
+import org.benben.modules.business.cart.vo.CartListVo;
 import org.benben.modules.business.cart.vo.CartVo;
-import org.benben.modules.business.cart.vo.ListCartVo;
+import org.benben.modules.business.commen.service.ICommonService;
 import org.benben.modules.business.goods.entity.Goods;
 import org.benben.modules.business.goods.service.IGoodsService;
 import org.benben.modules.business.store.entity.Store;
 import org.benben.modules.business.store.service.IStoreService;
 import org.benben.modules.business.user.entity.User;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +37,8 @@ public class RestCartController {
     private IGoodsService goodsService;
     @Autowired
     private IStoreService storeService;
+    @Autowired
+    private ICommonService commonService;
     /**
      * showdoc
      * @catalog 订单购物车接口
@@ -107,7 +107,6 @@ public class RestCartController {
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
         }
         return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
-
     }
 
 
@@ -172,20 +171,26 @@ public class RestCartController {
             set.add(cart.getStoreId());
         }
 
-        Map<String,List<Cart>> map = new HashMap<>();
 
-        //把不同的商品分别分别放入到各自的门店下
-        List<Cart> cartList = new ArrayList<>();
+        //把不同的购物车分别分别放入到各自的门店下
+        CartListVo cartVo = new CartListVo();
+        List<CartListVo> listVos = new ArrayList<>();
+
         for (String s : set) {
+            Store store = storeService.getById(s);
+            List<Cart> listCart = new ArrayList<>();
             for (Cart cart : list) {
                 if(s.equals(cart.getStoreId())){
-                    cartList.add(cart);
+                    cartVo.setStoreId(s);
+                    cartVo.setStoreName(store.getStoreName());
+                    cartVo.setStoreImage(commonService.getLocalUrl(store.getImgUrl()));
+                    listCart.add(cart);
                 }
             }
-            map.put(s,cartList);
-
+            cartVo.setCartList(listCart);
+            listVos.add(cartVo);
         }
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),map);
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),listVos);
     }
 
 
