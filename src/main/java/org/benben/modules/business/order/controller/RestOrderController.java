@@ -368,16 +368,21 @@ public class RestOrderController {
                                     @RequestParam(name = "orderRemark") String orderRemark,
                                     @RequestParam(name = "orderType") String orderType,
                                     @RequestParam(name = "deliveryMoney") String deliveryMoney,
-                                    @RequestParam(name = "appOrderMoney") String appOrderMoney){
+                                    @RequestParam(name = "appOrderMoney") String appOrderMoney,
+                                    @RequestParam(name = "accountFlag") String accountFlag,
+                                    @RequestParam(name = "thirdPay") String thirdPay){
        //判断用户是否登陆
        User user = (User) SecurityUtils.getSubject().getPrincipal();
        if(user==null) {
            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
        }
-       //查询选中购物车的商品详情
-       QueryWrapper<Cart> queryWrapper = new QueryWrapper<>();
-       queryWrapper.eq("user_id",user.getId());
-       List<Cart> cartList = cartService.list(queryWrapper);
+
+       List<Cart> cartList = new ArrayList<>();
+       for (int i = 0; i <cartIds.length ; i++) {
+           //查询选中购物车的商品详情
+           Cart cart = cartService.getById(cartIds[i]);
+           cartList.add(cart);
+       }
 
 
        double money = 0;
