@@ -1,24 +1,41 @@
 filterlist:
   # 用户删除
-  - /nckf-boot/api/v1/user/delete
-  - /nckf-boot/api/v1/invoice/title/queryInvoiceTitle、
-  - /nckf-boot/api/v1/user/userlogin
+  - /api/v1/user/userlogin
   - /api/v1/user/mobileLogin
-  - /api/v1/user/qqLoginCallback
+  - /api/v1/store/**
   - /api/v1/user/wxLoginCallBack
   - /api/v1/user/wbLoginCallback
   - /api/v1/user/userRegister
   - /api/v1/user/riderRegister
-  - /api/v1/user/login
   - /api/v1/user/forgetPassword
   - /api/v1/user/isExistMobile
-  - /api/v1/sms/**
-  - /api/v1/login/third
-  - /api/v1/validate/**
-  - /api/v1/announcement/**
-  - /api/v1/banner/**
-  - /api/v1/systemConfig/**
-  - /api/v1/store/*
-  - /api/v1/goods/*
-  - /api/v1/category/*
-  - /api/v1/rechargeConfig/**
+  - /api/v1/sms/
+  - /api/v1/user/userlogin
+  - /api/v1/user/userlogin
+  - /api/v1/sms/**"
+  - /api/v1/login/third"
+  - /api/v1/validate/**"
+  - /api/v1/announcement/**"
+  - /api/v1/banner/**"
+  - /api/v1/rechargeConfig/queryRechargeDictionary"
+  - /api/v1/coupons/queryCoupons"
+  - /api/v1/announcement/queryAnnouncementTitle"
+  - /api/v1/user/riderlogin"
+  - /api/v1/user/userlogin"
+  - /api/v1/common/uploadImageLocal"
+  - /api/v1/systemConfig/queryByTime"
+  - /api/v1/goods/queryGoodsByCategory"
+  - /api/v1/category/getCategory"
+  - /api/v1/rechargeConfig/queryHowToBuy"
+  - /api/v1/rechargeConfig/queryHowToRecharge"
+  - /api/v1/rechargeConfig/queryInvoiceIssued"
+  - /api/v1/rechargeConfig/queryOtherProblems"
+  - /api/v1/rechargeConfig/queryRechargeDictionary"
+  - /api/v1/feedback/queryFeedBackList"
+  - /api/v1/common/uploadImageLocal"
+  - /api/v1/goods/queryGoodsByCategory"
+  - /api/v1/goods/queryGoodsSpec"
+  - /api/v1/coupons/queryCoupons"
+  - /api/v1/systemConfig/queryByTime"
+  - /api/v1/region/list"
+  - /api/v1/evaluate/queryEvaluateList"
