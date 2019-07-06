@@ -10,7 +10,6 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.menu.ResultEnum;
-import org.benben.common.system.query.QueryGenerator;
 import org.benben.modules.business.commen.service.ICommonService;
 import org.benben.modules.business.store.entity.Store;
 import org.benben.modules.business.store.service.IStoreService;

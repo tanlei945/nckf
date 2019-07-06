@@ -1,15 +1,13 @@
 package org.benben.modules.business.store.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.benben.common.util.DistanceUtil;
 import org.benben.common.util.sortMapByValue;
 import org.benben.modules.business.store.entity.Store;
 import org.benben.modules.business.store.mapper.StoreMapper;
 import org.benben.modules.business.store.service.IStoreService;
-import org.benben.modules.business.user.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

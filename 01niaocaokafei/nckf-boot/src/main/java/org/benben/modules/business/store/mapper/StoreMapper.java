@@ -2,11 +2,9 @@ package org.benben.modules.business.store.mapper;
 
 import java.util.List;
 
-import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
-import org.benben.modules.business.store.entity.Store;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.benben.modules.business.user.entity.User;
+import org.benben.modules.business.store.entity.Store;
 
 /**
  * @Description: 店面

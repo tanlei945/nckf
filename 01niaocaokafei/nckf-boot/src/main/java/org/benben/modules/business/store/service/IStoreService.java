@@ -1,11 +1,9 @@
 package org.benben.modules.business.store.service;
 
-import org.benben.modules.business.store.entity.Store;
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.benben.modules.business.user.entity.User;
+import org.benben.modules.business.store.entity.Store;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Description: 店面
