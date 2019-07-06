@@ -1,6 +1,8 @@
 filterlist:
   # 用户删除
-  - /api/v1/user/delete
+  - /nckf-boot/api/v1/user/delete
+  - /nckf-boot/api/v1/invoice/title/queryInvoiceTitle、
+  - /nckf-boot/api/v1/user/userlogin
   - /api/v1/user/mobileLogin
   - /api/v1/user/qqLoginCallback
   - /api/v1/user/wxLoginCallBack
