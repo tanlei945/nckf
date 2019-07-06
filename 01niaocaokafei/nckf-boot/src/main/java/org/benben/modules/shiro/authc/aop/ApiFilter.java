@@ -4,6 +4,7 @@ package org.benben.modules.shiro.authc.aop;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;
+import org.benben.common.api.vo.TokenResponse;
 import org.benben.common.constant.CommonConstant;
 import org.benben.common.util.RedisUtil;
 import org.benben.common.util.oConvertUtils;
@@ -16,6 +17,7 @@ import org.benben.modules.system.entity.SysUser;
 import org.benben.modules.system.service.ISysUserService;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -55,6 +57,8 @@ public class ApiFilter implements Filter {
 	private IUserService userService;
 	@Autowired
 	private RedisUtil redisUtil;
+	@Value(value = "${server.servlet.context-path}")
+	private String projectName;
 
 	private List<String> filterlist;
 
@@ -72,14 +76,26 @@ public class ApiFilter implements Filter {
 		}
 		HttpSession session = httpServletRequest.getSession();
 		String currPath = httpServletRequest.getRequestURI();    //当前请求的URL
-		System.out.println(currPath);
+		currPath = currPath.replace(projectName,""); //去掉项目名，以api开头
+		log.info(currPath);
 		//判断接口地址是否相同
-		if (filterlist.size() != 0) {
+		if (filterlist.size() != 0 ) {
 			for (String s : filterlist) {
-				if (s.equals(currPath)) {
+				if (s.equals(currPath) ) {
 					chain.doFilter(httpServletRequest, httpServletResponse);
 					return;
 				}
+				//匹配/**
+				if(s.contains("/**")){
+					String path = s.replace("/**","");
+					log.info(path);
+					log.info(currPath);
+					if(currPath.contains(path)){
+						chain.doFilter(httpServletRequest, httpServletResponse);
+						return;
+					}
+				}
+
 			}
 		}
 		//假如token为空返回
@@ -146,7 +162,8 @@ public class ApiFilter implements Filter {
 //		Map<String, String> filterChainDefinitionMap = new LinkedHashMap<String, String>();
 		Yaml yaml = new Yaml();
 		URL url = ShiroConfig.class.getClassLoader().getResource("noneed-login.yml");
-		System.out.println(url.toString());
+		//System.out.println(url.toString());
+
 		Map map = null;
 		try {
 			map = yaml.load(new FileInputStream(url.getFile()));
@@ -163,22 +180,28 @@ public class ApiFilter implements Filter {
 		String time = String.valueOf(System.currentTimeMillis());
 		PrintWriter writer = null;
 
+		TokenResponse tokenResponse = new TokenResponse();
+		tokenResponse.setCode(2);
+		tokenResponse.setData(null);
+		tokenResponse.setMsg("token过期");
+		tokenResponse.setTime(time);
 
-		Map map = new HashMap<>();
-		map.put("code",2);
-		map.put("data",null);
-		map.put("msg","token过期");
-		map.put("time",time);
-		JSONArray array = new JSONArray();
-		array.put(map);
-		System.out.println(array);
+		//map.put("code",2);
+		//map.put("data",null);
+		//map.put("msg","token过期");
+		//map.put("time",time);
+		/*JSONArray array = new JSONArray();
+		array.put(map);*/
+
+
+//		System.out.println(array);
 
 		response.setCharacterEncoding("UTF-8");
-		response.setContentType("text/html; charset=utf-8");
+		response.setContentType("application/json; charset=utf-8");
 		try {
-//			JSONObject  myJson = JSONObject.fromObject(jsonMessage);
+			JSONObject  myJson = JSONObject.fromObject(tokenResponse);
 			writer = response.getWriter();
-			writer.print(array);
+			writer.print(myJson);
 
 		} catch (Exception e) {
 			//log.error("response error",e);
