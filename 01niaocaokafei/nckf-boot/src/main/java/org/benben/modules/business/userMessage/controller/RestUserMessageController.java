@@ -1,22 +1,17 @@
 package org.benben.modules.business.userMessage.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.menu.ResultEnum;
-import org.benben.common.system.query.QueryGenerator;
 import org.benben.modules.business.message.entity.Message;
 import org.benben.modules.business.message.service.IMessageService;
-import org.benben.modules.business.user.entity.User;
 import org.benben.modules.business.userMessage.entity.UserMessage;
 import org.benben.modules.business.userMessage.service.IUserMessageService;
-import org.benben.modules.system.entity.SysUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -62,6 +57,7 @@ public class RestUserMessageController {
         try {
             Page<Message> page = new Page<Message>(pageNo, pageSize);
             pageList = messageService.page(page);
+            messages = userMessageService.queryPageList(userId);
             pageList.setRecords(messages);
         } catch (Exception e) {
             e.printStackTrace();
@@ -99,6 +95,7 @@ public class RestUserMessageController {
      * @return
      */
     @DeleteMapping(value = "/delete")
+    @ApiOperation(value = "删除单个系统信息", notes = "删除单个系统信息", tags = {"用户接口"})
     public RestResponseBean delete(@RequestParam(name = "id", required = true) String id) {
         try {
             UserMessage userMessage = userMessageService.getById(id);
@@ -118,6 +115,7 @@ public class RestUserMessageController {
      * @return
      */
     @GetMapping(value = "/queryMessageById")
+    @ApiOperation(value = "查询某个系统信息", notes = "查询某个系统信息", tags = {"用户接口"})
     public RestResponseBean queryById(@RequestParam(name = "id", required = true) String id) {
         try {
             UserMessage userMessage = userMessageService.getById(id);
