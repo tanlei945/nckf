@@ -35,7 +35,7 @@ public class GoodsVo implements Serializable {
 	@Excel(name = "商品名称", width = 15)
 	private String goodsName;
 	/**价格集合*/
-	private LinkedList listPrice;
+	private ArrayList listPrice;
 	/**库存*/
 	@Excel(name = "库存", width = 15)
 	private Integer goodsCount;

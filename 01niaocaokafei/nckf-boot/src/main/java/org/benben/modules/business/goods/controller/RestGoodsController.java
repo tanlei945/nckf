@@ -93,7 +93,7 @@ public class RestGoodsController {
          GoodsVo goodsVo = new GoodsVo();
          for (Goods goods : goodsList) {
              BeanUtils.copyProperties(goods,goodsVo);
-             LinkedList<Double> objects = new LinkedList<Double>();
+             ArrayList<Double> objects = new ArrayList<Double>();
              objects.add(goods.getBigPrice());
              objects.add(goods.getMiddlePrice());
              objects.add(goods.getSmallPrice());
