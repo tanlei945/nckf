@@ -17,6 +17,7 @@ import org.benben.modules.business.message.entity.Message;
 import org.benben.modules.business.message.service.IMessageService;
 import org.benben.modules.business.message.vo.MessageVo;
 import org.benben.modules.business.user.entity.User;
+import org.benben.modules.shiro.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -126,7 +127,7 @@ public class RestMessageController {
 	@GetMapping(value = "/queryMessageCount")
 	@ApiOperation(value = "获取用户系统公告未读数量", notes = "获取用户系统公告未读数量", tags = {"首页"})
 	public RestResponseBean queryAnnouncementCount() {
-		User user = (User) SecurityUtils.getSubject().getPrincipal();
+		User user = (User) LoginUser.getCurrentUser();
 		if(user==null) {
 			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
 		}

@@ -21,6 +21,7 @@ import org.benben.modules.business.store.entity.Store;
 import org.benben.modules.business.store.service.IStoreService;
 import org.benben.modules.business.user.entity.User;
 import org.benben.modules.business.user.service.IUserService;
+import org.benben.modules.shiro.LoginUser;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -132,7 +133,7 @@ public class RestEvaluateController {
                                 @RequestParam(name ="evaluateType",required = true) String evaluateType,
                                 @RequestParam(name = "starCount") String starCount,
                                 @RequestParam(name = "imgUrl") String imgUrl) {
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        User user = (User) LoginUser.getCurrentUser();
         if (user == null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(), ResultEnum.TOKEN_OVERDUE.getDesc(), null);
         }

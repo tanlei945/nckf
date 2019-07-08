@@ -156,7 +156,7 @@ public class RestUserController {
     @ApiOperation(value = "通用-->用户修改", tags = {"用户接口"}, notes = "通用-->用户修改")
     public RestResponseBean editUser(@RequestBody UserVo userVo) {
 
-		User user = (User) SecurityUtils.getSubject().getPrincipal();
+		User user = (User) LoginUser.getCurrentUser();
 
 		if(user==null) {
 			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
@@ -203,7 +203,7 @@ public class RestUserController {
 	@ApiImplicitParam(name = "avatar",value = "头像图片",dataType = "String",required = true)
     public RestResponseBean changeAvatar(@RequestParam String avatar){
 
-		User user = (User) SecurityUtils.getSubject().getPrincipal();
+		User user = (User) LoginUser.getCurrentUser();
 
 		if(user==null) {
 			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
@@ -246,7 +246,7 @@ public class RestUserController {
 	@ApiOperation(value = "通用-->选择上一个头像", tags = {"用户接口"}, notes = "通用-->选择上一个头像")
 	public RestResponseBean changeOldAvatar(){
 
-		User user = (User) SecurityUtils.getSubject().getPrincipal();
+		User user = (User) LoginUser.getCurrentUser();
 
 		if(user==null) {
 			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
@@ -291,7 +291,7 @@ public class RestUserController {
 	@ApiImplicitParam(name = "username",value = "用户名",dataType = "String",defaultValue = "1",required = true)
     public RestResponseBean changeUsername(@RequestParam String realname){
 
-		User user = (User) SecurityUtils.getSubject().getPrincipal();
+		User user = (User) LoginUser.getCurrentUser();
 
 		if(user==null) {
 			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
@@ -343,7 +343,7 @@ public class RestUserController {
     })
     public RestResponseBean changeMobile(@RequestParam String mobile,@RequestParam String event,@RequestParam String captcha) {
 
-		User user = (User) SecurityUtils.getSubject().getPrincipal();
+		User user = (User) LoginUser.getCurrentUser();
 
 		if(user==null) {
 			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
@@ -464,7 +464,7 @@ public class RestUserController {
 	public RestResponseBean changePassword(@RequestParam String newPassword,@RequestParam String mobile,
 			@RequestParam String event,@RequestParam String captcha){
 
-		User user = (User) SecurityUtils.getSubject().getPrincipal();
+		User user = (User) LoginUser.getCurrentUser();
 
 		if(user == null){
 
@@ -900,7 +900,7 @@ public class RestUserController {
 //        String openid = "";
 //        String platform = request.getParameter("platform");
 //
-//        User user = (User) SecurityUtils.getSubject().getPrincipal();
+//        User user = (User) LoginUser.getCurrentUser();
 //        if(user != null){
 //            mobile = user.getMobile();
 //        }
@@ -1016,7 +1016,7 @@ public class RestUserController {
 	@ApiImplicitParam(name = "mobile",value = "手机号",dataType = "String",required = true)
 	public RestResponseBean isExistMobileByUserId(@RequestParam String mobile){
 
-		User user = (User) SecurityUtils.getSubject().getPrincipal();
+		User user = (User) LoginUser.getCurrentUser();
 
 		if(user == null){
 
@@ -1043,7 +1043,7 @@ public class RestUserController {
 	@ApiImplicitParam(name = "status",value = "当前上班状态",dataType = "String",required = true)
 	public RestResponseBean changeWorkStatus(@RequestParam(name = "status") String status){
 
-		User user = (User) SecurityUtils.getSubject().getPrincipal();
+		User user = (User) LoginUser.getCurrentUser();
 
 		if(user == null){
 

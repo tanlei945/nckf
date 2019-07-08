@@ -26,6 +26,7 @@ import org.benben.modules.business.order.entity.Order;
 import org.benben.modules.business.order.service.IOrderService;
 import org.benben.modules.business.user.entity.User;
 import org.benben.modules.business.user.service.IUserService;
+import org.benben.modules.shiro.LoginUser;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -54,7 +55,7 @@ public class RestInvoiceController {
     @GetMapping(value = "/queryInvoiceOrder")
     @ApiOperation(value = "用户可开发票订单查询接口", tags = {"用户发票"}, notes = "用户可开发票订单查询接口")
     public RestResponseBean queryInvoiceOrder(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo, @RequestParam(name="pageSize", defaultValue="10") Integer pageSize) {
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        User user = (User) LoginUser.getCurrentUser();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
@@ -86,7 +87,7 @@ public class RestInvoiceController {
    @GetMapping(value = "/queryInvoice")
    @ApiOperation(value = "用户发票查询接口", tags = {"用户发票"}, notes = "用户发票查询接口")
    public RestResponseBean queryInvoice(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo, @RequestParam(name="pageSize", defaultValue="10") Integer pageSize) {
-       User user = (User) SecurityUtils.getSubject().getPrincipal();
+       User user = (User) LoginUser.getCurrentUser();
        if(user==null) {
            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
        }
@@ -146,7 +147,7 @@ public class RestInvoiceController {
                                       @RequestParam(name = "taxName") String taxName,
                                       @RequestParam(name = "taxNo") String taxNo,
                                       @RequestParam(name = "titleType") String titleType) {
-       User user = (User) SecurityUtils.getSubject().getPrincipal();
+       User user = (User) LoginUser.getCurrentUser();
        if(user==null) {
            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
        }
@@ -216,7 +217,7 @@ public class RestInvoiceController {
    /*@ApiOperation(value = "用户发票编辑接口", tags = {"用户接口"}, notes = "用户发票编辑接口")
    @ApiImplicitParam(name = "invoice", value = "发票实体")*/
    public RestResponseBean editInvoice(Invoice invoice) {
-       User user = (User) SecurityUtils.getSubject().getPrincipal();
+       User user = (User) LoginUser.getCurrentUser();
        if(user==null) {
            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
        }
@@ -241,7 +242,7 @@ public class RestInvoiceController {
    @DeleteMapping(value = "/deleteInvoiceById")
    /*@ApiImplicitParam(name = "id", value = "发票id",required = true )*/
    public RestResponseBean deleteInvoiceById(@RequestParam(name="id",required=true) String id) {
-       User user = (User) SecurityUtils.getSubject().getPrincipal();
+       User user = (User) LoginUser.getCurrentUser();
        if(user==null) {
            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
        }
@@ -266,7 +267,7 @@ public class RestInvoiceController {
    @DeleteMapping(value = "/deleteBatchInvoice")
    /*@ApiImplicitParam(name = "ids", value = "选中发票的id",required = true )*/
    public RestResponseBean deleteBatchInvoice(@RequestParam(name="ids",required=true) String ids) {
-       User user = (User) SecurityUtils.getSubject().getPrincipal();
+       User user = (User) LoginUser.getCurrentUser();
        if(user==null) {
            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
        }
@@ -286,7 +287,7 @@ public class RestInvoiceController {
    @GetMapping(value = "/queryInvoiceById")
    @ApiOperation(value = "用户查询发票详情接口", tags = {"用户发票"}, notes = "用户查询发票详情接口")
    public RestResponseBean queryInvoiceById(@RequestParam(name="id",required=true) String id) {
-       User user = (User) SecurityUtils.getSubject().getPrincipal();
+       User user = (User) LoginUser.getCurrentUser();
        if(user==null) {
            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
        }
@@ -332,7 +333,7 @@ public class RestInvoiceController {
     @GetMapping(value = "/title/queryInvoiceTitle")
     @ApiOperation(value = "用户发票抬头查询接口", tags = {"用户发票"}, notes = "用户发票抬头查询接口")
     public RestResponseBean queryInvoiceTitle() {
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        User user = (User) LoginUser.getCurrentUser();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
@@ -363,7 +364,7 @@ public class RestInvoiceController {
     @PostMapping(value = "/title/addInvoiceTitle")
     @ApiOperation(value = "用户发票头提交接口", tags = {"用户发票"}, notes = "用户发票头提交接口")
     public RestResponseBean addInvoiceTitle(@RequestBody InvoiceTitleVo invoiceTitleVo) {
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        User user = (User) LoginUser.getCurrentUser();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
@@ -408,7 +409,7 @@ public class RestInvoiceController {
    /* @ApiOperation(value = "用户发票头根据id删除接口", tags = {"用户接口"}, notes = "用户发票头根据id删除接口")*/
     //@ApiImplicitParam(name = "id", value = "发票头id",required = true )
     public RestResponseBean deleteInvoiceTitle(@RequestParam(name="id",required=true) String id) {
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        User user = (User) LoginUser.getCurrentUser();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }

@@ -13,6 +13,7 @@ import org.benben.common.menu.ResultEnum;
 import org.benben.modules.business.rideraddress.entity.RiderAddress;
 import org.benben.modules.business.rideraddress.service.IRiderAddressService;
 import org.benben.modules.business.user.entity.User;
+import org.benben.modules.shiro.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,7 +61,7 @@ public class RestRiderAddressController {
     @ApiOperation(value = "新增和修改骑手位置", tags = {"骑手位置接口"}, notes = "新增和修改骑手位置")
     public RestResponseBean updateRiderAddress( @RequestParam String lat,@RequestParam String lng) {
 
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        User user = (User) LoginUser.getCurrentUser();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }

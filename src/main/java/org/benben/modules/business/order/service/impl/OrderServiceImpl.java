@@ -136,7 +136,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 		Order order = new Order();
 		if(sum == appMoney){
 			//开始给order赋值
-			User user = (User) SecurityUtils.getSubject().getPrincipal();
+			User user = (User) LoginUser.getCurrentUser();
 			//订单id---->用户id+时间戳
 			String orderId = user.getId()+System.currentTimeMillis();
 			orderPage.setOrderId(orderId);

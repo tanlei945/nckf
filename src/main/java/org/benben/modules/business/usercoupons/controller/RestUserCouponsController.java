@@ -16,6 +16,7 @@ import org.benben.common.system.query.QueryGenerator;
 import org.benben.modules.business.user.entity.User;
 import org.benben.modules.business.usercoupons.entity.UserCoupons;
 import org.benben.modules.business.usercoupons.service.IUserCouponsService;
+import org.benben.modules.shiro.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -59,7 +60,7 @@ public class RestUserCouponsController {
 			return new RestResponseBean(ResultEnum.PARAMETER_MISSING.getValue(),ResultEnum.PARAMETER_MISSING.getDesc(),null);
 		}
 
-		User user = (User) SecurityUtils.getSubject().getPrincipal();
+		User user = (User) LoginUser.getCurrentUser();
 		if(user == null){
 			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
 		}
@@ -93,7 +94,7 @@ public class RestUserCouponsController {
 			@ApiImplicitParam(name="couponsId",value = "优惠券id")
 	})
 	public RestResponseBean getCoupons(@RequestParam(value = "couponsId",required = true) String couponsId){
-		User user = (User) SecurityUtils.getSubject().getPrincipal();
+		User user = (User) LoginUser.getCurrentUser();
 		if (user == null) {
 			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(), ResultEnum.TOKEN_OVERDUE.getDesc(), null);
 		}

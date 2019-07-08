@@ -17,6 +17,7 @@ import org.benben.common.system.query.QueryGenerator;
 import org.benben.modules.business.recharge.entity.Recharge;
 import org.benben.modules.business.recharge.service.IRechargeService;
 import org.benben.modules.business.user.entity.User;
+import org.benben.modules.shiro.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,7 +53,7 @@ public class RestRechargeController {
     public RestResponseBean queryRecharge(@RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
                                           @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
 
-		User user = (User) SecurityUtils.getSubject().getPrincipal();
+		User user = (User) LoginUser.getCurrentUser();
 
 		if(user == null){
 			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
@@ -132,7 +133,7 @@ public class RestRechargeController {
     })
     public RestResponseBean rechargeRecharge(@RequestParam double money,@RequestParam String type) {
 
-		User user = (User) SecurityUtils.getSubject().getPrincipal();
+		User user = (User) LoginUser.getCurrentUser();
 
 		if(user == null){
 			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);

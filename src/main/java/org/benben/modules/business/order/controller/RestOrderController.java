@@ -34,6 +34,7 @@ import org.benben.modules.business.user.entity.User;
 import org.benben.modules.business.user.service.IUserService;
 import org.benben.modules.business.usercoupons.entity.UserCoupons;
 import org.benben.modules.business.usercoupons.service.IUserCouponsService;
+import org.benben.modules.shiro.LoginUser;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -73,7 +74,7 @@ public class RestOrderController {
    @PostMapping(value = "/queryOrderCount")
    @ApiOperation(value = "用户-->0全部订单数量 1待付款订单数量 2收货中订单数量 3待评价订单数量", tags = {"订单购物车接口"}, notes = "0全部订单数量 1待付款订单数量 2收货中订单数量 3待评价订单数量")
    public RestResponseBean queryOrder() {
-       User user = (User) SecurityUtils.getSubject().getPrincipal();
+       User user = (User) LoginUser.getCurrentUser();
        if(user==null) {
            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
        }
@@ -134,7 +135,7 @@ public class RestOrderController {
     @ApiOperation(value = "用户订单列表-->全部订单", tags = {"订单购物车接口"}, notes = "用户订单列表-->全部订单")
     public RestResponseBean queryAllOrder(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                           @RequestParam(name="pageSize", defaultValue="10") Integer pageSize) {
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        User user = (User) LoginUser.getCurrentUser();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
@@ -168,7 +169,7 @@ public class RestOrderController {
     @ApiOperation(value = "用户订单列表-->待付款订单", tags = {"订单购物车接口"}, notes = "用户订单列表-->待付款订单")
     public RestResponseBean queryOrderDfk(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                           @RequestParam(name="pageSize", defaultValue="10") Integer pageSize) {
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        User user = (User) LoginUser.getCurrentUser();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
@@ -203,7 +204,7 @@ public class RestOrderController {
     @ApiOperation(value = "用户订单列表-->收货中订单", tags = {"订单购物车接口"}, notes = "用户订单列表-->收货中订单")
     public RestResponseBean queryOrderShz(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                           @RequestParam(name="pageSize", defaultValue="10") Integer pageSize) {
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        User user = (User) LoginUser.getCurrentUser();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
@@ -238,7 +239,7 @@ public class RestOrderController {
     @ApiOperation(value = "用户订单列表-->待评价订单", tags = {"订单购物车接口"}, notes = "用户订单列表-->待评价订单")
     public RestResponseBean queryOrderDpj(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                           @RequestParam(name="pageSize", defaultValue="10") Integer pageSize) {
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        User user = (User) LoginUser.getCurrentUser();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
@@ -263,7 +264,7 @@ public class RestOrderController {
     @PostMapping(value = "/rider/orderUserOk")
     @ApiOperation(value = "用户确认收货接口", tags = {"订单购物车接口"}, notes = "用户确认收货接口")
     public RestResponseBean orderUserOk(@RequestParam(name = "orderId",required = true) String orderId){
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        User user = (User) LoginUser.getCurrentUser();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
@@ -335,7 +336,7 @@ public class RestOrderController {
    @ApiOperation(value = "用户根据订单号查询订单接口", tags = {"订单购物车接口"}, notes = "用户根据订单号查询订单接口")
    @ApiImplicitParam(name = "orderId", value = "订单的id",required = true )
    public RestResponseBean queryByOrderId(@RequestParam(name="orderId",required=true) String orderId) {
-       User user = (User) SecurityUtils.getSubject().getPrincipal();
+       User user = (User) LoginUser.getCurrentUser();
        if(user==null) {
            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
        }
@@ -372,7 +373,7 @@ public class RestOrderController {
                                     @RequestParam(name = "accountFlag") String accountFlag,
                                     @RequestParam(name = "thirdPay") String thirdPay){
        //判断用户是否登陆
-       User user = (User) SecurityUtils.getSubject().getPrincipal();
+       User user = (User) LoginUser.getCurrentUser();
        if(user==null) {
            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
        }
@@ -510,7 +511,7 @@ public class RestOrderController {
    @ApiOperation(value = "用户取消订单接口", tags = {"订单购物车接口"}, notes = "用户取消订单接口")
    @PostMapping(value = "/cancelOrder")
    public RestResponseBean cancelOrder(@RequestParam(name="orderId",required=true) String orderId) {
-       User user = (User) SecurityUtils.getSubject().getPrincipal();
+       User user = (User) LoginUser.getCurrentUser();
        if(user==null) {
            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
        }
@@ -541,7 +542,7 @@ public class RestOrderController {
    @GetMapping(value = "/queryOrderUserById")
    @ApiOperation(value = "用户查询订单（不包括商品详情）接口", tags = {"订单购物车接口"}, notes = "用户查询订单（不包括商品详情）接口")
    public RestResponseBean queryOrderUserById(@RequestParam(name="id",required=true) String id) {
-       User user = (User) SecurityUtils.getSubject().getPrincipal();
+       User user = (User) LoginUser.getCurrentUser();
        if(user==null) {
            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
        }
@@ -559,7 +560,7 @@ public class RestOrderController {
     @GetMapping(value = "/queryOrderGoods")
     @ApiOperation(value = "用户查询单个订单（包括商品详情）接口", tags = {"订单购物车接口"}, notes = "用户查询订单个（包括商品详情）接口")
     public RestResponseBean queryOrderGoods(@RequestParam(name="id",required=true)String id) {
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        User user = (User) LoginUser.getCurrentUser();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
@@ -578,7 +579,7 @@ public class RestOrderController {
     @GetMapping(value = "/queryNewOrder")
     @ApiOperation(value = "首页查询未完成订单接口", tags = {"首页"}, notes = "首页查询未完成订单接口")
     public RestResponseBean queryNewOrder() {
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        User user = (User) LoginUser.getCurrentUser();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
@@ -603,7 +604,7 @@ public class RestOrderController {
     @GetMapping(value = "/distance")
     @ApiOperation(value = "用户最近订单的骑手距离", tags = {"订单购物车接口"}, notes = "用户最近订单的骑手距离")
     public RestResponseBean queryDistance(@RequestParam(name = "userLat",required = true) String  userLat,@RequestParam(name = "userLng",required = true) String userLng){
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        User user = (User) LoginUser.getCurrentUser();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
@@ -741,7 +742,7 @@ public class RestOrderController {
     @PostMapping(value = "/rider/riderOrder")
     @ApiOperation(value = "骑手接单接口", tags = {"订单购物车接口"}, notes = "骑手接单接口")
     public RestResponseBean riderOrder(@RequestParam(name = "orderId",required = true) String orderId){
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        User user = (User) LoginUser.getCurrentUser();
         if(user == null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
@@ -756,7 +757,7 @@ public class RestOrderController {
     @PostMapping(value = "/rider/riderGetOrder")
     @ApiOperation(value = "骑手取货接口", tags = {"订单购物车接口"}, notes = "骑手取货接口")
     public RestResponseBean riderGetOrder(@RequestParam(name = "orderId",required = true) String orderId){
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        User user = (User) LoginUser.getCurrentUser();
         if(user == null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
@@ -771,7 +772,7 @@ public class RestOrderController {
     @PostMapping(value = "/rider/orderRiderOk")
     @ApiOperation(value = "骑手送达接口", tags = {"订单购物车接口"}, notes = "骑手送达接口")
     public RestResponseBean orderRiderOk(@RequestParam(name = "orderId",required = true) String orderId){
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        User user = (User) LoginUser.getCurrentUser();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
@@ -798,7 +799,7 @@ public class RestOrderController {
     @PostMapping(value = "/rider/queryRiderOrder")
     @ApiOperation(value = "骑手查询可接订单接口", tags = {"订单购物车接口"}, notes = "骑手查询可接订单接口")
     public RestResponseBean queryRiderOrder(){
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        User user = (User) LoginUser.getCurrentUser();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
@@ -816,7 +817,7 @@ public class RestOrderController {
     @PostMapping(value = "/rider/queryOrderDqh")
     @ApiOperation(value = "骑手查询待取货订单接口", tags = {"订单购物车接口"}, notes = "骑手查询待取货订单接口")
     public RestResponseBean queryOrderDqh(){
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        User user = (User) LoginUser.getCurrentUser();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
@@ -833,7 +834,7 @@ public class RestOrderController {
     @PostMapping(value = "/rider/queryOrderDsd")
     @ApiOperation(value = "骑手查询待送达订单接口", tags = {"订单购物车接口"}, notes = "骑手查询待送达订单接口")
     public RestResponseBean queryOrderDsd(){
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        User user = (User) LoginUser.getCurrentUser();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
@@ -848,7 +849,7 @@ public class RestOrderController {
     @PostMapping(value = "/rider/queryOrderYwc")
     @ApiOperation(value = "骑手查询已完成订单接口", tags = {"订单购物车接口"}, notes = "骑手查询已完成订单接口")
     public RestResponseBean queryOrderOk(){
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        User user = (User) LoginUser.getCurrentUser();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
@@ -866,7 +867,7 @@ public class RestOrderController {
     @PostMapping(value = "/rider/queryOrderCount")
     @ApiOperation(value = "骑手-->0新任务数量 1待取货订单数量 2待送达订单数量 3已完成订单数量", tags = {"订单购物车接口"}, notes = "骑手-->0新任务数量 1待取货订单数量 2待送达订单数量 3已完成订单数量")
     public RestResponseBean riderQueryOrder() {
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        User user = (User) LoginUser.getCurrentUser();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }

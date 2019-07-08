@@ -19,6 +19,7 @@ import org.benben.modules.business.goods.service.IGoodsService;
 import org.benben.modules.business.store.entity.Store;
 import org.benben.modules.business.store.service.IStoreService;
 import org.benben.modules.business.user.entity.User;
+import org.benben.modules.shiro.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -70,7 +71,7 @@ public class RestCartController {
     @Transactional
     @ApiOperation(value = "购物车添加商品", notes = "购物车添加商品",tags = "订单购物车接口")
     public RestResponseBean addCart(@RequestBody CartAddVo cartAddVo) {
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        User user = (User) LoginUser.getCurrentUser();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
@@ -116,7 +117,7 @@ public class RestCartController {
     @Transactional
     @ApiOperation(value = "根据商品id获取门店id", notes = "根据商品id获取门店id",tags = "订单购物车接口")
     public RestResponseBean queryStoreIdByGoodsId(@RequestParam String goodsId) {
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        User user = (User) LoginUser.getCurrentUser();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
@@ -151,7 +152,7 @@ public class RestCartController {
     @ApiOperation(value = "查询购物车", notes = "查询购物车",tags = "订单购物车接口")
     public RestResponseBean queryCartGoods() {
 
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        User user = (User) LoginUser.getCurrentUser();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
@@ -207,7 +208,7 @@ public class RestCartController {
     @ApiOperation(value = "单门店查询购物车", notes = "查询购物车",tags = "订单购物车接口")
     public RestResponseBean queryCartGoodsByStore(@RequestParam(name = "storeId",required = true) String storeId) {
 
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        User user = (User) LoginUser.getCurrentUser();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
@@ -245,7 +246,7 @@ public class RestCartController {
     public RestResponseBean deleteStore(@RequestParam(name="cartId") String cartId) {
         boolean ok;
 
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        User user = (User) LoginUser.getCurrentUser();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
