@@ -10,18 +10,17 @@ import org.benben.common.menu.ResultEnum;
 import org.benben.modules.business.commen.service.ICommonService;
 import org.benben.modules.business.goods.GoodsSpec;
 import org.benben.modules.business.goods.entity.Goods;
+import org.benben.modules.business.goods.entity.GoodsVo;
 import org.benben.modules.business.goods.service.IGoodsService;
 import org.benben.modules.system.service.ISysUserService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
 * @Title: Controller
@@ -91,11 +90,18 @@ public class RestGoodsController {
          List<Goods> goodsList = goodsService.queryByCotegory(categoryType, belongId);
          List<GoodsSpec> list = new ArrayList<>();
          Map<String, ArrayList<String>> map = new HashMap<>();
+         GoodsVo goodsVo = new GoodsVo();
          for (Goods goods : goodsList) {
-             goods.setImgUrl(commonService.getLocalUrl(goods.getImgUrl()));
+             BeanUtils.copyProperties(goods,goodsVo);
+             LinkedList<Double> objects = new LinkedList<Double>();
+             objects.add(goods.getBigPrice());
+             objects.add(goods.getMiddlePrice());
+             objects.add(goods.getSmallPrice());
+             goodsVo.setListPrice(objects);
+             goodsVo.setImgUrl(commonService.getLocalUrl(goods.getImgUrl()));
              map = goodsService.querySpec(goods.getId());
              GoodsSpec goodsSpec = new GoodsSpec();
-             goodsSpec.setGoods(goods);
+             goodsSpec.setGoods(goodsVo);
              goodsSpec.setMap(map);
              list.add(goodsSpec);
          }
