@@ -58,15 +58,9 @@ public class Store implements Serializable {
 	@Excel(name = "配送费", width = 15)
 	private java.lang.Double freight;
 	/**营业时间*/
-	@Excel(name = "营业时间", width = 20, format = "yyyy-MM-dd HH:mm:ss")
-	@JsonFormat(timezone = "GMT+8",pattern = "HH:mm")
-    @DateTimeFormat(pattern="HH:mm")
-	private java.util.Date startTime;
+	private java.lang.String startTime;
 	/**结束时间*/
-	@Excel(name = "结束时间", width = 20, format = "yyyy-MM-dd HH:mm:ss")
-	@JsonFormat(timezone = "GMT+8",pattern = "HH:mm")
-    @DateTimeFormat(pattern="HH:mm")
-	private java.util.Date endTime;
+	private java.lang.String endTime;
 	/**创建者*/
 	@Excel(name = "创建者", width = 15)
 	private java.lang.String createBy;
