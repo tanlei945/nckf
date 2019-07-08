@@ -141,7 +141,7 @@ public class RestOrderController {
         }
         IPage<Order> orderPageList = null;
         QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("user_id",user.getId()).in("status","2","3","4","5","6");
+        queryWrapper.eq("user_id",user.getId()).in("status","2","3","4");
         Page<Order> page = new Page<Order>(pageNo, pageSize);
 
         IPage<Order> pageList = orderService.page(page, queryWrapper);
