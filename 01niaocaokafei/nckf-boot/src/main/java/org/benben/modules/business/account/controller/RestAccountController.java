@@ -17,6 +17,7 @@ import org.benben.modules.business.accountbill.entity.AccountBill;
 import org.benben.modules.business.commen.service.ISMSService;
 import org.benben.modules.business.user.entity.User;
 import org.benben.modules.business.user.service.IUserService;
+import org.benben.modules.shiro.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -65,7 +66,7 @@ public class RestAccountController {
 	@ApiOperation(value = "账单详情", tags = {"用户接口"}, notes = "账单详情")
 	public RestResponseBean queryAccountBillById() {
 
-		User user = (User) SecurityUtils.getSubject().getPrincipal();
+		User user = (User) LoginUser.getCurrentUser();
 
 		if (user == null) {
 			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(), ResultEnum.TOKEN_OVERDUE.getDesc(), null);
@@ -114,7 +115,7 @@ public class RestAccountController {
     @ApiOperation(value = "账单/钱包详情", tags = {"用户接口"}, notes = "账单/钱包详情")
     public RestResponseBean queryAccount() {
 
-		User user = (User) SecurityUtils.getSubject().getPrincipal();
+		User user = (User) LoginUser.getCurrentUser();
 
 		if(user == null){
 			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
@@ -147,7 +148,7 @@ public class RestAccountController {
     @ApiOperation(value = "是否设置支付密码", tags = {"用户接口"}, notes = "是否设置支付密码")
     public RestResponseBean isPayPassword(){
 
-		User user = (User) SecurityUtils.getSubject().getPrincipal();
+		User user = (User) LoginUser.getCurrentUser();
 
 		if(user == null){
 			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
@@ -180,7 +181,7 @@ public class RestAccountController {
     @ApiOperation(value = "是否设置收款账户", tags = {"用户接口"}, notes = "是否设置收款账户")
     public RestResponseBean isWithdrawAccount(@RequestParam String userId){
 
-		User user = (User) SecurityUtils.getSubject().getPrincipal();
+		User user = (User) LoginUser.getCurrentUser();
 
 		if(user == null){
 			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
@@ -214,7 +215,7 @@ public class RestAccountController {
 	@ApiImplicitParam(name = "payPassword",value = "支付密码",dataType = "String",required = true)
     public RestResponseBean checkPayPassword(@RequestParam String payPassword){
 
-		User user = (User) SecurityUtils.getSubject().getPrincipal();
+		User user = (User) LoginUser.getCurrentUser();
 
 		if(user == null){
 			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
@@ -263,7 +264,7 @@ public class RestAccountController {
 	})
     public RestResponseBean resetPayPassword(@RequestParam String mobile, @RequestParam String event, @RequestParam String captcha,@RequestParam String payPassword){
 
-		User user = (User) SecurityUtils.getSubject().getPrincipal();
+		User user = (User) LoginUser.getCurrentUser();
 
 		if(user == null){
 			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
@@ -321,7 +322,7 @@ public class RestAccountController {
 	})
 	public RestResponseBean setWithdrawAccount(@RequestParam String accountType,@RequestParam String accountNo){
 
-		User user = (User) SecurityUtils.getSubject().getPrincipal();
+		User user = (User) LoginUser.getCurrentUser();
 
 		if(user == null){
 			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);

@@ -13,6 +13,7 @@ import org.benben.common.menu.ResultEnum;
 import org.benben.modules.business.accountbill.entity.AccountBill;
 import org.benben.modules.business.accountbill.service.IAccountBillService;
 import org.benben.modules.business.user.entity.User;
+import org.benben.modules.shiro.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,7 +50,7 @@ public class RestAccountBillController {
 			@RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
 			@RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
 
-		User user = (User) SecurityUtils.getSubject().getPrincipal();
+		User user = (User) LoginUser.getCurrentUser();
 
 		if (user == null) {
 			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(), ResultEnum.TOKEN_OVERDUE.getDesc(), null);

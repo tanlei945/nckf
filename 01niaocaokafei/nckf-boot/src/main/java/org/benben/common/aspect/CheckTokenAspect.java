@@ -10,6 +10,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.menu.ResultEnum;
 import org.benben.modules.business.user.entity.User;
+import org.benben.modules.shiro.LoginUser;
 import org.springframework.stereotype.Component;
 
 /**
@@ -30,7 +31,7 @@ public class CheckTokenAspect {
 
     @Around("checkToken()")
     public RestResponseBean check(ProceedingJoinPoint point) throws Throwable {
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        User user = (User) LoginUser.getCurrentUser();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }

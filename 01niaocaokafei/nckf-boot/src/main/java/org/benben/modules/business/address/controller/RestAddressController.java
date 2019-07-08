@@ -12,6 +12,7 @@ import org.benben.modules.business.address.service.IAddressService;
 import org.benben.modules.business.address.vo.AddressVO;
 import org.benben.modules.business.rideraddress.entity.RiderAddress;
 import org.benben.modules.business.user.entity.User;
+import org.benben.modules.shiro.LoginUser;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -46,7 +47,7 @@ public class RestAddressController {
 	@ApiOperation(value = "查询地址列表", tags = {"用户接口"}, notes = "查询地址列表")
 	public RestResponseBean queryAddress() {
 
-		User user = (User) SecurityUtils.getSubject().getPrincipal();
+		User user = (User) LoginUser.getCurrentUser();
 
 		if (user == null) {
 			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(), ResultEnum.TOKEN_OVERDUE.getDesc(), null);
@@ -90,7 +91,7 @@ public class RestAddressController {
 	@ApiOperation(value = "添加地址", tags = {"用户接口"}, notes = "添加地址")
 	public RestResponseBean addAddress(@RequestBody AddressVO addressVO) {
 
-		User user = (User) SecurityUtils.getSubject().getPrincipal();
+		User user = (User) LoginUser.getCurrentUser();
 
 		if (user == null) {
 			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(), ResultEnum.TOKEN_OVERDUE.getDesc(), null);
@@ -242,7 +243,7 @@ public class RestAddressController {
 	@ApiOperation(value = "修改默认地址", tags = {"用户接口"}, notes = "修改默认地址")
 	public RestResponseBean editDefaultAddress(@RequestParam String id) {
 
-		User user = (User) SecurityUtils.getSubject().getPrincipal();
+		User user = (User) LoginUser.getCurrentUser();
 
 		if (user == null) {
 			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(), ResultEnum.TOKEN_OVERDUE.getDesc(), null);

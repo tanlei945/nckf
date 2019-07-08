@@ -18,6 +18,7 @@ import org.benben.modules.business.account.service.IAccountService;
 import org.benben.modules.business.user.entity.User;
 import org.benben.modules.business.withdraw.entity.Withdraw;
 import org.benben.modules.business.withdraw.service.IWithdrawService;
+import org.benben.modules.shiro.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,7 +59,7 @@ public class RestWithdrawController {
             @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
                                           @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
 
-		User user = (User) SecurityUtils.getSubject().getPrincipal();
+		User user = (User) LoginUser.getCurrentUser();
 
 		if(user == null){
 			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
@@ -133,7 +134,7 @@ public class RestWithdrawController {
     public RestResponseBean withdrawApply(@RequestParam Double money) {
 
 
-		User user = (User) SecurityUtils.getSubject().getPrincipal();
+		User user = (User) LoginUser.getCurrentUser();
 
 		if(user == null){
 			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);

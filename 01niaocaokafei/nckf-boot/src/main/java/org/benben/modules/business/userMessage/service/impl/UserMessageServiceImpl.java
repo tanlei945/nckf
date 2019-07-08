@@ -9,6 +9,7 @@ import org.benben.modules.business.user.entity.User;
 import org.benben.modules.business.userMessage.entity.UserMessage;
 import org.benben.modules.business.userMessage.mapper.UserMessageMapper;
 import org.benben.modules.business.userMessage.service.IUserMessageService;
+import org.benben.modules.shiro.LoginUser;
 import org.benben.modules.system.entity.SysUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,7 @@ public class UserMessageServiceImpl extends ServiceImpl<UserMessageMapper, UserM
     @Override
     public List<UserMessage> queryAnnouncementCount() {
         SysUser sysuser = (SysUser) SecurityUtils.getSubject().getPrincipal();
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        User user = (User) LoginUser.getCurrentUser();
         QueryWrapper<UserMessage> userMessageQueryWrapper = new QueryWrapper<>();
         userMessageQueryWrapper.eq("user_id", user.getId()).eq("read_flag", "0");
         List<UserMessage> list = list(userMessageQueryWrapper);

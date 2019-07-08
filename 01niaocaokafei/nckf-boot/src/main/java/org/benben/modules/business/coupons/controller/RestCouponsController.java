@@ -16,6 +16,7 @@ import org.benben.common.system.query.QueryGenerator;
 import org.benben.modules.business.coupons.entity.Coupons;
 import org.benben.modules.business.coupons.service.ICouponsService;
 import org.benben.modules.business.user.entity.User;
+import org.benben.modules.shiro.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -97,7 +98,7 @@ public class RestCouponsController {
     @PostMapping(value = "/getCouponsCount")
     @ApiOperation(value = "用户优惠券数量", notes = "用户优惠券数量",tags = {"首页"})
     public RestResponseBean getCouponsCount(){
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        User user = (User) LoginUser.getCurrentUser();
         if (user == null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(), ResultEnum.TOKEN_OVERDUE.getDesc(), null);
         }

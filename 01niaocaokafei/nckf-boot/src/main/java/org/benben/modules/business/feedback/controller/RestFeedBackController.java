@@ -20,6 +20,7 @@ import org.benben.modules.business.order.entity.Order;
 import org.benben.modules.business.order.service.IOrderService;
 import org.benben.modules.business.user.entity.User;
 import org.benben.modules.business.user.service.IUserService;
+import org.benben.modules.shiro.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.FileCopyUtils;
@@ -110,7 +111,7 @@ public class RestFeedBackController {
            @ApiImplicitParam(name = "imageUrl", value = "图片的url")
    })
    public RestResponseBean addFeedBack(String content, String imageUrl) {
-       User user = (User) SecurityUtils.getSubject().getPrincipal();
+       User user = (User) LoginUser.getCurrentUser();
        if(user==null) {
            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
        }
