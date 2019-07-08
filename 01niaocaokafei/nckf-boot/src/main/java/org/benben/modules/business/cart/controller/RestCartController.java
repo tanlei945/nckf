@@ -192,7 +192,6 @@ public class RestCartController {
             listVos.add(cartVo);
         }
 
-        log.info(listVos.toString());
 
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),listVos);
     }
@@ -214,26 +213,24 @@ public class RestCartController {
         }
 
         QueryWrapper<Cart> cartQueryWrapper = new QueryWrapper<>();
-        cartQueryWrapper.eq("user_id",user.getId());
+        cartQueryWrapper.eq("user_id",user.getId()).eq("store_id",storeId);
         List<Cart> list = cartService.list(cartQueryWrapper);
 
         if(list == null){
-            return new RestResponseBean(ResultEnum.SELECTED_NULL.getValue(),ResultEnum.CART_NULL.getDesc(),null);
-        }
-        List<Cart> cartList = new ArrayList<>();
-
-        for (Cart cart : list) {
-            Goods goods = goodsService.getById(cart.getGoodsId());
-            if(goods!= null){
-                String storeIdDb = goods.getBelongId();
-                if(storeId.equals(storeIdDb)){
-                    cartList.add(cart);
-                }
-            }
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
         }
 
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),cartList);
+        Store store = storeService.getById(storeId);
+
+        CartListVo cartListVo = new CartListVo();
+        cartListVo.setStoreImage(store.getImgUrl());
+        cartListVo.setStoreName(store.getStoreName());
+        cartListVo.setStoreId(storeId);
+        cartListVo.setCartList(list);
+
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),cartListVo);
     }
+
 
 
 

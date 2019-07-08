@@ -39,7 +39,6 @@ public class Cart implements Serializable {
 	@Excel(name = "商品名称", width = 15)
 	@ApiModelProperty(value = "商品名称")
 	private java.lang.String goodsName;
-
 	/**是否有效*/
 	@Excel(name = "是否有效", width = 15)
 	@ApiModelProperty(value = "是否有效")
