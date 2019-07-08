@@ -72,7 +72,7 @@ public class RestUserMessageController {
      *
      * @return
      */
-    @PutMapping(value = "/changeMessageStatus")
+    @PostMapping(value = "/changeMessageStatus")
     @ApiOperation(value = "修改用户系统消息为已读", tags = {"用户接口"}, notes = "修改用户系统消息为已读")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "messageId", value = "消息id", dataType = "String", required = true),
@@ -94,7 +94,7 @@ public class RestUserMessageController {
      * @param id
      * @return
      */
-    @DeleteMapping(value = "/delete")
+    @GetMapping(value = "/delete")
     @ApiOperation(value = "删除单个系统信息", notes = "删除单个系统信息", tags = {"用户接口"})
     public RestResponseBean delete(@RequestParam(name = "id", required = true) String id) {
         try {
