@@ -77,7 +77,7 @@ public class LoginController {
 			stringRedisTemplate.delete(keys);
 
 			//生成token
-			String token = JwtUtil.sign(CommonConstant.SIGN_SYS_USER + username, syspassword);
+			String token = JwtUtil.sign(username, syspassword);
 			redisUtil.set(CommonConstant.PREFIX_USER_TOKEN + token + sysUser.getId(), token);
 			//设置超时时间
 			redisUtil.expire(CommonConstant.PREFIX_USER_TOKEN + token + sysUser.getId(), JwtUtil.EXPIRE_TIME/1000);

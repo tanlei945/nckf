@@ -46,8 +46,6 @@ public class MyRealm extends AuthorizingRealm {
     @Autowired
     private ISysUserService sysUserService;
     @Autowired
-    private IUserService userService;
-    @Autowired
     private StringRedisTemplate stringRedisTemplate;
     @Autowired
     private RedisUtil redisUtil;
@@ -126,9 +124,8 @@ public class MyRealm extends AuthorizingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken auth) throws AuthenticationException {
 
         String password,sign,userId;
-        int status,number =0;
+        int status;
         SysUser sysUser = new SysUser();
-        User userInfo = new User();
 
         log.debug("————身份认证方法————");
         String token = (String) auth.getCredentials();
@@ -138,36 +135,20 @@ public class MyRealm extends AuthorizingRealm {
 
         // 解密获得username，用于后台和数据库进行对比
         String username = JwtUtil.getUsername(token);
-        // 解密获得userId，用于IP端和数据库进行对比
-        String id = JwtUtil.getUserId(token);
         //判断是后台用户访问还是APP用户访问
         if(username != null){
-            //获取标识
-            sign = username.substring(0, username.indexOf("@") + 1);
-            username = username.substring(username.indexOf("@") + 1, username.length());
             // 查询用户信息
             sysUser = sysUserService.getUserByName(username);
 			userId = sysUser.getId();
             password = sysUser.getPassword();
             status = sysUser.getStatus();
 
-        }else if(id !=null){
-            //获取标识
-            sign = id.substring(0, id.indexOf("@") + 1);
-			id = id.substring(id.indexOf("@") + 1, id.length());
-            //查询用户信息
-            userInfo = userService.getById(id);
-
-			userId = userInfo.getId();
-            password = userInfo.getPassword();
-            status = userInfo.getStatus();
-            number = 1;
         } else{
             throw new AuthenticationException("token非法无效!");
         }
 
         //校验token是否超时失效 & 或者账号密码是否错误
-        if (!jwtTokenRefresh(token, userId, username, password, sign)) {
+        if (!jwtTokenRefresh(token, userId, username, password)) {
             throw new AuthenticationException("用户名或密码错误!");
         }
 
@@ -176,14 +157,8 @@ public class MyRealm extends AuthorizingRealm {
             throw new AuthenticationException("账号已被锁定,请联系管理员!");
         }
 
-        switch (number) {
-            case 0:
-                return new SimpleAuthenticationInfo(sysUser, token, getName());
-            case 1:
-                return new SimpleAuthenticationInfo(userInfo, token, getName());
-        }
+        return new SimpleAuthenticationInfo(sysUser, token, getName());
 
-        return new SimpleAuthenticationInfo();
     }
 
 
@@ -203,25 +178,19 @@ public class MyRealm extends AuthorizingRealm {
      * @param passWord
      * @return
      */
-    public boolean jwtTokenRefresh(String token,String userId, String userName, String passWord, String sign) {
+    public boolean jwtTokenRefresh(String token,String userId, String userName, String passWord) {
         //缓冲中拿取token
         String cacheToken = String.valueOf(redisUtil.get(CommonConstant.PREFIX_USER_TOKEN + token + userId));
-        //若为会员用户,重新规定有效期时长
-        if (StringUtils.equals(CommonConstant.SIGN_MEMBER_USER, sign)||StringUtils.equals(CommonConstant.SIGN_RIDER_USER, sign)) {
-            JwtUtil.EXPIRE_TIME = JwtUtil.APP_EXPIRE_TIME;
-        }
 
         if (oConvertUtils.isNotEmpty(cacheToken)) {
             //校验token有效性
-            if (!JwtUtil.verify(token, userName, passWord)) {
-                String newAuthorization = JwtUtil.sign(sign + userName, passWord);
-                redisUtil.set(CommonConstant.PREFIX_USER_TOKEN + token + userId, newAuthorization);
-                //设置超时时间
-                redisUtil.expire(CommonConstant.PREFIX_USER_TOKEN + token + userId, JwtUtil.EXPIRE_TIME / 1000);
+            if (!JwtUtil.verifyPc(token, userName, passWord)) {
+            	//生成新的token
+                String newAuthorization = JwtUtil.sign(userName, passWord);
+
+                redisUtil.set(CommonConstant.PREFIX_USER_TOKEN + token + userId, newAuthorization,JwtUtil.EXPIRE_TIME / 1000);
             } else {
-                redisUtil.set(CommonConstant.PREFIX_USER_TOKEN + token + userId, cacheToken);
-                //设置超时时间
-                redisUtil.expire(CommonConstant.PREFIX_USER_TOKEN + token + userId, JwtUtil.EXPIRE_TIME / 1000);
+                redisUtil.set(CommonConstant.PREFIX_USER_TOKEN + token + userId, cacheToken, JwtUtil.EXPIRE_TIME / 1000);
             }
             return true;
         }

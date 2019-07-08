@@ -31,17 +31,37 @@ public class JwtUtil {
 	public static long APP_EXPIRE_TIME = 7 * 24 * 60 * 60 * 1000;
 
 	/**
-	 * 校验token是否正确
+	 * 校验PC端token是否正确
 	 *
 	 * @param token  密钥
 	 * @param secret 用户的密码
 	 * @return 是否正确
 	 */
-	public static boolean verify(String token, String username, String secret) {
+	public static boolean verifyPc(String token, String username, String secret) {
 		try {
 			// 根据密码生成JWT效验器
 			Algorithm algorithm = Algorithm.HMAC256(secret);
 			JWTVerifier verifier = JWT.require(algorithm).withClaim("username", username).build();
+			// 效验TOKEN
+			DecodedJWT jwt = verifier.verify(token);
+			return true;
+		} catch (Exception exception) {
+			return false;
+		}
+	}
+
+	/**
+	 * 校验IP端token是否正确
+	 *
+	 * @param token  密钥
+	 * @param secret 用户的密码
+	 * @return 是否正确
+	 */
+	public static boolean verifyIp(String token, String mobile, String secret) {
+		try {
+			// 根据密码生成JWT效验器
+			Algorithm algorithm = Algorithm.HMAC256(secret);
+			JWTVerifier verifier = JWT.require(algorithm).withClaim("mobile", mobile).build();
 			// 效验TOKEN
 			DecodedJWT jwt = verifier.verify(token);
 			return true;

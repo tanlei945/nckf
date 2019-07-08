@@ -5,6 +5,7 @@ import com.qq.connect.QQConnectException;
 import com.qq.connect.utils.QQConnectConfig;
 import org.benben.common.constant.CommonConstant;
 import org.benben.common.util.PasswordUtil;
+import org.benben.common.util.RedisUtil;
 import org.benben.common.util.oConvertUtils;
 import org.benben.modules.business.account.entity.Account;
 import org.benben.modules.business.account.mapper.AccountMapper;
@@ -22,6 +23,7 @@ import org.benben.modules.business.usercoupons.entity.UserCoupons;
 import org.benben.modules.business.usercoupons.mapper.UserCouponsMapper;
 import org.benben.modules.business.userstore.entity.UserStore;
 import org.benben.modules.business.userstore.mapper.UserStoreMapper;
+import org.benben.modules.shiro.authc.util.JwtUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -54,6 +56,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     private UserStoreMapper userStoreMapper;
     @Autowired
 	private IStoreService storeService;
+    @Autowired
+    private RedisUtil redisUtil;
 
 //	@Override
 //	@Transactional
@@ -197,7 +201,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         String passwordEncode = PasswordUtil.encrypt(password, password, salt);
         user.setPassword(passwordEncode);
 
-        return userMapper.updateById(user);
+		int i = userMapper.updateById(user);
+
+		if(i != 0){
+			//刷新用户信息到缓存中
+			redisUtil.set(CommonConstant.SIGN_PHONE_USER + user.getId(),user, JwtUtil.APP_EXPIRE_TIME / 1000);
+		}
+
+		return i;
     }
 
 	/**

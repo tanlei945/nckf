@@ -13,7 +13,6 @@ import org.benben.modules.business.user.entity.User;
 import org.benben.modules.business.user.service.IUserService;
 import org.benben.modules.shiro.authc.util.JwtUtil;
 import org.benben.modules.shiro.vo.DefContants;
-import org.benben.modules.system.entity.SysUser;
 import org.benben.modules.system.service.ISysUserService;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,10 +50,7 @@ import net.sf.json.JSONObject;
 @Slf4j
 @WebFilter(filterName = "apiFilter",urlPatterns = "/api/*")
 public class ApiFilter implements Filter {
-	@Autowired
-	private ISysUserService sysUserService;
-	@Autowired
-	private IUserService userService;
+
 	@Autowired
 	private RedisUtil redisUtil;
 	@Value(value = "${server.servlet.context-path}")
@@ -105,31 +101,16 @@ public class ApiFilter implements Filter {
 			return;
 		}
 
-		// 解密获得username，用于后台和数据库进行对比
-		String username = JwtUtil.getUsername(token);
 		// 解密获得userId，用于IP端和数据库进行对比
 		String id = JwtUtil.getUserId(token);
 		//判断是后台用户访问还是APP用户访问
-		String password,sign,userId;
-		SysUser sysUser = new SysUser();
+		String password,userId,mobile;
 		User userInfo = new User();
-		if(username != null){
-			//获取标识
-			sign = username.substring(0, username.indexOf("@") + 1);
-			username = username.substring(username.indexOf("@") + 1, username.length());
-			// 查询用户信息
-			sysUser = sysUserService.getUserByName(username);
-			userId = sysUser.getId();
-			password = sysUser.getPassword();
 
-
-		}else if(id !=null){
-			//获取标识
-			sign = id.substring(0, id.indexOf("@") + 1);
-			id = id.substring(id.indexOf("@") + 1, id.length());
+		if(id !=null){
 			//查询用户信息
-			userInfo = userService.getById(id);
-
+			userInfo = (User) redisUtil.get(CommonConstant.SIGN_PHONE_USER + id);
+			mobile = userInfo.getMobile();
 			userId = userInfo.getId();
 			password = userInfo.getPassword();
 
@@ -140,10 +121,12 @@ public class ApiFilter implements Filter {
 		}
 
 		//校验token是否超时失效 & 或者账号密码是否错误
-		if (!jwtTokenRefresh(token, userId, username, password, sign)) {
+		if (!jwtTokenRefresh(token, userId, mobile, password)) {
 			returnJson(response);
 			return;
 		} else {
+			//如果token验证成功，将token对应的用户id存在request中，便于之后注入
+			request.setAttribute(CommonConstant.SIGN_PHONE_USER,id);
 			chain.doFilter(httpServletRequest, httpServletResponse);
 			return;
 		}
@@ -223,29 +206,24 @@ public class ApiFilter implements Filter {
 	 * 8、sign为登录标识,0:系统用户(有效期30分钟)1:会员用户（有效期7天）
 	 * 参考方案：https://blog.csdn.net/qq394829044/article/details/82763936
 	 *
-	 * @param userName
+	 * @param mobile
 	 * @param passWord
 	 * @return
 	 */
-	public boolean jwtTokenRefresh(String token,String userId, String userName, String passWord, String sign) {
+	public boolean jwtTokenRefresh(String token,String userId, String mobile, String passWord) {
 		//缓冲中拿取token
 		String cacheToken = String.valueOf(redisUtil.get(CommonConstant.PREFIX_USER_TOKEN + token + userId));
-		//若为会员用户,重新规定有效期时长
-		if (StringUtils.equals(CommonConstant.SIGN_MEMBER_USER, sign)||StringUtils.equals(CommonConstant.SIGN_RIDER_USER, sign)) {
-			JwtUtil.EXPIRE_TIME = JwtUtil.APP_EXPIRE_TIME;
-		}
 
 		if (oConvertUtils.isNotEmpty(cacheToken)) {
 			//校验token有效性
-			if (!JwtUtil.verify(token, userName, passWord)) {
-				String newAuthorization = JwtUtil.sign(sign + userName, passWord);
-				redisUtil.set(CommonConstant.PREFIX_USER_TOKEN + token + userId, newAuthorization);
-				//设置超时时间
-				redisUtil.expire(CommonConstant.PREFIX_USER_TOKEN + token + userId, JwtUtil.EXPIRE_TIME / 1000);
+			if (!JwtUtil.verifyIp(token, mobile, passWord)) {
+				//生产新的token
+				String newAuthorization = JwtUtil.sign( mobile, passWord);
+
+				redisUtil.set(CommonConstant.PREFIX_USER_TOKEN + token + userId, newAuthorization, JwtUtil.APP_EXPIRE_TIME / 1000);
 			} else {
-				redisUtil.set(CommonConstant.PREFIX_USER_TOKEN + token + userId, cacheToken);
-				//设置超时时间
-				redisUtil.expire(CommonConstant.PREFIX_USER_TOKEN + token + userId, JwtUtil.EXPIRE_TIME / 1000);
+
+				redisUtil.set(CommonConstant.PREFIX_USER_TOKEN + token + userId, cacheToken, JwtUtil.APP_EXPIRE_TIME / 1000);
 			}
 			return true;
 		}

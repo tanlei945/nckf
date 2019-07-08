@@ -53,6 +53,8 @@ public interface CommonConstant {
 
 	public static String SIGN_RIDER_USER = "rider@";
 
+	public static String SIGN_PHONE_USER = "phone@";	//IP端识别
+
 	public static String SMS_EVENT_LOGIN = "login";
 
 	public static String SMS_EVENT_REGISTER = "register";

@@ -25,6 +25,7 @@ import org.benben.modules.business.user.vo.UserStoreVo;
 import org.benben.modules.business.user.vo.UserVo;
 import org.benben.modules.business.userstore.entity.UserStore;
 import org.benben.modules.business.userstore.service.IUserStoreService;
+import org.benben.modules.shiro.LoginUser;
 import org.benben.modules.shiro.authc.util.JwtUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,7 +110,7 @@ public class RestUserController {
     @ApiOperation(value = "通用-->用户详情", tags = {"用户接口"}, notes = "通用-->用户详情")
     public RestResponseBean queryUserById() {
 
-		User user = (User) SecurityUtils.getSubject().getPrincipal();
+		User user = (User) LoginUser.getCurrentUser();
 
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
@@ -175,6 +176,8 @@ public class RestUserController {
                 return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
             }
         }
+		//刷新用户信息到缓存中
+		redisUtil.set(CommonConstant.SIGN_PHONE_USER + userEntity.getId(),userEntity,JwtUtil.APP_EXPIRE_TIME / 1000);
 
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
     }
@@ -215,6 +218,8 @@ public class RestUserController {
 		userEntity.setAvatar(avatar);
 
         if(userService.updateById(userEntity)){
+			//刷新用户信息到缓存中
+			redisUtil.set(CommonConstant.SIGN_PHONE_USER + userEntity.getId(),userEntity,JwtUtil.APP_EXPIRE_TIME / 1000);
 
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.desc(),null);
         }
@@ -256,6 +261,8 @@ public class RestUserController {
 		userEntity.setAvatar(userEntity.getOldAvatar());
 
 		if(userService.updateById(userEntity)){
+			//刷新用户信息到缓存中
+			redisUtil.set(CommonConstant.SIGN_PHONE_USER + userEntity.getId(),userEntity,JwtUtil.APP_EXPIRE_TIME / 1000);
 
 			return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.desc(),null);
 		}
@@ -301,7 +308,8 @@ public class RestUserController {
 		userEntity.setUsername(realname);
 
         if(userService.updateById(userEntity)){
-
+			//刷新用户信息到缓存中
+			redisUtil.set(CommonConstant.SIGN_PHONE_USER + userEntity.getId(),userEntity,JwtUtil.APP_EXPIRE_TIME / 1000);
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.desc(),null);
         }
 
@@ -362,6 +370,8 @@ public class RestUserController {
 		userEntity.setMobile(mobile);
 
         if(userService.updateById(userEntity)){
+			//刷新用户信息到缓存中
+			redisUtil.set(CommonConstant.SIGN_PHONE_USER + userEntity.getId(),userEntity,JwtUtil.APP_EXPIRE_TIME / 1000);
 
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.desc(),null);
         }
@@ -1049,6 +1059,15 @@ public class RestUserController {
 		}else{
 			boolean ok = userService.changeWorkStatus("0",user.getId());
 			if(ok){
+
+				if(StringUtils.equals(status,"0")){
+					user.setWorkFlag("1");
+				}else{
+					user.setWorkFlag("0");
+				}
+				//刷新用户信息到缓存中
+				redisUtil.set(CommonConstant.SIGN_PHONE_USER + user.getId(),user,JwtUtil.APP_EXPIRE_TIME / 1000);
+
 				return new RestResponseBean(ResultEnum.CHANGE_WORK_STATUS.getValue(),ResultEnum.CHANGE_WORK_STATUS.getDesc(),"0");
 			}
 			return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
@@ -1135,10 +1154,7 @@ public class RestUserController {
 
 		if(StringUtils.equals(user.getUserType(),"0")){ //普通用户
 			//生成token
-			token = JwtUtil.signUser(CommonConstant.SIGN_MEMBER_USER + user.getId(), user.getPassword());
-		}else{ //骑手
-			//生成token
-			token = JwtUtil.signUser(CommonConstant.SIGN_RIDER_USER + user.getId(), user.getPassword());
+			token = JwtUtil.signUser(user.getId(), user.getPassword());
 		}
 
 
@@ -1146,10 +1162,10 @@ public class RestUserController {
 		Set<String> keys = stringRedisTemplate.keys("*" + user.getId());
 		//清除redis中存在此手机号的token记录
 		stringRedisTemplate.delete(keys);*/
-
-		redisUtil.set(CommonConstant.PREFIX_USER_TOKEN + token + user.getId(), token);
-		//设置超时时间
-		redisUtil.expire(CommonConstant.PREFIX_USER_TOKEN + token + user.getId(), JwtUtil.APP_EXPIRE_TIME / 1000);
+		//设置token到缓存中
+		redisUtil.set(CommonConstant.PREFIX_USER_TOKEN + token + user.getId(), token, JwtUtil.APP_EXPIRE_TIME / 1000);
+		//设置用户信息到缓存中
+		redisUtil.set(CommonConstant.SIGN_PHONE_USER + user.getId(),user,JwtUtil.APP_EXPIRE_TIME / 1000);
 
 		map.put("token", token);
 		map.put("user", userService.queryUserVo(user));
