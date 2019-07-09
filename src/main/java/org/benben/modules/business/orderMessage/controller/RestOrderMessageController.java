@@ -15,6 +15,7 @@ import org.benben.common.menu.ResultEnum;
 import org.benben.modules.business.orderMessage.entity.OrderMessage;
 import org.benben.modules.business.orderMessage.service.IOrderMessageService;
 import org.benben.modules.business.user.entity.User;
+import org.benben.modules.shiro.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,7 +42,7 @@ public class RestOrderMessageController {
    @GetMapping(value = "/queryAllList")
    public RestResponseBean queryPageList(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                          @RequestParam(name="pageSize", defaultValue="10") Integer pageSize) {
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        User user = (User)LoginUser.getCurrentUser();
 
         if (user == null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(), ResultEnum.TOKEN_OVERDUE.getDesc(), null);
@@ -69,7 +70,7 @@ public class RestOrderMessageController {
    @ApiOperation(value = "删除单个订单消息", notes = "删除单个订单消息", tags = {"订单消息"})
    public RestResponseBean delete(@RequestParam(name="id",required=true) String id) {
 
-       User user = (User) SecurityUtils.getSubject().getPrincipal();
+       User user = (User)LoginUser.getCurrentUser();
 
        if (user == null) {
            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(), ResultEnum.TOKEN_OVERDUE.getDesc(), null);
@@ -97,7 +98,7 @@ public class RestOrderMessageController {
             @ApiImplicitParam(name = "messageId", value = "消息id", dataType = "String", required = true),
     })
     public RestResponseBean changeMessageStatus(@RequestParam(name = "messageId") String messageId) {
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        User user = (User)LoginUser.getCurrentUser();
 
         if (user == null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(), ResultEnum.TOKEN_OVERDUE.getDesc(), null);
@@ -119,7 +120,7 @@ public class RestOrderMessageController {
     @ApiOperation(value = "获取用户订单消息未读数量", notes = "获取用户订单消息未读数量", tags = {"订单消息"})
     public RestResponseBean queryAnnouncementCount() {
 
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        User user = (User)LoginUser.getCurrentUser();
 
         if (user == null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(), ResultEnum.TOKEN_OVERDUE.getDesc(), null);
@@ -141,7 +142,7 @@ public class RestOrderMessageController {
     @GetMapping(value = "/queryMessageById")
     @ApiOperation(value = "查询某个订单消息", notes = "查询某个订单消息", tags = {"订单消息"})
     public RestResponseBean queryById(@RequestParam(name = "id", required = true) String id) {
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        User user = (User)LoginUser.getCurrentUser();
 
         if (user == null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(), ResultEnum.TOKEN_OVERDUE.getDesc(), null);
