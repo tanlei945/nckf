@@ -32,6 +32,9 @@ public class Message implements Serializable {
 	@Excel(name = "内容", width = 15)
 	private java.lang.Object msgContent;
 	/**发布人*/
+	@Excel(name = "消息类型", width = 15)
+	private java.lang.String messageType;
+	/**发布人*/
 	@Excel(name = "发布人", width = 15)
 	private java.lang.String sender;
 	/**发布状态（0未发布，1已发布，2已撤销）*/

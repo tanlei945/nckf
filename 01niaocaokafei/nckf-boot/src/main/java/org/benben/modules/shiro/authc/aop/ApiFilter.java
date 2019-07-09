@@ -1,6 +1,4 @@
 package org.benben.modules.shiro.authc.aop;
-
-
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -29,10 +27,7 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -42,8 +37,8 @@ import net.sf.json.JSONObject;
 
 
 /**
- * @author Scott
- * @create 2018-07-12 15:56
+ * @author
+ * @create 2019-07-12 15:56
  * @desc   鉴权登录拦截器
  **/
 @Component
@@ -144,14 +139,13 @@ public class ApiFilter implements Filter {
 		//从配置文件读取添加不需要token的路径
 //		Map<String, String> filterChainDefinitionMap = new LinkedHashMap<String, String>();
 		Yaml yaml = new Yaml();
-		URL url = ShiroConfig.class.getClassLoader().getResource("noneed-login.yml");
+		InputStream inputStream = ShiroConfig.class.getClassLoader().getResourceAsStream("noneed-login.yml");
 		//System.out.println(url.toString());
 
-		Map map = null;
+		HashMap hashMap = yaml.loadAs(inputStream, HashMap.class);
 		try {
-			map = yaml.load(new FileInputStream(url.getFile()));
-			filterlist = (List)map.get("filterlist");
-		} catch (FileNotFoundException e) {
+			filterlist = (List)hashMap.get("filterlist");
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -232,3 +226,4 @@ public class ApiFilter implements Filter {
 
 
 }
+
