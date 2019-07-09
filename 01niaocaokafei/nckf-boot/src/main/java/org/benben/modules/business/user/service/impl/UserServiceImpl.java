@@ -3,6 +3,7 @@ package org.benben.modules.business.user.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.qq.connect.QQConnectException;
 import com.qq.connect.utils.QQConnectConfig;
+import org.benben.common.constant.CommonConstant;
 import org.benben.common.util.PasswordUtil;
 import org.benben.common.util.RedisUtil;
 import org.benben.common.util.oConvertUtils;
