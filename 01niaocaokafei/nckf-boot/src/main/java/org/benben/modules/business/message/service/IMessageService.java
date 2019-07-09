@@ -1,7 +1,7 @@
 package org.benben.modules.business.message.service;
 
-import org.benben.modules.business.message.entity.Message;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.benben.modules.business.message.entity.Message;
 
 /**
  * @Description: 消息

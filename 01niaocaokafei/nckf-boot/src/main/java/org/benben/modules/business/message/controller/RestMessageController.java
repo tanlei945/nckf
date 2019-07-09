@@ -8,14 +8,12 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.menu.ResultEnum;
 import org.benben.modules.business.announcement.entity.Announcement;
 import org.benben.modules.business.announcement.service.IAnnouncementService;
 import org.benben.modules.business.message.entity.Message;
 import org.benben.modules.business.message.service.IMessageService;
-import org.benben.modules.business.message.vo.MessageVo;
 import org.benben.modules.business.user.entity.User;
 import org.benben.modules.shiro.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -66,10 +63,6 @@ public class RestMessageController {
 			pageListAnno = announcementService.page(pageAnno,null);
 
 		}
-
-
-
-
 		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), pageListAnno);
 
 	}
@@ -87,8 +80,6 @@ public class RestMessageController {
 
 		Message message = new Message();
 		message.setId(messageId);
-		message.setReadTime(new Date());
-		message.setReadFlag("1");
 		boolean ok = messageService.updateById(message);
 		if(ok){
 			return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
@@ -111,9 +102,6 @@ public class RestMessageController {
 	//@ApiImplicitParams({@ApiImplicitParam(name = "id", value = "消息id", dataType = "String", required = true),})
 	public RestResponseBean queryMessageById(@RequestParam(name = "id", required = true) String id) {
 		Message message = messageService.getById(id);
-		message.setReadTime(new Date());
-		message	.setReadFlag("1");
-		messageService.updateById(message);
 		if (message == null) {
 			return new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(), ResultEnum.QUERY_NOT_EXIST.getDesc(),
 					null);
