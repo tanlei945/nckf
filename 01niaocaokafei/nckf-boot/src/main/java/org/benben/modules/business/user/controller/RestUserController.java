@@ -1152,11 +1152,8 @@ public class RestUserController {
 
 		String token = "";
 
-		if(StringUtils.equals(user.getUserType(),"0")){ //普通用户
-			//生成token
-			token = JwtUtil.signUser(user.getId(), user.getPassword());
-		}
-
+		//生成token
+		token = JwtUtil.signUser(user.getId(), user.getPassword());
 
 /*		//根据用户ID模糊查询
 		Set<String> keys = stringRedisTemplate.keys("*" + user.getId());
