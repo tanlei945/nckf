@@ -17,10 +17,10 @@ import org.jeecgframework.poi.excel.annotation.Excel;
  * @version： V1.0
  */
 @Data
-@TableName("user_message")
+@TableName("bb_announcement")
 public class Announcement implements Serializable {
-    private static final long serialVersionUID = 1L;
-    
+    private static final long serialVersionUID =1L;
+
 	/**id*/
 	@TableId(type = IdType.UUID)
 	private java.lang.String id;
@@ -40,26 +40,6 @@ public class Announcement implements Serializable {
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	private java.util.Date endTime;
-	/**发布人*/
-	@Excel(name = "发布人", width = 15)
-	private java.lang.String sender;
-	/**发布状态（0未发布，1已发布，2已撤销）*/
-	@Excel(name = "发布状态（0未发布，1已发布，2已撤销）", width = 15,dicCode = "send_status")
-	@Dict(dicCode = "send_status")
-	private java.lang.String sendStatus;
-	/**发布时间*/
-	@Excel(name = "发布时间", width = 20, format = "yyyy-MM-dd HH:mm:ss")
-	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-	private java.util.Date sendTime;
-	/**撤销时间*/
-	@Excel(name = "撤销时间", width = 20, format = "yyyy-MM-dd HH:mm:ss")
-	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-	private java.util.Date cancelTime;
-	/**图片*/
-	@Excel(name = "图片", width = 15)
-	private java.lang.String imgUrl;
 	/**删除状态（0，正常，1已删除）*/
 	@Excel(name = "删除状态（0/已删除，1/正常）", width = 15,dicCode = "del_flag")
 	@Dict(dicCode = "del_flag")
@@ -80,7 +60,4 @@ public class Announcement implements Serializable {
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	private java.util.Date updateTime;
-	/**1:系统消息 2：订单消息*/
-	@Excel(name = "1:系统消息 2：订单消息", width = 15)
-	private java.lang.String messageType;
 }

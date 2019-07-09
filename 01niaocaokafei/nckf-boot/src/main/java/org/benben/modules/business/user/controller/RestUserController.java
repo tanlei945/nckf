@@ -669,11 +669,11 @@ public class RestUserController {
      * @number 37
      */
     @PostMapping(value = "/riderlogin")
-    @ApiOperation(value = "骑手-->账户密码登录", tags = {"用户接口"}, notes = "骑手-->账户密码登录")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "mobile",value = "用户手机号",dataType = "String",required = true),
-            @ApiImplicitParam(name = "password",value = "用户密码",dataType = "String",required = true)
-    })
+	@ApiOperation(value = "骑手-->账户密码登录", tags = {"用户接口"}, notes = "骑手-->账户密码登录")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "mobile",value = "用户手机号",dataType = "String",required = true),
+			@ApiImplicitParam(name = "password",value = "用户密码",dataType = "String",required = true)
+	})
     public RestResponseBean riderlogin(@RequestParam String mobile, @RequestParam String password) {
 
 		Map<String,Object> obj = new HashMap<>();

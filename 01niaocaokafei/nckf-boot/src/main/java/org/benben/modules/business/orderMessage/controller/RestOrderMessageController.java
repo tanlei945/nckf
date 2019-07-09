@@ -125,11 +125,11 @@ public class RestOrderMessageController {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(), ResultEnum.TOKEN_OVERDUE.getDesc(), null);
         }
         try {
-            List<OrderMessage> userMessages = orderMessageService.queryAnnouncementCount();
-            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(), ResultEnum.TOKEN_OVERDUE.getDesc(), userMessages.size());
+            List<OrderMessage> userMessages = orderMessageService.queryAnnouncementCount(user.getId());
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), userMessages.size());
         } catch (Exception e) {
             e.printStackTrace();
-            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
+            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(), ResultEnum.TOKEN_OVERDUE.getDesc(), null);
         }
     }
     /**

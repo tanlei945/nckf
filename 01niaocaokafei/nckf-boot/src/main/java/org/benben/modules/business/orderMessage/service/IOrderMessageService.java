@@ -14,5 +14,5 @@ import java.util.List;
  */
 public interface IOrderMessageService extends IService<OrderMessage> {
     Boolean addOrderMsg(String orderId);
-    List<OrderMessage> queryAnnouncementCount();
+    List<OrderMessage> queryAnnouncementCount(String id);
 }

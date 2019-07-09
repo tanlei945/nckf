@@ -32,7 +32,6 @@ public class UserMessageServiceImpl extends ServiceImpl<UserMessageMapper, UserM
     private IMessageService messageService;
     @Override
     public List<UserMessage> queryAnnouncementCount() {
-        SysUser sysuser = (SysUser) SecurityUtils.getSubject().getPrincipal();
         User user = (User) LoginUser.getCurrentUser();
         QueryWrapper<UserMessage> userMessageQueryWrapper = new QueryWrapper<>();
         userMessageQueryWrapper.eq("user_id", user.getId()).eq("read_flag", "0");
