@@ -132,10 +132,10 @@ public class RestUserMessageController {
     public RestResponseBean queryAnnouncementCount() {
         try {
             List<UserMessage> userMessages = userMessageService.queryAnnouncementCount();
-            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(), ResultEnum.TOKEN_OVERDUE.getDesc(), userMessages.size());
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), userMessages.size());
         } catch (Exception e) {
             e.printStackTrace();
-            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
+            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(), ResultEnum.TOKEN_OVERDUE.getDesc(), null);
         }
     }
 }
