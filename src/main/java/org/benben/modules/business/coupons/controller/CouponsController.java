@@ -121,7 +121,8 @@ public class CouponsController {
 		if(coupons==null) {
 			result.error500("未找到对应实体");
 		}else {
-			boolean ok = couponsService.removeById(id);
+			coupons.setDelFlag("1");
+			boolean ok = couponsService.saveOrUpdate(coupons);
 			if(ok) {
 				result.success("删除成功!");
 			}

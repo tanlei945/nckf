@@ -71,6 +71,7 @@ public class MessageController {
 									  HttpServletRequest req) {
 		Result<IPage<Message>> result = new Result<IPage<Message>>();
 		QueryWrapper<Message> queryWrapper = QueryGenerator.initQueryWrapper(message, req.getParameterMap());
+		queryWrapper.eq("del_flag","1");
 		Page<Message> page = new Page<Message>(pageNo, pageSize);
 		IPage<Message> pageList = messageService.page(page, queryWrapper);
 		result.setSuccess(true);
@@ -94,7 +95,7 @@ public class MessageController {
 			list.forEach(user ->
 					userMessageService.save(
 							new UserMessage().setUserId(user.getId())
-									.setReadFlag("0")
+									.setReadFlag("1")
 									.setMessageId(message.getId())
 					)
 			);
@@ -141,7 +142,8 @@ public class MessageController {
 		if(message==null) {
 			result.error500("未找到对应实体");
 		}else {
-			boolean ok = messageService.removeById(id);
+			message.setDelFlag("0");
+			boolean ok = messageService.saveOrUpdate(message);
 			if(ok) {
 				result.success("删除成功!");
 			}
