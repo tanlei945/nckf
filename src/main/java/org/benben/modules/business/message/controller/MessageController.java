@@ -8,6 +8,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.shiro.SecurityUtils;
 import org.benben.common.api.vo.Result;
 import org.benben.common.system.query.QueryGenerator;
 import org.benben.common.util.oConvertUtils;
@@ -19,6 +21,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
+import org.benben.modules.business.user.entity.User;
+import org.benben.modules.business.user.service.IUserService;
+import org.benben.modules.business.userMessage.entity.UserMessage;
+import org.benben.modules.business.userMessage.service.IUserMessageService;
+import org.benben.modules.system.entity.SysUser;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -45,7 +52,10 @@ import com.alibaba.fastjson.JSON;
 public class MessageController {
 	@Autowired
 	private IMessageService messageService;
-	
+	 @Autowired
+	 private IUserMessageService userMessageService;
+	 @Autowired
+	 private IUserService userService;
 	/**
 	  * 分页列表查询
 	 * @param message
@@ -76,8 +86,18 @@ public class MessageController {
 	@PostMapping(value = "/add")
 	public Result<Message> add(@RequestBody Message message) {
 		Result<Message> result = new Result<Message>();
+		SysUser sysuser = (SysUser) SecurityUtils.getSubject().getPrincipal();
 		try {
 			messageService.save(message);
+			message.setSender(sysuser.getUsername());
+			List<User> list = userService.list();
+			list.forEach(user ->
+					userMessageService.save(
+							new UserMessage().setUserId(user.getId())
+									.setReadFlag("0")
+									.setMessageId(message.getId())
+					)
+			);
 			result.success("添加成功！");
 		} catch (Exception e) {
 			e.printStackTrace();

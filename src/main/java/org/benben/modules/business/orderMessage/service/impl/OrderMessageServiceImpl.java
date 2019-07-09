@@ -11,7 +11,6 @@ import org.benben.modules.business.orderMessage.mapper.OrderMessageMapper;
 import org.benben.modules.business.orderMessage.service.IOrderMessageService;
 import org.benben.modules.business.user.entity.User;
 import org.benben.modules.business.userMessage.entity.UserMessage;
-import org.benben.modules.shiro.LoginUser;
 import org.benben.modules.system.entity.SysUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -49,10 +48,9 @@ public class OrderMessageServiceImpl extends ServiceImpl<OrderMessageMapper, Ord
     }
 
     @Override
-    public List<OrderMessage> queryAnnouncementCount() {
-        User user = (User) LoginUser.getCurrentUser();
+    public List<OrderMessage> queryAnnouncementCount(String userId) {
         QueryWrapper<OrderMessage> userMessageQueryWrapper = new QueryWrapper<>();
-        userMessageQueryWrapper.eq("user_id", user.getId()).eq("read_flag", "0");
+        userMessageQueryWrapper.eq("user_id", userId).eq("read_flag", "0");
         List<OrderMessage> list = list(userMessageQueryWrapper);
         return  list;
     }
