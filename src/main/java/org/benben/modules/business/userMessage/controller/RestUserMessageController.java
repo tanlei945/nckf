@@ -63,6 +63,7 @@ public class RestUserMessageController {
             LinkedList<Message> messages = new LinkedList<>();
             records.forEach(msg->{
                 Message message = messageService.getById(msg.getMessageId());
+                message.setReadFlag(msg.getReadFlag());
                 messages.add(message);
             });
             pageList1.setTotal(pageList.getTotal());
