@@ -1,5 +1,6 @@
 package org.benben.modules.business.withdraw.controller;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.util.List;
 
 
 @RestController
@@ -103,6 +105,12 @@ public class RestWithdrawController {
     @ApiOperation(value = "提现详情", tags = {"用户接口"}, notes = "提现详情")
     public RestResponseBean queryWithdrawById(@RequestParam(name = "id", required = true) String id) {
 
+        User user = (User) LoginUser.getCurrentUser();
+
+        if(user == null){
+            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+        }
+
         Withdraw withdraw = withdrawService.getById(id);
 
         if (withdraw == null) {
@@ -110,6 +118,44 @@ public class RestWithdrawController {
         }
 
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), withdraw);
+    }
+
+
+    @GetMapping(value = "/queryLast")
+    @ApiOperation(value = "通用-->最近一次提现状态", tags = {"用户接口"}, notes = "通用-->最近一次提现状态")
+    public RestResponseBean queryLast() {
+
+        User user = (User) LoginUser.getCurrentUser();
+
+        if(user == null){
+            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+        }
+
+        QueryWrapper<Withdraw> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id",user.getId());
+
+
+        List<Withdraw> list = withdrawService.list(queryWrapper);
+        if(list == null){
+            return new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(), ResultEnum.QUERY_NOT_EXIST.getDesc(), null);
+        }
+
+
+        if(list.size() == 1){
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), list.get(0));
+        }
+
+        Withdraw withdrawLast = list.get(0);
+        for (int i = 0; i < list.size()-1; i++) {
+            if(list.get(i+1).getCreateTime().after(withdrawLast.getCreateTime())){
+                withdrawLast = list.get(i+1);
+            }
+        }
+
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), withdrawLast);
+
+
+
     }
 
     /**

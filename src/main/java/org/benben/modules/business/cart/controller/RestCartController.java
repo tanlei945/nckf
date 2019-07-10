@@ -76,7 +76,7 @@ public class RestCartController {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
         Cart cart = new Cart();
-        cart.setGoodsNum(cartAddVo.getGoodsNum());
+        cart.setGoodsCount(cartAddVo.getGoodsCount());
         cart.setGoodsId(cartAddVo.getGoodsId());
         cart.setGoodsSpecValues(cartAddVo.getGoodsSpecValues());
         cart.setGoodsName(cartAddVo.getGoodsName());
@@ -100,7 +100,7 @@ public class RestCartController {
             cart.setCreateTime(new Date());
             Cart cartResult = cartService.queryByGoodsId(cart);
             if(cartResult!=null){
-                cartResult.setGoodsNum(cartResult.getGoodsNum()+1);
+                cartResult.setGoodsCount(1);
                 cartService.updateById(cartResult);
             }else {
                 cartService.save(cart);
@@ -251,8 +251,8 @@ public class RestCartController {
         if(cart == null){
             return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
         }
-        if(cart.getGoodsNum()>1) {
-            cart.setGoodsNum(cart.getGoodsNum()-1);
+        if(cart.getGoodsCount()>1) {
+            cart.setGoodsCount(cart.getGoodsCount()-1);
             ok= cartService.updateById(cart);
         }else {
             ok = cartService.removeById(cartId);

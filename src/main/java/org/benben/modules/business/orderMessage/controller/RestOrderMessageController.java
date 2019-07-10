@@ -93,7 +93,7 @@ public class RestOrderMessageController {
      * @return
      */
     @GetMapping(value = "/changeMessageStatus")
-    @ApiOperation(value = "修改用户系统消息为已读", tags = {"订单消息"}, notes = "修改用户系统消息为已读")
+    @ApiOperation(value = "修改用户订单消息为已读", tags = {"订单消息"}, notes = "修改用户订单消息为已读")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "messageId", value = "消息id", dataType = "String", required = true),
     })

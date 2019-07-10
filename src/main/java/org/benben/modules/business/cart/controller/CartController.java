@@ -81,7 +81,7 @@ public class CartController {
 		try {
 			Cart cartResult = cartService.queryByGoodsId(cart);
 			if(cartResult!=null){
-				cartResult.setGoodsNum(cartResult.getGoodsNum()+1);
+				cartResult.setGoodsCount(cartResult.getGoodsCount()+1);
 				cartService.updateById(cartResult);
 			}else {
 				cartService.save(cart);

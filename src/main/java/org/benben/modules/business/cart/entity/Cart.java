@@ -58,7 +58,7 @@ public class Cart implements Serializable {
 	/**商品数量*/
 	@Excel(name = "商品数量", width = 15)
 	@ApiModelProperty(value = "商品数量")
-	private java.lang.Integer goodsNum;
+	private java.lang.Integer goodsCount;
 	/**创建者*/
 	@Excel(name = "创建者", width = 15)
 	@ApiModelProperty(value = "创建者")
