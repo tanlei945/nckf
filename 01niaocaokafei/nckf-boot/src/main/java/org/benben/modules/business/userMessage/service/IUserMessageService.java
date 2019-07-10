@@ -1,5 +1,6 @@
 package org.benben.modules.business.userMessage.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.benben.modules.business.message.entity.Message;
 import org.benben.modules.business.userMessage.entity.UserMessage;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -15,5 +16,5 @@ import java.util.List;
  */
 public interface IUserMessageService extends IService<UserMessage> {
     List<UserMessage> queryAnnouncementCount();
-    LinkedList<Message> queryPageList(String userId);
+    IPage<UserMessage> queryPageList(String userId, Integer pageNo, Integer pageSize);
 }

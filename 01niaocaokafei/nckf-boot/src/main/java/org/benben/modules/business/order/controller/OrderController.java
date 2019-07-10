@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.benben.common.api.vo.Result;
 import org.benben.common.system.query.QueryGenerator;
+import org.benben.common.util.DateUtils;
 import org.benben.common.util.oConvertUtils;
 import org.benben.modules.business.order.entity.Order;
 import org.benben.modules.business.order.entity.OrderGoods;
@@ -31,12 +32,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.text.ParseException;
+import java.util.*;
 
- /**
+/**
  * @Title: Controller
  * @Description: 订单
  * @author： jeecg-boot
@@ -284,4 +283,33 @@ public class OrderController {
       return Result.ok("文件导入失败！");
   }
 
+  @GetMapping(value="/moneyCount")
+  public Result<Double> moneyCount(){
+	  Result<Double> result = new Result<Double>();
+	  Double i = orderService.countMoney();
+	  result.setResult(i);
+	  return result;
+  }
+	@GetMapping(value="/DiffDayMoney")
+  public Result<Double> diffDayMoney(){
+	  Result<Double> result = new Result<Double>();
+	  Double aDouble = orderService.DiffDayMoney();
+	  result.setResult(aDouble);
+	  return result;
+  }
+
+	@GetMapping(value="/orderCount")
+	public Result<Integer> orderCount(){
+		Result<Integer> result = null;
+		try {
+			result = new Result<Integer>();
+			Integer integer = orderService.countOrder();
+			result.setResult(integer);
+			result.setSuccess(true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.error500("系统错误");
+		}
+		return result;
+	}
 }

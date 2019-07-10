@@ -60,5 +60,9 @@ public interface IOrderService extends IService<Order> {
 	//骑手取货
 	public boolean riderGetOrder (String riderId, String orderId);
 
+	Double countMoney();
 
+	Integer countOrder();
+
+	Double DiffDayMoney();
 }

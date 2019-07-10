@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.benben.common.api.vo.Result;
+import org.benben.common.util.DateUtils;
 import org.benben.common.util.UUIDGenerator;
 import org.benben.modules.business.goods.entity.Goods;
 import org.benben.modules.business.goods.service.IGoodsService;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
+import java.text.ParseException;
 import java.util.*;
 
 /**
@@ -286,5 +288,33 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 		}else{
 			return false;
 		}
+	}
+
+	@Override
+	public Double countMoney() {
+		return orderMapper.OrderSumMoney();
+	}
+
+	@Override
+	public Integer countOrder() {
+		return orderMapper.OrderCount();
+	}
+	@Override
+	public Double DiffDayMoney() {
+		Double diffmoney =0.00;
+		try {
+			Calendar calendar = DateUtils.getCalendar();
+			Date date = DateUtils.parseDate("2019-07-05", "yyyy-MM-dd");
+			calendar.setTime(date);
+			int d = DateUtils.dateDiff('d',DateUtils.getCalendar(), calendar);
+			Double aDouble = orderService.countMoney();
+			if(d!=0){
+				diffmoney = aDouble / d;
+			}
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return 0.00;
+		}
+		return diffmoney;
 	}
 }

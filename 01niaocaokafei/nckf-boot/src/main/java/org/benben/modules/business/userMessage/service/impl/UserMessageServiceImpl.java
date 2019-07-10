@@ -1,6 +1,8 @@
 package org.benben.modules.business.userMessage.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.benben.common.system.query.QueryGenerator;
 import org.benben.modules.business.message.entity.Message;
 import org.benben.modules.business.message.service.IMessageService;
@@ -28,6 +30,8 @@ public class UserMessageServiceImpl extends ServiceImpl<UserMessageMapper, UserM
 
     @Autowired
     private IMessageService messageService;
+    @Autowired
+    private IUserMessageService userMessageService;
     @Override
     public List<UserMessage> queryAnnouncementCount() {
         User user = (User) LoginUser.getCurrentUser();
@@ -38,15 +42,11 @@ public class UserMessageServiceImpl extends ServiceImpl<UserMessageMapper, UserM
     }
 
     @Override
-    public LinkedList<Message> queryPageList(String userId) {
-        UserMessage userMessage = new UserMessage();
-        QueryWrapper<UserMessage> queryWrapper = QueryGenerator.initQueryWrapper(userMessage, null);
-        queryWrapper.eq("user_id", userId).eq("del_flag", "0");
-        List<UserMessage> list = list(queryWrapper);
-        LinkedList<Message> messages = new LinkedList<Message>();
-        list.forEach(msg -> {
-            messages.add(messageService.getById("1"));
-        });
-        return messages;
+    public IPage<UserMessage> queryPageList(String userId,Integer pageNo,Integer pageSize) {
+        Page<UserMessage> page = new Page<UserMessage>(pageNo, pageSize);
+        QueryWrapper<UserMessage> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", userId).eq("del_flag", "1");
+        IPage<UserMessage> pageList  = userMessageService.page(page,queryWrapper);
+        return pageList;
     }
 }
