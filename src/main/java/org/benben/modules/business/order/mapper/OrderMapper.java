@@ -1,6 +1,7 @@
 package org.benben.modules.business.order.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Select;
 import org.benben.modules.business.order.entity.Order;
 
 /**
@@ -11,4 +12,10 @@ import org.benben.modules.business.order.entity.Order;
  */
 public interface OrderMapper extends BaseMapper<Order> {
     int edit(String id);
+
+    @Select("select sum(order_money) from bb_order")
+    Double OrderSumMoney();
+
+    @Select("select count(id) from bb_order")
+    int OrderCount();
 }
