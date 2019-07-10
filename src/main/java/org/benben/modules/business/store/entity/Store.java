@@ -39,6 +39,9 @@ public class Store implements Serializable {
 	/**评分*/
 	@Excel(name = "评分", width = 15)
 	private java.lang.Double mark;
+	@Excel(name = "商家评价人数", width = 64)
+	/**商家评价人数*/
+	private int markCount;
 	/**位置描述*/
 	@Excel(name = "位置描述", width = 15)
 	private java.lang.String addressDesc;
@@ -86,8 +89,6 @@ public class Store implements Serializable {
 	@Excel(name = "商家简介", width = 64)
 	/**商家简介*/
 	private String storeDesc;
-	@Excel(name = "商家评价人数", width = 64)
-	/**商家评价人数*/
-	private int markCount;
+
 
 }

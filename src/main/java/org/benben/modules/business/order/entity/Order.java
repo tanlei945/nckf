@@ -59,6 +59,7 @@ public class Order implements Serializable {
 	@Dict(dicCode = "orderType")
 	@ApiModelProperty(required = true)
 	private String orderType;
+
 	/**送餐地址*/
 	@Excel(name = "送餐地址", width = 15)
 	private String userAddress;
@@ -83,6 +84,10 @@ public class Order implements Serializable {
 	/**订单备注*/
 	@Excel(name = "订单备注", width = 15)
 	private String orderRemark;
+	//接单时间
+	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
+	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+	private Date jiedanTime;
 	/**骑手取餐时间*/
 	@Excel(name = "骑手取餐时间", width = 20, format = "yyyy-MM-dd HH:mm:ss")
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
@@ -93,6 +98,10 @@ public class Order implements Serializable {
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
 	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	private Date overTime;
+	//预计送达时间
+	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
+	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+	private Date yujiTime;
 	/**配送费*/
 	@Excel(name = "配送费", width = 15)
 	private Double deliveryMoney;
@@ -129,5 +138,6 @@ public class Order implements Serializable {
 	private double userLat;
 	//收货地址纬度
 	private double userLng;
+
 
 }

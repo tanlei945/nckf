@@ -139,15 +139,19 @@ public class RestEvaluateController {
         Evaluate evaluate = new Evaluate();
         Order order = orderService.getById(orderId);
         Store store = storeService.getById(order.getStoreId());
-        double totalmark = store.getMark()*store.getMarkCount();
-        if(starCount != null && starCount != ""){
-            totalmark += Integer.parseInt(starCount);
-        }
+        if(evaluateType.equals("0")){
+            double totalmark = store.getMark()*store.getMarkCount();
+            if(starCount != null && starCount != ""){
+                totalmark += Integer.parseInt(starCount);
+            }
 
-        double mark = totalmark/(store.getMarkCount()+1);
-        store.setMark(mark);
-        store.setMarkCount(store.getMarkCount()+1);
-        storeService.updateById(store);
+            double mark = totalmark/(store.getMarkCount()+1);
+            store.setMark(mark);
+            store.setMarkCount(store.getMarkCount()+1);
+            storeService.updateById(store);
+        }//else if (evaluateType.equals("1")){
+
+        //}
 
         evaluate.setStoreId(store.getId());
         evaluate.setStorename(store.getStoreName());
@@ -164,7 +168,9 @@ public class RestEvaluateController {
         }
         evaluate.setEvaluateType(evaluateType);
         evaluate.setContent(content);
-        evaluateService.save(evaluate);
+        Boolean flag = evaluateService.save(evaluate);
+
+        //if()
 
 
 

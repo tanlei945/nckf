@@ -265,8 +265,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 			User user = userService.getById(riderId);
 			order.setRidername(user.getUsername());
 			order.setRiderOk("1");
-			order.setGetTime(new Date());
+			//order.setGetTime(new Date());
 			order.setRiderPhone(user.getMobile());
+			order.setJiedanTime(new Date());
 			//订单修改时间
 			order.setUpdateTime(new Date());
 			if(orderService.updateById(order)){
@@ -283,6 +284,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 	public boolean riderGetOrder(String riderId, String orderId) {
 		Order order = orderService.getById(orderId);
 		order.setRiderOk("2");
+		order.setGetTime(new Date());
 		if(orderService.updateById(order)){
 			return true;
 		}else{

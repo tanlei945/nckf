@@ -71,7 +71,7 @@ public class OrderPage {
 	@Excel(name = "发票id", width = 15)
 	private String invoiceId;
 	/**订单来源(0:微信1:安卓app 2:苹果app 3:)*/
-	@Excel(name = "订单来源(0:微信1:安卓app 2:苹果app 3:)", width = 15)
+	@Excel(name = "订单来源(0:微信1:安卓app 2:苹果app)", width = 15)
 	private String orderSrc;
 	/**订单备注*/
 	@Excel(name = "订单备注", width = 15)
@@ -92,12 +92,14 @@ public class OrderPage {
 	/**第三方流水号*/
 	@Excel(name = "第三方流水号", width = 15)
 	private String tradeNo;
-	/**9:已取消 0:全部 1待付款 2收货中 3待评价 4已评价  */
-	@Excel(name = "9:已取消 0:全部 1待付款 2收货中 3待评价 4已评价   ", width = 15,dicCode = "orderStatus")
+	/**9:已取消 0:全部 1待付款 2收货中 3待评价 4已评价 5待接单 6骑手确认送达*/
+	@Excel(name = "9:已取消 0:全部 1待付款 2收货中 3待评价 4已评价", width = 15,dicCode = "orderStatus")
 	@Dict(dicCode = "orderStatus")
 	private String status;
 
-	/** 0骑手未接单 1骑手待取货 2骑手待送达 3骑手确认送达*/
+	/**0骑手未接单 1骑手已接单 2骑手确认收货*/
+	@Excel(name = "0骑手未接单 1骑手待取货 2骑手待送达 3骑手确认送达", width = 15)
+	@Dict(dicCode = "riderOk")
 	private String riderOk;
 
 	/**创建者*/
@@ -116,6 +118,13 @@ public class OrderPage {
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
 	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	private Date updateTime;
+	//收货地址经度
+	private double userLat;
+	//收货地址纬度
+	private double userLng;
+	//预计送达时间
+	private Date yujiTime;
+	private Date jiedanTime;
 	
 	@ExcelCollection(name="订单商品")
 	private List<OrderGoods> orderGoodsList;

@@ -6,10 +6,15 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.benben.common.aspect.annotation.Dict;
+import org.benben.modules.business.goods.entity.Goods;
+import org.benben.modules.business.order.entity.OrderGoods;
 import org.jeecgframework.poi.excel.annotation.Excel;
+import org.jeecgframework.poi.excel.annotation.ExcelCollection;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class RiderOrder {
@@ -56,6 +61,8 @@ public class RiderOrder {
     /**用户优惠券id*/
     @Excel(name = "用户优惠券id", width = 15)
     private String userCouponsId;
+    //优惠券金额
+    private double couponsMoney;
     /**是否已开发票(0:未开 1:已开)*/
     @Excel(name = "是否已开发票(0:未开 1:已开)", width = 15)
     private String invoiceFlag;
@@ -110,6 +117,11 @@ public class RiderOrder {
     @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
+    //预计送达时间
+    private Date yujiTime;
+    private Date jiedanTime;
+
+
     /**骑手距离门店距离*/
     private Double riderAndStoreDis;
     /**骑手距离用户地址距离*/
@@ -127,4 +139,8 @@ public class RiderOrder {
     private String userAddress;
     private double userLat;
     private double userLng;
+
+
+    @ExcelCollection(name="订单商品")
+    private List<OrderGoods> orderGoodsList;
 }
