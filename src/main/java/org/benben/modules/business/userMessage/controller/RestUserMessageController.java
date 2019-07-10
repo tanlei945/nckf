@@ -1,6 +1,8 @@
 package org.benben.modules.business.userMessage.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -51,13 +54,26 @@ public class RestUserMessageController {
                                           @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
                                           HttpServletRequest req) {
         IPage<UserMessage> pageList = null;
+        IPage<Message> pageList1 =null;
         try {
+            Page<Message> page = new Page<Message>(pageNo, pageSize);
+             pageList1  = messageService.page(page);
             pageList  = userMessageService.queryPageList(userId,pageNo,pageSize);
+            List<UserMessage> records = pageList.getRecords();
+            LinkedList<Message> messages = new LinkedList<>();
+            records.forEach(msg->{
+                Message message = messageService.getById(msg.getMessageId());
+                messages.add(message);
+            });
+            pageList1.setTotal(pageList.getTotal());
+            pageList1.setRecords(messages);
+            pageList1.setCurrent(pageList.getCurrent());
+            pageList1.setPages(pageList.getPages());
         } catch (Exception e) {
             e.printStackTrace();
             return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
         }
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), pageList);
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), pageList1);
     }
 
 
