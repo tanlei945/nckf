@@ -31,7 +31,7 @@ public class Withdraw implements Serializable {
 	@Excel(name = "充值金额", width = 15)
 	private java.lang.Double money;
 	/**0-未审核 1-审核未通过 2-审核已通过*/
-	@Excel(name = "0-未审核 1-审核未通过 2-审核已通过", width = 15)
+	@Excel(name = "0-审核中 1-审核通过", width = 15)
 	private java.lang.String status;
 	/**1：支付宝 2：微信*/
 	@Excel(name = "1：支付宝 2：微信", width = 15)
