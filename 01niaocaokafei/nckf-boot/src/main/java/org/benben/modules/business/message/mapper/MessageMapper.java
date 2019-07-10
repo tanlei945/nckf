@@ -1,8 +1,8 @@
 package org.benben.modules.business.message.mapper;
 
 import org.apache.ibatis.annotations.Select;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.benben.modules.business.message.entity.Message;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
  * @Description: 消息

@@ -12,7 +12,6 @@ import org.apache.shiro.SecurityUtils;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.constant.CommonConstant;
 import org.benben.common.menu.ResultEnum;
-import org.benben.common.system.api.ISysBaseAPI;
 import org.benben.common.util.PasswordUtil;
 import org.benben.common.util.RedisUtil;
 import org.benben.modules.business.commen.dto.SmsDTO;
@@ -56,9 +55,6 @@ public class RestUserController {
 
     @Autowired
     private IUserThirdService userThirdService;
-
-    @Autowired
-    private ISysBaseAPI sysBaseAPI;
 
     @Autowired
     private IWxService iWxService;
@@ -288,7 +284,7 @@ public class RestUserController {
      */
     @PostMapping(value = "/changeRealname")
     @ApiOperation(value = "通用-->修改用户名", tags = {"用户接口"}, notes = "通用-->修改用户名")
-	@ApiImplicitParam(name = "username",value = "用户名",dataType = "String",defaultValue = "1",required = true)
+	@ApiImplicitParam(name = "realname",value = "用户名",dataType = "String",defaultValue = "1",required = true)
     public RestResponseBean changeUsername(@RequestParam String realname){
 
 		User user = (User) LoginUser.getCurrentUser();
@@ -305,7 +301,7 @@ public class RestUserController {
         if(userEntity == null){
             return new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(),ResultEnum.QUERY_NOT_EXIST.desc(),null);
         }
-		userEntity.setUsername(realname);
+		userEntity.setRealname(realname);
 
         if(userService.updateById(userEntity)){
 			//刷新用户信息到缓存中
@@ -691,7 +687,6 @@ public class RestUserController {
 		}
 
 		if (user == null) {
-            sysBaseAPI.addLog("登录失败，用户名:" + mobile + "不存在！", CommonConstant.LOG_TYPE_1, null);
             return new RestResponseBean(ResultEnum.USER_NOT_EXIST.getValue(), ResultEnum.USER_NOT_EXIST.getDesc(), null);
         } else {
             //密码验证
@@ -750,7 +745,6 @@ public class RestUserController {
 		User user = userService.queryByMobileAndUserType(mobile,"0");
 
 		if (user == null) {
-			sysBaseAPI.addLog("登录失败，用户名:" + mobile + "不存在！", CommonConstant.LOG_TYPE_1, null);
 			return new RestResponseBean(ResultEnum.USER_NOT_EXIST.getValue(), ResultEnum.USER_NOT_EXIST.getDesc(), null);
 		} else {
 			//密码验证
@@ -1167,7 +1161,6 @@ public class RestUserController {
 		map.put("token", token);
 		map.put("user", userService.queryUserVo(user));
 
-		sysBaseAPI.addLog("手机号: " + user.getMobile() + ",登录成功！", CommonConstant.LOG_TYPE_1, null);
 
 		return map;
 	}

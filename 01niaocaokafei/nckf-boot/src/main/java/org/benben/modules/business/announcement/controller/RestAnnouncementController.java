@@ -44,7 +44,7 @@ public class RestAnnouncementController {
 	@GetMapping(value = "/list")
 //	@ApiOperation(value = "通告详情列表", notes = "通告详情列表", tags = {"首页"})
 //	@ApiImplicitParams({@ApiImplicitParam(name = "pageNo", value = "当前页", dataType = "Integer", defaultValue = "1"),
-//			@ApiImplicitParam(name = "pageSize", value = "每页显示条数", dataType = "Integer", defaultValue = "10"),})
+//	@ApiImplicitParam(name = "pageSize", value = "每页显示条数", dataType = "Integer", defaultValue = "10"),})
 	public RestResponseBean list(Announcement announcement,
 			@RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
 			@RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest req) {

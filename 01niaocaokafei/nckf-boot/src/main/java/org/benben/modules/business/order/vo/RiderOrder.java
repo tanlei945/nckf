@@ -47,9 +47,6 @@ public class RiderOrder {
     @Dict(dicCode = "orderType")
     @ApiModelProperty(required = true)
     private String orderType;
-    /**送餐地址*/
-    @Excel(name = "送餐地址", width = 15)
-    private String userAddress;
     /**用户电话*/
     @Excel(name = "用户电话", width = 15)
     private String userPhone;
@@ -117,4 +114,17 @@ public class RiderOrder {
     private Double riderAndStoreDis;
     /**骑手距离用户地址距离*/
     private Double riderAndUserDis;
+
+
+    /**门店位置描述*/
+    private String storeAddress;
+    private double storeLat;
+    private double storeLng;
+
+
+
+    /**送餐地址*/
+    private String userAddress;
+    private double userLat;
+    private double userLng;
 }

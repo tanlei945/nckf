@@ -24,7 +24,7 @@ public class ListCartVo {
     private java.lang.String goodstSpecid;
     /**商品数量*/
     @Excel(name = "商品数量", width = 15)
-    private java.lang.Integer goodsNum;
+    private java.lang.Integer goodsCount;
     /**商品价格*/
     @Excel(name = "商品价格", width = 15)
     private double price;
@@ -46,7 +46,7 @@ public class ListCartVo {
     private java.util.Date updateTime;
 
     public double getPrice() {
-        this.price=this.goodsNum*this.price;
+        this.price=this.getGoodsCount()*this.price;
         return this.price;
     }
 }

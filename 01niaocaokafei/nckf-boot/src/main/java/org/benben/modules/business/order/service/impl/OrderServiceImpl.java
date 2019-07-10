@@ -105,7 +105,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 	@Override
 	public Order queryByOrderId(String orderId) {
 		QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
-		queryWrapper.eq("order_id",orderId);
+		queryWrapper.eq("id",orderId);
 		Order order = orderService.getOne(queryWrapper);
 		return order;
 	}
