@@ -30,6 +30,11 @@ public class OrderGoods implements Serializable {
 	/**商品id*/
     @Excel(name = "商品id", width = 15)
 	private String goodsId;
+
+	/**商品id*/
+	@Excel(name = "商品id", width = 15)
+	private String goodsName;
+
 	/**orderId*/
 	@Excel(name = "订单id", width = 15)
 	private String orderId;
@@ -42,12 +47,6 @@ public class OrderGoods implements Serializable {
 	/**规格*/
     @Excel(name = "规格", width = 15)
 	private String goodsSpecValues;
-	/**温度*/
-    @Excel(name = "温度", width = 15)
-	private String temperatureValue;
-	/**糖度*/
-    @Excel(name = "糖度", width = 15)
-	private String sugarValue;
 	/**商品单价*/
     @Excel(name = "选中单价", width = 15)
 	private Double selectedPrice;

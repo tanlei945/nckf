@@ -90,8 +90,9 @@ public class RestGoodsController {
          List<Goods> goodsList = goodsService.queryByCotegory(categoryType, belongId);
          List<GoodsSpec> list = new ArrayList<>();
          Map<String, ArrayList<String>> map = new HashMap<>();
-         GoodsVo goodsVo = new GoodsVo();
+
          for (Goods goods : goodsList) {
+             GoodsVo goodsVo = new GoodsVo();
              BeanUtils.copyProperties(goods,goodsVo);
              ArrayList<Double> objects = new ArrayList<Double>();
              objects.add(goods.getBigPrice());

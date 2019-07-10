@@ -43,7 +43,7 @@ public class OrderMessageServiceImpl extends ServiceImpl<OrderMessageMapper, Ord
     @Override
     public List<OrderMessage> queryAnnouncementCount(String userId) {
         QueryWrapper<OrderMessage> userMessageQueryWrapper = new QueryWrapper<>();
-        userMessageQueryWrapper.eq("user_id", userId).eq("read_flag", "0");
+        userMessageQueryWrapper.eq("user_id", userId).eq("read_flag", "0").eq("del_flag","1");
         List<OrderMessage> list = list(userMessageQueryWrapper);
         return  list;
     }

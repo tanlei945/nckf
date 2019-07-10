@@ -79,9 +79,12 @@ public class RestCartController {
         cart.setGoodsCount(cartAddVo.getGoodsCount());
         cart.setGoodsId(cartAddVo.getGoodsId());
         cart.setGoodsSpecValues(cartAddVo.getGoodsSpecValues());
-        cart.setGoodsName(cartAddVo.getGoodsName());
+
 
         Goods goods = goodsService.getById(cartAddVo.getGoodsId());
+        cart.setGoodsName(goods.getGoodsName());
+
+
         if(goods != null){
             switch (cartAddVo.getSelectedCupSpecIndex()) {
                 case "0":
@@ -108,6 +111,35 @@ public class RestCartController {
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
         }
         return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+    }
+
+
+
+
+
+
+
+    @PostMapping(value = "/changeCartCount")
+    @Transactional
+    @ApiOperation(value = "购物商品数量修改", notes = "购物商品数量修改",tags = "订单购物车接口")
+    public RestResponseBean changeCartCount(@RequestParam(name = "cartId",required = true)String cartId,
+                                            @RequestParam(name = "count",required = true) String count) {
+        User user = (User) LoginUser.getCurrentUser();
+        if(user==null) {
+            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+        }
+        Cart cart = cartService.getById(cartId);
+        if(cart == null){
+            return new RestResponseBean(ResultEnum.CART_NULL.getValue(),ResultEnum.CART_NULL.getDesc(),null);
+        }
+
+        if(Integer.parseInt(count)==0){
+            cartService.removeById(cartId);
+        }
+        cart.setGoodsCount(Integer.parseInt(cartId));
+        cartService.updateById(cart);
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
+
     }
 
 
