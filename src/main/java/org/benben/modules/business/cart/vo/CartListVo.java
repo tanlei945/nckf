@@ -10,5 +10,6 @@ public class CartListVo {
     private String storeId;
     private String storeName;
     private String storeImage;
+    private String storeAddress;
     private List<Cart> cartList;
 }

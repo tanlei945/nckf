@@ -45,7 +45,7 @@ public class RestUserMessageController {
      * @return
      */
     @GetMapping(value = "/list")
-    @ApiOperation(value = "查询用户系统消息", tags = {"用户接口"}, notes = "查询用户系统消息")
+    @ApiOperation(value = "查询用户系统消息", tags = {"首页"}, notes = "查询用户系统消息")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId", value = "用户id", dataType = "String", required = true),
     })
@@ -111,11 +111,12 @@ public class RestUserMessageController {
         try {
             UserMessage userMessage = userMessageService.getById(id);
             userMessage.setReadFlag("1").setDelFlag("0");
-            userMessageService.saveOrUpdate(userMessage);
-            return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
+            userMessageService.updateById(userMessage);
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
+
         } catch (Exception e) {
             e.printStackTrace();
-            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
+            return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
         }
     }
 

@@ -1,13 +1,17 @@
 package org.benben.modules.business.order.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.benben.modules.business.order.entity.Order;
 import org.benben.modules.business.order.entity.OrderGoods;
 import org.benben.modules.business.order.vo.OrderPage;
+import org.benben.modules.business.order.vo.RiderOrder;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description: 订单
@@ -53,7 +57,7 @@ public interface IOrderService extends IService<Order> {
 	public boolean edit(String id,String tradeNo);
 
 	//开发票后修改订单状态
-	public boolean invoiceOk(List<String> orderIdList);
+	public boolean invoiceOk(String orderIdList);
 
 	//骑手确认接单
 	public boolean riderOrder(String riderId, String orderId);
@@ -65,4 +69,15 @@ public interface IOrderService extends IService<Order> {
 	Integer countOrder();
 
 	Double DiffDayMoney();
+
+	Page<RiderOrder> queryOrderByDate(String beginTime, String endTime, Integer pageNo, Integer pageSize) throws  Exception;
+
+	Page<RiderOrder> queryOrderToday(Integer pageNo, Integer pageSize) throws  Exception;
+	Page<RiderOrder> queryOrderYest(Integer pageNo, Integer pageSize) throws  Exception;
+	Page<RiderOrder> queryOrderQiantian(Integer pageNo, Integer pageSize) throws  Exception;
+	Map<String,Object> queryOrderCount();
+	Page<RiderOrder> queryOrderYwc(Integer pageNo, Integer pageSize);
+	Page<RiderOrder> queryOrderDsd(Integer pageNo, Integer pageSize);
+	Page<RiderOrder> queryOrderDqh(Integer pageNo, Integer pageSize);
+	Page<RiderOrder> queryRiderOrder(Integer pageNo, Integer pageSize);
 }

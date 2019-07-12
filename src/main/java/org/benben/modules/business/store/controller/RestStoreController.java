@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.menu.ResultEnum;
 import org.benben.modules.business.commen.service.ICommonService;
+import org.benben.modules.business.order.entity.Order;
+import org.benben.modules.business.order.service.IOrderService;
 import org.benben.modules.business.store.entity.Store;
 import org.benben.modules.business.store.service.IStoreService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,8 @@ public class RestStoreController {
    private IStoreService storeService;
    @Autowired
    private ICommonService commonService;
+   @Autowired
+   private IOrderService orderService;
 
 
 
@@ -80,6 +84,15 @@ public class RestStoreController {
      }
 
  }
+
+
+
+    @RequestMapping(value = "/queryStoreIdByOrderId",method = RequestMethod.POST)
+    @ApiOperation(value="根据订单id查询门店id", tags = {"门店管理接口"})
+    public RestResponseBean queryStoreIdByOrderId(@RequestParam(name="orderId")String orderId){
+     Order order = orderService.getById(orderId);
+     return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), order.getStoreId());
+    }
 
 
 

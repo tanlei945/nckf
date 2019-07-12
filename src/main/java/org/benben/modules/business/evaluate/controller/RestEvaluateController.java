@@ -139,6 +139,8 @@ public class RestEvaluateController {
         Evaluate evaluate = new Evaluate();
         Order order = orderService.getById(orderId);
         Store store = storeService.getById(order.getStoreId());
+
+        //修改评价人数
         if(evaluateType.equals("0")){
             double totalmark = store.getMark()*store.getMarkCount();
             if(starCount != null && starCount != ""){
@@ -149,9 +151,17 @@ public class RestEvaluateController {
             store.setMark(mark);
             store.setMarkCount(store.getMarkCount()+1);
             storeService.updateById(store);
-        }//else if (evaluateType.equals("1")){
+        }/*else if (evaluateType.equals("1")){
+            double totalmark = user.getMark()*user.getMarkCount();
+            if(starCount != null && starCount != ""){
+                totalmark += Integer.parseInt(starCount);
+            }
 
-        //}
+            double mark = totalmark/(store.getMarkCount()+1);
+            user.setMark(mark);
+            user.setMarkCount(store.getMarkCount()+1);
+            userService.updateById(user);
+        }*/
 
         evaluate.setStoreId(store.getId());
         evaluate.setStorename(store.getStoreName());

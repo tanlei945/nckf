@@ -1,5 +1,6 @@
 package org.benben.modules.business.order.controller;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -12,6 +13,7 @@ import org.benben.common.menu.ResultEnum;
 import org.benben.common.system.query.QueryGenerator;
 import org.benben.common.util.DayUtils;
 import org.benben.common.util.DistanceUtil;
+import org.benben.common.util.IPUtils;
 import org.benben.modules.business.address.entity.Address;
 import org.benben.modules.business.address.service.IAddressService;
 import org.benben.modules.business.cart.entity.Cart;
@@ -106,13 +108,16 @@ public class RestOrderController {
 
        //待评价订单的数量
        QueryWrapper<Order> queryWrapper3 = new QueryWrapper<>();
-       queryWrapper3.eq("user_id",user.getId()).eq("status","3");
+       queryWrapper3.eq("user_id",user.getId()).eq("status","3").eq("user_del_flag","1");
        List<Order> list3 = orderService.list(queryWrapper3);
+       for (Order order : list3) {
+
+       }
        map.put("3",list3.size());
 
        //总订单的数量
        QueryWrapper<Order> queryWrapper0 = new QueryWrapper<>();
-       queryWrapper0.eq("user_id",user.getId()).eq("status","4");
+       queryWrapper0.eq("user_id",user.getId()).eq("status","4").eq("user_del_flag","1");
        List<Order> list0 = orderService.list(queryWrapper0);
        map.put("0",list0.size()+list1.size()+list2.size()+list3.size());
 
@@ -150,6 +155,23 @@ public class RestOrderController {
         Page<Order> page = new Page<Order>(pageNo, pageSize);
 
         IPage<Order> pageList = orderService.page(page, queryWrapper);
+
+
+        //过滤掉用户已收货订单的已删除的
+        List<Order> list = pageList.getRecords();
+        for (Order order : list) {
+            if("3".equals(order.getStatus()) && "0".equals(order.getUserDelFlag())){
+                list.remove(order);
+            }
+
+            if("4".equals(order.getStatus()) && "0".equals(order.getUserDelFlag())){
+                list.remove(order);
+            }
+
+        }
+
+        pageList.setRecords(list);
+
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
     }
 
@@ -249,7 +271,7 @@ public class RestOrderController {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
         QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("user_id",user.getId()).eq("status","3");
+        queryWrapper.eq("user_id",user.getId()).eq("status","3").eq("user_del_flag","1");
         Page<Order> page = new Page<Order>(pageNo, pageSize);
 
         //queryWrapper.lambda().eq(Order::getUserId,user.getId()).in(Order::getStatus,);
@@ -349,6 +371,21 @@ public class RestOrderController {
        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),order);
    }
 
+
+    public String getUUID(){
+        //随机生成一位整数
+        int random = (int) (Math.random()*9+1);
+        String valueOf = String.valueOf(random);
+        //生成uuid的hashCode值
+        int hashCode = UUID.randomUUID().toString().hashCode();
+        //可能为负数
+        if(hashCode<0){
+            hashCode = -hashCode;
+        }
+        String value = valueOf + String.format("%015d", hashCode);
+        return value;
+    }
+
     /**
      * showdoc
      * @catalog 订单购物车接口
@@ -367,16 +404,15 @@ public class RestOrderController {
    @PostMapping(value = "/addOrder")
    @ApiOperation(value = "用户新增订单接口", tags = {"订单购物车接口"}, notes = "用户新增订单接口")
    public RestResponseBean addOrder(@RequestParam(name = "cartIds") String[] cartIds,
-                                    @RequestParam(name = "userAddress") String userAddress,
-                                    @RequestParam(name = "userAddressId") String userAddressId,
-                                    @RequestParam(name = "couponseId") String couponseId,
+                                     String userAddressId,
+                                     String couponseId,
                                     @RequestParam(name = "orderSrc") String orderSrc,
                                     @RequestParam(name = "orderRemark") String orderRemark,
                                     @RequestParam(name = "orderType") String orderType,
                                     @RequestParam(name = "deliveryMoney") String deliveryMoney,
                                     @RequestParam(name = "appOrderMoney") String appOrderMoney,
                                     @RequestParam(name = "accountFlag") String accountFlag,
-                                    @RequestParam(name = "thirdPay") String thirdPay){
+                                     String thirdPay){
        //判断用户是否登陆
        User user = (User) LoginUser.getCurrentUser();
        if(user==null) {
@@ -389,20 +425,23 @@ public class RestOrderController {
        List<Cart> cartList = new ArrayList<>();
        for (int i = 0; i <cartIds.length ; i++) {
            //查询选中购物车的商品详情
+           //log.info(cartIds[i]);
            Cart cart = cartService.getById(cartIds[i]);
            cartList.add(cart);
        }
 
-       //验证购物车id是否有无
+       //验证购物车id是否有
         if(cartList == null){
             return new RestResponseBean(ResultEnum.CART_NULL.getValue(),ResultEnum.CART_NULL.getDesc(),null);
         }
        double money = 0;
        int count = 0;
        List<OrderGoods> list =new ArrayList<>();
-       OrderGoods orderGoods = new OrderGoods();
+
+
        //遍历给orderGoods值
        for (Cart cart : cartList) {
+           OrderGoods orderGoods = new OrderGoods();
            orderGoods.setCreateBy(user.getRealname());
            orderGoods.setGoodsCount(cart.getGoodsCount());
            orderGoods.setSelectedPrice(cart.getSelectedPrice());
@@ -418,6 +457,8 @@ public class RestOrderController {
            money += cart.getSelectedPrice()*cart.getGoodsCount();
            count += cart.getGoodsCount();
        }
+
+
 
        //如果此订单使用优惠券，得到数据库查询到的订单金额减去优惠金额
        if(couponseId != null && couponseId != ""){
@@ -448,8 +489,10 @@ public class RestOrderController {
        order.setInvoiceFlag("0");
        order.setOrderMoney(money);
        order.setGoodsCount(count);
-       order.setOrderId(user.getId()+System.currentTimeMillis());
+       order.setOrderId(getUUID());
        order.setCreateBy(user.getRealname());
+       //为了给订单列表展示订单中的某一件商品名称字段给上值
+       order.setOneGoodsName(list.get(0).getGoodsName());
        if(userAddressId!=null && userAddressId!=""){
            //根据addressId拿到收货地址的lat，lng
            Address address = addressService.getById(userAddressId);
@@ -468,7 +511,11 @@ public class RestOrderController {
            order.setStorename(storeService.getById(cart.getStoreId()).getStoreName());
        }
 
-       order.setUserAddress(userAddress);
+       if(userAddressId!=null && userAddressId != ""){
+           Address address = addressService.getById(userAddressId);
+           order.setUserAddress(address.getDetailedAddress());
+       }
+
        order.setUserCouponsId(couponseId);
        order.setOrderSrc(orderSrc);
        order.setOrderRemark(orderRemark);
@@ -531,25 +578,6 @@ public class RestOrderController {
 
 
 
-    @ApiOperation(value = "用户钱包支付接口", tags = {"订单购物车接口"}, notes = "用户钱包支付接口")
-    @PostMapping(value = "/payByAccount")
-    public RestResponseBean payByAccount(@RequestParam(name="orderId",required=true) String orderId) {
-        User user = (User) LoginUser.getCurrentUser();
-        if(user==null) {
-            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
-        }
-
-        Order order = orderService.getById(orderId);
-
-        if(order == null){
-            return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
-        }
-
-        user.setUserMoney(user.getUserMoney()-order.getOrderMoney());
-        userService.updateById(user);
-        order.setStatus("2");
-        orderService.updateById(order);
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);    }
 
    /**
      *  编辑
@@ -591,57 +619,128 @@ public class RestOrderController {
             return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
         }
 
-        RiderOrder riderOrder = new RiderOrder();
-        BeanUtils.copyProperties(order,riderOrder);
+
+        if(user.getUserType().equals("0")){
+            if("0".equals(order.getUserDelFlag())){
+                return  new RestResponseBean(ResultEnum.ORDER_already_delete.getValue(),ResultEnum.ORDER_already_delete.getDesc(),null);
+            }
+
+            RiderOrder riderOrder = new RiderOrder();
+            BeanUtils.copyProperties(order,riderOrder);
 
 
-        String userCouponseId = order.getUserCouponsId();
-        if(userCouponseId != null && userCouponseId !=""){
-            UserCoupons userCoupons =  userCouponsService.getById(userCouponseId);
-            String couponsId = userCoupons.getCouponsId();
-            Coupons coupons =couponsService.getById(couponsId);
-            riderOrder.setCouponsMoney(coupons.getSaveMoney());
+            String userCouponseId = order.getUserCouponsId();
+            if(userCouponseId != null && userCouponseId !=""){
+                UserCoupons userCoupons =  userCouponsService.getById(userCouponseId);
+                if(userCoupons!=null){
+                    String couponsId = userCoupons.getCouponsId();
+                    Coupons coupons =couponsService.getById(couponsId);
+                    riderOrder.setCouponsMoney(coupons.getSaveMoney());
+                }
+            }
+
+
+
+            List<OrderGoods> orderGoodsList = orderGoodsService.selectByMainId(id);
+            riderOrder.setOrderGoodsList(orderGoodsList);
+
+            Store store = storeService.getById(order.getStoreId());
+
+            String type = order.getOrderType();
+            if(type == "0"){
+                //得到骑手位置对象，拿到经纬度
+                QueryWrapper<RiderAddress> wrapper1 = new QueryWrapper<>();
+                wrapper1.eq("rider_id",user.getId());
+                RiderAddress riderAddress = riderAddressService.getOne(wrapper1);
+
+
+                //得到用户下单地址的经纬度和门店的经纬度
+                double lat = order.getUserLat();
+                double lng = order.getUserLng();
+
+
+                String disRS = DistanceUtil.algorithm(lat,lng,riderAddress.getLat(),riderAddress.getLng());
+                String disRU = DistanceUtil.algorithm(store.getLat(),store.getLng(),riderAddress.getLat(),riderAddress.getLng());
+                riderOrder.setRiderAndStoreDis(Double.parseDouble(disRS));
+                riderOrder.setRiderAndUserDis(Double.parseDouble(disRU));
+            }
+
+
+            riderOrder.setStoreLat(store.getLat());
+            riderOrder.setStoreLng(store.getLng());
+
+            riderOrder.setStorename(store.getStoreName());
+            riderOrder.setStoreAddress(store.getAddressDesc());
+
+
+            String userId = order.getUserId();
+            User reciveUser = userService.getById(userId);
+            riderOrder.setUserAddress(order.getUserAddress());
+            riderOrder.setUserPhone(reciveUser.getMobile());
+
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),riderOrder);
+        }else{
+            if("0".equals(order.getRiderDelFlag())){
+                return  new RestResponseBean(ResultEnum.ORDER_already_delete.getValue(),ResultEnum.ORDER_already_delete.getDesc(),null);
+            }
+
+            RiderOrder riderOrder = new RiderOrder();
+            BeanUtils.copyProperties(order,riderOrder);
+
+
+            String userCouponseId = order.getUserCouponsId();
+            if(userCouponseId != null && userCouponseId !=""){
+                UserCoupons userCoupons =  userCouponsService.getById(userCouponseId);
+                if(userCoupons!=null){
+                    String couponsId = userCoupons.getCouponsId();
+                    Coupons coupons =couponsService.getById(couponsId);
+                    riderOrder.setCouponsMoney(coupons.getSaveMoney());
+                }
+            }
+
+
+
+            List<OrderGoods> orderGoodsList = orderGoodsService.selectByMainId(id);
+            riderOrder.setOrderGoodsList(orderGoodsList);
+
+            Store store = storeService.getById(order.getStoreId());
+
+            String type = order.getOrderType();
+            if(type == "0"){
+                //得到骑手位置对象，拿到经纬度
+                QueryWrapper<RiderAddress> wrapper1 = new QueryWrapper<>();
+                wrapper1.eq("rider_id",user.getId());
+                RiderAddress riderAddress = riderAddressService.getOne(wrapper1);
+
+
+                //得到用户下单地址的经纬度和门店的经纬度
+                double lat = order.getUserLat();
+                double lng = order.getUserLng();
+
+
+                String disRS = DistanceUtil.algorithm(lat,lng,riderAddress.getLat(),riderAddress.getLng());
+                String disRU = DistanceUtil.algorithm(store.getLat(),store.getLng(),riderAddress.getLat(),riderAddress.getLng());
+                riderOrder.setRiderAndStoreDis(Double.parseDouble(disRS));
+                riderOrder.setRiderAndUserDis(Double.parseDouble(disRU));
+            }
+
+
+            riderOrder.setStoreLat(store.getLat());
+            riderOrder.setStoreLng(store.getLng());
+
+            riderOrder.setStorename(store.getStoreName());
+            riderOrder.setStoreAddress(store.getAddressDesc());
+
+
+            String userId = order.getUserId();
+            User reciveUser = userService.getById(userId);
+            riderOrder.setUserAddress(order.getUserAddress());
+            riderOrder.setUserPhone(reciveUser.getMobile());
+
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),riderOrder);
         }
 
 
-
-        List<OrderGoods> orderGoodsList = orderGoodsService.selectByMainId(id);
-        riderOrder.setOrderGoodsList(orderGoodsList);
-
-
-
-
-        //得到骑手位置对象，拿到经纬度
-        QueryWrapper<RiderAddress> wrapper1 = new QueryWrapper<>();
-        wrapper1.eq("rider_id",user.getId());
-        RiderAddress riderAddress = riderAddressService.getOne(wrapper1);
-
-
-        //得到用户下单地址的经纬度和门店的经纬度
-        double lat = order.getUserLat();
-        double lng = order.getUserLng();
-
-        Store store = storeService.getById(order.getStoreId());
-
-        String disRS = DistanceUtil.algorithm(lat,lng,riderAddress.getLat(),riderAddress.getLng());
-        String disRU = DistanceUtil.algorithm(store.getLat(),store.getLng(),riderAddress.getLat(),riderAddress.getLng());
-
-        riderOrder.setRiderAndStoreDis(Double.parseDouble(disRS));
-         riderOrder.setRiderAndUserDis(Double.parseDouble(disRU));
-
-        riderOrder.setStoreLat(store.getLat());
-        riderOrder.setStoreLng(store.getLng());
-
-        riderOrder.setStorename(store.getStoreName());
-        riderOrder.setStoreAddress(store.getAddressDesc());
-
-
-        String userId = order.getUserId();
-        User reciveUser = userService.getById(userId);
-        riderOrder.setUserAddress(order.getUserAddress());
-        riderOrder.setUserPhone(reciveUser.getMobile());
-
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),riderOrder);
     }
 
 
@@ -871,23 +970,17 @@ public class RestOrderController {
 
     @PostMapping(value = "/rider/queryRiderOrder")
     @ApiOperation(value = "骑手查询新任务订单接口", tags = {"订单购物车接口"}, notes = "骑手查询新任务订单接口")
-    public RestResponseBean queryRiderOrder(){
+    public RestResponseBean queryRiderOrder(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+                                            @RequestParam(name="pageSize", defaultValue="10") Integer pageSize){
         User user = (User) LoginUser.getCurrentUser();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
 
+        Page<RiderOrder> pageList = orderService.queryOrderDqh(pageNo,pageSize);
 
 
-
-
-        QueryWrapper<Order> wrapper = new QueryWrapper<>();
-        wrapper.eq("store_id",user.getStoreId()).eq("status","2").eq("rider_ok","0");
-        List<Order> list = orderService.list(wrapper);
-
-        List<RiderOrder> riderOrderList = query(user,list);
-
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),riderOrderList);
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
     }
 
 
@@ -896,21 +989,18 @@ public class RestOrderController {
 
     @PostMapping(value = "/rider/queryOrderDqh")
     @ApiOperation(value = "骑手查询待取货订单接口", tags = {"订单购物车接口"}, notes = "骑手查询待取货订单接口")
-    public RestResponseBean queryOrderDqh(){
+    public RestResponseBean queryOrderDqh(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+                                          @RequestParam(name="pageSize", defaultValue="10") Integer pageSize){
         User user = (User) LoginUser.getCurrentUser();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
 
+        Page<RiderOrder> pageList = orderService.queryOrderDqh(pageNo,pageSize);
 
 
-        QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("rider_id",user.getId()).eq("rider_ok","1");
-        List<Order> list = orderService.list(queryWrapper);
 
-        List<RiderOrder> riderOrderList = query(user,list);
-
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),riderOrderList);
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
     }
 
 
@@ -918,36 +1008,30 @@ public class RestOrderController {
 
     @PostMapping(value = "/rider/queryOrderDsd")
     @ApiOperation(value = "骑手查询待送达订单接口", tags = {"订单购物车接口"}, notes = "骑手查询待送达订单接口")
-    public RestResponseBean queryOrderDsd(){
+    public RestResponseBean queryOrderDsd(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+                                          @RequestParam(name="pageSize", defaultValue="10") Integer pageSize){
         User user = (User) LoginUser.getCurrentUser();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
+        Page<RiderOrder> pageList = orderService.queryOrderDsd(pageNo,pageSize);
 
-        QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("rider_id",user.getId()).eq("rider_ok","2");
-        List<Order> list = orderService.list(queryWrapper);
-
-        List<RiderOrder> riderOrderList = query(user,list);
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),riderOrderList);
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
     }
 
 
     @PostMapping(value = "/rider/queryOrderYwc")
     @ApiOperation(value = "骑手查询已完成订单接口", tags = {"订单购物车接口"}, notes = "骑手查询已完成订单接口")
-    public RestResponseBean queryOrderOk(){
+    public RestResponseBean queryOrderYwc(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+                                         @RequestParam(name="pageSize", defaultValue="10") Integer pageSize){
         User user = (User) LoginUser.getCurrentUser();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
 
-        QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("rider_id",user.getId()).eq("rider_ok","3");
-        List<Order> list = orderService.list(queryWrapper);
+        Page<RiderOrder> pageList = orderService.queryOrderYwc(pageNo,pageSize);
 
-        List<RiderOrder> riderOrderList = query(user,list);
-
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),riderOrderList);
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
     }
 
 
@@ -956,203 +1040,159 @@ public class RestOrderController {
 
     @PostMapping(value = "/rider/queryOrderCount")
     @ApiOperation(value = "骑手-->0新任务数量 1待取货订单数量 2待送达订单数量 3已完成订单数量", tags = {"订单购物车接口"}, notes = "骑手-->0新任务数量 1待取货订单数量 2待送达订单数量 3已完成订单数量")
-    public RestResponseBean riderQueryOrder() {
+    public RestResponseBean queryOrderCount() {
         User user = (User) LoginUser.getCurrentUser();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
 
-
-        //获取所需状态的订单
-        //orderPageList = orderService.page(page,queryWrapper);
-        Map<String,Object> map = new HashMap<>();
-        //放入map中
-        //map.put("orderList",orderPageList);
-        //获取各种状态的订单数量
-
-        //新任务订单的数量
-        QueryWrapper<Order> queryWrapper0 = new QueryWrapper<>();
-
-        queryWrapper0.eq("store_id",user.getStoreId()).eq("status","2").eq("rider_ok","0");
-
-        List<Order> list0 = orderService.list(queryWrapper0);
-        map.put("0",list0.size());
-
-        //待取货订单的数量
-        QueryWrapper<Order> queryWrapper1 = new QueryWrapper<>();
-        queryWrapper1.lambda().eq(Order::getRiderId,user.getId()).eq(Order::getRiderOk,"1").eq(Order::getStoreId,user.getStoreId());
-        List<Order> list1 = orderService.list(queryWrapper1);
-        map.put("1",list1.size());
-
-        //待送达订单的数量
-        QueryWrapper<Order> queryWrapper2 = new QueryWrapper<>();
-        queryWrapper2.lambda().eq(Order::getRiderId,user.getId()).eq(Order::getRiderOk,"2").eq(Order::getStoreId,user.getStoreId());
-        List<Order> list2 = orderService.list(queryWrapper2);
-        map.put("2",list2.size());
-
-        //已送达订单的数量
-        QueryWrapper<Order> queryWrappe3 = new QueryWrapper<>();
-        queryWrappe3.lambda().eq(Order::getRiderId,user.getId()).eq(Order::getRiderOk,"3").eq(Order::getStoreId,user.getStoreId());
-        List<Order> list3 = orderService.list(queryWrappe3);
-        map.put("3",list3.size());
-
+        Map<String,Object> map = orderService.queryOrderCount();
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),map);
 
     }
 
 
-    //@赵永刚
-    private List<RiderOrder> query(User user,List<Order> list){
-        //得到骑手位置对象，拿到经纬度
-        QueryWrapper<RiderAddress> wrapper1 = new QueryWrapper<>();
-        wrapper1.eq("rider_id",user.getId());
-        RiderAddress riderAddress = riderAddressService.getOne(wrapper1);
-        //创建RiderAddress对象
-        List<RiderOrder> riderOrderList = new ArrayList<>();
 
-        if(list == null){
-            return new ArrayList<RiderOrder>();
-        }
-        //遍历订单，得到用户下单地址的经纬度和门店的经纬度
-        for (Order order : list) {
-            RiderOrder riderOrder = new RiderOrder();
-            BeanUtils.copyProperties(order,riderOrder);
-            double lat = order.getUserLat();
-            double lng = order.getUserLng();
-
-            Store store = storeService.getById(order.getStoreId());
-
-            String disRS = DistanceUtil.algorithm(lat,lng,riderAddress.getLat(),riderAddress.getLng());
-            String disRU = DistanceUtil.algorithm(store.getLat(),store.getLng(),riderAddress.getLat(),riderAddress.getLng());
-
-            riderOrder.setRiderAndStoreDis(Double.parseDouble(disRS));
-            riderOrder.setRiderAndUserDis(Double.parseDouble(disRU));
-
-            riderOrder.setStoreLat(store.getLat());
-            riderOrder.setStoreLng(store.getLng());
-
-            riderOrder.setStorename(store.getStoreName());
-            riderOrder.setStoreAddress(store.getAddressDesc());
-
-
-            String userId = order.getUserId();
-            User reciveUser = userService.getById(userId);
-            riderOrder.setUserAddress(order.getUserAddress());
-            riderOrder.setUserPhone(reciveUser.getMobile());
-
-            riderOrderList.add(riderOrder);
-        }
-
-        return riderOrderList;
-    }
 
     @PostMapping(value = "/rider/queryOrderToday")
     @ApiOperation(value = "骑手查询今天订单接口", tags = {"订单购物车接口"}, notes = "骑手查询今天订单接口")
-    public RestResponseBean queryOrderToday()throws Exception{
+    public RestResponseBean queryOrderToday(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+                                            @RequestParam(name="pageSize", defaultValue="10") Integer pageSize)throws Exception{
         User user = (User) LoginUser.getCurrentUser();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
 
-        QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("rider_id",user.getId()).eq("rider_ok","3");
-        List<Order> list = orderService.list(queryWrapper);
-        List<Order> orderList = new ArrayList<>();
-        for (Order order : list) {
-            if(DayUtils.isToday(order.getOverTime())){
-                orderList.add(order);
-            }
-        }
+        Page<RiderOrder> pageList = orderService.queryOrderToday(pageNo,pageSize);
 
-
-        List<RiderOrder> riderOrderList = query(user,orderList);
-
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),riderOrderList);
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
     }
 
 
     @PostMapping(value = "/rider/queryOrderYest")
     @ApiOperation(value = "骑手查询昨天订单接口", tags = {"订单购物车接口"}, notes = "骑手查询昨天订单接口")
-    public RestResponseBean queryOrderYest()throws Exception{
+    public RestResponseBean queryOrderYest(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+                                           @RequestParam(name="pageSize", defaultValue="10") Integer pageSize)throws Exception{
         User user = (User) LoginUser.getCurrentUser();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
 
-        QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("rider_id",user.getId()).eq("rider_ok","3");
-        List<Order> list = orderService.list(queryWrapper);
-        List<Order> orderList = new ArrayList<>();
-        for (Order order : list) {
-            if(DayUtils.isYesterday(order.getOverTime())){
-                orderList.add(order);
-            }
-        }
+        Page<RiderOrder> pageList = orderService.queryOrderYest(pageNo,pageSize);
 
-
-        List<RiderOrder> riderOrderList = query(user,orderList);
-
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),riderOrderList);
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
     }
 
 
     @PostMapping(value = "/rider/queryOrderQiantian")
     @ApiOperation(value = "骑手查询前天订单接口", tags = {"订单购物车接口"}, notes = "骑手查询前天订单接口")
-    public RestResponseBean queryOrderQiantian()throws Exception{
+    public RestResponseBean queryOrderQiantian(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+                                               @RequestParam(name="pageSize", defaultValue="10") Integer pageSize)throws Exception{
         User user = (User) LoginUser.getCurrentUser();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
 
-        QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("rider_id",user.getId()).eq("rider_ok","3");
-        List<Order> list = orderService.list(queryWrapper);
-        List<Order> orderList = new ArrayList<>();
-        for (Order order : list) {
-            if(DayUtils.isQiantian(order.getOverTime())){
-                orderList.add(order);
-            }
-        }
+        Page<RiderOrder> pageList = orderService.queryOrderQiantian(pageNo,pageSize);
 
-
-        List<RiderOrder> riderOrderList = query(user,orderList);
-
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),riderOrderList);
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
     }
 
 
 
     @PostMapping(value = "/rider/queryOrderByDate")
     @ApiOperation(value = "骑手按日期查询订单接口", tags = {"订单购物车接口"}, notes = "骑手按日期查询订单接口")
-    public RestResponseBean queryOrderByDate(@RequestParam(name = "beginTime") String beginTime,@RequestParam(name = "endTime") String endTime)throws Exception{
+    public RestResponseBean queryOrderByDate(@RequestParam(name = "beginTime") String beginTime,
+                                             @RequestParam(name = "endTime") String endTime,
+                                             @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+                                             @RequestParam(name="pageSize", defaultValue="10") Integer pageSize) throws Exception{
         User user = (User) LoginUser.getCurrentUser();
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        Date beginDate = formatter.parse(beginTime);
-        Date endDate = formatter.parse(endTime);
+        Page<RiderOrder> pageList = orderService.queryOrderByDate(beginTime,endTime,pageNo,pageSize);
 
-        QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("rider_id",user.getId()).eq("rider_ok","3");
-        List<Order> list = orderService.list(queryWrapper);
-        List<Order> orderList = new ArrayList<>();
-        for (Order order : list) {
-            if(order.getOverTime().after(beginDate) && endDate.after(order.getOverTime())){
-                orderList.add(order);
-            }
-        }
-
-
-        List<RiderOrder> riderOrderList = query(user,orderList);
-
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),riderOrderList);
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
     }
 
 
 
+    @PostMapping(value = "/deleteOrderByUserId")
+    @ApiOperation(value = "用户-->删除订单", tags = {"订单购物车接口"}, notes = "用户-->删除订单")
+    public RestResponseBean deleteOrderByUserId(@RequestParam(name = "orderId",required = true) String orderId){
+        User user = (User) LoginUser.getCurrentUser();
+        if(user==null) {
+            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+        }
 
+        Order order = orderService.getById(orderId);
+
+        if(!("4").equals(order.getStatus()) && !("3").equals(order.getStatus())){
+            return new RestResponseBean(ResultEnum.ORDER_NOT_OK.getValue(),ResultEnum.ORDER_NOT_OK.getDesc(),null);
+        }
+
+        order.setUserDelFlag("0");
+        boolean flag = orderService.updateById(order);
+
+        if(flag){
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
+
+        }
+        return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+    }
+
+
+    @PostMapping(value = "/deleteOrderByRiderId")
+    @ApiOperation(value = "骑手-->删除订单", tags = {"订单购物车接口"}, notes = "骑手-->删除订单")
+    public RestResponseBean deleteOrderByRiderId(@RequestParam(name = "orderId",required = true) String orderId){
+        User user = (User) LoginUser.getCurrentUser();
+        if(user==null) {
+            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+        }
+
+        Order order = orderService.getById(orderId);
+
+
+        if(!("3").equals(order.getRiderOk())){
+            return new RestResponseBean(ResultEnum.ORDER_NOT_OK.getValue(),ResultEnum.ORDER_NOT_OK.getDesc(),null);
+        }
+
+        order.setRiderDelFlag("0");
+        boolean flag = orderService.updateById(order);
+
+        if(flag){
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
+
+        }
+        return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+    }
+
+
+
+    @ApiOperation(value = "用户钱包支付接口", tags = {"订单购物车接口"}, notes = "用户钱包支付接口")
+    @PostMapping(value = "/payByAccount")
+    public RestResponseBean payByAccount(@RequestParam(name="orderId",required=true) String orderId) {
+        User user = (User) LoginUser.getCurrentUser();
+        if(user==null) {
+            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+        }
+
+        Order order = orderService.getById(orderId);
+
+        if(order == null){
+            return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+        }
+
+        user.setUserMoney(user.getUserMoney()-order.getOrderMoney());
+        userService.updateById(user);
+        order.setStatus("2");
+        orderService.updateById(order);
+
+        //把订单临时表中的数据删除
+        orderNoPayService.removeById(orderId);
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
+    }
 
 
 

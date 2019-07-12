@@ -68,7 +68,7 @@ public class RestWithdrawController {
 		}
 
         QueryWrapper<Withdraw> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(Withdraw::getUserId,user.getId());
+        queryWrapper.lambda().eq(Withdraw::getUserId,user.getId()).orderByDesc(Withdraw::getCreateTime);
         Page<Withdraw> page = new Page<Withdraw>(pageNo, pageSize);
         IPage<Withdraw> pageList = withdrawService.page(page, queryWrapper);
 

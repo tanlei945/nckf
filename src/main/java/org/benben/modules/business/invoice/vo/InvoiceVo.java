@@ -39,5 +39,5 @@ public class InvoiceVo {
 	private java.lang.String mailingAddress;
 	/**状态*/
 
-	private List<String> orderIdList;
+	private String orderIdList;
 }

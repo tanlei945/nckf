@@ -138,6 +138,13 @@ public class Order implements Serializable {
 	private double userLat;
 	//收货地址纬度
 	private double userLng;
+	/**订单类型(0:送餐  1：店内用餐)*/
+	private String oneGoodsName;
+	//用户删除状态
+	private String userDelFlag;
+	//骑手删除状态
+	private String riderDelFlag;
+
 
 
 }
