@@ -37,37 +37,18 @@ public class Coupons implements Serializable {
 	/**图片路径*/
 	@Excel(name = "图片路径", width = 15)
 	private java.lang.String imgUrl;
-	/**状态：-1已过期 0 未使用 1已使用*/
-	@Excel(name = "状态：0/已过期 1/未过期", width = 15,dicCode = "couponse_status")
-	@Dict(dicCode = "couponse_status")
-	private java.lang.String status;
 	/**是否删除：0--否；1--删除*/
-	@Excel(name = "是否删除：0--否；1--删除", width = 15,dicCode = "del_flag")
+	@Excel(name = "0已删除  1未删除", width = 15,dicCode = "del_flag")
 	@Dict(dicCode = "del_flag")
 	private java.lang.String delFlag;
 	/**是否新用户 0--否  1--是*/
-	@Excel(name = "新用户专享 0--否  1--是", width = 15,dicCode = "new_user_flag")
-	@Dict(dicCode = "new_user_flag")
-	private java.lang.String newuserFlag;
+	@Excel(name = "门店id", width = 15)
+	//@Dict(dicCode = "new_user_flag")
+	private java.lang.String storeId;
 	/**是否所有商检通用：0-否 1-是*/
-	@Excel(name = "是否所有商检通用：0-否 1-是", width = 15,dicCode = "common_flag")
+	@Excel(name = "是否所有商家通用：0-否 1-是", width = 15,dicCode = "common_flag")
 	@Dict(dicCode = "common_flag")
 	private java.lang.String commonFlag;
-	/**优惠券开始发放时间*/
-	@Excel(name = "优惠券开始发放时间", width = 20, format = "yyyy-MM-dd HH:mm:ss")
-	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-	private java.util.Date sendStartTime;
-	/**优惠券结束发放时间*/
-	@Excel(name = "优惠券结束发放时间", width = 20, format = "yyyy-MM-dd HH:mm:ss")
-	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-	private java.util.Date sendEndTime;
-	/**开始使用时间*/
-	@Excel(name = "开始使用时间", width = 20, format = "yyyy-MM-dd HH:mm:ss")
-	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-	private java.util.Date useStartTime;
 	/**过期时间*/
 	@Excel(name = "过期时间", width = 20, format = "yyyy-MM-dd HH:mm:ss")
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")

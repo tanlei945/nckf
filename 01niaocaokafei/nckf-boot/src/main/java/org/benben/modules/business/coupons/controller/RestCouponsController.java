@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.shiro.SecurityUtils;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.api.vo.Result;
@@ -16,20 +17,26 @@ import org.benben.common.system.query.QueryGenerator;
 import org.benben.modules.business.coupons.entity.Coupons;
 import org.benben.modules.business.coupons.service.ICouponsService;
 import org.benben.modules.business.user.entity.User;
+import org.benben.modules.business.user.service.IUserService;
+import org.benben.modules.business.usercoupons.service.IUserCouponsService;
 import org.benben.modules.shiro.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/coupons")
 @Slf4j
-@Api(tags = {"首页"})
+@Api(tags = {"优惠券"})
 public class RestCouponsController {
 
     @Autowired
     private ICouponsService couponsService;
+    @Autowired
+    private IUserCouponsService userCouponsService;
 
     /**
      * showdoc
@@ -64,47 +71,34 @@ public class RestCouponsController {
      * @number 5
      */
     @GetMapping(value = "/queryCoupons")
-    @ApiOperation(value = "展示优惠券", notes = "展示优惠券",tags = {"首页"})
+    @ApiOperation(value = "首页展示可领取优惠券", notes = "首页展示可领取优惠券",tags = {"优惠券"})
     @ApiImplicitParams({
             @ApiImplicitParam(name="pageNo",value = "当前页",dataType = "Integer",defaultValue = "1"),
             @ApiImplicitParam(name="pageSize",value = "每页显示条数",dataType = "Integer",defaultValue = "10"),
     })
-    public RestResponseBean queryCoupons(
-                                                @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-                                                @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
-                                                HttpServletRequest req) {
+    public RestResponseBean queryCoupons(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+                                         @RequestParam(name="pageSize", defaultValue="10") Integer pageSize) {
         QueryWrapper<Coupons> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(Coupons::getStatus,"1").eq(Coupons::getDelFlag,"1");
+        queryWrapper.lambda().eq(Coupons::getDelFlag,"1");
         Page<Coupons> page = new Page<Coupons>(pageNo, pageSize);
         IPage<Coupons> pageList = couponsService.page(page, queryWrapper);
+
+        List<Coupons> list = pageList.getRecords();
+        for (Coupons coupons : list) {
+            if (coupons.getUseEndTime().before(new Date())){
+                list.remove(coupons);
+            }
+        }
+
+        //查询用户现在已经拥有的优惠券id
+        //userCouponsService
+
+        pageList.setRecords(list);
+
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
     }
 
-    /**
-     * showdoc
-     * @catalog 首页
-     * @title 用户优惠券数量
-     * @description 用户优惠券数量
-     * @method POST
-     * @url /nckf-boot/api/v1/coupons/getCouponsCount
-     * @return {"code": 1,"data": 0,"msg": "操作成功","time": "1561014430794"}
-     * @return_param code String 响应状态
-     * @return_param data Integer 优惠券数量
-     * @return_param msg String 操作信息
-     * @return_param time Date 操作时间
-     * @remark 这里是备注信息
-     * @number 4
-     */
-    @PostMapping(value = "/getCouponsCount")
-    @ApiOperation(value = "用户优惠券数量", notes = "用户优惠券数量",tags = {"首页"})
-    public RestResponseBean getCouponsCount(){
-        User user = (User) LoginUser.getCurrentUser();
-        if (user == null) {
-            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(), ResultEnum.TOKEN_OVERDUE.getDesc(), null);
-        }
-        Integer count = couponsService.getCouponsCount(user.getId());
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),count);
-    }
+
 
 
     /**

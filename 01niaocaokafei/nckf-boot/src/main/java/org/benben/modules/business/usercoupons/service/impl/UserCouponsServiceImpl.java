@@ -41,4 +41,9 @@ public class UserCouponsServiceImpl extends ServiceImpl<UserCouponsMapper, UserC
 	public void updateStatus(String couponsId,String status) {
 		userCouponsMapper.updateStatus(couponsId,status);
 	}
+
+	@Override
+	public int getCouponsCount(String userId) {
+		return userCouponsMapper.getCouponsCount(userId);
+	}
 }

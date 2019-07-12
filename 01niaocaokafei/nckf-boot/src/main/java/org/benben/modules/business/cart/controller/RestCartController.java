@@ -136,7 +136,7 @@ public class RestCartController {
         if(Integer.parseInt(count)==0){
             cartService.removeById(cartId);
         }
-        cart.setGoodsCount(Integer.parseInt(cartId));
+        cart.setGoodsCount(Integer.parseInt(count));
         cartService.updateById(cart);
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
 
@@ -146,8 +146,6 @@ public class RestCartController {
 
 
     @PostMapping(value = "/queryStoreIdByGoodsId")
-    @Transactional
-    @ApiOperation(value = "根据商品id获取门店id", notes = "根据商品id获取门店id",tags = "订单购物车接口")
     public RestResponseBean queryStoreIdByGoodsId(@RequestParam String goodsId) {
         User user = (User) LoginUser.getCurrentUser();
         if(user==null) {
@@ -217,6 +215,7 @@ public class RestCartController {
                     cartVo.setStoreId(s);
                     cartVo.setStoreName(store.getStoreName());
                     cartVo.setStoreImage(commonService.getLocalUrl(store.getImgUrl()));
+                    cartVo.setStoreAddress(store.getAddressDesc());
                     listCart.add(cart);
                 }
             }
@@ -259,6 +258,7 @@ public class RestCartController {
         cartListVo.setStoreName(store.getStoreName());
         cartListVo.setStoreId(storeId);
         cartListVo.setCartList(list);
+        cartListVo.setStoreAddress(store.getAddressDesc());
 
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),cartListVo);
     }

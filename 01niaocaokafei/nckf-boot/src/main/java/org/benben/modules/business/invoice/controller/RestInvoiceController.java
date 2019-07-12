@@ -143,7 +143,7 @@ public class RestInvoiceController {
                                       @RequestParam(name = "invoiceMoney") String invoiceMoney,
                                       @RequestParam(name = "invoiceType") String invoiceType,
                                       @RequestParam(name = "mailingAddress") String mailingAddress,
-                                      @RequestParam(name = "orderIdList") List<String> orderIdList,
+                                      @RequestParam(name = "orderIdList") String orderIdList,
                                       @RequestParam(name = "taxName") String taxName,
                                       @RequestParam(name = "taxNo") String taxNo,
                                       @RequestParam(name = "titleType") String titleType) {
@@ -167,8 +167,11 @@ public class RestInvoiceController {
 
        //从数据库中获取用户所需的实际开票金额
        double sum = 0;
-       for (String s : invoiceVo.getOrderIdList()) {
+       for (String s : invoiceVo.getOrderIdList().split(",")) {
            Order order = orderService.getById(s);
+           if(order == null){
+               return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+           }
            if(order.getOrderMoney()!=0){
                sum += order.getOrderMoney();
            }
@@ -185,7 +188,7 @@ public class RestInvoiceController {
 				   invoice.setCreateTime(new Date());
 				   invoice.setStatus("0");
                    invoiceService.save(invoice);
-                   for (String s : invoiceVo.getOrderIdList()) {
+                   for (String s : invoiceVo.getOrderIdList().split(",")) {
                        Order order = orderService.getById(s);
                        order.setInvoiceFlag("1");
                        order.setInvoiceId(invoice.getId());

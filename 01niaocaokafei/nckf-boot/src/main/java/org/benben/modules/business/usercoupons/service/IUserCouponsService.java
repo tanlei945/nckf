@@ -22,4 +22,6 @@ public interface IUserCouponsService extends IService<UserCoupons> {
 
 	void updateStatus(String couponsId,String status);
 
+	int getCouponsCount(String userId);
+
 }

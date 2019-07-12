@@ -40,24 +40,9 @@ public class UserCoupons implements Serializable {
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	private java.util.Date useTime;
-	/**使用条件*/
-	@Excel(name = "使用条件", width = 15)
-	private java.lang.Double useCondition;
-	/**优惠券名称*/
-	@Excel(name = "优惠券名称", width = 15)
-	private java.lang.String couonsName;
 	/**状态：-1已过期 0 未使用 1已使用*/
-	@Excel(name = "状态：-1已过期 0 未使用 1已使用", width = 15)
+	@Excel(name = "0 未使用  1 已使用", width = 15)
 	private java.lang.String status;
-	/**是否新用户 0--否  1--是*/
-	@Excel(name = "是否新用户 0--否  1--是", width = 15)
-	private java.lang.String newuserFlag;
-	/**是否所有商家通用：0-否 1-是*/
-	@Excel(name = "是否所有商家通用：0-否 1-是", width = 15)
-	private java.lang.String commonFlag;
-	/**图片路径*/
-	@Excel(name = "图片路径", width = 15)
-	private java.lang.String imgUrl;
 	/**创建者*/
 	@Excel(name = "创建者", width = 15)
 	private java.lang.String createBy;
@@ -79,9 +64,4 @@ public class UserCoupons implements Serializable {
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	private java.util.Date updateTime;
-	/**过期时间*/
-	@Excel(name = "过期时间", width = 20, format = "yyyy-MM-dd HH:mm:ss")
-	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-	private java.util.Date useEndTime;
 }

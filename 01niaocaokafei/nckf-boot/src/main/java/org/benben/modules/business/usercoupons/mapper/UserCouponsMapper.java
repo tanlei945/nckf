@@ -23,5 +23,10 @@ public interface UserCouponsMapper extends BaseMapper<UserCoupons> {
 	void updateStatus(@Param("userCouponsId") String userCouponsId, @Param("status") String status);
 
 
+	@Select("select count(*) from bb_user_coupons where #{status} ='1'")
+	int getCouponsCount(String userId);
+
+
+
 
 }

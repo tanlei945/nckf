@@ -215,6 +215,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 	 * @param user
 	 * @return
 	 */
+
+	@Autowired
+	private  IUserService userService;
 	@Override
 	public UserVo queryUserVo(User user) {
 
@@ -223,6 +226,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 		Account account = accountMapper.queryByUserId(user.getId());
 		List<UserCoupons> list = userCouponsMapper.queryByUserId(user.getId());
 		BeanUtils.copyProperties(user,userVo);
+		user = userService.getById(user.getId());
 		userVo.setWorkFlag(user.getWorkFlag());
 		Store store = storeService.getById(user.getStoreId());
 		if(store != null){
