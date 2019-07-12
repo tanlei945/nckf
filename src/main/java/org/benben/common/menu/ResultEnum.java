@@ -11,6 +11,11 @@ public enum ResultEnum {
 
     ORDER_MONEY_FAIL(0,"订单金额异常"),
 
+    ORDER_already_delete(0,"订单已经删除"),
+
+
+    ORDER_NOT_OK(0,"未完成订单不能删除"),
+
     QUERY_NOT_EXIST(0,"查询不存在"),
 
     SELECTED_NULL(1,"购物车商品不见了"),
