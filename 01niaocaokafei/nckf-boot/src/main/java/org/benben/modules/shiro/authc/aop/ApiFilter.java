@@ -102,7 +102,7 @@ public class ApiFilter implements Filter {
 		String password,userId,mobile;
 		User userInfo = new User();
 
-		if(id !=null){
+		if(StringUtils.isNotBlank(id)){
 			//查询用户信息
 			userInfo = (User) redisUtil.get(CommonConstant.SIGN_PHONE_USER + id);
 			mobile = userInfo.getMobile();

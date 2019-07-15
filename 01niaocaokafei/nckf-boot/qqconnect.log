@@ -59,3 +59,7 @@
 200  DEBUG [2019-04-18 18:40:23]  TemplateLoader.findTemplateSource("java\\${bussiPackage}\\${entityPackage}\\vue\\modules\\${entityName}Modal__Style#Drawer_zh.vuei"): Not found
 200  DEBUG [2019-04-18 18:40:23]  TemplateLoader.findTemplateSource("java\\${bussiPackage}\\${entityPackage}\\vue\\modules\\${entityName}Modal__Style#Drawer.vuei"): Found
 201  DEBUG [2019-04-18 18:40:23]  Loading template for "java\\${bussiPackage}\\${entityPackage}\\vue\\modules\\${entityName}Modal__Style#Drawer.vuei"("zh_CN", UTF-8, parsed) from "E:\\SvnProjects\\product\\benben-boot\\target\\classes\\jeecg\\code-template\\one\\java\\${bussiPackage}\\${entityPackage}\\vue\\modules\\${entityName}Modal__Style#Drawer.vuei"
+0    DEBUG [2019-05-29 17:24:07]  Couldn't find template in cache for "error.ftl"("zh_CN", UTF-8, parsed); will try to load it.
+5    DEBUG [2019-05-29 17:24:07]  TemplateLoader.findTemplateSource("error_zh_CN.ftl"): Not found
+6    DEBUG [2019-05-29 17:24:07]  TemplateLoader.findTemplateSource("error_zh.ftl"): Not found
+6    DEBUG [2019-05-29 17:24:07]  TemplateLoader.findTemplateSource("error.ftl"): Not found
