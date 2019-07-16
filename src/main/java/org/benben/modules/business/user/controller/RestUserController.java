@@ -676,6 +676,10 @@ public class RestUserController {
 
         User user = userService.queryByMobileAndUserType(mobile,"1");
 
+		if (user == null) {
+			return new RestResponseBean(ResultEnum.USER_NOT_EXIST.getValue(), ResultEnum.USER_NOT_EXIST.getDesc(), null);
+		}
+
 		UserStore userStore = userStoreService.queryByUserId(user.getId());
 
 		if(StringUtils.equals(userStore.getCompleteFlag(),"0")){
@@ -685,21 +689,14 @@ public class RestUserController {
 		if(StringUtils.equals(userStore.getCompleteFlag(),"1")){
 			return new RestResponseBean(ResultEnum.COMPLETE_NOT_PASS.getValue(),ResultEnum.COMPLETE_NOT_PASS.getDesc(),null);
 		}
+		//密码验证
+		String userpassword = PasswordUtil.encrypt(password, password, user.getSalt());
+		String syspassword = user.getPassword();
+		if (!syspassword.equals(userpassword)) {
+			return new RestResponseBean(ResultEnum.USER_PWD_ERROR.getValue(), ResultEnum.USER_PWD_ERROR.getDesc(), null);
+		}
 
-		if (user == null) {
-            return new RestResponseBean(ResultEnum.USER_NOT_EXIST.getValue(), ResultEnum.USER_NOT_EXIST.getDesc(), null);
-        } else {
-            //密码验证
-            String userpassword = PasswordUtil.encrypt(password, password, user.getSalt());
-            String syspassword = user.getPassword();
-            if (!syspassword.equals(userpassword)) {
-                return new RestResponseBean(ResultEnum.USER_PWD_ERROR.getValue(), ResultEnum.USER_PWD_ERROR.getDesc(), null);
-            }
-            //调用公共方法
-            obj = tokenBuild(user);
-        }
-
-        return new RestResponseBean(ResultEnum.LOGIN_SUCCESS.getValue(), ResultEnum.LOGIN_SUCCESS.getDesc(), obj);
+        return new RestResponseBean(ResultEnum.LOGIN_SUCCESS.getValue(), ResultEnum.LOGIN_SUCCESS.getDesc(), tokenBuild(user));
     }
 
 
@@ -1143,11 +1140,8 @@ public class RestUserController {
 	private Map tokenBuild(User user) {
 
 		Map<String,Object> map = new HashMap();
-
-		String token = "";
-
 		//生成token
-		token = JwtUtil.signUser(user.getId(), user.getPassword());
+		String token = JwtUtil.signUser(user.getId(), user.getPassword());
 
 /*		//根据用户ID模糊查询
 		Set<String> keys = stringRedisTemplate.keys("*" + user.getId());
