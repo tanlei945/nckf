@@ -33,6 +33,7 @@ public class OrderMessageServiceImpl extends ServiceImpl<OrderMessageMapper, Ord
             stringBuffer.append(",共购买"+order.getGoodsCount()+"件商品，请到个人中心->我的订单查看详情");
             OrderMessage orderMessage = new OrderMessage();
             orderMessage.setTitle("系统消息").setMsgContent(stringBuffer);
+            orderMessage.setUserId(order.getUserId());
             save = save(orderMessage);
         } catch (Exception e) {
             e.printStackTrace();
