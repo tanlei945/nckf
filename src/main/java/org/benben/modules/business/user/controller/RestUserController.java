@@ -631,9 +631,9 @@ public class RestUserController {
         } catch (Exception e) {
             e.printStackTrace();
             log.info(e.getMessage());
-        }
+			return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+		}
 
-        return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
 
     }
 
@@ -1157,6 +1157,7 @@ public class RestUserController {
 		redisUtil.set(CommonConstant.PREFIX_USER_TOKEN + token + user.getId(), token, JwtUtil.APP_EXPIRE_TIME / 1000);
 		//设置用户信息到缓存中
 		redisUtil.set(CommonConstant.SIGN_PHONE_USER + user.getId(),user,JwtUtil.APP_EXPIRE_TIME / 1000);
+		user.setAvatar(commonService.getLocalUrl(user.getAvatar()));
 
 		map.put("token", token);
 		map.put("user", userService.queryUserVo(user));
