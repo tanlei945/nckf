@@ -41,7 +41,7 @@ import com.alibaba.fastjson.JSON;
  * @version： V1.0
  */
 @RestController
-@RequestMapping("/api/userStore")
+@RequestMapping("/userStore/userStore")
 @Slf4j
 public class UserStoreController {
 	@Autowired
