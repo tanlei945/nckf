@@ -89,6 +89,7 @@ public class Store implements Serializable {
 	@Excel(name = "商家简介", width = 64)
 	/**商家简介*/
 	private String storeDesc;
+	private String city;
 
 
 }
