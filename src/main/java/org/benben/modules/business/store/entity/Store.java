@@ -59,7 +59,7 @@ public class Store implements Serializable {
 	private java.lang.Integer minDeliveryMoney;
 	/**配送费*/
 	@Excel(name = "配送费", width = 15)
-	private java.lang.Double delivery_money;
+	private java.lang.Double freight;
 	/**营业时间*/
 	private java.lang.String startTime;
 	/**结束时间*/
