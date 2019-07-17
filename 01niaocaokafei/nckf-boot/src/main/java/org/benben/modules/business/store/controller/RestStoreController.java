@@ -217,9 +217,9 @@ public class RestStoreController {
 
     @GetMapping("/queryStoreByName")
     @ApiOperation(value="根据关键字模糊查询商家", tags = {"门店管理接口"})
-    public RestResponseBean queryStoreByName(@RequestParam(name = "keywords",required = true) String  keywords){
+    public RestResponseBean queryStoreByName(@RequestParam(name = "keywords") String  keywords,@RequestParam(name = "city",required = true) String city ){
         QueryWrapper<Store> storeQueryWrapper = new QueryWrapper<>();
-        storeQueryWrapper.like("address_desc", keywords);
+        storeQueryWrapper.like("address_desc", keywords).eq("city",city);
         List<Store> store = null;
         try {
             store = storeService.list(storeQueryWrapper);
