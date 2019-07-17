@@ -15,6 +15,6 @@ import java.util.List;
  * @version： V1.0
  */
 public interface IUserMessageService extends IService<UserMessage> {
-    List<UserMessage> queryAnnouncementCount();
-    IPage<UserMessage> queryPageList(String userId, Integer pageNo, Integer pageSize);
+    List<UserMessage> queryMessageCount();
+    IPage<Message> queryPageList(Integer pageNo, Integer pageSize);
 }

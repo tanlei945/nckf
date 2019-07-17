@@ -94,7 +94,7 @@ public class RestUserCouponsController {
 //					return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
 //				}
 				for (UserCoupons userCoupons : list1) {
-					Coupons coupons =couponsService.getById(userCoupons.getUserId());
+					Coupons coupons =couponsService.getById(userCoupons.getCouponsId());
 					couponsList1.add(coupons);
 				}
 
@@ -114,7 +114,7 @@ public class RestUserCouponsController {
 					return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
 				}
 				for (UserCoupons userCoupons : list2) {
-					Coupons coupons =couponsService.getById(userCoupons.getUserId());
+					Coupons coupons =couponsService.getById(userCoupons.getCouponsId());
 					couponsList2.add(coupons);
 				}
 
@@ -158,7 +158,7 @@ public class RestUserCouponsController {
 				return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), pageList0);
 		}
 
-		return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+		return new RestResponseBean(ResultEnum.PARAM_TYPE_FAIL.getValue(),ResultEnum.PARAM_TYPE_FAIL.getDesc(),null);
 	}
 
 
@@ -190,18 +190,20 @@ public class RestUserCouponsController {
 		QueryWrapper<UserCoupons> queryWrapper = new QueryWrapper<>();
 		queryWrapper.lambda().eq(UserCoupons::getUserId,user.getId()).eq(UserCoupons::getStatus,"0");
 		List<UserCoupons> list = userCouponsService.list(queryWrapper);
-
+		List<UserCoupons> removeList = new ArrayList<>();
 		//剔除未使用但已过期的优惠券
 		if(list!=null){
 			for (UserCoupons userCoupons : list) {
 				Coupons coupons =couponsService.getById(userCoupons.getCouponsId());
 				if(coupons != null){
-					if(coupons.getUseEndTime().after(new Date())){
-						list.remove(userCoupons);
+					if(new Date().after(coupons.getUseEndTime())){
+						removeList.add(userCoupons);
 					}
 				}
 			}
 		}
+		list.removeAll(removeList);
+
 		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), list.size());
 	}
 
@@ -271,32 +273,43 @@ public class RestUserCouponsController {
 
 		QueryWrapper<UserCoupons> queryWrapper = new QueryWrapper<>();
 		queryWrapper.lambda().eq(UserCoupons::getUserId,user.getId()).eq(UserCoupons::getStatus,"0");
-		Page<UserCoupons> page = new Page<UserCoupons>(pageNo, pageSize);
-		IPage<UserCoupons> pageList = userCouponsService.page(page, queryWrapper);
-		List<UserCoupons> list = pageList.getRecords();
+
+		List<UserCoupons> list = userCouponsService.list( queryWrapper);
 
 		if(list == null){
 			return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
 		}
 
 
-		List<UserCoupons> userCouponsList = new ArrayList<>();
+		//List<UserCoupons> userCouponsList = new ArrayList<>();
+		List<UserCoupons> removeList = new ArrayList<>();
 		for (UserCoupons userCoupons : list) {
 			Coupons coupons =couponsService.getById(userCoupons.getCouponsId());
 			if(coupons != null){
-				if(coupons.getUseEndTime().before(new Date()) || coupons.getUseCondition() < Double.parseDouble(appOrderMoney)){
-					list.remove(userCoupons);
+				if(coupons.getUseEndTime().before(new Date()) || coupons.getUseCondition() > Double.parseDouble(appOrderMoney)){
+					removeList.add(userCoupons);
 				}
 			}
 		}
+
+		list.removeAll(removeList);
+		List<Coupons> couponsList = new ArrayList<>();
 		for (UserCoupons userCoupons : list) {
 			Coupons coupons =couponsService.getById(userCoupons.getCouponsId());
-			if(coupons.getStoreId()==storeId || coupons.getCommonFlag()=="1"){
-				userCouponsList.add(userCoupons);
+			if(coupons.getStoreId().equals(storeId) || "1".equals(coupons.getCommonFlag())){
+				couponsList.add(coupons);
 			}
 		}
 
-		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), pageList);
+		//拿到couponsId去查询优惠券
+
+
+		IPage<Coupons> pageList0 = new Page<>(pageNo,pageSize);
+		pageList0.setRecords(couponsList);
+		pageList0.setTotal((long)couponsList.size());
+
+
+		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), pageList0);
 	}
 
 
@@ -375,20 +388,11 @@ public class RestUserCouponsController {
 				}
 			}
 		}
-
 		list.removeAll(listRemove);
-
 		//查询用户现在已经拥有的优惠券id
 		//userCouponsService
-
 		pageList.setRecords(list);
 		pageList.setTotal((long)list.size());
-
 		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
 	}
-
-
-
-
-
 }

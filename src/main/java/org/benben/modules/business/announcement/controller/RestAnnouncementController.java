@@ -17,6 +17,7 @@ import org.benben.modules.business.announcement.service.IAnnouncementService;
 import org.benben.modules.business.announcement.vo.AnnouncementVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import sun.security.x509.IPAddressName;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/announcement")
 @Slf4j
-@Api(tags = {"首页"})
+@Api(tags = {"首页通知公告"})
 public class RestAnnouncementController {
 
 	@Autowired
@@ -41,10 +42,10 @@ public class RestAnnouncementController {
 	 * @param req
 	 * @return
 	 */
-	@GetMapping(value = "/list")
-//	@ApiOperation(value = "通告详情列表", notes = "通告详情列表", tags = {"首页"})
-//	@ApiImplicitParams({@ApiImplicitParam(name = "pageNo", value = "当前页", dataType = "Integer", defaultValue = "1"),
-//	@ApiImplicitParam(name = "pageSize", value = "每页显示条数", dataType = "Integer", defaultValue = "10"),})
+	/*@GetMapping(value = "/list")
+	@ApiOperation(value = "通告详情列表", notes = "通告详情列表", tags = {"首页通知公告"})
+	@ApiImplicitParams({@ApiImplicitParam(name = "pageNo", value = "当前页", dataType = "Integer", defaultValue = "1"),
+	@ApiImplicitParam(name = "pageSize", value = "每页显示条数", dataType = "Integer", defaultValue = "10"),})
 	public RestResponseBean list(Announcement announcement,
 			@RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
 			@RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize, HttpServletRequest req) {
@@ -52,18 +53,18 @@ public class RestAnnouncementController {
 		Page<Announcement> page = new Page<Announcement>(pageNo, pageSize);
 		IPage<Announcement> pageList = announcementService.page(page, queryWrapper);
 		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), pageList);
-	}
+	}*/
 
 	/**
 	 * 列表查询
 	 * @return
 	 */
-	@GetMapping(value = "/queryAnnouncement")
-	//@ApiOperation(value = "通告详情列表", notes = "通告详情列表", tags = {"首页"})
+	/*@GetMapping(value = "/queryAnnouncement")
+	@ApiOperation(value = "通告详情列表", notes = "通告详情列表", tags = {"首页通知公告"})
 	public RestResponseBean queryAnnouncement() {
 		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(),
 				announcementService.queryAnnouncement());
-	}
+	}*/
 
 	/**
 	 * showdoc
@@ -97,7 +98,7 @@ public class RestAnnouncementController {
 	 * @number 1
 	 */
 	@GetMapping(value = "/queryAnnouncementById")
-	@ApiOperation(value = "通过id查询通告详情", notes = "通过id查询通告详情", tags = {"首页"})
+	@ApiOperation(value = "查询通告详情", notes = "查询通告详情", tags = {"首页通知公告"})
 	@ApiImplicitParams({@ApiImplicitParam(name = "id", value = "通告id", dataType = "String", required = true),})
 	public RestResponseBean queryAnnouncementById(@RequestParam(name = "id", required = true) String id) {
 		Announcement announcement = announcementService.getById(id);
@@ -118,7 +119,7 @@ public class RestAnnouncementController {
 	 * @return
 	 */
 	@PostMapping(value = "/add")
-	/*@ApiOperation(value = "添加通告详情", notes = "添加通告详情", tags = {"首页"})*/
+	//@ApiOperation(value = "添加通告详情", notes = "添加通告详情", tags = {"首页通知公告"})
 	public Result<Announcement> add(@RequestBody Announcement announcement) {
 		Result<Announcement> result = new Result<Announcement>();
 		try {
@@ -133,9 +134,10 @@ public class RestAnnouncementController {
 	}
 
 
-	@GetMapping(value = "/queryAnnouncementTitle")
-	@ApiOperation(value = "获取系统公告标题和id", notes = "获取系统公告标题和id", tags = {"首页"})
-	public RestResponseBean queryAnnouncementTitle() {
+	@GetMapping(value = "/queryAnnouncementList")
+	@ApiOperation(value = "系统公告列表", notes = "系统公告列表", tags = {"首页通知公告"})
+	public RestResponseBean queryAnnouncementList(@RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+												  @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
 		QueryWrapper<Announcement> queryWrapper = new QueryWrapper<>();
 		queryWrapper.lambda().eq(Announcement::getDelFlag,"1");
 		List<Announcement> list = announcementService.list(queryWrapper);
@@ -146,8 +148,12 @@ public class RestAnnouncementController {
 			announcementVo.setTitle(announcement.getTitle());
 			listVo.add(announcementVo);
 		}
+		IPage<AnnouncementVo> page = new Page<>(pageNo,pageSize);
+		page.setRecords(listVo);
+		page.setTotal((long)listVo.size());
+
 		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(),
-				listVo);
+				page);
 	}
 
 }
