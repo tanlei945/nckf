@@ -2,6 +2,7 @@ package org.benben.config;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 import javax.servlet.Filter;
@@ -20,6 +21,7 @@ import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreato
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.yaml.snakeyaml.Yaml;
 
 /**
  * @author: Scott
@@ -65,6 +67,8 @@ public class ShiroConfig {
 		filterChainDefinitionMap.put("/swagger**/**", "anon");
 		filterChainDefinitionMap.put("/webjars/**", "anon");
 		filterChainDefinitionMap.put("/v2/**", "anon");
+		filterChainDefinitionMap.put("/api/**", "anon");
+		filterChainDefinitionMap.put("/h5/**", "anon");
 
 
 		//暂时的
@@ -77,7 +81,7 @@ public class ShiroConfig {
 		filterChainDefinitionMap.put("/api/v1/user/login", "anon");
 		filterChainDefinitionMap.put("/api/v1/user/forgetPassword", "anon");
 		filterChainDefinitionMap.put("/api/v1/user/isExistMobile", "anon");
-		filterChainDefinitionMap.put("/api/v1/sms/**", "anon");
+		//filterChainDefinitionMap.put("/api/v1/sms/**", "anon");
 		filterChainDefinitionMap.put("/api/v1/login/third", "anon");
 		filterChainDefinitionMap.put("/api/v1/validate/**", "anon");
 		filterChainDefinitionMap.put("/api/v1/announcement/**", "anon");
@@ -117,6 +121,7 @@ public class ShiroConfig {
 		filterChainDefinitionMap.put("/api/v1/store/queryStoreByDistance", "anon");
 		filterChainDefinitionMap.put("/api/v1/store/queryStoreById", "anon");
 		filterChainDefinitionMap.put("/api/v1/store/query_all_store", "anon");
+		filterChainDefinitionMap.put("/api/v1/evaluate/queryEvaluateList", "anon");
 		//性能监控
 		filterChainDefinitionMap.put("/actuator/metrics/**", "anon");
 		filterChainDefinitionMap.put("/actuator/httptrace/**", "anon");
@@ -128,22 +133,18 @@ public class ShiroConfig {
 
 		filterChainDefinitionMap.put("/api/v1/user/login", "anon");
 		//从配置文件读取添加不需要token的路径
-//		Yaml yaml = new Yaml();
-//		URL url = ShiroConfig.class.getClassLoader().getResource("noneed-login.yml");
-//
-//		log.info("URL"+url.toString());
-//
-//		Map map = null;
-//		try {
-//			map = yaml.load(new FileInputStream(url.getFile()));
-//		} catch (FileNotFoundException e) {
-//			e.printStackTrace();
-//		}
-//		if(map!=null){
-//			List<String> filterlist = (List)map.get("filterlist");
-//			filterlist.forEach(value->filterChainDefinitionMap.put(value,"anon"));
-//		}
-
+		//从配置文件读取添加不需要token的路径
+		Yaml yaml = new Yaml();
+		try {
+			InputStream inputStream = ShiroConfig.class.getClassLoader().getResourceAsStream("noneed-login.yml");
+			HashMap hashMap = yaml.loadAs(inputStream, HashMap.class);
+			if(hashMap!=null){
+				List<String> filterlist = (List)hashMap.get("filterlist");
+				filterlist.forEach(value->filterChainDefinitionMap.put(value,"anon"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		// 添加自己的过滤器并且取名为jwt
 		Map<String, Filter> filterMap = new HashMap<String, Filter>(1);
 		filterMap.put("jwt", new JwtFilter());
