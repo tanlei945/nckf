@@ -637,7 +637,7 @@ public class RestOrderController {
 
         if(user.getUserType().equals("0")){
             if("0".equals(order.getUserDelFlag())){
-                return  new RestResponseBean(ResultEnum.ORDER_already_delete.getValue(),ResultEnum.ORDER_already_delete.getDesc(),null);
+                return  new RestResponseBean(ResultEnum.ORDER_ALREADY_DELETE.getValue(),ResultEnum.ORDER_ALREADY_DELETE.getDesc(),null);
             }
 
             RiderOrder riderOrder = new RiderOrder();
@@ -697,7 +697,7 @@ public class RestOrderController {
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),riderOrder);
         }else{
             if("0".equals(order.getRiderDelFlag())){
-                return  new RestResponseBean(ResultEnum.ORDER_already_delete.getValue(),ResultEnum.ORDER_already_delete.getDesc(),null);
+                return  new RestResponseBean(ResultEnum.ORDER_ALREADY_NULL.getValue(),ResultEnum.ORDER_ALREADY_NULL.getDesc(),null);
             }
 
             RiderOrder riderOrder = new RiderOrder();
@@ -939,7 +939,7 @@ public class RestOrderController {
 
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
         }
-        return  new RestResponseBean(ResultEnum.ORDER_already_NULL.getValue(),ResultEnum.ORDER_already_NULL.getDesc(),null);
+        return  new RestResponseBean(ResultEnum.ORDER_ALREADY_NULL.getValue(),ResultEnum.ORDER_ALREADY_NULL.getDesc(),null);
     }
 
 

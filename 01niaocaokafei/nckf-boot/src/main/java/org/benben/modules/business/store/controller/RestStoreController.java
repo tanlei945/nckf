@@ -183,9 +183,12 @@ public class RestStoreController {
     @GetMapping("/query_all_store")
     @ApiOperation(value="门店列表", tags = {"门店管理接口"})
     public RestResponseBean queryAllStore(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-                                          @RequestParam(name="pageSize", defaultValue="10") Integer pageSize){
+                                          @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
+                                          @RequestParam(name = "keywords") String  keywords,
+                                          @RequestParam(name = "city",required = true) String city){
         try {
             QueryWrapper<Store> queryWrapper = new QueryWrapper<>();
+            queryWrapper.like("address_desc", keywords).eq("city",city);
             Page<Store> page = new Page<Store>(pageNo, pageSize);
             IPage<Store> pageList = storeService.page(page, queryWrapper);
 
@@ -215,8 +218,8 @@ public class RestStoreController {
     }
 
 
-    @GetMapping("/queryStoreByName")
-    @ApiOperation(value="根据关键字模糊查询商家", tags = {"门店管理接口"})
+    //@GetMapping("/queryStoreByName")
+   // @ApiOperation(value="根据关键字模糊查询商家", tags = {"门店管理接口"})
     public RestResponseBean queryStoreByName(@RequestParam(name = "keywords") String  keywords,@RequestParam(name = "city",required = true) String city ){
         QueryWrapper<Store> storeQueryWrapper = new QueryWrapper<>();
         storeQueryWrapper.like("address_desc", keywords).eq("city",city);

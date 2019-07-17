@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
@@ -127,6 +129,12 @@ public class RestEvaluateController {
      */
     @PostMapping(value = "/addEvaluate")
     @ApiOperation(value = "用户评论提交接口", tags = {"用户接口"}, notes = "用户评论提交接口")
+    @ApiImplicitParams({@ApiImplicitParam(name = "orderId", value = "订单id"),
+            @ApiImplicitParam(name = "content", value = "评论内容"),
+            @ApiImplicitParam(name = "evaluateType", value = "评论类型 0:门店 1:骑手"),
+            @ApiImplicitParam(name = "starCount", value = "星星数量"),
+            @ApiImplicitParam(name = "imgUrl", value = "图片url"),
+    })
     public RestResponseBean add(@RequestParam(name = "orderId", required = true) String orderId,
                                 @RequestParam(name = "content") String content,
                                 @RequestParam(name ="evaluateType",required = true) String evaluateType,
@@ -155,17 +163,17 @@ public class RestEvaluateController {
             store.setMarkCount(store.getMarkCount()+1);
             storeService.updateById(store);
 
-        }/*else if (evaluateType.equals("1")){
-            double totalmark = user.getMark()*user.getMarkCount();
+        }else if (evaluateType.equals("1")){
+            double totalmark = user.getMark()*Integer.parseInt(user.getMarkCount());
             if(starCount != null && starCount != ""){
                 totalmark += Integer.parseInt(starCount);
             }
 
             double mark = totalmark/(store.getMarkCount()+1);
             user.setMark(mark);
-            user.setMarkCount(store.getMarkCount()+1);
+            user.setMarkCount(Integer.parseInt(user.getMarkCount())+1+"");
             userService.updateById(user);
-        }*/
+        }
 
         evaluate.setStoreId(store.getId());
         evaluate.setStorename(store.getStoreName());

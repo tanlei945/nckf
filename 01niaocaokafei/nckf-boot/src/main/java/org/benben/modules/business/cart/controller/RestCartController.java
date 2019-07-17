@@ -216,7 +216,7 @@ public class RestCartController {
                     cartVo.setStoreName(store.getStoreName());
                     cartVo.setStoreImage(commonService.getLocalUrl(store.getImgUrl()));
                     cartVo.setStoreAddress(store.getAddressDesc());
-                    cartVo.setFreight(store.getDelivery_money());
+                    cartVo.setFreight(store.getFreight());
                     listCart.add(cart);
                 }
             }

@@ -11,8 +11,10 @@ import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.menu.ResultEnum;
 import org.benben.modules.business.message.entity.Message;
 import org.benben.modules.business.message.service.IMessageService;
+import org.benben.modules.business.user.entity.User;
 import org.benben.modules.business.userMessage.entity.UserMessage;
 import org.benben.modules.business.userMessage.service.IUserMessageService;
+import org.benben.modules.shiro.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,24 +43,26 @@ public class RestUserMessageController {
      *
      * @param pageNo
      * @param pageSize
-     * @param req
      * @return
      */
     @GetMapping(value = "/list")
-    @ApiOperation(value = "查询用户系统消息", tags = {"首页"}, notes = "查询用户系统消息")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "userId", value = "用户id", dataType = "String", required = true),
-    })
-    public RestResponseBean queryPageList(@RequestParam(name = "userId") String userId,
+    @ApiOperation(value = "通用-->查询系统消息", tags = {"首页系统消息"}, notes = "通用-->查询系统消息")
+    public RestResponseBean queryPageList(
                                           @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
-                                          @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
-                                          HttpServletRequest req) {
-        IPage<UserMessage> pageList = null;
+                                          @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+        User user = (User) LoginUser.getCurrentUser();
+        if(user==null) {
+            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+        }
+
+        IPage<Message> page = userMessageService.queryPageList(pageNo,pageSize);
+
+        /*IPage<UserMessage> pageList = null;
         IPage<Message> pageList1 =null;
         try {
             Page<Message> page = new Page<Message>(pageNo, pageSize);
              pageList1  = messageService.page(page);
-            pageList  = userMessageService.queryPageList(userId,pageNo,pageSize);
+            pageList  = userMessageService.queryPageList(user.getId(),pageNo,pageSize);
             List<UserMessage> records = pageList.getRecords();
             LinkedList<Message> messages = new LinkedList<>();
             records.forEach(msg->{
@@ -74,7 +78,9 @@ public class RestUserMessageController {
             e.printStackTrace();
             return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
         }
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), pageList1);
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), pageList1);*/
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), page);
+
     }
 
 
@@ -84,16 +90,22 @@ public class RestUserMessageController {
      * @return
      */
     @PostMapping(value = "/changeMessageStatus")
-    @ApiOperation(value = "修改用户系统消息为已读", tags = {"用户接口"}, notes = "修改用户系统消息为已读")
+    @ApiOperation(value = "通用-->修改系统消息为已读", tags = {"首页系统消息"}, notes = "通用-->修改系统消息为已读")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "messageId", value = "消息id", dataType = "String", required = true),
     })
     public RestResponseBean edit(@RequestParam(name = "messageId") String messageId) {
-        UserMessage byId = null;
+
+        User user = (User) LoginUser.getCurrentUser();
+        if(user==null) {
+            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+        }
+
+        UserMessage userMessage = null;
         try {
-            byId = userMessageService.getById(messageId);
-            byId.setReadFlag("1");
-            userMessageService.saveOrUpdate(byId);
+            userMessage = userMessageService.getById(messageId);
+            userMessage.setReadFlag("1");
+            userMessageService.updateById(userMessage);
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
         } catch (Exception e) {
             e.printStackTrace();
@@ -106,8 +118,14 @@ public class RestUserMessageController {
      * @return
      */
     @GetMapping(value = "/delete")
-    @ApiOperation(value = "删除单个系统信息", notes = "删除单个系统信息", tags = {"用户接口"})
+    @ApiOperation(value = "通用-->删除单个系统信息", notes = "通用-->删除单个系统信息", tags = {"首页系统消息"})
     public RestResponseBean delete(@RequestParam(name = "id", required = true) String id) {
+        User user = (User) LoginUser.getCurrentUser();
+        if(user==null) {
+            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+        }
+
+
         try {
             UserMessage userMessage = userMessageService.getById(id);
             userMessage.setReadFlag("1").setDelFlag("0");
@@ -127,23 +145,36 @@ public class RestUserMessageController {
      * @return
      */
     @GetMapping(value = "/queryMessageById")
-    @ApiOperation(value = "查询某个系统信息", notes = "查询某个系统信息", tags = {"用户接口"})
+    @ApiOperation(value = "通用-->查询某个系统信息", notes = "通用-->查询某个系统信息", tags = {"首页系统消息"})
     public RestResponseBean queryById(@RequestParam(name = "id", required = true) String id) {
+
+        User user = (User) LoginUser.getCurrentUser();
+        if(user==null) {
+            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+        }
+
         try {
-            UserMessage userMessage = userMessageService.getById(id);
-            Message byId = messageService.getById(userMessage.getMessageId());
-            return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), byId);
+           // UserMessage userMessage = userMessageService.getById(id);
+            Message message = messageService.getById(id);
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), message);
+
         } catch (Exception e) {
             e.printStackTrace();
-            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
+            return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
+
         }
     }
 
     @GetMapping(value = "/queryMessageCount")
-    @ApiOperation(value = "获取用户系统公告未读数量", notes = "获取用户系统公告未读数量", tags = {"首页"})
+    @ApiOperation(value = "通用-->取系统消息未读数量", notes = "通用-->取系统消息未读数量", tags = {"首页系统消息"})
     public RestResponseBean queryAnnouncementCount() {
+        User user = (User) LoginUser.getCurrentUser();
+        if(user==null) {
+            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+        }
+
         try {
-            List<UserMessage> userMessages = userMessageService.queryAnnouncementCount();
+            List<UserMessage> userMessages = userMessageService.queryMessageCount();
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), userMessages.size());
         } catch (Exception e) {
             e.printStackTrace();

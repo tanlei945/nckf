@@ -19,7 +19,7 @@ import org.jeecgframework.poi.excel.annotation.Excel;
  */
 @Data
 @Accessors(chain = true)
-@TableName("user_message_send")
+@TableName("bb_user_message")
 public class UserMessage implements Serializable {
     private static final long serialVersionUID = 1L;
     

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -34,21 +35,30 @@ public class UserMessageServiceImpl extends ServiceImpl<UserMessageMapper, UserM
     @Autowired
     private IUserMessageService userMessageService;
     @Override
-    public List<UserMessage> queryAnnouncementCount() {
+    public List<UserMessage> queryMessageCount() {
         User user = (User) LoginUser.getCurrentUser();
         QueryWrapper<UserMessage> userMessageQueryWrapper = new QueryWrapper<>();
-        userMessageQueryWrapper.eq("user_id", user.getId()).eq("read_flag", "0");
+        userMessageQueryWrapper.eq("user_id", user.getId()).eq("read_flag", "0").eq("del_flag","1");
         List<UserMessage> list = list(userMessageQueryWrapper);
         return  list;
     }
 
     @Override
-    public IPage<UserMessage> queryPageList(String userId,Integer pageNo,Integer pageSize) {
+    public IPage<Message> queryPageList(Integer pageNo,Integer pageSize) {
         User user = (User) LoginUser.getCurrentUser();
-        Page<UserMessage> page = new Page<UserMessage>(pageNo, pageSize);
+        IPage<Message> page = new Page<Message>(pageNo, pageSize);
+        List<Message> messageList = new ArrayList<>();
+
         QueryWrapper<UserMessage> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(UserMessage::getUserId,user.getId()).eq(UserMessage::getDelFlag, "1").orderByDesc(UserMessage::getCreateTime);
-        IPage<UserMessage> pageList  = userMessageService.page(page,queryWrapper);
-        return pageList;
+        List<UserMessage> userMessageList = userMessageService.list(queryWrapper);
+
+        for (UserMessage userMessage : userMessageList) {
+            Message message = messageService.getById(userMessage.getMessageId());
+            messageList.add(message);
+        }
+        page.setRecords(messageList);
+        page.setTotal((long)messageList.size());
+        return page;
     }
 }

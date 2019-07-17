@@ -18,7 +18,7 @@ import org.jeecgframework.poi.excel.annotation.Excel;
  * @version： V1.0
  */
 @Data
-@TableName("user_message")
+@TableName("bb_message")
 public class Message implements Serializable {
 	private static final long serialVersionUID =1L;
 
@@ -66,6 +66,4 @@ public class Message implements Serializable {
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
 	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	private java.util.Date updateTime;
-
-	private String readFlag;
 }
