@@ -49,7 +49,7 @@ public class RestOrderMessageController {
         }
 
        QueryWrapper<OrderMessage> queryWrapper = new QueryWrapper<>();
-       queryWrapper.eq("del_flag","0").eq("user_id",user.getId());
+       queryWrapper.lambda().eq(OrderMessage::getDelFlag,"0").eq(OrderMessage::getUserId,user.getId()).orderByDesc(OrderMessage::getCreateTime);
        Page<OrderMessage> page = new Page<OrderMessage>(pageNo, pageSize);
        try {
            IPage<OrderMessage> pageList = orderMessageService.page(page, queryWrapper);

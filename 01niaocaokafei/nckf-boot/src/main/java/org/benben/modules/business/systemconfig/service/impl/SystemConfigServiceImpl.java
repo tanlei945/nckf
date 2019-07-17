@@ -77,11 +77,7 @@ public class SystemConfigServiceImpl extends ServiceImpl<SystemConfigMapper, Sys
             if(systemConfigone != null){
                 words=(String)systemConfigone.getConfigValue();
             }
-
-
         }
-
-
         return words;
     }
 }

@@ -11,5 +11,6 @@ public class CartListVo {
     private String storeName;
     private String storeImage;
     private String storeAddress;
+    private double freight;
     private List<Cart> cartList;
 }

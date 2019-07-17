@@ -75,11 +75,9 @@ public class RestUserCouponsController {
 				QueryWrapper<UserCoupons> queryWrapper1 = new QueryWrapper<>();
 				//未使用
 				queryWrapper1.lambda().eq(UserCoupons::getUserId,user.getId()).eq(UserCoupons::getStatus,"0");
-				Page<UserCoupons> page1 = new Page<UserCoupons>(pageNo, pageSize);
-				IPage<UserCoupons> pageList1 = userCouponsService.page(page1, queryWrapper1);
+				List<UserCoupons> list1 = userCouponsService.list(queryWrapper1);
 
 				//剔除未使用但已过期的优惠券
-				List<UserCoupons> list1 = pageList1.getRecords();
 				if(list1!=null){
 					for (UserCoupons userCoupons : list1) {
 						Coupons coupons =couponsService.getById(userCoupons.getCouponsId());
@@ -90,25 +88,50 @@ public class RestUserCouponsController {
 						}
 					}
 				}
-				pageList1.setRecords(list1);
+				//拿到couponsId去查询优惠券
+				List<Coupons> couponsList1 = new ArrayList<>();
+//				if(couponsList1 == null){
+//					return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
+//				}
+				for (UserCoupons userCoupons : list1) {
+					Coupons coupons =couponsService.getById(userCoupons.getUserId());
+					couponsList1.add(coupons);
+				}
+
+				IPage<Coupons> pageList1 = new Page<>(pageNo,pageSize);
+				pageList1.setRecords(couponsList1);
+				pageList1.setTotal((long)couponsList1.size());
+
 				return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), pageList1);
 			//已使用优惠券
 			case "2" :
 				QueryWrapper<UserCoupons> queryWrapper2 = new QueryWrapper<>();
 				queryWrapper2.lambda().eq(UserCoupons::getUserId,user.getId()).eq(UserCoupons::getStatus,"1");
-				Page<UserCoupons> page2 = new Page<UserCoupons>(pageNo, pageSize);
-				IPage<UserCoupons> pageList2 = userCouponsService.page(page2, queryWrapper2);
+				List<UserCoupons> list2 = userCouponsService.list(queryWrapper2);
+				//拿到couponsId去查询优惠券
+				List<Coupons> couponsList2 = new ArrayList<>();
+				if(couponsList2 == null){
+					return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
+				}
+				for (UserCoupons userCoupons : list2) {
+					Coupons coupons =couponsService.getById(userCoupons.getUserId());
+					couponsList2.add(coupons);
+				}
+
+				IPage<Coupons> pageList2 = new Page<>(pageNo,pageSize);
+				pageList2.setRecords(couponsList2);
+				pageList2.setTotal((long)couponsList2.size());
+
+
 				return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), pageList2);
 			//已过期优惠券
 			case "0" :
 				QueryWrapper<UserCoupons> queryWrapper0 = new QueryWrapper<>();
 				//未使用
 				queryWrapper0.lambda().eq(UserCoupons::getUserId,user.getId()).eq(UserCoupons::getStatus,"0");
-				Page<UserCoupons> page0 = new Page<UserCoupons>(pageNo, pageSize);
-				IPage<UserCoupons> pageList0 = userCouponsService.page(page0, queryWrapper0);
+				List<UserCoupons> list0 = userCouponsService.list(queryWrapper0);
 
 				//剔除未使用也未过期的优惠券
-				List<UserCoupons> list0 = pageList0.getRecords();
 				if(list0!=null){
 					for (UserCoupons userCoupons : list0) {
 						Coupons coupons =couponsService.getById(userCoupons.getCouponsId());
@@ -119,7 +142,19 @@ public class RestUserCouponsController {
 						}
 					}
 				}
-				pageList0.setRecords(list0);
+				//拿到couponsId去查询优惠券
+				List<Coupons> couponsList0 = new ArrayList<>();
+				if(couponsList0 == null){
+					return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
+				}
+				for (UserCoupons userCoupons : list0) {
+					Coupons coupons =couponsService.getById(userCoupons.getUserId());
+					couponsList0.add(coupons);
+				}
+
+				IPage<Coupons> pageList0 = new Page<>(pageNo,pageSize);
+				pageList0.setRecords(couponsList0);
+				pageList0.setTotal((long)couponsList0.size());
 				return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), pageList0);
 		}
 
@@ -263,6 +298,95 @@ public class RestUserCouponsController {
 
 		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), pageList);
 	}
+
+
+
+	@GetMapping(value = "/queryCouponsWdl")
+	@ApiOperation(value = "首页展示可领取优惠券-->未登录", notes = "首页展示可领取优惠券-->未登录",tags = {"优惠券"})
+	@ApiImplicitParams({
+			@ApiImplicitParam(name="pageNo",value = "当前页",dataType = "Integer",defaultValue = "1"),
+			@ApiImplicitParam(name="pageSize",value = "每页显示条数",dataType = "Integer",defaultValue = "10"),
+	})
+	public RestResponseBean queryCouponsWdl(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+										 @RequestParam(name="pageSize", defaultValue="10") Integer pageSize) {
+
+
+		QueryWrapper<Coupons> queryWrapper = new QueryWrapper<>();
+		queryWrapper.lambda().eq(Coupons::getDelFlag,"1");
+		Page<Coupons> page = new Page<Coupons>(pageNo, pageSize);
+		IPage<Coupons> pageList = couponsService.page(page, queryWrapper);
+
+		List<Coupons> list = pageList.getRecords();
+		for (Coupons coupons : list) {
+			if (coupons.getUseEndTime().before(new Date())){
+				list.remove(coupons);
+			}
+		}
+
+		//查询用户现在已经拥有的优惠券id
+		//userCouponsService
+
+		pageList.setRecords(list);
+
+		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
+	}
+
+
+
+	@GetMapping(value = "/queryCouponsYdl")
+	@ApiOperation(value = "首页展示可领取优惠券-->已登录", notes = "首页展示可领取优惠券-->已登录",tags = {"优惠券"})
+	@ApiImplicitParams({
+			@ApiImplicitParam(name="pageNo",value = "当前页",dataType = "Integer",defaultValue = "1"),
+			@ApiImplicitParam(name="pageSize",value = "每页显示条数",dataType = "Integer",defaultValue = "10"),
+	})
+	public RestResponseBean queryCouponsYdl(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+										    @RequestParam(name="pageSize", defaultValue="10") Integer pageSize) {
+
+		User user = (User) LoginUser.getCurrentUser();
+
+		QueryWrapper<Coupons> queryWrapper = new QueryWrapper<>();
+		queryWrapper.lambda().eq(Coupons::getDelFlag,"1");
+		IPage<Coupons> page = new Page<Coupons>(pageNo, pageSize);
+		IPage<Coupons> pageList = couponsService.page(page, queryWrapper);
+
+		List<Coupons> list = pageList.getRecords();
+		for (Coupons coupons : list) {
+			if (coupons.getUseEndTime().before(new Date())){
+				list.remove(coupons);
+			}
+		}
+
+		//查询用户现在已经拥有的优惠券id
+
+		QueryWrapper<UserCoupons> userQueryWrapper = new QueryWrapper<>();
+
+		//标记要移除的元素
+		List<Coupons> listRemove = new ArrayList<>();
+
+		userQueryWrapper.eq("user_id",user.getId());
+		List<UserCoupons> userCoupons = userCouponsService.list(userQueryWrapper);
+		for (Coupons coupons : list) {
+			if (coupons.getUseEndTime().before(new Date())){
+				list.remove(coupons);
+			}
+			for (int i = 0; i < userCoupons.size(); i++) {
+				if(coupons.getId().equals(userCoupons.get(i).getCouponsId())){
+					listRemove.add(coupons);
+				}
+			}
+		}
+
+		list.removeAll(listRemove);
+
+		//查询用户现在已经拥有的优惠券id
+		//userCouponsService
+
+		pageList.setRecords(list);
+		pageList.setTotal((long)list.size());
+
+		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
+	}
+
 
 
 

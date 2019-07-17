@@ -55,7 +55,7 @@ public class Order implements Serializable {
 	@Excel(name = "订单总金额", width = 15)
 	private Double orderMoney;
 	/**订单类型(0:送餐  1：店内用餐)*/
-	@Excel(name = "订单类型(0:送餐  1：店内用餐)", width = 15,dicCode = "orderType")
+	@Excel(name = "订单类型(0:店内用餐  1：送餐)", width = 15,dicCode = "orderType")
 	@Dict(dicCode = "orderType")
 	@ApiModelProperty(required = true)
 	private String orderType;

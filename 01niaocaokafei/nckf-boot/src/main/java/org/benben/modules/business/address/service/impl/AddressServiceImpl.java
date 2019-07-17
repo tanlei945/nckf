@@ -50,8 +50,8 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
     @Override
     public Address queryAddress(String userId) {
         QueryWrapper<Address> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("user_id", userId);
-        queryWrapper.and(wrapper -> wrapper.eq("default_flag", "1"));
+        queryWrapper.eq("user_id", userId).eq("default_flag","1");
+        //queryWrapper.and(wrapper -> wrapper.eq("default_flag", "1"));
         Address address = addressMapper.selectOne(queryWrapper);
 
         return address;
@@ -102,6 +102,7 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
 		Address address = new Address();
 		address.setUserId(userId);
 		BeanUtils.copyProperties(addressVO,address);
+		address.setDefaultFlag("0");
 
 		if(addressMapper.insert(address) == 0){
 			return false;

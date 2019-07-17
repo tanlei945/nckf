@@ -38,8 +38,8 @@ public class AddressVO {
 
 	/**经度*/
 	@ApiModelProperty(name = "lat", value = "经度", required = true)
-	private java.lang.String lat;
+	private java.lang.Double lat;
 	/**纬度*/
 	@ApiModelProperty(name = "lng", value = "纬度", required = true)
-	private java.lang.String lng;
+	private java.lang.Double lng;
 }

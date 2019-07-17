@@ -141,6 +141,10 @@ public class RiderOrder {
     private double userLng;
 
 
+    //商家电话
+    private String storePhone;
+
+
     @ExcelCollection(name="订单商品")
     private List<OrderGoods> orderGoodsList;
 }

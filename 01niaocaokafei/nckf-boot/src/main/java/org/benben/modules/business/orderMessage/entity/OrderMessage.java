@@ -26,6 +26,9 @@ public class OrderMessage implements Serializable {
 	/**id*/
 	@TableId(type = IdType.UUID)
 	private java.lang.String id;
+	/**用户id*/
+	@Excel(name = "用户id", width = 15)
+	private java.lang.String userId;
 	/**标题*/
 	@Excel(name = "标题", width = 15)
 	private java.lang.String title;

@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.benben.common.XXPay.service.XXPayService;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.api.vo.Result;
 import org.benben.common.menu.ResultEnum;
@@ -29,6 +30,8 @@ import org.benben.modules.business.order.service.IOrderService;
 import org.benben.modules.business.order.vo.OrderDistanceVo;
 import org.benben.modules.business.order.vo.OrderNoPay;
 import org.benben.modules.business.order.vo.RiderOrder;
+import org.benben.modules.business.orderMessage.entity.OrderMessage;
+import org.benben.modules.business.orderMessage.service.IOrderMessageService;
 import org.benben.modules.business.rideraddress.entity.RiderAddress;
 import org.benben.modules.business.rideraddress.service.IRiderAddressService;
 import org.benben.modules.business.store.entity.Store;
@@ -73,7 +76,10 @@ public class RestOrderController {
    private ICouponsService couponsService;
    @Autowired
    private IAddressService addressService;
-
+   @Autowired
+   private XXPayService xxPayService;
+   @Autowired
+   private IOrderMessageService orderMessageService;
 
 
 
@@ -151,7 +157,7 @@ public class RestOrderController {
         }
         IPage<Order> orderPageList = null;
         QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("user_id",user.getId()).in("status","1","2","3","4");
+        queryWrapper.lambda().eq(Order::getUserId,user.getId()).in(Order::getStatus,"1","2","3","4").orderByDesc(Order::getCreateTime);
         Page<Order> page = new Page<Order>(pageNo, pageSize);
 
         IPage<Order> pageList = orderService.page(page, queryWrapper);
@@ -201,10 +207,8 @@ public class RestOrderController {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
         QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("user_id",user.getId()).eq("status","1");
+        queryWrapper.lambda().eq(Order::getUserId,user.getId()).eq(Order::getStatus,"1").orderByDesc(Order::getCreateTime);
         Page<Order> page = new Page<Order>(pageNo, pageSize);
-
-        //queryWrapper.lambda().eq(Order::getUserId,user.getId()).in(Order::getStatus,);
         IPage<Order> pageList = orderService.page(page, queryWrapper);
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
     }
@@ -236,7 +240,7 @@ public class RestOrderController {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
         QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("user_id",user.getId()).eq("status","2");
+        queryWrapper.lambda().eq(Order::getUserId,user.getId()).eq(Order::getStatus,"2").orderByDesc(Order::getCreateTime);
         Page<Order> page = new Page<Order>(pageNo, pageSize);
 
         //queryWrapper.lambda().eq(Order::getUserId,user.getId()).in(Order::getStatus,);
@@ -271,7 +275,7 @@ public class RestOrderController {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
         QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("user_id",user.getId()).eq("status","3").eq("user_del_flag","1");
+        queryWrapper.lambda().eq(Order::getUserId,user.getId()).eq(Order::getStatus,"3").eq(Order::getUserDelFlag,"1").orderByDesc(Order::getCreateTime);
         Page<Order> page = new Page<Order>(pageNo, pageSize);
 
         //queryWrapper.lambda().eq(Order::getUserId,user.getId()).in(Order::getStatus,);
@@ -431,9 +435,9 @@ public class RestOrderController {
        }
 
        //验证购物车id是否有
-        if(cartList == null){
-            return new RestResponseBean(ResultEnum.CART_NULL.getValue(),ResultEnum.CART_NULL.getDesc(),null);
-        }
+//        if(cartList.size()==0){
+//            return new RestResponseBean(ResultEnum.CART_NULL.getValue(),ResultEnum.CART_NULL.getDesc(),null);
+//        }
        double money = 0;
        int count = 0;
        List<OrderGoods> list =new ArrayList<>();
@@ -542,22 +546,29 @@ public class RestOrderController {
            cartService.removeById(cartId);
        }
 
-       //如果不用钱包支付
+//       String info = "";
+//       //如果不用钱包支付
 //       if(accountFlag.equals("0")){
 //           //调用三方支付
 //           switch(thirdPay){
 //               case "1":
 //                   //调用微信
+//                   info = xxPayService.getWxParOederStr(order.getOrderId(),order.getOrderMoney(),order.getUsername()+order.getOneGoodsName(),"");
 //               case "2":
 //                   //调用支付宝
+//                   info = xxPayService.getWxParOederStr(order.getOrderId(),order.getOrderMoney(),order.getUsername()+order.getOneGoodsName(),"");
+//
 //           }
 //       }else{
 //           //如果使用使用钱包支付并且钱包余额大于订单余额，使用钱包付款并且更新余额
 //           if(user.getUserMoney()>=Double.parseDouble(appOrderMoney)){
 //               user.setUserMoney(user.getUserMoney()-Double.parseDouble(appOrderMoney));
 //               userService.updateById(user);
+//               order.setStatus("2");
+//               orderService.updateById(order);
+//               return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),order);
 //           }else{
-//               user.setUserMoney(0.0);
+//               user.setUserMoney(user.getUserMoney()-Double.parseDouble(appOrderMoney));
 //               userService.updateById(user);
 //               //三方需支付金额
 //               double trueMoney = Double.parseDouble(appOrderMoney)-user.getUserMoney();
@@ -565,10 +576,14 @@ public class RestOrderController {
 //               switch(thirdPay){
 //                   case "1":
 //                       //调用微信
+//                       info = xxPayService.getWxParOederStr(order.getOrderId(),order.getOrderMoney(),order.getUsername()+order.getOneGoodsName(),"");
 //                   case "2":
 //                       //调用支付宝
+//                       info = xxPayService.getWxParOederStr(order.getOrderId(),order.getOrderMoney(),order.getUsername()+order.getOneGoodsName(),"");
 //               }
 //           }
+//
+//           orderMessageService.addOrderMsg(order.getId());
 //       }
 
        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),order);
@@ -647,7 +662,7 @@ public class RestOrderController {
             Store store = storeService.getById(order.getStoreId());
 
             String type = order.getOrderType();
-            if(type == "0"){
+            if( "1".equals(type)){
                 //得到骑手位置对象，拿到经纬度
                 QueryWrapper<RiderAddress> wrapper1 = new QueryWrapper<>();
                 wrapper1.eq("rider_id",user.getId());
@@ -665,6 +680,7 @@ public class RestOrderController {
                 riderOrder.setRiderAndUserDis(Double.parseDouble(disRU));
             }
 
+            riderOrder.setStorePhone(store.getPhone());
 
             riderOrder.setStoreLat(store.getLat());
             riderOrder.setStoreLng(store.getLng());
@@ -706,7 +722,7 @@ public class RestOrderController {
             Store store = storeService.getById(order.getStoreId());
 
             String type = order.getOrderType();
-            if(type == "0"){
+            if("1".equals(type)){
                 //得到骑手位置对象，拿到经纬度
                 QueryWrapper<RiderAddress> wrapper1 = new QueryWrapper<>();
                 wrapper1.eq("rider_id",user.getId());
@@ -920,9 +936,10 @@ public class RestOrderController {
         }
         boolean flag = orderService.riderOrder(user.getId(),orderId);
         if(flag){
+
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
         }
-        return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+        return  new RestResponseBean(ResultEnum.ORDER_already_NULL.getValue(),ResultEnum.ORDER_already_NULL.getDesc(),null);
     }
 
 
@@ -954,6 +971,8 @@ public class RestOrderController {
         if(order != null){
             order.setOverTime(new Date());
             order.setRiderOk("3");
+            user.setUserMoney(user.getUserMoney() + order.getDeliveryMoney());
+            userService.updateById(user);
             boolean b = orderService.updateById(order);
             if(b){
                 return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
@@ -977,9 +996,7 @@ public class RestOrderController {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
 
-        Page<RiderOrder> pageList = orderService.queryOrderDqh(pageNo,pageSize);
-
-
+        IPage<RiderOrder> pageList = orderService.queryRiderOrder(pageNo,pageSize);
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
     }
 
@@ -996,7 +1013,7 @@ public class RestOrderController {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
 
-        Page<RiderOrder> pageList = orderService.queryOrderDqh(pageNo,pageSize);
+        IPage<RiderOrder> pageList = orderService.queryOrderDqh(pageNo,pageSize);
 
 
 
@@ -1014,7 +1031,7 @@ public class RestOrderController {
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
-        Page<RiderOrder> pageList = orderService.queryOrderDsd(pageNo,pageSize);
+        IPage<RiderOrder> pageList = orderService.queryOrderDsd(pageNo,pageSize);
 
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
     }
@@ -1029,7 +1046,7 @@ public class RestOrderController {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
 
-        Page<RiderOrder> pageList = orderService.queryOrderYwc(pageNo,pageSize);
+        IPage<RiderOrder> pageList = orderService.queryOrderYwc(pageNo,pageSize);
 
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
     }
@@ -1063,7 +1080,7 @@ public class RestOrderController {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
 
-        Page<RiderOrder> pageList = orderService.queryOrderToday(pageNo,pageSize);
+        IPage<RiderOrder> pageList = orderService.queryOrderToday(pageNo,pageSize);
 
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
     }
@@ -1078,7 +1095,7 @@ public class RestOrderController {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
 
-        Page<RiderOrder> pageList = orderService.queryOrderYest(pageNo,pageSize);
+        IPage<RiderOrder> pageList = orderService.queryOrderYest(pageNo,pageSize);
 
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
     }
@@ -1093,7 +1110,7 @@ public class RestOrderController {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
 
-        Page<RiderOrder> pageList = orderService.queryOrderQiantian(pageNo,pageSize);
+        IPage<RiderOrder> pageList = orderService.queryOrderQiantian(pageNo,pageSize);
 
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
     }
@@ -1111,7 +1128,7 @@ public class RestOrderController {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
 
-        Page<RiderOrder> pageList = orderService.queryOrderByDate(beginTime,endTime,pageNo,pageSize);
+        IPage<RiderOrder> pageList = orderService.queryOrderByDate(beginTime,endTime,pageNo,pageSize);
 
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
     }
@@ -1191,10 +1208,10 @@ public class RestOrderController {
 
         //把订单临时表中的数据删除
         orderNoPayService.removeById(orderId);
+
+        //生成订单消息
+        orderMessageService.addOrderMsg(orderId);
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
     }
-
-
-
 
 }
