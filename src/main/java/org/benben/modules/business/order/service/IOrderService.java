@@ -1,5 +1,6 @@
 package org.benben.modules.business.order.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.benben.modules.business.order.entity.Order;
@@ -58,7 +59,6 @@ public interface IOrderService extends IService<Order> {
 
 	//开发票后修改订单状态
 	public boolean invoiceOk(String orderIdList);
-
 	//骑手确认接单
 	public boolean riderOrder(String riderId, String orderId);
 	//骑手取货
@@ -70,14 +70,14 @@ public interface IOrderService extends IService<Order> {
 
 	Double DiffDayMoney();
 
-	Page<RiderOrder> queryOrderByDate(String beginTime, String endTime, Integer pageNo, Integer pageSize) throws  Exception;
+	IPage<RiderOrder> queryOrderByDate(String beginTime, String endTime, Integer pageNo, Integer pageSize) throws  Exception;
 
-	Page<RiderOrder> queryOrderToday(Integer pageNo, Integer pageSize) throws  Exception;
-	Page<RiderOrder> queryOrderYest(Integer pageNo, Integer pageSize) throws  Exception;
-	Page<RiderOrder> queryOrderQiantian(Integer pageNo, Integer pageSize) throws  Exception;
+	IPage<RiderOrder> queryOrderToday(Integer pageNo, Integer pageSize) throws  Exception;
+	IPage<RiderOrder> queryOrderYest(Integer pageNo, Integer pageSize) throws  Exception;
+	IPage<RiderOrder> queryOrderQiantian(Integer pageNo, Integer pageSize) throws  Exception;
 	Map<String,Object> queryOrderCount();
-	Page<RiderOrder> queryOrderYwc(Integer pageNo, Integer pageSize);
-	Page<RiderOrder> queryOrderDsd(Integer pageNo, Integer pageSize);
-	Page<RiderOrder> queryOrderDqh(Integer pageNo, Integer pageSize);
-	Page<RiderOrder> queryRiderOrder(Integer pageNo, Integer pageSize);
+	IPage<RiderOrder> queryOrderYwc(Integer pageNo, Integer pageSize);
+	IPage<RiderOrder> queryOrderDsd(Integer pageNo, Integer pageSize);
+	IPage<RiderOrder> queryOrderDqh(Integer pageNo, Integer pageSize);
+	IPage<RiderOrder> queryRiderOrder(Integer pageNo, Integer pageSize);
 }

@@ -10,6 +10,7 @@ import org.benben.modules.business.user.entity.User;
 import org.benben.modules.business.userMessage.entity.UserMessage;
 import org.benben.modules.business.userMessage.mapper.UserMessageMapper;
 import org.benben.modules.business.userMessage.service.IUserMessageService;
+import org.benben.modules.business.withdraw.entity.Withdraw;
 import org.benben.modules.shiro.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,9 +44,10 @@ public class UserMessageServiceImpl extends ServiceImpl<UserMessageMapper, UserM
 
     @Override
     public IPage<UserMessage> queryPageList(String userId,Integer pageNo,Integer pageSize) {
+        User user = (User) LoginUser.getCurrentUser();
         Page<UserMessage> page = new Page<UserMessage>(pageNo, pageSize);
         QueryWrapper<UserMessage> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("user_id", userId).eq("del_flag", "1");
+        queryWrapper.lambda().eq(UserMessage::getUserId,user.getId()).eq(UserMessage::getDelFlag, "1").orderByDesc(UserMessage::getCreateTime);
         IPage<UserMessage> pageList  = userMessageService.page(page,queryWrapper);
         return pageList;
     }

@@ -122,7 +122,7 @@ public class JwtUtil {
      * @return 加密的token
      */
     public static String signUser(String userId, String secret) {
-        Date date = new Date(System.currentTimeMillis() + EXPIRE_TIME);
+        Date date = new Date(System.currentTimeMillis() + APP_EXPIRE_TIME);
         Algorithm algorithm = Algorithm.HMAC256(secret);
         // 附带mobile信息
         return JWT.create().withClaim("userId", userId).withExpiresAt(date).sign(algorithm);

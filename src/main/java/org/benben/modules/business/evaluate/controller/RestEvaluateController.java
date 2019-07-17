@@ -138,6 +138,9 @@ public class RestEvaluateController {
         }
         Evaluate evaluate = new Evaluate();
         Order order = orderService.getById(orderId);
+        if(order==null){
+            return new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(), ResultEnum.QUERY_NOT_EXIST.getDesc(), null);
+        }
         Store store = storeService.getById(order.getStoreId());
 
         //修改评价人数
@@ -151,6 +154,7 @@ public class RestEvaluateController {
             store.setMark(mark);
             store.setMarkCount(store.getMarkCount()+1);
             storeService.updateById(store);
+
         }/*else if (evaluateType.equals("1")){
             double totalmark = user.getMark()*user.getMarkCount();
             if(starCount != null && starCount != ""){
@@ -179,12 +183,6 @@ public class RestEvaluateController {
         evaluate.setEvaluateType(evaluateType);
         evaluate.setContent(content);
         Boolean flag = evaluateService.save(evaluate);
-
-        //if()
-
-
-
-
         order.setStatus("4");
         order.setUpdateTime(new Date());
         order.setUpdateBy(user.getUsername());

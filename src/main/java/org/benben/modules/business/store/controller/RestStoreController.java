@@ -97,6 +97,16 @@ public class RestStoreController {
 
 
 
+    /*@RequestMapping(value = "/queryStoreById",method = RequestMethod.POST)
+    @ApiOperation(value="根据门店id查询门店详情", tags = {"门店管理接口"})
+    public RestResponseBean queryStoreById(@RequestParam(name="id")String id){
+        Store store = storeService.getById(id);
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), store);
+    }*/
+
+
+
+
     /**
      * 门店管理接口
      *
@@ -195,8 +205,8 @@ public class RestStoreController {
 
 
 
-    @GetMapping("/queryStoreById")
-    @ApiOperation(value="根据id查询商家", tags = {"门店管理接口"})
+    @RequestMapping(value = "/queryStoreById",method = RequestMethod.POST)
+    @ApiOperation(value="根据门店id查询门店详情", tags = {"门店管理接口"})
     public RestResponseBean queryStoreById(@RequestParam(name = "id",required = true) String id){
         Store store = storeService.getById(id);
 
