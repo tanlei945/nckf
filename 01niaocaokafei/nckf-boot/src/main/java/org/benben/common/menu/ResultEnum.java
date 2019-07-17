@@ -13,6 +13,9 @@ public enum ResultEnum {
 
     ORDER_already_delete(0,"订单已经删除"),
 
+    ORDER_already_NULL(0,"订单已经抢走了"),
+
+
 
     ORDER_NOT_OK(0,"未完成订单不能删除"),
 
