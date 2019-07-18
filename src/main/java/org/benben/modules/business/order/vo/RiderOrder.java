@@ -144,6 +144,13 @@ public class RiderOrder {
     //商家电话
     private String storePhone;
 
+    //骑手图片
+    private String riderImage;
+    //门店图片
+    private String storeImage ;
+    //骑手满意度
+    private double riderRating;
+
 
     @ExcelCollection(name="订单商品")
     private List<OrderGoods> orderGoodsList;

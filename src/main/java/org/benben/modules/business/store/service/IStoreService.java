@@ -1,5 +1,6 @@
 package org.benben.modules.business.store.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.benben.modules.business.store.entity.Store;
 
@@ -16,4 +17,6 @@ public interface IStoreService extends IService<Store> {
     List<Store> queryByDistance(double longitude, double latitude);
 
     Boolean queryScopeById(String id,double lng,double lat);
+
+   // IPage<Store> queryAllStore();
 }

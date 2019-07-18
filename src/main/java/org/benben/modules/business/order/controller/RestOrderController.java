@@ -413,7 +413,7 @@ public class RestOrderController {
                                     @RequestParam(name = "orderSrc") String orderSrc,
                                     @RequestParam(name = "orderRemark") String orderRemark,
                                     @RequestParam(name = "orderType") String orderType,
-                                    @RequestParam(name = "deliveryMoney") String deliveryMoney,
+                                    String deliveryMoney,
                                     @RequestParam(name = "appOrderMoney") String appOrderMoney,
                                     @RequestParam(name = "accountFlag") String accountFlag,
                                      String thirdPay){
@@ -486,7 +486,9 @@ public class RestOrderController {
 
        //给order值
        Order order = new Order();
-       order.setDeliveryMoney(Double.parseDouble(deliveryMoney));
+       if(deliveryMoney != null && deliveryMoney != ""){
+           order.setDeliveryMoney(Double.parseDouble(deliveryMoney));
+       }
        order.setUsername(user.getRealname());
        order.setStatus("1");
        order.setUserId(user.getId());
@@ -631,7 +633,7 @@ public class RestOrderController {
 
         Order order = orderService.getById(id);
         if(order == null){
-            return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+            return  new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(),ResultEnum.QUERY_NOT_EXIST.getDesc(),null);
         }
 
 
@@ -654,7 +656,12 @@ public class RestOrderController {
                 }
             }
 
-
+            String riderId = order.getRiderId();
+            if(riderId != null && riderId != ""){
+                User rider =userService.getById(riderId);
+                riderOrder.setRiderImage(rider.getAvatar());
+                riderOrder.setRiderRating(rider.getMark());
+            }
 
             List<OrderGoods> orderGoodsList = orderGoodsService.selectByMainId(id);
             riderOrder.setOrderGoodsList(orderGoodsList);
@@ -752,6 +759,7 @@ public class RestOrderController {
             User reciveUser = userService.getById(userId);
             riderOrder.setUserAddress(order.getUserAddress());
             riderOrder.setUserPhone(reciveUser.getMobile());
+            riderOrder.setStoreImage(store.getImgUrl());
 
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),riderOrder);
         }
