@@ -6,7 +6,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.api.vo.Result;
+import org.benben.common.menu.ResultEnum;
 import org.benben.common.system.query.QueryGenerator;
 import org.benben.common.util.oConvertUtils;
 import org.benben.modules.business.category.entity.Category;
@@ -53,7 +55,18 @@ public class CategoryController {
 		result.setResult(pageList);
 		return result;
 	}
-	
+
+	@ApiOperation(value="查询商品种类",tags = {"门店管理接口"})
+	@GetMapping("/getCategory")
+	public RestResponseBean getCategory(){
+		try {
+			List<Category> category = categoryService.getCategory();
+			return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), category);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
+		}
+	}
 
 	@PostMapping(value = "/addCateGory")
 	public Result<Category> addCateGory(@RequestBody Category category) {
