@@ -184,10 +184,11 @@ public class RestStoreController {
     @ApiOperation(value="门店列表", tags = {"门店管理接口"})
     public RestResponseBean queryAllStore(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                           @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
-                                          @RequestParam(name = "keywords") String  keywords,
-                                          @RequestParam(name = "city",required = true) String city){
+                                           String  keywords,
+                                           String city){
         try {
             QueryWrapper<Store> queryWrapper = new QueryWrapper<>();
+            //if(keywords == null || )
             queryWrapper.like("address_desc", keywords).eq("city",city);
             Page<Store> page = new Page<Store>(pageNo, pageSize);
             IPage<Store> pageList = storeService.page(page, queryWrapper);
@@ -196,7 +197,6 @@ public class RestStoreController {
             for (Store store : list) {
                 store.setImgUrl(commonService.getLocalUrl(store.getImgUrl()));
             }
-
             pageList.setRecords(list);
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), pageList);
         } catch (Exception e) {
