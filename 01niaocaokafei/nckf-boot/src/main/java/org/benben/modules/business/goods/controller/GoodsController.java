@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
@@ -34,9 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @RestController
@@ -68,7 +68,21 @@ public class GoodsController {
 		return result;
 	}
 
+	@GetMapping("queryGoodsSpec")
+	@ApiOperation(value="根据商品id查商品规格",tags = {"门店管理接口"})
+	@ApiImplicitParams({@ApiImplicitParam(name="goodId",value="商品id",dataType = "String",required = true)
+	})
+	public RestResponseBean querySpec(@RequestParam(name="goodId")String goodId){
+		HashMap<String, ArrayList<String>> stringListMap = new HashMap<>();
+		try {
+			stringListMap= goodsService.querySpec(goodId);
+			return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), stringListMap);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
+		}
 
+	}
 	@PostMapping(value = "/add")
 	public Result<Goods> add(@RequestBody JSONObject jsonObject) {
 		Result<Goods> result = new Result<Goods>();

@@ -8,7 +8,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.api.vo.Result;
+import org.benben.common.menu.ResultEnum;
 import org.benben.common.system.query.QueryGenerator;
 import org.benben.common.util.oConvertUtils;
 import org.benben.modules.business.region.entity.Region;
@@ -55,17 +58,22 @@ public class RegionController {
 	 * @return
 	 */
 	@GetMapping(value = "/list")
-	public Result<IPage<Region>> queryPageList(Region region,
+	public RestResponseBean queryPageList(Region region,
 									  @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
 									  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 									  HttpServletRequest req) {
-		Result<IPage<Region>> result = new Result<IPage<Region>>();
-		QueryWrapper<Region> queryWrapper = QueryGenerator.initQueryWrapper(region, req.getParameterMap());
-		Page<Region> page = new Page<Region>(pageNo, pageSize);
-		IPage<Region> pageList = regionService.page(page, queryWrapper);
-		result.setSuccess(true);
-		result.setResult(pageList);
-		return result;
+		QueryWrapper<Region> regionQueryWrapper = new QueryWrapper<>();
+		regionQueryWrapper.eq("level_type","2");
+		List<Region> list = null;
+		RestResponseBean restResponseBean = null;
+		try {
+			list = regionService.list(regionQueryWrapper);
+			restResponseBean = new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), list);
+		} catch (Exception e) {
+			e.printStackTrace();
+			restResponseBean = new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
+		}
+		return restResponseBean;
 	}
 	
 	/**

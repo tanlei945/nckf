@@ -16,6 +16,6 @@ public interface OrderMapper extends BaseMapper<Order> {
     @Select("select sum(order_money) from bb_order")
     Double OrderSumMoney();
 
-    @Select("select count(id) from bb_order")
+    @Select("select count(id) from bb_order where status  = '3'")
     int OrderCount();
 }
