@@ -49,10 +49,11 @@ public class RestOrderMessageController {
         }
 
        QueryWrapper<OrderMessage> queryWrapper = new QueryWrapper<>();
-       queryWrapper.lambda().eq(OrderMessage::getDelFlag,"0").eq(OrderMessage::getUserId,user.getId()).orderByDesc(OrderMessage::getCreateTime);
+       queryWrapper.lambda().eq(OrderMessage::getDelFlag,"1").eq(OrderMessage::getUserId,user.getId()).orderByDesc(OrderMessage::getCreateTime);
        Page<OrderMessage> page = new Page<OrderMessage>(pageNo, pageSize);
        try {
            IPage<OrderMessage> pageList = orderMessageService.page(page, queryWrapper);
+          // log.info(pageList.getRecords().toString());
            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
        } catch (Exception e) {
            e.printStackTrace();
@@ -151,10 +152,11 @@ public class RestOrderMessageController {
 
         try {
             OrderMessage byId = orderMessageService.getById(id);
-            return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), byId);
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), byId);
         } catch (Exception e) {
             e.printStackTrace();
-            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
+
+            return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
         }
     }
 }

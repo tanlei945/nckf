@@ -59,8 +59,8 @@ public class RestInvoiceController {
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
-        Result<IPage<Order>> result = new Result<IPage<Order>>();
         QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id",user.getId()).eq("invoice_flag","0");
         Page<Order> page = new Page<Order>(pageNo, pageSize);
         IPage<Order> pageList = orderService.page(page, queryWrapper);
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);

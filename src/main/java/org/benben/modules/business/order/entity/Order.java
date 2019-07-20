@@ -55,7 +55,7 @@ public class Order implements Serializable {
 	@Excel(name = "订单总金额", width = 15)
 	private Double orderMoney;
 	/**订单类型(0:送餐  1：店内用餐)*/
-	@Excel(name = "订单类型(0:店内用餐  1：送餐)", width = 15,dicCode = "orderType")
+	@Excel(name = "订单类型(1:店内用餐 0：送餐))", width = 15,dicCode = "orderType")
 	@Dict(dicCode = "orderType")
 	@ApiModelProperty(required = true)
 	private String orderType;
@@ -73,7 +73,7 @@ public class Order implements Serializable {
 	@Excel(name = "用户优惠券id", width = 15)
 	private String userCouponsId;
 	/**是否已开发票(0:未开 1:已开)*/
-	@Excel(name = "是否已开发票(0:未开 1:已开)", width = 15)
+	@Excel(name = "0:未开票 1:已开票", width = 15)
 	private String invoiceFlag;
 	/**发票id*/
 	@Excel(name = "发票id", width = 15)
@@ -144,6 +144,8 @@ public class Order implements Serializable {
 	private String userDelFlag;
 	//骑手删除状态
 	private String riderDelFlag;
+	private String accountFlag;
+	private String thirdPay;
 
 
 

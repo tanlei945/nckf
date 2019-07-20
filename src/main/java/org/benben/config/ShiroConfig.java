@@ -72,7 +72,7 @@ public class ShiroConfig {
 
 
 		//暂时的
-		filterChainDefinitionMap.put("/api/v1/user/mobileLogin", "anon");
+/*		filterChainDefinitionMap.put("/api/v1/user/mobileLogin", "anon");
 		filterChainDefinitionMap.put("/api/v1/user/qqLoginCallback", "anon");
 		filterChainDefinitionMap.put("/api/v1/user/wxLoginCallBack", "anon");
 		filterChainDefinitionMap.put("/api/v1/user/wbLoginCallback", "anon");
@@ -121,7 +121,7 @@ public class ShiroConfig {
 		filterChainDefinitionMap.put("/api/v1/store/queryStoreByDistance", "anon");
 		filterChainDefinitionMap.put("/api/v1/store/queryStoreById", "anon");
 		filterChainDefinitionMap.put("/api/v1/store/query_all_store", "anon");
-		filterChainDefinitionMap.put("/api/v1/evaluate/queryEvaluateList", "anon");
+		filterChainDefinitionMap.put("/api/v1/evaluate/queryEvaluateList", "anon");*/
 		//性能监控
 		filterChainDefinitionMap.put("/actuator/metrics/**", "anon");
 		filterChainDefinitionMap.put("/actuator/httptrace/**", "anon");
@@ -134,7 +134,7 @@ public class ShiroConfig {
 		filterChainDefinitionMap.put("/api/v1/user/login", "anon");
 		//从配置文件读取添加不需要token的路径
 		//从配置文件读取添加不需要token的路径
-		Yaml yaml = new Yaml();
+/*		Yaml yaml = new Yaml();
 		try {
 			InputStream inputStream = ShiroConfig.class.getClassLoader().getResourceAsStream("noneed-login.yml");
 			HashMap hashMap = yaml.loadAs(inputStream, HashMap.class);
@@ -144,7 +144,7 @@ public class ShiroConfig {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		}*/
 		// 添加自己的过滤器并且取名为jwt
 		Map<String, Filter> filterMap = new HashMap<String, Filter>(1);
 		filterMap.put("jwt", new JwtFilter());

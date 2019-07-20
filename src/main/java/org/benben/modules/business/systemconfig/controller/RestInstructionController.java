@@ -254,7 +254,7 @@ public class RestInstructionController {
 	 * @remark 这里是备注信息
 	 * @number 4
 	 */
-	@GetMapping(value = "/queryOtherProblems")
+	@GetMapping(value = "/za")
 	@ApiOperation(value = "其他问题查询", tags = {"个人中心接口"}, notes = "其他问题查询")
 	public RestResponseBean queryOtherProblems() {
 

@@ -14,5 +14,6 @@ import java.util.Date;
  */
 public interface ISystemConfigService extends IService<SystemConfig> {
     public String queryByTime(Date date)throws Exception;
+    public String queryWord();
 
 }

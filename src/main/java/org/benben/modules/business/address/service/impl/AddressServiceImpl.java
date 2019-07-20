@@ -74,21 +74,22 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
      */
     @Override
     @Transactional
-    public boolean editDefaultAddress(String userId, String id) {
+    public void editDefaultAddress(String userId, String id) {
 
-        Address beforeAddress = this.queryAddress(userId);
-        Address afterAddress = addressMapper.selectById(id);
+        QueryWrapper<Address> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id",userId).eq("del_flag","0");
+        List<Address> list = addressMapper.selectList(queryWrapper);
 
-        if(beforeAddress == null || afterAddress == null){
-            return false;
+
+
+        for (Address address1 : list) {
+            address1.setDefaultFlag("0");
+            addressMapper.updateById(address1);
         }
 
-        beforeAddress.setDefaultFlag("0");
-        afterAddress.setDefaultFlag("1");
-        addressMapper.updateById(beforeAddress);
-        addressMapper.updateById(afterAddress);
-
-        return true;
+        Address address = addressMapper.selectById(id);
+        address.setDefaultFlag("1");
+        addressMapper.updateById(address);
     }
 
 	/**
@@ -102,7 +103,17 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
 		Address address = new Address();
 		address.setUserId(userId);
 		BeanUtils.copyProperties(addressVO,address);
-		address.setDefaultFlag("0");
+
+		QueryWrapper<Address> queryWrapper = new QueryWrapper<>();
+		queryWrapper.eq("user_id",userId).eq("del_flag","0");
+		List<Address> list = addressMapper.selectList(queryWrapper);
+
+		if("1".equals(address.getDefaultFlag())){
+            for (Address address1 : list) {
+                address1.setDefaultFlag("0");
+                addressMapper.updateById(address1);
+            }
+        }
 
 		if(addressMapper.insert(address) == 0){
 			return false;

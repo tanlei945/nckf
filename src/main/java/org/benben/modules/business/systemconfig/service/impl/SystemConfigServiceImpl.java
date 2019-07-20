@@ -80,4 +80,17 @@ public class SystemConfigServiceImpl extends ServiceImpl<SystemConfigMapper, Sys
         }
         return words;
     }
+
+
+    @Override
+    public String queryWord() {
+        String word = "";
+        QueryWrapper<SystemConfig> systemConfigWrapper = new QueryWrapper<>();
+        systemConfigWrapper.eq("config_name","shouye_word");
+        SystemConfig systemConfigone = systemConfigMapper.selectOne(systemConfigWrapper);
+        if(systemConfigone != null){
+            word=(String)systemConfigone.getConfigValue();
+        }
+        return word;
+    }
 }

@@ -34,7 +34,7 @@ public class OrderMessage implements Serializable {
 	private java.lang.String title;
 	/**内容*/
 	@Excel(name = "内容", width = 15)
-	private java.lang.Object msgContent;
+	private java.lang.String msgContent;
 	/**删除状态（0，未读，1已读）*/
 	@Excel(name = "删除状态（0，未读，1已读）", width = 15)
 	private java.lang.String readFlag;

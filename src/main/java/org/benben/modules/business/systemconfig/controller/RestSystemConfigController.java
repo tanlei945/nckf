@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @RestController
@@ -48,7 +50,13 @@ public class RestSystemConfigController {
             Date parse = sdf.parse(sdf.format(date));
             //根据当前时间返回不同的文字内容
             String words = systemConfigService.queryByTime(parse);
-            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),words);
+            String desc = systemConfigService.queryWord();
+
+            Map<String,String> map = new HashMap<String,String>(){{
+                put("word",words);
+                put("desc",desc);
+            }};
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),map);
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -23,7 +23,7 @@ public interface IAddressService extends IService<Address> {
 
     public List<Address> selectByMainId(String mainId);
 
-    public boolean editDefaultAddress(String userId,String id);
+    public void editDefaultAddress(String userId,String id);
 
 	Boolean save(AddressVO addressVO,String userId);
 }

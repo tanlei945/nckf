@@ -31,6 +31,8 @@ public class Coupons implements Serializable {
 	/**优惠券名称*/
 	@Excel(name = "优惠券名称", width = 15)
 	private java.lang.String couponsName;
+	//描述
+	private java.lang.String desc;
 	/**使用条件*/
 	@Excel(name = "使用条件", width = 15)
 	private java.lang.Double useCondition;

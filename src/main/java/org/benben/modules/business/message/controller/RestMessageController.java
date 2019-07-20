@@ -106,7 +106,7 @@ public class RestMessageController {
 	 * @param id
 	 * @return
 	 */
-	@GetMapping(value = "/queryMessageById")
+	//@GetMapping(value = "/queryMessageById")
 	//@ApiOperation(value = "通过id查询消息详情", notes = "通过id查询消息详情", tags = {"首页"})
 	//@ApiImplicitParams({@ApiImplicitParam(name = "id", value = "消息id", dataType = "String", required = true),})
 	public RestResponseBean queryMessageById(@RequestParam(name = "id", required = true) String id) {

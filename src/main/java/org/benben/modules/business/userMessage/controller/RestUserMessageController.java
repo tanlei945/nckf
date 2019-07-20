@@ -55,7 +55,7 @@ public class RestUserMessageController {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
 
-        IPage<Message> page = userMessageService.queryPageList(pageNo,pageSize);
+        IPage<UserMessage> page = userMessageService.queryPageList(pageNo,pageSize);
 
         /*IPage<UserMessage> pageList = null;
         IPage<Message> pageList1 =null;

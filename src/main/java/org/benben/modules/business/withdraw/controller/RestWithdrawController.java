@@ -137,7 +137,7 @@ public class RestWithdrawController {
 
         List<Withdraw> list = withdrawService.list(queryWrapper);
         if(list.size() == 0){
-            return new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(), ResultEnum.QUERY_NOT_EXIST.getDesc(), null);
+            return new RestResponseBean(ResultEnum.WITHDRAW_NULL.getValue(), ResultEnum.WITHDRAW_NULL.getDesc(), null);
         }
 
 

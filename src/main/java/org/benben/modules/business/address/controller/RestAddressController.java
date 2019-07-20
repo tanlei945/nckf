@@ -145,6 +145,12 @@ public class RestAddressController {
 	@ApiOperation(value = "编辑地址", tags = {"用户接口"}, notes = "编辑地址")
 	public RestResponseBean editAddress(@RequestBody AddressVO addressVO) {
 
+		User user = (User) LoginUser.getCurrentUser();
+
+		if (user == null) {
+			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(), ResultEnum.TOKEN_OVERDUE.getDesc(), null);
+		}
+
 		Address addressEntity = addressService.getById(addressVO.getId());
 
 		if (addressEntity == null) {
@@ -155,13 +161,24 @@ public class RestAddressController {
 			BeanUtils.copyProperties(addressVO,addressEntity);
 
 			boolean ok = addressService.updateById(addressEntity);
-
 			if (!ok) {
 
 				return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(),
 						null);
 
 			}
+
+			QueryWrapper<Address> queryWrapper = new QueryWrapper<>();
+			queryWrapper.eq("user_id",user.getId()).eq("del_flag","0");
+			List<Address> list = addressService.list(queryWrapper);
+
+			if("1".equals(addressEntity.getDelFlag())){
+				for (Address address1 : list) {
+					address1.setDefaultFlag("0");
+					addressService.updateById(address1);
+				}
+			}
+
 		}
 
 		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(),
@@ -249,14 +266,14 @@ public class RestAddressController {
 			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(), ResultEnum.TOKEN_OVERDUE.getDesc(), null);
 		}
 
-		if (addressService.editDefaultAddress(user.getId(), id)) {
+		try {
+			addressService.editDefaultAddress(user.getId(), id);
+			return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
 
-			return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(),
-					null);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
 		}
-
-		return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
-
 	}
 
 

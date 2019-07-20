@@ -44,21 +44,21 @@ public class UserMessageServiceImpl extends ServiceImpl<UserMessageMapper, UserM
     }
 
     @Override
-    public IPage<Message> queryPageList(Integer pageNo,Integer pageSize) {
+    public IPage<UserMessage> queryPageList(Integer pageNo,Integer pageSize) {
         User user = (User) LoginUser.getCurrentUser();
-        IPage<Message> page = new Page<Message>(pageNo, pageSize);
-        List<Message> messageList = new ArrayList<>();
+        IPage<UserMessage> page = new Page<UserMessage>(pageNo, pageSize);
+        //List<Message> messageList = new ArrayList<>();
 
         QueryWrapper<UserMessage> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(UserMessage::getUserId,user.getId()).eq(UserMessage::getDelFlag, "1").orderByDesc(UserMessage::getCreateTime);
-        List<UserMessage> userMessageList = userMessageService.list(queryWrapper);
+        IPage<UserMessage> page1 = userMessageService.page(page,queryWrapper);
 
-        for (UserMessage userMessage : userMessageList) {
+        /*for (UserMessage userMessage : userMessageList) {
             Message message = messageService.getById(userMessage.getMessageId());
             messageList.add(message);
         }
         page.setRecords(messageList);
-        page.setTotal((long)messageList.size());
-        return page;
+        page.setTotal((long)messageList.size());*/
+        return page1;
     }
 }
