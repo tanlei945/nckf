@@ -9,12 +9,14 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.api.vo.Result;
 import org.benben.common.menu.ResultEnum;
 import org.benben.common.system.query.QueryGenerator;
 import org.benben.common.util.oConvertUtils;
+import org.benben.modules.business.commen.service.ICommonService;
 import org.benben.modules.business.evaluate.entity.Evaluate;
 import org.benben.modules.business.evaluate.service.IEvaluateService;
 import org.benben.modules.business.order.entity.Order;
@@ -62,6 +64,8 @@ public class RestEvaluateController {
     private IStoreService storeService;
     @Value(value = "${benben.path.upload}")
     private String uploadpath;
+    @Autowired
+    private ICommonService commonService;
 
     /**
      * showdoc
@@ -103,6 +107,10 @@ public class RestEvaluateController {
         queryWrapper.eq("store_id", storeId).eq("evaluate_type","0");
         Page<Evaluate> page = new Page<Evaluate>(pageNo, pageSize);
         IPage<Evaluate> pageList = evaluateService.page(page, queryWrapper);
+        List<Evaluate> records = pageList.getRecords();
+        for (Evaluate record : records) {
+            record.setImgUrl(commonService.getLocalUrl(record.getImgUrl()));
+        }
 
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), pageList);
     }
@@ -185,7 +193,7 @@ public class RestEvaluateController {
         evaluate.setDelFlag("1");
         evaluate.setRiderId(order.getRiderId());
         evaluate.setAvatar(user.getAvatar());
-        if(starCount != null && starCount != ""){
+        if(StringUtils.isNotBlank(starCount)){
             evaluate.setStarCount(Integer.parseInt(starCount));
         }
         evaluate.setEvaluateType(evaluateType);

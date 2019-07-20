@@ -133,6 +133,10 @@ public class RiderOrder {
     private double storeLat;
     private double storeLng;
 
+    //骑手经纬度
+    private double riderLat;
+    private double riderLng;
+
 
 
     /**送餐地址*/
@@ -151,7 +155,8 @@ public class RiderOrder {
     //骑手满意度
     private double riderRating;
 
+    private String accountFlag;
+    private String thirdPay;
 
-    @ExcelCollection(name="订单商品")
     private List<OrderGoods> orderGoodsList;
 }

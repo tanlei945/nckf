@@ -103,7 +103,7 @@ public class RestCartController {
             cart.setCreateTime(new Date());
             Cart cartResult = cartService.queryByGoodsId(cart);
             if(cartResult!=null){
-                cartResult.setGoodsCount(1);
+                cartResult.setGoodsCount(cartResult.getGoodsCount()+cartAddVo.getGoodsCount());
                 cartService.updateById(cartResult);
             }else {
                 cartService.save(cart);

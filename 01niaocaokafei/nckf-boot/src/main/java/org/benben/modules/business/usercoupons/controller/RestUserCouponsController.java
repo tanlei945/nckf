@@ -125,30 +125,37 @@ public class RestUserCouponsController {
 
 				return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), pageList2);
 			//已过期优惠券
-			case "0" :
+			case "0":
 				QueryWrapper<UserCoupons> queryWrapper0 = new QueryWrapper<>();
 				//未使用
-				queryWrapper0.lambda().eq(UserCoupons::getUserId,user.getId()).eq(UserCoupons::getStatus,"0");
+				queryWrapper0.lambda().eq(UserCoupons::getUserId, user.getId()).eq(UserCoupons::getStatus, "0");
 				List<UserCoupons> list0 = userCouponsService.list(queryWrapper0);
 
 				//剔除未使用也未过期的优惠券
-				if(list0!=null){
-					for (UserCoupons userCoupons : list0) {
-						Coupons coupons =couponsService.getById(userCoupons.getCouponsId());
-						if(coupons != null){
-							if(coupons.getUseEndTime().after(new Date())){
-								list0.remove(userCoupons);
-							}
+				if (list0 == null || list0.size() == 0) {
+					return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
+
+				}
+
+				List<UserCoupons> removeList = new ArrayList<>();
+
+				for (UserCoupons userCoupons : list0) {
+					Coupons coupons = couponsService.getById(userCoupons.getCouponsId());
+					if (coupons != null) {
+						if (coupons.getUseEndTime().after(new Date())) {
+							//list0.remove(userCoupons);
+							removeList.add(userCoupons);
 						}
 					}
 				}
+
+				list0.removeAll(removeList);
+
 				//拿到couponsId去查询优惠券
 				List<Coupons> couponsList0 = new ArrayList<>();
-				if(couponsList0 == null){
-					return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
-				}
+
 				for (UserCoupons userCoupons : list0) {
-					Coupons coupons =couponsService.getById(userCoupons.getUserId());
+					Coupons coupons =couponsService.getById(userCoupons.getCouponsId());
 					couponsList0.add(coupons);
 				}
 
@@ -253,7 +260,7 @@ public class RestUserCouponsController {
 
 
 	@GetMapping(value = "/queryByStore")
-	@ApiOperation(value = "生成订单查询可用优惠券", notes = "生成订单查询可用优惠券", tags = "首页")
+	@ApiOperation(value = "生成订单查询可用优惠券", notes = "生成订单查询可用优惠券", tags = "优惠券")
 	@ApiImplicitParams({@ApiImplicitParam(name = "pageNo", value = "当前页", dataType = "Integer", defaultValue = "1"),
 			@ApiImplicitParam(name = "pageSize", value = "每页显示条数", dataType = "Integer", defaultValue = "10"),
 			@ApiImplicitParam(name = "storeId", value = "门店id", dataType = "String")})

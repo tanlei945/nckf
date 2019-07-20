@@ -41,6 +41,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.text.ParseException;
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -344,35 +345,40 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
 
 	@Override
-	public IPage<RiderOrder> queryOrderByDate(String beginTime, String endTime, Integer pageNo, Integer pageSize) throws Exception{
+	public List<RiderOrder> queryOrderByDate(String beginTime, String endTime, Integer pageNo, Integer pageSize) throws Exception{
 		User user = (User) LoginUser.getCurrentUser();
 
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 		Date beginDate = formatter.parse(beginTime);
 		Date endDate = formatter.parse(endTime);
 
+
+
+
+
 		QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
 		queryWrapper.eq("rider_id",user.getId()).eq("rider_ok","3").eq("rider_del_flag","1").lambda().orderByDesc(Order::getCreateTime);
 		List<Order> list = orderService.list(queryWrapper);
 		List<Order> orderList = new ArrayList<>();
 		for (Order order : list) {
-			if(!beginDate.after(order.getOverTime()) && !order.getOverTime().after(endDate)){
+			SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd");
+			String dateString = formatter1.format(order.getOverTime());
+			Date overDate = formatter.parse(dateString);
+
+			if(!beginDate.after(overDate) && !overDate.after(endDate)){
 				orderList.add(order);
 			}
 		}
 
 		List<RiderOrder> riderOrderList = query(user,orderList);
+		/*IPage<RiderOrder> pageList = new Page<>(pageNo,pageSize);
+		pageList.setRecords(riderOrderList);*/
 
-		IPage<RiderOrder> pageList = new Page<>(pageNo,pageSize);
-		pageList.setRecords(riderOrderList);
-
-		return pageList;
-
-
+		return riderOrderList;
 	}
 
 	@Override
-	public IPage<RiderOrder> queryOrderToday(Integer pageNo, Integer pageSize)  throws  Exception{
+	public List<RiderOrder> queryOrderToday(Integer pageNo, Integer pageSize)  throws  Exception{
 
 		User user = (User) LoginUser.getCurrentUser();
 
@@ -381,22 +387,16 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 		List<Order> list = orderService.list(queryWrapper);
 		List<Order> orderList = new ArrayList<>();
 		for (Order order : list) {
-			if(DayUtils.isYesterday(order.getOverTime())){
+			if(DayUtils.isToday(order.getOverTime())){
 				orderList.add(order);
 			}
 		}
-
-
 		List<RiderOrder> riderOrderList = query(user,orderList);
-
-		IPage<RiderOrder> pageList = new Page<>(pageNo,pageSize);
-		pageList.setRecords(riderOrderList);
-
-		return pageList;
+		return riderOrderList;
 	}
 
 	@Override
-	public IPage<RiderOrder> queryOrderYest(Integer pageNo, Integer pageSize)  throws  Exception{
+	public List<RiderOrder> queryOrderYest(Integer pageNo, Integer pageSize)  throws  Exception{
 		User user = (User) LoginUser.getCurrentUser();
 
 		QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
@@ -410,15 +410,18 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 		}
 		List<RiderOrder> riderOrderList = query(user,orderList);
 
-
+/*
 		IPage<RiderOrder> pageList = new Page<>(pageNo,pageSize);
 		pageList.setRecords(riderOrderList);
+		pageList.setTotal((long)riderOrderList.size());*/
+		//pageList.setCurrent(pageNo);
 
-		return pageList;
+
+		return riderOrderList;
 	}
 
 	@Override
-	public IPage<RiderOrder> queryOrderQiantian(Integer pageNo, Integer pageSize)  throws  Exception{
+	public List<RiderOrder> queryOrderQiantian(Integer pageNo, Integer pageSize)  throws  Exception{
 		User user = (User) LoginUser.getCurrentUser();
 
 		QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
@@ -433,10 +436,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 		List<RiderOrder> riderOrderList = query(user,orderList);
 
 
-		IPage<RiderOrder> pageList = new Page<>(pageNo,pageSize);
-		pageList.setRecords(riderOrderList);
+		/*IPage<RiderOrder> pageList = new Page<>(pageNo,pageSize);
+		pageList.setRecords(riderOrderList);*/
 
-		return pageList;
+		return riderOrderList;
 	}
 
 
@@ -455,7 +458,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 		//新任务订单的数量
 		QueryWrapper<Order> queryWrapper0 = new QueryWrapper<>();
 
-		queryWrapper0.eq("store_id",user.getStoreId()).eq("status","2").eq("rider_ok","0");
+		queryWrapper0.eq("store_id",user.getStoreId()).eq("status","2").eq("rider_ok","0").eq("order_type","0");
 
 		List<Order> list0 = orderService.list(queryWrapper0);
 		map.put("0",list0.size());
@@ -482,7 +485,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 	}
 
 	@Override
-	public IPage<RiderOrder> queryOrderYwc(Integer pageNo, Integer pageSize) {
+	public List<RiderOrder> queryOrderYwc(Integer pageNo, Integer pageSize) {
 		User user = (User) LoginUser.getCurrentUser();
 
 		QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
@@ -491,14 +494,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
 		List<RiderOrder> riderOrderList = query(user,list);
 
-		IPage<RiderOrder> pageList = new Page<>(pageNo,pageSize);
+		/*IPage<RiderOrder> pageList = new Page<>(pageNo,pageSize);
 		pageList.setRecords(riderOrderList);
-
-		return  pageList;
+*/
+		return  riderOrderList;
 	}
 
 	@Override
-	public IPage<RiderOrder> queryOrderDsd(Integer pageNo, Integer pageSize) {
+	public List<RiderOrder> queryOrderDsd(Integer pageNo, Integer pageSize) {
 		User user = (User) LoginUser.getCurrentUser();
 		QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
 		queryWrapper.eq("rider_id",user.getId()).eq("rider_ok","2").lambda().orderByDesc(Order::getCreateTime);
@@ -506,14 +509,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
 		List<RiderOrder> riderOrderList = query(user,list);
 
-		IPage<RiderOrder> pageList = new Page<>(pageNo,pageSize);
-		pageList.setRecords(riderOrderList);
+		/*IPage<RiderOrder> pageList = new Page<>(pageNo,pageSize);
+		pageList.setRecords(riderOrderList);*/
 
-		return  pageList;
+		return  riderOrderList;
 	}
 
 	@Override
-	public IPage<RiderOrder> queryOrderDqh(Integer pageNo, Integer pageSize) {
+	public List<RiderOrder> queryOrderDqh(Integer pageNo, Integer pageSize) {
 		User user = (User) LoginUser.getCurrentUser();
 
 		QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
@@ -522,26 +525,26 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
 		List<RiderOrder> riderOrderList = query(user,list);
 
-		IPage<RiderOrder> pageList = new Page<>(pageNo,pageSize);
-		pageList.setRecords(riderOrderList);
+		/*IPage<RiderOrder> pageList = new Page<>(pageNo,pageSize);
+		pageList.setRecords(riderOrderList);*/
 
-		return  pageList;
+		return  riderOrderList;
 	}
 
 	@Override
-	public IPage<RiderOrder> queryRiderOrder(Integer pageNo, Integer pageSize) {
+	public List<RiderOrder> queryRiderOrder(Integer pageNo, Integer pageSize) {
 		User user = (User) LoginUser.getCurrentUser();
 
 		QueryWrapper<Order> wrapper = new QueryWrapper<>();
-		wrapper.eq("store_id",user.getStoreId()).eq("status","2").eq("rider_ok","0").lambda().orderByDesc(Order::getCreateTime);
+		wrapper.eq("store_id",user.getStoreId()).eq("status","2").eq("rider_ok","0").eq("order_type","0").lambda().orderByDesc(Order::getCreateTime);
 		List<Order> list = orderService.list(wrapper);
 
 		List<RiderOrder> riderOrderList = query(user,list);
 
-		IPage<RiderOrder> pageList = new Page<>(pageNo,pageSize);
-		pageList.setRecords(riderOrderList);
+		/*IPage<RiderOrder> pageList = new Page<>(pageNo,pageSize);
+		pageList.setRecords(riderOrderList);*/
 
-		return  pageList;
+		return  riderOrderList;
 	}
 
 

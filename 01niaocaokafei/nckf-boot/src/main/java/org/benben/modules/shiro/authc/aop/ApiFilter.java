@@ -41,7 +41,6 @@ import net.sf.json.JSONObject;
  * @create 2019-07-12 15:56
  * @desc   鉴权登录拦截器
  **/
-@Component
 @Slf4j
 @WebFilter(filterName = "apiFilter",urlPatterns = "/api/*")
 public class ApiFilter implements Filter {

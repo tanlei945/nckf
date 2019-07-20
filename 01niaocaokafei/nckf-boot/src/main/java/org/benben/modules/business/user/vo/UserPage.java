@@ -59,9 +59,6 @@ public class UserPage {
 	/**格言*/
 	@Excel(name = "格言", width = 15)
 	private java.lang.String bio;
-	/**余额*/
-	@Excel(name = "余额", width = 15)
-	private java.math.BigDecimal userMoney;
 	/**积分*/
 	@Excel(name = "积分", width = 15)
 	private java.lang.Integer score;

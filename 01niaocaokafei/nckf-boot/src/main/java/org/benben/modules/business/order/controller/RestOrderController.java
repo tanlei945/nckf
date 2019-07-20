@@ -5,8 +5,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.benben.common.XXPay.service.XXPayService;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.api.vo.Result;
@@ -15,6 +18,9 @@ import org.benben.common.system.query.QueryGenerator;
 import org.benben.common.util.DayUtils;
 import org.benben.common.util.DistanceUtil;
 import org.benben.common.util.IPUtils;
+import org.benben.common.util.PageUtil;
+import org.benben.modules.business.account.entity.Account;
+import org.benben.modules.business.account.service.IAccountService;
 import org.benben.modules.business.address.entity.Address;
 import org.benben.modules.business.address.service.IAddressService;
 import org.benben.modules.business.cart.entity.Cart;
@@ -45,6 +51,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.management.Query;
 import javax.servlet.http.HttpServletRequest;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -80,6 +87,8 @@ public class RestOrderController {
    private XXPayService xxPayService;
    @Autowired
    private IOrderMessageService orderMessageService;
+   @Autowired
+   private IAccountService accountService;
 
 
 
@@ -407,6 +416,17 @@ public class RestOrderController {
      */
    @PostMapping(value = "/addOrder")
    @ApiOperation(value = "用户新增订单接口", tags = {"订单购物车接口"}, notes = "用户新增订单接口")
+   @ApiImplicitParams({@ApiImplicitParam(name = "cartIds", value = "购物车id数组"),
+                        @ApiImplicitParam(name = "userAddressId", value = "收货地址id"),
+           @ApiImplicitParam(name = "orderSrc", value = "订单来源(0:微信1:安卓app 2:苹果app)"),
+           @ApiImplicitParam(name = "couponseId", value = "优惠券id"),
+           @ApiImplicitParam(name = "orderRemark", value = "订单备注"),
+           @ApiImplicitParam(name = "orderType", value = "订单类型(1:店内用餐 0：送餐)"),
+           @ApiImplicitParam(name = "deliveryMoney", value = "配送费"),
+           @ApiImplicitParam(name = "appOrderMoney", value = "合计金额"),
+           @ApiImplicitParam(name = "accountFlag", value = "是否使用钱包支付 1使用  0不使用"),
+           @ApiImplicitParam(name = "thirdPay", value = "1:微信 2:支付宝")
+   })
    public RestResponseBean addOrder(@RequestParam(name = "cartIds") String[] cartIds,
                                      String userAddressId,
                                      String couponseId,
@@ -465,17 +485,19 @@ public class RestOrderController {
 
 
        //如果此订单使用优惠券，得到数据库查询到的订单金额减去优惠金额
-       if(couponseId != null && couponseId != ""){
-           UserCoupons userCoupons = userCouponsService.getById(couponseId);
-           if(userCoupons != null){
-               userCoupons.setStatus("1");
-               userCouponsService.updateById(userCoupons);
-               money = money - couponsService.getById(userCoupons.getCouponsId()).getSaveMoney();
-            }
+       if(StringUtils.isNotBlank(couponseId)){
+          Coupons coupons = couponsService.getById(couponseId);
+          money -= coupons.getSaveMoney();
+          QueryWrapper<UserCoupons> queryWrapper = new QueryWrapper<>();
+          queryWrapper.eq("coupons_id",couponseId);
+          UserCoupons userCoupons = userCouponsService.getOne(queryWrapper);
+          userCoupons.setStatus("1");
+          userCouponsService.updateById(userCoupons);
        }
+        //log.info(deliveryMoney+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 
        //得到数据库订单金额减去加上配送费
-       if(deliveryMoney != null && deliveryMoney != ""){
+       if(StringUtils.isNotBlank(deliveryMoney)){
            money += Double.parseDouble(deliveryMoney);
        }
 
@@ -486,9 +508,11 @@ public class RestOrderController {
 
        //给order值
        Order order = new Order();
-       if(deliveryMoney != null && deliveryMoney != ""){
+       if(orderType.equals("0")){
            order.setDeliveryMoney(Double.parseDouble(deliveryMoney));
        }
+        order.setAccountFlag(accountFlag);
+       order.setThirdPay(thirdPay);
        order.setUsername(user.getRealname());
        order.setStatus("1");
        order.setUserId(user.getId());
@@ -497,7 +521,7 @@ public class RestOrderController {
        order.setGoodsCount(count);
        order.setOrderId(getUUID());
        order.setCreateBy(user.getRealname());
-       //为了给订单列表展示订单中的某一件商品名称字段给上值
+       //为了给订单列表展示订单中的“某一件商品”名称字段给上值
        order.setOneGoodsName(list.get(0).getGoodsName());
        if(userAddressId!=null && userAddressId!=""){
            //根据addressId拿到收货地址的lat，lng
@@ -519,7 +543,9 @@ public class RestOrderController {
 
        if(userAddressId!=null && userAddressId != ""){
            Address address = addressService.getById(userAddressId);
-           order.setUserAddress(address.getDetailedAddress());
+           if(address!=null){
+               order.setUserAddress(address.getDetailedAddress());
+           }
        }
 
        order.setUserCouponsId(couponseId);
@@ -534,6 +560,7 @@ public class RestOrderController {
 
 
        order.setYujiTime(date);
+
 
        //保存order
        orderService.saveMain(order,list);
@@ -636,7 +663,7 @@ public class RestOrderController {
             return  new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(),ResultEnum.QUERY_NOT_EXIST.getDesc(),null);
         }
 
-
+        //如果是普通用户查看详情
         if(user.getUserType().equals("0")){
             if("0".equals(order.getUserDelFlag())){
                 return  new RestResponseBean(ResultEnum.ORDER_ALREADY_DELETE.getValue(),ResultEnum.ORDER_ALREADY_DELETE.getDesc(),null);
@@ -657,7 +684,7 @@ public class RestOrderController {
             }
 
             String riderId = order.getRiderId();
-            if(riderId != null && riderId != ""){
+            if(StringUtils.isNotBlank(riderId)){
                 User rider =userService.getById(riderId);
                 riderOrder.setRiderImage(rider.getAvatar());
                 riderOrder.setRiderRating(rider.getMark());
@@ -669,22 +696,32 @@ public class RestOrderController {
             Store store = storeService.getById(order.getStoreId());
 
             String type = order.getOrderType();
-            if( "1".equals(type)){
+            if( "0".equals(type)){
+
+                //如果当前订单状态为骑手接单状态，给qi手经纬度赋值
+                if(order.getRiderOk().equals("1") || order.getRiderOk().equals("2") || order.getRiderOk().equals("3")){
+                    QueryWrapper<RiderAddress> queryWrapper = new QueryWrapper<>();
+                    queryWrapper.eq("rider_id",order.getRiderId());
+                    ;
+                }
                 //得到骑手位置对象，拿到经纬度
                 QueryWrapper<RiderAddress> wrapper1 = new QueryWrapper<>();
                 wrapper1.eq("rider_id",user.getId());
                 RiderAddress riderAddress = riderAddressService.getOne(wrapper1);
 
+                if(riderAddress != null){
+                    //得到用户下单地址的经纬度和门店的经纬度
+                    double lat = order.getUserLat();
+                    double lng = order.getUserLng();
 
-                //得到用户下单地址的经纬度和门店的经纬度
-                double lat = order.getUserLat();
-                double lng = order.getUserLng();
+
+                    String disRS = DistanceUtil.algorithm(lat,lng,riderAddress.getLat(),riderAddress.getLng());
+                    String disRU = DistanceUtil.algorithm(store.getLat(),store.getLng(),riderAddress.getLat(),riderAddress.getLng());
+                    riderOrder.setRiderAndStoreDis(Double.parseDouble(disRS));
+                    riderOrder.setRiderAndUserDis(Double.parseDouble(disRU));
+                }
 
 
-                String disRS = DistanceUtil.algorithm(lat,lng,riderAddress.getLat(),riderAddress.getLng());
-                String disRU = DistanceUtil.algorithm(store.getLat(),store.getLng(),riderAddress.getLat(),riderAddress.getLng());
-                riderOrder.setRiderAndStoreDis(Double.parseDouble(disRS));
-                riderOrder.setRiderAndUserDis(Double.parseDouble(disRU));
             }
 
             riderOrder.setStorePhone(store.getPhone());
@@ -702,7 +739,9 @@ public class RestOrderController {
             riderOrder.setUserPhone(reciveUser.getMobile());
 
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),riderOrder);
-        }else{
+        }
+        //如果为骑手查看订单详情
+        else{
             if("0".equals(order.getRiderDelFlag())){
                 return  new RestResponseBean(ResultEnum.ORDER_ALREADY_NULL.getValue(),ResultEnum.ORDER_ALREADY_NULL.getDesc(),null);
             }
@@ -729,7 +768,7 @@ public class RestOrderController {
             Store store = storeService.getById(order.getStoreId());
 
             String type = order.getOrderType();
-            if("1".equals(type)){
+            if("0".equals(type)){
                 //得到骑手位置对象，拿到经纬度
                 QueryWrapper<RiderAddress> wrapper1 = new QueryWrapper<>();
                 wrapper1.eq("rider_id",user.getId());
@@ -979,7 +1018,9 @@ public class RestOrderController {
         if(order != null){
             order.setOverTime(new Date());
             order.setRiderOk("3");
-            user.setUserMoney(user.getUserMoney() + order.getDeliveryMoney());
+            Account account = accountService.queryByUserId(user.getId());
+            account.setMoney(account.getMoney()+order.getDeliveryMoney());
+            //user.setUserMoney(user.getUserMoney() + order.getDeliveryMoney());
             userService.updateById(user);
             boolean b = orderService.updateById(order);
             if(b){
@@ -1004,8 +1045,8 @@ public class RestOrderController {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
 
-        IPage<RiderOrder> pageList = orderService.queryRiderOrder(pageNo,pageSize);
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
+        List<RiderOrder> list = orderService.queryRiderOrder(pageNo,pageSize);
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),list);
     }
 
 
@@ -1021,11 +1062,11 @@ public class RestOrderController {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
 
-        IPage<RiderOrder> pageList = orderService.queryOrderDqh(pageNo,pageSize);
+        List<RiderOrder> list = orderService.queryOrderDqh(pageNo,pageSize);
 
 
 
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),list);
     }
 
 
@@ -1039,9 +1080,9 @@ public class RestOrderController {
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
-        IPage<RiderOrder> pageList = orderService.queryOrderDsd(pageNo,pageSize);
+        List<RiderOrder> list = orderService.queryOrderDsd(pageNo,pageSize);
 
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),list);
     }
 
 
@@ -1054,9 +1095,9 @@ public class RestOrderController {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
 
-        IPage<RiderOrder> pageList = orderService.queryOrderYwc(pageNo,pageSize);
+        List<RiderOrder> list = orderService.queryOrderYwc(pageNo,pageSize);
 
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),list);
     }
 
 
@@ -1088,9 +1129,14 @@ public class RestOrderController {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
 
-        IPage<RiderOrder> pageList = orderService.queryOrderToday(pageNo,pageSize);
+        List<RiderOrder> list = orderService.queryOrderToday(pageNo,pageSize);
+        if(list.size() == 0 || list == null){
 
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
+
+        }
+        //PageUtil.page(list,pageNo,pageSize);
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),list);
     }
 
 
@@ -1102,10 +1148,8 @@ public class RestOrderController {
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
-
-        IPage<RiderOrder> pageList = orderService.queryOrderYest(pageNo,pageSize);
-
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
+        List<RiderOrder> list = orderService.queryOrderYest(pageNo,pageSize);
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),list);
     }
 
 
@@ -1118,9 +1162,9 @@ public class RestOrderController {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
 
-        IPage<RiderOrder> pageList = orderService.queryOrderQiantian(pageNo,pageSize);
+        List<RiderOrder> list = orderService.queryOrderQiantian(pageNo,pageSize);
 
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),list);
     }
 
 
@@ -1136,9 +1180,9 @@ public class RestOrderController {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
 
-        IPage<RiderOrder> pageList = orderService.queryOrderByDate(beginTime,endTime,pageNo,pageSize);
+        List<RiderOrder> list = orderService.queryOrderByDate(beginTime,endTime,pageNo,pageSize);
 
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),pageList);
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),list);
     }
 
 
@@ -1205,11 +1249,22 @@ public class RestOrderController {
 
         Order order = orderService.getById(orderId);
 
-        if(order == null){
-            return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+        if(order.getOrderType().equals("0")){
+            order.setStatus("3");
         }
 
-        user.setUserMoney(user.getUserMoney()-order.getOrderMoney());
+        if(order == null){
+            return new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(),ResultEnum.QUERY_NOT_EXIST.getDesc(),null);
+        }
+
+        Account account = accountService.getByUid(user.getId());
+
+        if(account.getMoney()<order.getOrderMoney()){
+            return new RestResponseBean(ResultEnum.MONEY_NOT_ENOUGH.getValue(),ResultEnum.MONEY_NOT_ENOUGH.getDesc(),null);
+        }
+
+        account.setMoney(account.getMoney()-order.getOrderMoney());
+        //user.setUserMoney(user.getUserMoney()-order.getOrderMoney());
         userService.updateById(user);
         order.setStatus("2");
         orderService.updateById(order);
