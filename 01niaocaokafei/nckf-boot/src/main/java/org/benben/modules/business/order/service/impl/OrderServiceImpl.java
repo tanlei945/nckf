@@ -548,6 +548,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 	}
 
 
+
 	//@赵永刚
 	private List<RiderOrder> query(User user,List<Order> list){
 		//得到骑手位置对象，拿到经纬度

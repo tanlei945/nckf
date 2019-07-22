@@ -33,6 +33,8 @@ public class OrderMessageServiceImpl extends ServiceImpl<OrderMessageMapper, Ord
             OrderMessage orderMessage = new OrderMessage();
             orderMessage.setTitle("订单消息").setMsgContent(stringBuffer.toString());
             orderMessage.setUserId(order.getUserId());
+            orderMessage.setOrderId(orderId);
+            orderMessage.setOrderType(order.getOrderType());
             boolean save = save(orderMessage);
             return save;
         } catch (Exception e) {

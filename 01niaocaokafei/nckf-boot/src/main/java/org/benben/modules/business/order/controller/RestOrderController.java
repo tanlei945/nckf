@@ -714,7 +714,6 @@ public class RestOrderController {
                     double lat = order.getUserLat();
                     double lng = order.getUserLng();
 
-
                     String disRS = DistanceUtil.algorithm(lat,lng,riderAddress.getLat(),riderAddress.getLng());
                     String disRU = DistanceUtil.algorithm(store.getLat(),store.getLng(),riderAddress.getLat(),riderAddress.getLng());
                     riderOrder.setRiderAndStoreDis(Double.parseDouble(disRS));
@@ -825,7 +824,9 @@ public class RestOrderController {
         if(orderList!=null){
             List<OrderGoods> orderGoodsList = new ArrayList<>();
             for (Order order : orderList) {
-                orderGoodsList.add(orderGoodsService.getById(order.getId()));
+                QueryWrapper<OrderGoods> orderGoodsQueryWrapper = new QueryWrapper<>();
+                orderGoodsQueryWrapper.eq("orderId",order.getId());
+                orderGoodsList.add(orderGoodsService.getOne(orderGoodsQueryWrapper));
             }
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),orderGoodsList);
         }
@@ -1248,15 +1249,14 @@ public class RestOrderController {
         }
 
         Order order = orderService.getById(orderId);
-
-        if(order.getOrderType().equals("0")){
-            order.setStatus("3");
-        }
-
         if(order == null){
             return new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(),ResultEnum.QUERY_NOT_EXIST.getDesc(),null);
         }
-
+        if(order.getOrderType().equals("1")){
+            order.setStatus("3");
+        }else{
+            order.setStatus("2");
+        }
         Account account = accountService.getByUid(user.getId());
 
         if(account.getMoney()<order.getOrderMoney()){
@@ -1266,7 +1266,6 @@ public class RestOrderController {
         account.setMoney(account.getMoney()-order.getOrderMoney());
         //user.setUserMoney(user.getUserMoney()-order.getOrderMoney());
         userService.updateById(user);
-        order.setStatus("2");
         orderService.updateById(order);
 
         //把订单临时表中的数据删除
