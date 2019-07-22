@@ -82,7 +82,7 @@ public class RestOrderMessageController {
            result.error500("未找到对应实体");
            return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
        }else {
-           orderMessage.setDelFlag("1");
+           orderMessage.setDelFlag("0");
            boolean b = orderMessageService.updateById(orderMessage);
            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
        }

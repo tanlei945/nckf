@@ -67,7 +67,7 @@ public class RestRiderAddressController {
         }
 
         QueryWrapper<RiderAddress> riderAddressQueryWrapper = new QueryWrapper<>();
-        riderAddressQueryWrapper.eq("rider_id",user.getId());
+            riderAddressQueryWrapper.eq("rider_id",user.getId());
         RiderAddress riderAddressEntity = riderAddressService.getOne(riderAddressQueryWrapper);
         if(riderAddressEntity == null) {
             riderAddressEntity = new RiderAddress();
@@ -83,7 +83,7 @@ public class RestRiderAddressController {
             return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
         }else {
             riderAddressEntity.setLat(Double.parseDouble(lat));
-            riderAddressEntity.setLat(Double.parseDouble(lng));
+            riderAddressEntity.setLng(Double.parseDouble(lng));
             riderAddressEntity.setUpdateBy(user.getRealname());
             riderAddressEntity.setUpdateTime(new Date());
             riderAddressService.update(riderAddressEntity, riderAddressQueryWrapper);

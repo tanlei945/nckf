@@ -31,8 +31,6 @@ public class Coupons implements Serializable {
 	/**优惠券名称*/
 	@Excel(name = "优惠券名称", width = 15)
 	private java.lang.String couponsName;
-	//描述
-	private java.lang.String desc;
 	/**使用条件*/
 	@Excel(name = "使用条件", width = 15)
 	private java.lang.Double useCondition;
@@ -51,6 +49,8 @@ public class Coupons implements Serializable {
 	@Excel(name = "是否所有商家通用：0-否 1-是", width = 15,dicCode = "common_flag")
 	@Dict(dicCode = "common_flag")
 	private java.lang.String commonFlag;
+	@Excel(name = "描述", width = 15)
+	private java.lang.String describtion;
 	/**过期时间*/
 	@Excel(name = "过期时间", width = 20, format = "yyyy-MM-dd HH:mm:ss")
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
