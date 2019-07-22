@@ -11,4 +11,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IRiderAddressService extends IService<RiderAddress> {
 
+    void getOne();
 }

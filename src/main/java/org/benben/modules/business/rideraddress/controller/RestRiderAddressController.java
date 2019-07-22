@@ -10,6 +10,8 @@ import org.apache.shiro.SecurityUtils;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.api.vo.Result;
 import org.benben.common.menu.ResultEnum;
+import org.benben.modules.business.order.entity.Order;
+import org.benben.modules.business.order.service.IOrderService;
 import org.benben.modules.business.rideraddress.entity.RiderAddress;
 import org.benben.modules.business.rideraddress.service.IRiderAddressService;
 import org.benben.modules.business.user.entity.User;
@@ -93,6 +95,27 @@ public class RestRiderAddressController {
     }
 
 
+    @Autowired
+    private IOrderService orderService;
+
+    @Autowired
+    private IRiderAddressService IRiderAddressService;
+    @PostMapping(value = "/getRiderAddress")
+    @ApiOperation(value = "查看骑手位置", tags = {"骑手位置接口"}, notes = "查看骑手位置")
+    public RestResponseBean getRiderAddress( @RequestParam String orderId) {
+        RiderAddress one = null;
+        try {
+            Order byId = orderService.getById(orderId);
+            String riderId = byId.getRiderId();
+            QueryWrapper<RiderAddress> riderAddressQueryWrapper = new QueryWrapper<>();
+            riderAddressQueryWrapper.eq("ridder_id",riderId);
+            one = IRiderAddressService.getOne(riderAddressQueryWrapper);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
+        }
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),one);
+    }
     /**
      * showdoc
      * @catalog 骑手位置接口

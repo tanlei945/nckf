@@ -1066,7 +1066,6 @@ public class RestOrderController {
         List<RiderOrder> list = orderService.queryOrderDqh(pageNo,pageSize);
 
 
-
         return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),list);
     }
 
