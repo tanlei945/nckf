@@ -192,7 +192,7 @@ public class RestSmsController {
     @ApiOperation(value = "测试发送验证码", tags = {"短信接口"},notes = "测试发送验证码")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "mobile",value = "手机号",dataType = "String",required = true),
-			@ApiImplicitParam(name = "event",value = "login、register、forget、changePwd、changePayPwd、binding",dataType = "String",required = true)
+			@ApiImplicitParam(name = "event",value = "login、register、forget、changePwd、changePayPwd、binding、third",dataType = "String",required = true)
 	})
     public RestResponseBean testSend(@RequestParam String mobile, @RequestParam String event) {
 

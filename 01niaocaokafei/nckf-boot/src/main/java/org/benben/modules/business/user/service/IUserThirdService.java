@@ -17,4 +17,8 @@ public interface IUserThirdService extends IService<UserThird> {
 
 	public UserThird queryByOpenid(String openid);
 
+	public UserThird queryByUserIdAndStatus(String userId, String openType);
+
+	public int bindOpenId(String userid,String openid,String openType);
+
 }

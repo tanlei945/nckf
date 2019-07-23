@@ -7,6 +7,7 @@ import org.benben.modules.business.user.mapper.UserThirdMapper;
 import org.benben.modules.business.user.service.IUserThirdService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -28,6 +29,36 @@ public class UserThirdServiceImpl extends ServiceImpl<UserThirdMapper, UserThird
 	}
 
 	/**
+	 * 根据类型和用户ID查询，目的查询是否存在，处理重复绑定问题
+	 * @param userId
+	 * @param openType
+	 * @return
+	 */
+	@Override
+	public UserThird queryByUserIdAndStatus(String userId, String openType){
+
+		QueryWrapper<UserThird> queryWrapper = new QueryWrapper<>();
+		queryWrapper.lambda()
+				.eq(UserThird::getUserId,userId)
+				.eq(UserThird::getOpenType,openType);
+
+		return userThirdMapper.selectOne(queryWrapper);
+	}
+
+	@Override
+	@Transactional
+	public int bindOpenId(String userid, String openid, String openType) {
+
+		UserThird userThird = new UserThird();
+
+		userThird.setOpenType(openType);
+		userThird.setUserId(userid);
+		userThird.setOpenId(openid);
+
+		return userThirdMapper.insert(userThird);
+	}
+
+	/**
 	 * 根据openid查询绑定信息
 	 * @param openid
 	 * @return
@@ -36,7 +67,9 @@ public class UserThirdServiceImpl extends ServiceImpl<UserThirdMapper, UserThird
 	public UserThird queryByOpenid(String openid) {
 
 		QueryWrapper<UserThird> queryWrapper = new QueryWrapper<>();
-		queryWrapper.eq("open_id",openid);
+		queryWrapper.lambda()
+				.eq(UserThird::getOpenId,openid)
+				.eq(UserThird::getStatus,"0");
 
 		return userThirdMapper.selectOne(queryWrapper);
 	}

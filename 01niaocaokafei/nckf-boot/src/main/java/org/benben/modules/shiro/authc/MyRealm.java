@@ -123,7 +123,7 @@ public class MyRealm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken auth) throws AuthenticationException {
 
-        String password,sign,userId;
+        String password,userId;
         int status;
         SysUser sysUser = new SysUser();
 
@@ -135,10 +135,13 @@ public class MyRealm extends AuthorizingRealm {
 
         // 解密获得username，用于后台和数据库进行对比
         String username = JwtUtil.getUsername(token);
-        //判断是后台用户访问还是APP用户访问
+
         if(username != null){
             // 查询用户信息
             sysUser = sysUserService.getUserByName(username);
+			if (sysUser == null) {
+				throw new AuthenticationException("用户不存在!");
+			}
 			userId = sysUser.getId();
             password = sysUser.getPassword();
             status = sysUser.getStatus();
