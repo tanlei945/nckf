@@ -67,6 +67,8 @@ public interface CommonConstant {
 
 	public static String SMS_EVENT_BINGDING = "binding";
 
+	public static String SMS_EVENT_THIRD = "third";
+
 	public static String NCKF_PWD="nckf123";
 
     /**

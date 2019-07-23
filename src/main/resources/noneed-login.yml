@@ -9,6 +9,8 @@ filterlist:
   - /api/v1/user/riderRegister
   - /api/v1/user/forgetPassword
   - /api/v1/user/isExistMobile
+  - /api/v1/user/mobileThirdLogin
+  - /api/v1/user/bindOpenId
   - /api/v1/sms/
   - /api/v1/user/userlogin
   - /api/v1/user/userlogin
