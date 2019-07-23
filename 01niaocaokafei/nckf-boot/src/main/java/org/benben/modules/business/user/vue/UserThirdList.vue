@@ -12,19 +12,14 @@
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="8">
-            <a-form-item label="QQ_OpenId">
-              <a-input placeholder="请输入QQ_OpenId" v-model="queryParam.qqOpenid"></a-input>
+            <a-form-item label="OpenId">
+              <a-input placeholder="请输入OpenId" v-model="queryParam.openId"></a-input>
             </a-form-item>
           </a-col>
         <template v-if="toggleSearchStatus">
         <a-col :md="6" :sm="8">
-            <a-form-item label="微信_OpenId">
-              <a-input placeholder="请输入微信_OpenId" v-model="queryParam.wxOpenid"></a-input>
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="8">
-            <a-form-item label="微博_OpenId">
-              <a-input placeholder="请输入微博_OpenId" v-model="queryParam.wbOpenid"></a-input>
+            <a-form-item label="类型  0/QQ,1/微信,2/微博">
+              <a-input placeholder="请输入类型  0/QQ,1/微信,2/微博" v-model="queryParam.type"></a-input>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="8">
@@ -138,19 +133,14 @@
             dataIndex: 'userId'
            },
 		   {
-            title: 'QQ_OpenId',
+            title: 'OpenId',
             align:"center",
-            dataIndex: 'qqOpenid'
+            dataIndex: 'openId'
            },
 		   {
-            title: '微信_OpenId',
+            title: '类型  0/QQ,1/微信,2/微博',
             align:"center",
-            dataIndex: 'wxOpenid'
-           },
-		   {
-            title: '微博_OpenId',
-            align:"center",
-            dataIndex: 'wbOpenid'
+            dataIndex: 'type'
            },
 		   {
             title: '状态  0/启用,1/未启用,2/已删除',

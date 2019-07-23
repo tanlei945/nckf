@@ -20,26 +20,20 @@
         <a-form-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
-          label="QQ_OpenId">
-          <a-input placeholder="请输入QQ_OpenId" v-decorator="['qqOpenid', {}]" />
+          label="OpenId">
+          <a-input placeholder="请输入OpenId" v-decorator="['openId', {}]" />
         </a-form-item>
         <a-form-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
-          label="微信_OpenId">
-          <a-input placeholder="请输入微信_OpenId" v-decorator="['wxOpenid', {}]" />
-        </a-form-item>
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="微博_OpenId">
-          <a-input placeholder="请输入微博_OpenId" v-decorator="['wbOpenid', {}]" />
+          label="类型  0/QQ,1/微信,2/微博">
+          <a-input placeholder="请输入类型  0/QQ,1/微信,2/微博" v-decorator="['type', validatorRules.type ]" />
         </a-form-item>
         <a-form-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           label="状态  0/启用,1/未启用,2/已删除">
-          <a-input placeholder="请输入状态  0/启用,1/未启用,2/已删除" v-decorator="['status', {}]" />
+          <a-input placeholder="请输入状态  0/启用,1/未启用,2/已删除" v-decorator="['status', validatorRules.status ]" />
         </a-form-item>
 		
       </a-form>
@@ -71,6 +65,8 @@
         confirmLoading: false,
         form: this.$form.createForm(this),
         validatorRules:{
+        type:{rules: [{ required: true, message: '请输入类型  0/QQ,1/微信,2/微博!' }]},
+        status:{rules: [{ required: true, message: '请输入状态  0/启用,1/未启用,2/已删除!' }]},
         },
         url: {
           add: "/user/userThird/add",
@@ -89,7 +85,7 @@
         this.model = Object.assign({}, record);
         this.visible = true;
         this.$nextTick(() => {
-          this.form.setFieldsValue(pick(this.model,'userId','qqOpenid','wxOpenid','wbOpenid','status'))
+          this.form.setFieldsValue(pick(this.model,'userId','openId','type','status'))
 		  //时间格式化
         });
 
@@ -119,10 +115,10 @@
             console.log(formData)
             httpAction(httpurl,formData,method).then((res)=>{
               if(res.success){
-                that.$message.success(org.benben.modules.business.usermessage);
+                that.$message.success(res.message);
                 that.$emit('ok');
               }else{
-                that.$message.warning(org.benben.modules.business.usermessage);
+                that.$message.warning(res.message);
               }
             }).finally(() => {
               that.confirmLoading = false;

@@ -14,7 +14,7 @@ import java.util.List;
 public interface UserThirdMapper extends BaseMapper<UserThird> {
 
 	public boolean deleteByMainId(String mainId);
-    
+
 	public List<UserThird> selectByMainId(String mainId);
 
 }

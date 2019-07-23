@@ -1134,6 +1134,8 @@ public class RestUserController {
 			@RequestParam(name = "event") String event, @RequestParam(name = "captcha") String captcha,
 			@RequestParam(name = "openId") String openId, @RequestParam(name = "platform") String platform) {
 
+		User user = null;
+
 		if (StringUtils.isBlank(mobile) || StringUtils.isBlank(event) || StringUtils.isBlank(captcha) || StringUtils
 				.isBlank(openId) || StringUtils.isBlank(platform)) {
 			return new RestResponseBean(ResultEnum.PARAMETER_MISSING.getValue(), ResultEnum.PARAMETER_MISSING.getDesc(),
@@ -1154,24 +1156,34 @@ public class RestUserController {
 						null);
 		}
 
-		User user = userService.queryByMobile(mobile);
+		user = userService.queryByMobile(mobile);
+		//新用户
+		if(user == null){
+
+			user = userService.userRegister(mobile, CommonConstant.NCKF_PWD);
+		}
 
 		UserThird userThird = userThirdService.queryByUserIdAndStatus(user.getId(), platform);
-		//未绑定
+		//未绑定,添加绑定
 		if (userThird == null) {
 			//绑定失败
 			if (userThirdService.bindOpenId(user.getId(), openId, platform) == 0) {
 				return new RestResponseBean(ResultEnum.BINDING_FAIL.getValue(), ResultEnum.BINDING_FAIL.getDesc(),
 						null);
 			}
-			//绑定成功
-			return new RestResponseBean(ResultEnum.BINDING_SUCCESS.getValue(), ResultEnum.BINDING_SUCCESS.getDesc(),
-					null);
-		}
-		//已绑定
 
-		return new RestResponseBean(ResultEnum.REPEATED_BINDING.getValue(), ResultEnum.REPEATED_BINDING.getDesc(),
-				null);
+		}else{//已绑定,更换绑定
+
+			userThird.setOpenId(openId);
+			//换绑失败
+			if(!userThirdService.updateById(userThird)){
+				return new RestResponseBean(ResultEnum.BINDING_FAIL.getValue(), ResultEnum.BINDING_FAIL.getDesc(),
+						null);
+			}
+		}
+		//绑定成功
+		return new RestResponseBean(ResultEnum.BINDING_SUCCESS.getValue(), ResultEnum.BINDING_SUCCESS.getDesc(),
+				tokenBuild(user));
 	}
 
 
