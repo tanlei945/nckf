@@ -170,7 +170,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         UserThird userThird = new UserThird();
         userThird.setUserId(userId);
         userThird.setOpenId(openId);
-        userThird.setOpenType(type);
+        userThird.setType(type);
 
         return userThirdMapper.insert(userThird);
     }

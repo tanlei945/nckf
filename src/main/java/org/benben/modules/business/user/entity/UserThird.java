@@ -25,13 +25,14 @@ public class UserThird implements Serializable {
 	@TableId(type = IdType.UUID)
 	private java.lang.String id;
 	/**用户ID*/
+	@Excel(name = "用户ID", width = 15)
 	private java.lang.String userId;
-	/**状态  0/QQ,1/微信,2/微博*/
-	@Excel(name = "状态  0/QQ,1/微信,2/微博", width = 15)
-	private java.lang.String openType;
 	/**OpenId*/
 	@Excel(name = "OpenId", width = 15)
 	private java.lang.String openId;
+	/**类型  0/QQ,1/微信,2/微博*/
+	@Excel(name = "类型  0/QQ,1/微信,2/微博", width = 15)
+	private java.lang.String type;
 	/**状态  0/启用,1/未启用,2/已删除*/
 	@Excel(name = "状态  0/启用,1/未启用,2/已删除", width = 15)
 	private java.lang.String status;

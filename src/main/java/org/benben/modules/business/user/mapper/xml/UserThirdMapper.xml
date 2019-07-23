@@ -3,16 +3,16 @@
 <mapper namespace="org.benben.modules.business.user.mapper.UserThirdMapper">
 
 	<delete id="deleteByMainId" parameterType="java.lang.String">
-		DELETE 
-		FROM  user_third 
-		WHERE
-			 user_id = #{id} 		
-	</delete>
-	
-	<select id="selectByMainId" parameterType="java.lang.String" resultType="org.benben.modules.business.user.entity.UserThird">
-		SELECT * 
+		DELETE
 		FROM  user_third
 		WHERE
-			 user_id = #{id} 		
+			 user_id = #{id}
+	</delete>
+
+	<select id="selectByMainId" parameterType="java.lang.String" resultType="org.benben.modules.business.user.entity.UserThird">
+		SELECT *
+		FROM  user_third
+		WHERE
+			 user_id = #{id}
 	</select>
 </mapper>

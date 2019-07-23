@@ -19,10 +19,10 @@ import java.util.List;
  */
 @Service
 public class UserThirdServiceImpl extends ServiceImpl<UserThirdMapper, UserThird> implements IUserThirdService {
-	
+
 	@Autowired
 	private UserThirdMapper userThirdMapper;
-	
+
 	@Override
 	public List<UserThird> selectByMainId(String mainId) {
 		return userThirdMapper.selectByMainId(mainId);
@@ -31,27 +31,27 @@ public class UserThirdServiceImpl extends ServiceImpl<UserThirdMapper, UserThird
 	/**
 	 * 根据类型和用户ID查询，目的查询是否存在，处理重复绑定问题
 	 * @param userId
-	 * @param openType
+	 * @param type
 	 * @return
 	 */
 	@Override
-	public UserThird queryByUserIdAndStatus(String userId, String openType){
+	public UserThird queryByUserIdAndStatus(String userId, String type){
 
 		QueryWrapper<UserThird> queryWrapper = new QueryWrapper<>();
 		queryWrapper.lambda()
 				.eq(UserThird::getUserId,userId)
-				.eq(UserThird::getOpenType,openType);
+				.eq(UserThird::getType,type);
 
 		return userThirdMapper.selectOne(queryWrapper);
 	}
 
 	@Override
 	@Transactional
-	public int bindOpenId(String userid, String openid, String openType) {
+	public int bindOpenId(String userid, String openid, String type) {
 
 		UserThird userThird = new UserThird();
 
-		userThird.setOpenType(openType);
+		userThird.setType(type);
 		userThird.setUserId(userid);
 		userThird.setOpenId(openid);
 
