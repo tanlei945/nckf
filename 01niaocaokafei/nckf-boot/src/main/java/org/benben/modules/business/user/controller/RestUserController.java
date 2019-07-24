@@ -1098,7 +1098,7 @@ public class RestUserController {
 	}
 
 
-	@GetMapping(value = "/mobileThirdLogin")
+	@PostMapping(value = "/mobileThirdLogin")
 	@ApiOperation(value = "手机三方登录", tags = {"用户接口"}, notes = "手机三方登录")
 	@ApiImplicitParam(name = "openId", value = "三方唯一标识ID", dataType = "String", required = true)
 	public RestResponseBean mobileThirdLogin(@RequestParam(name = "openId") String openId) {
