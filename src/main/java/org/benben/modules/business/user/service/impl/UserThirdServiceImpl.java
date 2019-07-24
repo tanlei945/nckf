@@ -35,7 +35,7 @@ public class UserThirdServiceImpl extends ServiceImpl<UserThirdMapper, UserThird
 	 * @return
 	 */
 	@Override
-	public UserThird queryByUserIdAndStatus(String userId, String type){
+	public UserThird queryByUserIdAndType(String userId, String type){
 
 		QueryWrapper<UserThird> queryWrapper = new QueryWrapper<>();
 		queryWrapper.lambda()
