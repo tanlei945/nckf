@@ -1163,7 +1163,7 @@ public class RestUserController {
 			user = userService.userRegister(mobile, CommonConstant.NCKF_PWD);
 		}
 
-		UserThird userThird = userThirdService.queryByUserIdAndStatus(user.getId(), platform);
+		UserThird userThird = userThirdService.queryByUserIdAndType(user.getId(), platform);
 		//未绑定,添加绑定
 		if (userThird == null) {
 			//绑定失败
