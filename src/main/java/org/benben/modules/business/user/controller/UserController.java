@@ -75,6 +75,20 @@ public class UserController {
 	}
 
 	/**
+	 * 骑手列表
+	 * @return
+	 */
+	@GetMapping(value = "/queryRiderList")
+	public Result<List<User>> queryRiderList() {
+		Result<List<User>> result = new Result<List<User>>();
+		QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+		List<User> list = userService.list(queryWrapper);
+		result.setSuccess(true);
+		result.setResult(list);
+		return result;
+	}
+
+	/**
 	 *   添加
 	 * @param user
 	 * @return
