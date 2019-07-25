@@ -18,6 +18,8 @@ import org.benben.common.util.oConvertUtils;
 import org.benben.modules.business.goods.entity.Goods;
 import org.benben.modules.business.goods.entity.SpecDict;
 import org.benben.modules.business.goods.service.IGoodsService;
+import org.benben.modules.business.store.entity.Store;
+import org.benben.modules.business.store.service.IStoreService;
 import org.benben.modules.system.entity.SysUser;
 import org.benben.modules.system.service.ISysUserService;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
@@ -49,6 +51,8 @@ public class GoodsController {
 	@Autowired
 	private ISysUserService sysUserService;
 
+	@Autowired
+	private IStoreService storeService;
 
 	@GetMapping(value = "/list")
 	public Result<IPage<Goods>> queryGoodsPageList(Goods goods,
@@ -89,7 +93,9 @@ public class GoodsController {
 		try {
 		SysUser sysuser = (SysUser) SecurityUtils.getSubject().getPrincipal();
 		Goods goods = JSON.parseObject(jsonObject.toJSONString(), Goods.class);
-		goods.setBelongId(sysuser.getId());
+		QueryWrapper<Store> storeQueryWrapper = new QueryWrapper<Store>();
+		Store one = storeService.getOne(storeQueryWrapper);
+		goods.setBelongId(one.getId());
 		goodsService.save(goods);
 
 		Object selectedRole = jsonObject.get("selectedroles");

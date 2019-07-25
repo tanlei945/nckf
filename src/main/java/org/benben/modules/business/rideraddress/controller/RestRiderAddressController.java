@@ -107,9 +107,7 @@ public class RestRiderAddressController {
         try {
             Order byId = orderService.getById(orderId);
             String riderId = byId.getRiderId();
-            QueryWrapper<RiderAddress> riderAddressQueryWrapper = new QueryWrapper<>();
-            riderAddressQueryWrapper.eq("ridder_id",riderId);
-            one = IRiderAddressService.getOne(riderAddressQueryWrapper);
+            one = IRiderAddressService.getRiderAddress(riderId);
         } catch (Exception e) {
             e.printStackTrace();
             return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);

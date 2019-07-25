@@ -129,7 +129,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public User queryByMobile(String moblie) {
 
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-		queryWrapper.eq("mobile", moblie);
+		queryWrapper.lambda().eq(User::getMobile,moblie)
+				.eq(User::getUserType,"0");
 
         return userMapper.selectOne(queryWrapper);
     }

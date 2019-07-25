@@ -20,6 +20,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
+import org.benben.modules.business.user.entity.User;
+import org.benben.modules.business.user.service.IUserService;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -46,7 +48,8 @@ import com.alibaba.fastjson.JSON;
 public class InvoiceController {
 	@Autowired
 	private IInvoiceService invoiceService;
-	
+	 @Autowired
+	 private IUserService userService;
 	/**
 	  * 分页列表查询
 	 * @param invoice
@@ -234,5 +237,28 @@ public class InvoiceController {
       }
       return Result.ok("文件导入失败！");
   }
+	 @GetMapping(value = "/background_list")
+	 public Result<IPage<Invoice>> querybackgroundList(Invoice invoice,
+												 @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+												 @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
+												 HttpServletRequest req) {
+		 Result<IPage<Invoice>> result = new Result<IPage<Invoice>>();
+		 QueryWrapper<Invoice> queryWrapper = QueryGenerator.initQueryWrapper(invoice, req.getParameterMap());
+		 Page<Invoice> page = new Page<Invoice>(pageNo, pageSize);
+		 IPage<Invoice> pageList = invoiceService.page(page, queryWrapper);
 
+		 List<Invoice> records = pageList.getRecords();
+		 for (Invoice record : records) {
+			 String userId = record.getUserId();
+			 User user = userService.getById(userId);
+			 if(user != null){
+				 record.setRealname(user.getRealname());
+			 }
+		 }
+		 pageList.setRecords(records);
+
+		 result.setSuccess(true);
+		 result.setResult(pageList);
+		 return result;
+	 }
 }
