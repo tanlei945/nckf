@@ -284,7 +284,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 			order.setRiderId(riderId);
 			//给订单的rider  name 赋上值
 			User user = userService.getById(riderId);
-			order.setRidername(user.getUsername());
+			order.setRidername(user.getRealname());
 			order.setRiderOk("1");
 			//order.setGetTime(new Date());
 			order.setRiderPhone(user.getMobile());
@@ -345,22 +345,18 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
 
 	@Override
-	public List<RiderOrder> queryOrderByDate(String beginTime, String endTime, Integer pageNo, Integer pageSize) throws Exception{
+	public IPage<RiderOrder> queryOrderByDate(String beginTime, String endTime, Integer pageNo, Integer pageSize) throws Exception{
 		User user = (User) LoginUser.getCurrentUser();
 
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 		Date beginDate = formatter.parse(beginTime);
 		Date endDate = formatter.parse(endTime);
-
-
-
-
-
 		QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
 		queryWrapper.eq("rider_id",user.getId()).eq("rider_ok","3").eq("rider_del_flag","1").lambda().orderByDesc(Order::getCreateTime);
-		List<Order> list = orderService.list(queryWrapper);
+		Page<Order> page = new Page<Order>(pageNo, pageSize);
+		IPage<Order> orderPageList = orderService.page(page, queryWrapper);
 		List<Order> orderList = new ArrayList<>();
-		for (Order order : list) {
+		for (Order order : orderPageList.getRecords()) {
 			SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd");
 			String dateString = formatter1.format(order.getOverTime());
 			Date overDate = formatter.parse(dateString);
@@ -369,77 +365,57 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 				orderList.add(order);
 			}
 		}
-
-		List<RiderOrder> riderOrderList = query(user,orderList);
-		/*IPage<RiderOrder> pageList = new Page<>(pageNo,pageSize);
-		pageList.setRecords(riderOrderList);*/
-
-		return riderOrderList;
+		return momentSet(user,orderPageList,orderList,pageNo,pageSize);
 	}
 
 	@Override
-	public List<RiderOrder> queryOrderToday(Integer pageNo, Integer pageSize)  throws  Exception{
+	public IPage<RiderOrder> queryOrderToday(Integer pageNo, Integer pageSize)  throws  Exception{
 
 		User user = (User) LoginUser.getCurrentUser();
-
 		QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
 		queryWrapper.eq("rider_id",user.getId()).eq("rider_ok","3").eq("rider_del_flag","1").lambda().orderByDesc(Order::getCreateTime);
-		List<Order> list = orderService.list(queryWrapper);
+        Page<Order> page = new Page<Order>(pageNo, pageSize);
+        IPage<Order> orderPageList = orderService.page(page, queryWrapper);
 		List<Order> orderList = new ArrayList<>();
-		for (Order order : list) {
+		for (Order order : orderPageList.getRecords()) {
 			if(DayUtils.isToday(order.getOverTime())){
 				orderList.add(order);
 			}
 		}
-		List<RiderOrder> riderOrderList = query(user,orderList);
-		return riderOrderList;
+        return momentSet(user,orderPageList,orderList,pageNo,pageSize);
 	}
 
 	@Override
-	public List<RiderOrder> queryOrderYest(Integer pageNo, Integer pageSize)  throws  Exception{
+	public IPage<RiderOrder> queryOrderYest(Integer pageNo, Integer pageSize)  throws  Exception{
 		User user = (User) LoginUser.getCurrentUser();
-
 		QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
 		queryWrapper.eq("rider_id",user.getId()).eq("rider_ok","3").eq("rider_del_flag","1").orderByDesc("create_time");
-		List<Order> list = orderService.list(queryWrapper);
+        Page<Order> page = new Page<Order>(pageNo, pageSize);
+        IPage<Order> orderPageList = orderService.page(page, queryWrapper);
 		List<Order> orderList = new ArrayList<>();
-		for (Order order : list) {
+		for (Order order : orderPageList.getRecords()) {
 			if(DayUtils.isYesterday(order.getOverTime())){
 				orderList.add(order);
 			}
 		}
-		List<RiderOrder> riderOrderList = query(user,orderList);
-
-/*
-		IPage<RiderOrder> pageList = new Page<>(pageNo,pageSize);
-		pageList.setRecords(riderOrderList);
-		pageList.setTotal((long)riderOrderList.size());*/
-		//pageList.setCurrent(pageNo);
-
-
-		return riderOrderList;
+        return momentSet(user,orderPageList,orderList,pageNo,pageSize);
 	}
 
 	@Override
-	public List<RiderOrder> queryOrderQiantian(Integer pageNo, Integer pageSize)  throws  Exception{
+	public IPage<RiderOrder> queryOrderQiantian(Integer pageNo, Integer pageSize)  throws  Exception{
 		User user = (User) LoginUser.getCurrentUser();
 
 		QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
 		queryWrapper.eq("rider_id",user.getId()).eq("rider_ok","3").eq("rider_del_flag","1").lambda().orderByDesc(Order::getCreateTime);
-		List<Order> list = orderService.list(queryWrapper);
+        Page<Order> page = new Page<Order>(pageNo, pageSize);
+        IPage<Order> orderPageList = orderService.page(page, queryWrapper);
 		List<Order> orderList = new ArrayList<>();
-		for (Order order : list) {
+		for (Order order : orderPageList.getRecords()) {
 			if(DayUtils.isQiantian(order.getOverTime())){
 				orderList.add(order);
 			}
 		}
-		List<RiderOrder> riderOrderList = query(user,orderList);
-
-
-		/*IPage<RiderOrder> pageList = new Page<>(pageNo,pageSize);
-		pageList.setRecords(riderOrderList);*/
-
-		return riderOrderList;
+        return momentSet(user,orderPageList,orderList,pageNo,pageSize);
 	}
 
 
@@ -485,69 +461,59 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 	}
 
 	@Override
-	public List<RiderOrder> queryOrderYwc(Integer pageNo, Integer pageSize) {
+	public IPage<RiderOrder> queryOrderYwc(Integer pageNo, Integer pageSize) {
 		User user = (User) LoginUser.getCurrentUser();
-
 		QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
 		queryWrapper.eq("rider_id",user.getId()).eq("rider_ok","3").eq("rider_del_flag","1").lambda().orderByDesc(Order::getCreateTime);
-		List<Order> list = orderService.list(queryWrapper);
-
-		List<RiderOrder> riderOrderList = query(user,list);
-
-		/*IPage<RiderOrder> pageList = new Page<>(pageNo,pageSize);
-		pageList.setRecords(riderOrderList);
-*/
-		return  riderOrderList;
+		Page<Order> page = new Page<Order>(pageNo, pageSize);
+		IPage<Order> orderPageList = orderService.page(page, queryWrapper);
+		List<Order> list = orderPageList.getRecords();
+		return momentSet(user,orderPageList,list,pageNo,pageSize);
 	}
 
 	@Override
-	public List<RiderOrder> queryOrderDsd(Integer pageNo, Integer pageSize) {
+	public IPage<RiderOrder> queryOrderDsd(Integer pageNo, Integer pageSize) {
 		User user = (User) LoginUser.getCurrentUser();
 		QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
 		queryWrapper.eq("rider_id",user.getId()).eq("rider_ok","2").lambda().orderByDesc(Order::getCreateTime);
-		List<Order> list = orderService.list(queryWrapper);
-
-		List<RiderOrder> riderOrderList = query(user,list);
-
-		/*IPage<RiderOrder> pageList = new Page<>(pageNo,pageSize);
-		pageList.setRecords(riderOrderList);*/
-
-		return  riderOrderList;
+		Page<Order> page = new Page<Order>(pageNo, pageSize);
+		IPage<Order> orderPageList = orderService.page(page, queryWrapper);
+		List<Order> list = orderPageList.getRecords();
+		return momentSet(user,orderPageList,list,pageNo,pageSize);
 	}
 
 	@Override
-	public List<RiderOrder> queryOrderDqh(Integer pageNo, Integer pageSize) {
+	public IPage<RiderOrder> queryOrderDqh(Integer pageNo, Integer pageSize) {
 		User user = (User) LoginUser.getCurrentUser();
-
 		QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
 		queryWrapper.eq("rider_id",user.getId()).eq("rider_ok","1").lambda().orderByDesc(Order::getCreateTime);
-		List<Order> list = orderService.list(queryWrapper);
-
-		List<RiderOrder> riderOrderList = query(user,list);
-
-		/*IPage<RiderOrder> pageList = new Page<>(pageNo,pageSize);
-		pageList.setRecords(riderOrderList);*/
-
-		return  riderOrderList;
+		Page<Order> page = new Page<Order>(pageNo, pageSize);
+		IPage<Order> orderPageList = orderService.page(page, queryWrapper);
+		List<Order> list = orderPageList.getRecords();
+		return momentSet(user,orderPageList,list,pageNo,pageSize);
 	}
 
 	@Override
-	public List<RiderOrder> queryRiderOrder(Integer pageNo, Integer pageSize) {
+	public IPage<RiderOrder> queryRiderOrder(Integer pageNo, Integer pageSize) {
 		User user = (User) LoginUser.getCurrentUser();
-
 		QueryWrapper<Order> wrapper = new QueryWrapper<>();
-		wrapper.eq("store_id",user.getStoreId()).eq("status","2").eq("rider_ok","0").eq("order_type","0").lambda().orderByDesc(Order::getCreateTime);
-		List<Order> list = orderService.list(wrapper);
-
-		List<RiderOrder> riderOrderList = query(user,list);
-
-		/*IPage<RiderOrder> pageList = new Page<>(pageNo,pageSize);
-		pageList.setRecords(riderOrderList);*/
-
-		return  riderOrderList;
+		wrapper.lambda().eq(Order::getStoreId,user.getStoreId()).eq(Order::getStatus,"2").eq(Order::getRiderOk,"0").eq(Order::getOrderType,"0").orderByDesc(Order::getCreateTime);
+		Page<Order> page = new Page<Order>(pageNo, pageSize);
+		IPage<Order> orderPageList = orderService.page(page, wrapper);
+		List<Order> list = orderPageList.getRecords();
+        return momentSet(user,orderPageList,list,pageNo,pageSize);
 	}
 
-
+    private IPage<RiderOrder> momentSet(User user,IPage<Order> orderPageList,List<Order> list,Integer pageNo, Integer pageSize){
+        List<RiderOrder> riderOrderList = query(user,list);
+        IPage<RiderOrder> pageList = new Page<>(pageNo,pageSize);
+        pageList.setRecords(riderOrderList);
+        pageList.setPages(orderPageList.getPages());
+        pageList.setCurrent(orderPageList.getCurrent());
+        pageList.setTotal(Long.parseLong(String.valueOf(list.size())));
+        pageList.setSize(orderPageList.getSize());
+        return  pageList;
+    }
 
 	//@赵永刚
 	private List<RiderOrder> query(User user,List<Order> list){
@@ -570,7 +536,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
 			Store store = storeService.getById(order.getStoreId());
 
-			if (order.getOrderType().equals("1")){
+			if (order.getOrderType().equals("0")){
 				String disRS = DistanceUtil.algorithm(lat,lng,riderAddress.getLat(),riderAddress.getLng());
 				String disRU = DistanceUtil.algorithm(store.getLat(),store.getLng(),riderAddress.getLat(),riderAddress.getLng());
 
@@ -580,17 +546,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 				riderOrder.setStoreLat(store.getLat());
 				riderOrder.setStoreLng(store.getLng());
 			}
-
-
 			riderOrder.setStorename(store.getStoreName());
 			riderOrder.setStoreAddress(store.getAddressDesc());
-
-
 			String userId = order.getUserId();
 			User reciveUser = userService.getById(userId);
 			riderOrder.setUserAddress(order.getUserAddress());
 			riderOrder.setUserPhone(reciveUser.getMobile());
-
 			riderOrderList.add(riderOrder);
 		}
 

@@ -77,10 +77,8 @@ public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> impl
     public void editDefaultAddress(String userId, String id) {
 
         QueryWrapper<Address> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("user_id",userId).eq("del_flag","0");
+        queryWrapper.lambda().eq(Address::getUserId,userId).eq(Address::getDelFlag,"0");
         List<Address> list = addressMapper.selectList(queryWrapper);
-
-
 
         for (Address address1 : list) {
             address1.setDefaultFlag("0");

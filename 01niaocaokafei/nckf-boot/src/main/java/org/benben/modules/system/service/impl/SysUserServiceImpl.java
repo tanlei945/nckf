@@ -114,10 +114,12 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	public String querySuperAdmin() {
 		SysUser sysuser = (SysUser) SecurityUtils.getSubject().getPrincipal();
 		List<String> strings = userMapper.querySuperAdmin();
+		/*是admin或者superadmin*/
 		if(strings.contains(sysuser.getId())){
-			return null;
-		}else{
 			return sysuser.getId();
+			/*普通用户*/
+		}else{
+			return null;
 		}
 	}
 

@@ -169,7 +169,7 @@ public class RestAddressController {
 			}
 
 			QueryWrapper<Address> queryWrapper = new QueryWrapper<>();
-			queryWrapper.eq("user_id",user.getId()).eq("del_flag","0");
+			queryWrapper.lambda().eq(Address::getUserId,user.getId()).eq(Address::getDelFlag,"0");
 			List<Address> list = addressService.list(queryWrapper);
 
 			if("1".equals(addressEntity.getDelFlag())){

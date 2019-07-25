@@ -47,8 +47,7 @@ public class RestInvoiceController {
     private IOrderService orderService;
     @Autowired
     private IInvoiceTitleService invoiceTitleService;
-    @Autowired
-    private IUserService userService;
+
 
 
 
@@ -429,31 +428,6 @@ public class RestInvoiceController {
         }
     }
 
-
-    @GetMapping(value = "/background_list")
-    public Result<IPage<Invoice>> queryPageList(Invoice invoice,
-                                                @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-                                                @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
-                                                HttpServletRequest req) {
-        Result<IPage<Invoice>> result = new Result<IPage<Invoice>>();
-        QueryWrapper<Invoice> queryWrapper = QueryGenerator.initQueryWrapper(invoice, req.getParameterMap());
-        Page<Invoice> page = new Page<Invoice>(pageNo, pageSize);
-        IPage<Invoice> pageList = invoiceService.page(page, queryWrapper);
-
-        List<Invoice> records = pageList.getRecords();
-        for (Invoice record : records) {
-            String userId = record.getUserId();
-            User user = userService.getById(userId);
-            if(user != null){
-                record.setRealname(user.getRealname());
-            }
-        }
-        pageList.setRecords(records);
-
-        result.setSuccess(true);
-        result.setResult(pageList);
-        return result;
-    }
 
 
 }

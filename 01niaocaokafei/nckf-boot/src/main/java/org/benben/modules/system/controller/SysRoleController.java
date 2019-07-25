@@ -196,10 +196,13 @@ public class SysRoleController {
 	public Result<List<SysRole>> queryall() {
 		Result<List<SysRole>> result = new Result<>();
 		String s = sysUserService.querySuperAdmin();
+		//查询所有权限
 		List<SysRole> list = sysRoleService.list();
 		List<SysRole> list1 = new LinkedList<>();
+		/*admin或者superadmin情况下*/
 		if(s!=null&&!"".equals(s)){
 			list.forEach(value->{
+				//不能添加superadmin
 				if(!"superadmin".equals(value.getRoleCode()))
 				{
 					list1.add(value);

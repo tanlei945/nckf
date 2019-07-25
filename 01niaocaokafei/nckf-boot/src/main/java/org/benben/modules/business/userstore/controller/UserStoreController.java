@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.benben.common.api.vo.Result;
 import org.benben.common.system.query.QueryGenerator;
 import org.benben.common.util.oConvertUtils;
+import org.benben.modules.business.user.entity.User;
+import org.benben.modules.business.user.service.IUserService;
 import org.benben.modules.business.userstore.entity.UserStore;
 import org.benben.modules.business.userstore.service.IUserStoreService;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
@@ -85,7 +87,9 @@ public class UserStoreController {
 		}
 		return result;
 	}
-	
+
+	@Autowired
+	private IUserService userService;
 	/**
 	  *  编辑
 	 * @param userStore
@@ -95,6 +99,10 @@ public class UserStoreController {
 	public Result<UserStore> edit(@RequestBody UserStore userStore) {
 		Result<UserStore> result = new Result<UserStore>();
 		UserStore userStoreEntity = userStoreService.getById(userStore.getId());
+		String userId = userStore.getUserId();
+		User user = userService.getById(userId);
+		user.setStoreId(userStore.getStoreId());
+		userService.saveOrUpdate(user);
 		if(userStoreEntity==null) {
 			result.error500("未找到对应实体");
 		}else {
