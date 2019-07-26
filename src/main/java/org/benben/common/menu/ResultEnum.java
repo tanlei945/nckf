@@ -41,6 +41,7 @@ public enum ResultEnum {
     USER_EXIST(0, "用户已存在"),
     USER_NOT_EXIST(0, "用户不存在"),
     PASSWORD_ERROR(306,"密码错误"),
+    PASSWORD_EXIST(0,"新密码重复啦"),
 //    PASSWORD_RIGHT(307,"密码正确"),
     MOBILE_NOT_EXIST(1,"手机号不存在"),
     MOBILE_EXIST(0,"手机号已存在"),

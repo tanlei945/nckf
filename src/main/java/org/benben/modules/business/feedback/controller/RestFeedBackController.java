@@ -122,6 +122,7 @@ public class RestFeedBackController {
        feedBack.setCreateBy(user.getUsername());
        feedBack.setCreateTime(new Date());
        feedBack.setDelFlag("1");
+       feedBack.setContent(content);
        boolean flag = feedBackService.save(feedBack);
        if(flag){
            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);

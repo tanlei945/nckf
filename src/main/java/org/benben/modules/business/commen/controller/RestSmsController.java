@@ -14,6 +14,7 @@ import org.benben.common.util.DateUtils;
 import org.benben.common.util.RedisUtil;
 import org.benben.modules.business.commen.dto.SmsDTO;
 import org.benben.modules.business.commen.service.ISMSService;
+import org.benben.modules.business.user.entity.User;
 import org.benben.modules.business.user.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
@@ -41,15 +42,30 @@ public class RestSmsController {
 
     @PostMapping(value = "/thirdSend")
 //    @ApiOperation(value = "发送验证码 ",tags = {"短信接口"},notes = "发送验证码 ")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "mobile",value = "手机号",dataType = "String",required = true),
-            @ApiImplicitParam(name = "event",value = "事件",dataType = "String",defaultValue = "register",required = true)
-    })
-    public RestResponseBean thirdSend(@RequestParam String mobile,@RequestParam String event) {
+        @ApiImplicitParams({
+                @ApiImplicitParam(name = "mobile",value = "手机号",dataType = "String",required = true),
+                @ApiImplicitParam(name = "event",value = "事件",dataType = "String",defaultValue = "register",required = true)
+        })
+        public RestResponseBean thirdSend(@RequestParam String mobile,@RequestParam String event) {
 
         if (StringUtils.isBlank(mobile)|| StringUtils.isBlank(event)) {
             return new RestResponseBean(ResultEnum.PARAMETER_MISSING.getValue(), ResultEnum.PARAMETER_MISSING.getDesc(), null);
         }
+
+        if("register".equals(event)){
+            User user = userService.queryByMobileAndUserType(mobile, "0");
+
+            if (user == null) {
+
+                return new RestResponseBean(ResultEnum.MOBILE_NOT_EXIST.getValue(), ResultEnum.MOBILE_NOT_EXIST.getDesc(),
+                        null);
+            }
+
+            return new RestResponseBean(ResultEnum.MOBILE_EXIST.getValue(), ResultEnum.MOBILE_EXIST.getDesc(), null);
+        }
+
+
+
 
         String returncode =  ismsService.send(mobile,event);
 

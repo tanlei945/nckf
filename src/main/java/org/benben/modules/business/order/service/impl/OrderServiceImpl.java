@@ -292,7 +292,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 			//订单修改时间
 			order.setUpdateTime(new Date());
 			if(orderService.updateById(order)){
-				orderMessageService.addOrderMsg(orderId);
+				orderMessageService.riderAddOrderMsg(orderId,riderId);
 				return true;
 
 			}else{

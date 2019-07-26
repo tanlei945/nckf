@@ -33,7 +33,7 @@ public class DistanceUtil {
         s = s * 6378137.0;//弧长乘地球半径（半径为米）
 
         s = Math.round(s * 10000d) / 10000d;//精确距离的数值
-        s = s/1000;//将单位转换为km，如果想得到以米为单位的数据 就不用除以1000
+        //s = s/1000;//将单位转换为km，如果想得到以米为单位的数据 就不用除以1000
         //四舍五入 保留一位小数
         DecimalFormat df = new DecimalFormat("#.0");
 

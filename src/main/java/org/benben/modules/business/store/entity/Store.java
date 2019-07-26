@@ -90,6 +90,7 @@ public class Store implements Serializable {
 	/**商家简介*/
 	private String storeDesc;
 	private String city;
+	private int monthSaleCount;
 
 
 }

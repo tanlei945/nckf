@@ -160,6 +160,16 @@ public class RestAddressController {
 
 			BeanUtils.copyProperties(addressVO,addressEntity);
 
+			if(addressVO.getDefaultFlag().equals("1")){
+				QueryWrapper<Address> queryWrapper = new QueryWrapper<>();
+				queryWrapper.eq("user_id",user.getId());
+				List<Address> list = addressService.list(queryWrapper);
+				for (Address address : list) {
+					address.setDefaultFlag("0");
+				}
+				addressService.updateBatchById(list);
+			}
+
 			boolean ok = addressService.updateById(addressEntity);
 			if (!ok) {
 

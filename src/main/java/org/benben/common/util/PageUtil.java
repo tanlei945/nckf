@@ -7,7 +7,7 @@ import java.util.List;
 
 public class PageUtil {
     public static List page(List beforeList,int pageNo,int pageSize){
-
+        //总条数
         int totalCount=beforeList.size();
         int pageCount = (totalCount / pageSize) + ((totalCount % pageNo > 0) ? 1 : 0);
 
