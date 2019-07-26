@@ -292,6 +292,9 @@ public class RestUserCouponsController {
 		QueryWrapper<UserCoupons> queryWrapper = new QueryWrapper<>();
 		queryWrapper.lambda().eq(UserCoupons::getUserId,user.getId()).eq(UserCoupons::getStatus,"0");
 
+		Page<UserCoupons> page0 = new Page<UserCoupons>(pageNo, pageSize);
+		IPage<UserCoupons> pageList = userCouponsService.page(page0, queryWrapper);
+
 		List<UserCoupons> list = userCouponsService.list( queryWrapper);
 
 		if(list == null){
@@ -325,7 +328,8 @@ public class RestUserCouponsController {
 		IPage<Coupons> pageList0 = new Page<>(pageNo,pageSize);
 		pageList0.setRecords(couponsList);
 		pageList0.setTotal((long)couponsList.size());
-
+		pageList0.setCurrent(pageNo);
+		pageList0.setSize(pageSize);
 
 		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), pageList0);
 	}
