@@ -478,37 +478,13 @@ public class RestOrderController {
            money += cart.getSelectedPrice()*cart.getGoodsCount();
            count += cart.getGoodsCount();
        }
-
-
-
-       //如果此订单使用优惠券，得到数据库查询到的订单金额减去优惠金额
-       if(StringUtils.isNotBlank(couponseId)){
-          Coupons coupons = couponsService.getById(couponseId);
-          money -= coupons.getSaveMoney();
-          QueryWrapper<UserCoupons> queryWrapper = new QueryWrapper<>();
-          queryWrapper.lambda().eq(UserCoupons::getCouponsId,couponseId).eq(UserCoupons::getUserId,user.getId());
-          UserCoupons userCoupons = userCouponsService.getOne(queryWrapper);
-          userCoupons.setStatus("1");
-          userCouponsService.updateById(userCoupons);
-       }
-        //log.info(deliveryMoney+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-
-       //得到数据库订单金额减去加上配送费
-       if(StringUtils.isNotBlank(deliveryMoney)){
-           money += Double.parseDouble(deliveryMoney);
-       }
-
-       //比较db金额与app传过来的金额
-       if(money  != Double.parseDouble(appOrderMoney)){
-           return new RestResponseBean(ResultEnum.ORDER_MONEY_FAIL.getValue(),ResultEnum.ORDER_MONEY_FAIL.getDesc(),null);
-       }
-
-       //给order值
+        //给order值
        Order order = new Order();
        if(orderType.equals("0")){
            order.setDeliveryMoney(Double.parseDouble(deliveryMoney));
        }
-        order.setAccountFlag(accountFlag);
+
+       order.setAccountFlag(accountFlag);
        order.setThirdPay(thirdPay);
        order.setUsername(user.getRealname());
        order.setStatus("1");
@@ -520,6 +496,33 @@ public class RestOrderController {
        order.setCreateBy(user.getRealname());
        //为了给订单列表展示订单中的“某一件商品”名称字段给上值
        order.setOneGoodsName(list.get(0).getGoodsName());
+
+
+       //如果此订单使用优惠券，得到数据库查询到的订单金额减去优惠金额
+       if(StringUtils.isNotBlank(couponseId)){
+          Coupons coupons = couponsService.getById(couponseId);
+          money -= coupons.getSaveMoney();
+          QueryWrapper<UserCoupons> queryWrapper = new QueryWrapper<>();
+          queryWrapper.lambda().eq(UserCoupons::getCouponsId,couponseId).eq(UserCoupons::getUserId,user.getId());
+          UserCoupons userCoupons = userCouponsService.getOne(queryWrapper);
+          userCoupons.setStatus("1");
+          userCouponsService.updateById(userCoupons);
+            order.setUserCouponsId(userCoupons.getId());
+
+
+       }
+
+       //得到数据库订单金额减去加上配送费
+       if(StringUtils.isNotBlank(deliveryMoney)){
+           money += Double.parseDouble(deliveryMoney);
+       }
+
+       //比较db金额与app传过来的金额
+       if(money  != Double.parseDouble(appOrderMoney)){
+           return new RestResponseBean(ResultEnum.ORDER_MONEY_FAIL.getValue(),ResultEnum.ORDER_MONEY_FAIL.getDesc(),null);
+       }
+
+
        if(userAddressId!=null && userAddressId!=""){
            //根据addressId拿到收货地址的lat，lng
            Address address = addressService.getById(userAddressId);
@@ -545,7 +548,7 @@ public class RestOrderController {
            }
        }
 
-       order.setUserCouponsId(couponseId);
+
        order.setOrderSrc(orderSrc);
        order.setOrderRemark(orderRemark);
        order.setOrderType(orderType);
@@ -663,7 +666,12 @@ public class RestOrderController {
         RiderOrder riderOrder = new RiderOrder();
         /*查询骑手位置放入riderOrder*/
         //得到骑手位置对象，拿到经纬度
-        RiderAddress riderAddress = riderAddressService.getRiderAddress(order.getRiderId());
+        RiderAddress riderAddress = null;
+        if("0".equals(user.getUserType())){
+            riderAddress = riderAddressService.getRiderAddress(order.getRiderId());
+        }else{
+            riderAddress = riderAddressService.getRiderAddress(user.getId());
+        }
         Store store = storeService.getById(order.getStoreId());
         BeanUtils.copyProperties(order,riderOrder);
         if(riderAddress != null){
@@ -683,9 +691,9 @@ public class RestOrderController {
                 return  new RestResponseBean(ResultEnum.ORDER_ALREADY_DELETE.getValue(),ResultEnum.ORDER_ALREADY_DELETE.getDesc(),null);
             }
             String userCouponseId = order.getUserCouponsId();
-            if(userCouponseId != null && userCouponseId !=""){
+            if(StringUtils.isNotBlank(userCouponseId)){
                 UserCoupons userCoupons =  userCouponsService.getById(userCouponseId);
-                if(userCoupons!=null){
+                if(userCoupons != null){
                     String couponsId = userCoupons.getCouponsId();
                     Coupons coupons =couponsService.getById(couponsId);
                     riderOrder.setCouponsMoney(coupons.getSaveMoney());
@@ -729,7 +737,7 @@ public class RestOrderController {
             String userCouponseId = order.getUserCouponsId();
             if(userCouponseId != null && userCouponseId !=""){
                 UserCoupons userCoupons =  userCouponsService.getById(userCouponseId);
-                if(userCoupons!=null){
+                if(userCoupons != null){
                     String couponsId = userCoupons.getCouponsId();
                     Coupons coupons =couponsService.getById(couponsId);
                     riderOrder.setCouponsMoney(coupons.getSaveMoney());

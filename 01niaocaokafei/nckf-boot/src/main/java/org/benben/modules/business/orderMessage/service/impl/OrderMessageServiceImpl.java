@@ -44,6 +44,29 @@ public class OrderMessageServiceImpl extends ServiceImpl<OrderMessageMapper, Ord
 
     }
 
+
+
+    @Override
+    public Boolean riderAddOrderMsg(String orderId,String riderId) {
+        try {
+            Order order = orderService.getById(orderId);
+            StringBuffer stringBuffer = new StringBuffer();
+            stringBuffer.append("订单编号为:"+order.getOrderId());
+            stringBuffer.append(",共购买"+order.getGoodsCount()+"件商品，请到个人中心->我的订单查看详情");
+            OrderMessage orderMessage = new OrderMessage();
+            orderMessage.setTitle("订单消息").setMsgContent(stringBuffer.toString());
+            orderMessage.setUserId(riderId);
+            orderMessage.setOrderId(orderId);
+            orderMessage.setOrderType(order.getOrderType());
+            boolean save = save(orderMessage);
+            return save;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+    }
+
     @Override
     public List<OrderMessage> queryAnnouncementCount(String userId) {
         QueryWrapper<OrderMessage> userMessageQueryWrapper = new QueryWrapper<>();

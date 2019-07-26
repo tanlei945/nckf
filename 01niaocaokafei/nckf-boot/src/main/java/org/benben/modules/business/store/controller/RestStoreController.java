@@ -185,10 +185,13 @@ public class RestStoreController {
     public RestResponseBean queryAllStore(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                           @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
                                            String  keywords,
-                                           String city){
+                                          @RequestParam(required = true)String city){
         try {
             QueryWrapper<Store> queryWrapper = new QueryWrapper<>();
             //if(keywords == null || )
+
+
+
             queryWrapper.like("address_desc", keywords).eq("city",city);
             Page<Store> page = new Page<Store>(pageNo, pageSize);
             IPage<Store> pageList = storeService.page(page, queryWrapper);

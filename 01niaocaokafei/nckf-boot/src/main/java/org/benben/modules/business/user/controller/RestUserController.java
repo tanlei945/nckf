@@ -441,8 +441,8 @@ public class RestUserController {
 						null);
 		}
 
-		if (userService.changePassword(mobile, password, userType) == 0) {
-			return new RestResponseBean(ResultEnum.ERROR.getValue(), ResultEnum.ERROR.getDesc(), null);
+		if (userService.forgetPassword(mobile, password, userType) == 0) {
+			return new RestResponseBean(ResultEnum.USER_NOT_EXIST.getValue(), ResultEnum.USER_NOT_EXIST.getDesc(), null);
 		}
 
 		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(),
@@ -505,6 +505,11 @@ public class RestUserController {
 			case 2:
 				return new RestResponseBean(ResultEnum.SMS_CODE_ERROR.getValue(), ResultEnum.SMS_CODE_ERROR.getDesc(),
 						null);
+		}
+
+
+		if (userService.changePassword(userEntity.getMobile(), newPassword, user.getUserType()) == -1) {
+			return new RestResponseBean(ResultEnum.PASSWORD_EXIST.getValue(), ResultEnum.PASSWORD_EXIST.getDesc(), null);
 		}
 
 		if (userService.changePassword(userEntity.getMobile(), newPassword, user.getUserType()) == 0) {

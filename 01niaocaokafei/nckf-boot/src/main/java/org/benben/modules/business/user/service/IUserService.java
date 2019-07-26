@@ -60,6 +60,8 @@ public interface IUserService extends IService<User> {
 
 	public int changePassword(String mobile, String password,String userType);
 
+	public int forgetPassword(String mobile, String password,String userType);
+
     UserVo queryUserVo(User user);
 
     User userRegister(String mobile,String password);

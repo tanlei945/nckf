@@ -104,7 +104,7 @@ public class RestEvaluateController {
 
         //Result<IPage<Evaluate>> result = new Result<IPage<Evaluate>>();
         QueryWrapper<Evaluate> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("store_id", storeId).eq("evaluate_type","0");
+        queryWrapper.eq("store_id", storeId).eq("evaluate_type","0").lambda().orderByDesc(Evaluate::getCreateTime);
         Page<Evaluate> page = new Page<Evaluate>(pageNo, pageSize);
         IPage<Evaluate> pageList = evaluateService.page(page, queryWrapper);
         List<Evaluate> records = pageList.getRecords();
@@ -141,13 +141,13 @@ public class RestEvaluateController {
             @ApiImplicitParam(name = "content", value = "评论内容"),
             @ApiImplicitParam(name = "evaluateType", value = "评论类型 0:门店 1:骑手"),
             @ApiImplicitParam(name = "starCount", value = "星星数量"),
-            @ApiImplicitParam(name = "imgUrl", value = "图片url"),
+            @ApiImplicitParam(name = "imgUrl", value = "图片url",required = false),
     })
     public RestResponseBean add(@RequestParam(name = "orderId", required = true) String orderId,
                                 @RequestParam(name = "content") String content,
                                 @RequestParam(name ="evaluateType",required = true) String evaluateType,
                                 @RequestParam(name = "starCount") String starCount,
-                                @RequestParam(name = "imgUrl") String imgUrl) {
+                                String imgUrl) {
         User user = (User) LoginUser.getCurrentUser();
         if (user == null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(), ResultEnum.TOKEN_OVERDUE.getDesc(), null);
@@ -185,7 +185,9 @@ public class RestEvaluateController {
 
         evaluate.setStoreId(store.getId());
         evaluate.setStorename(store.getStoreName());
-        evaluate.setImgUrl(imgUrl);
+        if(StringUtils.isNotBlank(imgUrl)){
+            evaluate.setImgUrl(imgUrl);
+        }
         evaluate.setUserId(user.getId());
         evaluate.setRealname(user.getRealname());
         evaluate.setCreateBy(user.getRealname());
@@ -198,7 +200,7 @@ public class RestEvaluateController {
         }
         evaluate.setEvaluateType(evaluateType);
         evaluate.setContent(content);
-        Boolean flag = evaluateService.save(evaluate);
+        evaluateService.save(evaluate);
         order.setStatus("4");
         order.setUpdateTime(new Date());
         order.setUpdateBy(user.getUsername());

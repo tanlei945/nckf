@@ -199,6 +199,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         String salt = oConvertUtils.randomGen(8);
         user.setSalt(salt);
         String passwordEncode = PasswordUtil.encrypt(password, password, salt);
+
+        if (passwordEncode.equals(user.getPassword())){
+        	return -1;
+		}
+
         user.setPassword(passwordEncode);
 
 		int i = userMapper.updateById(user);
@@ -210,6 +215,44 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
 		return i;
     }
+
+
+
+	/**
+	 * 忘记密码
+	 * @param mobile
+	 * @param password
+	 * @return
+	 */
+	@Override
+	@Transactional
+	public int forgetPassword(String mobile, String password,String userType) {
+
+		QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+		queryWrapper.eq("mobile",mobile);
+		queryWrapper.eq("user_type",userType);
+
+		User user = userMapper.selectOne(queryWrapper);
+		if(user == null){
+			return 0;
+		}
+
+		String salt = oConvertUtils.randomGen(8);
+		user.setSalt(salt);
+		String passwordEncode = PasswordUtil.encrypt(password, password, salt);
+		user.setPassword(passwordEncode);
+
+		int i = userMapper.updateById(user);
+
+		if(i != 0){
+			//刷新用户信息到缓存中
+			redisUtil.set(CommonConstant.SIGN_PHONE_USER + user.getId(),user, JwtUtil.APP_EXPIRE_TIME / 1000);
+		}
+
+		return i;
+	}
+
+
 
 	/**
 	 * 用户详情

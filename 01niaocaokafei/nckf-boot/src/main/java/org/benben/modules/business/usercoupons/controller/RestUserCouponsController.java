@@ -13,6 +13,7 @@ import org.apache.shiro.SecurityUtils;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.menu.ResultEnum;
 import org.benben.common.system.query.QueryGenerator;
+import org.benben.common.util.PageUtil;
 import org.benben.modules.business.address.entity.Address;
 import org.benben.modules.business.coupons.entity.Coupons;
 import org.benben.modules.business.coupons.service.ICouponsService;
@@ -289,11 +290,13 @@ public class RestUserCouponsController {
 			return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
 		}
 
+
 		QueryWrapper<UserCoupons> queryWrapper = new QueryWrapper<>();
 		queryWrapper.lambda().eq(UserCoupons::getUserId,user.getId()).eq(UserCoupons::getStatus,"0");
 
-		Page<UserCoupons> page0 = new Page<UserCoupons>(pageNo, pageSize);
-		IPage<UserCoupons> pageList = userCouponsService.page(page0, queryWrapper);
+		Page<UserCoupons> page = new Page<UserCoupons>(pageNo, pageSize);
+		IPage<UserCoupons> pageList = userCouponsService.page(page, queryWrapper);
+
 
 		List<UserCoupons> list = userCouponsService.list( queryWrapper);
 
@@ -322,14 +325,19 @@ public class RestUserCouponsController {
 			}
 		}
 
+		//List<Coupons> list1 =  PageUtil.page(couponsList,pageNo,pageSize);
+
 		//拿到couponsId去查询优惠券
 
 
 		IPage<Coupons> pageList0 = new Page<>(pageNo,pageSize);
+		pageList0.setCurrent((long)pageNo);
 		pageList0.setRecords(couponsList);
 		pageList0.setTotal((long)couponsList.size());
-		pageList0.setCurrent(pageNo);
-		pageList0.setSize(pageSize);
+		int a = (couponsList.size() / pageSize) + 1;
+		pageList0.setPages(pageList.getSize());
+
+
 
 		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), pageList0);
 	}
