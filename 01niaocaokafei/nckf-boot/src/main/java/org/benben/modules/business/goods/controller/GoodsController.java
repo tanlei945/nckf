@@ -62,8 +62,9 @@ public class GoodsController {
 		Result<IPage<Goods>> result = new Result<IPage<Goods>>();
 			QueryWrapper<Goods> queryWrapper = QueryGenerator.initQueryWrapper(goods, req.getParameterMap());
 			String s = sysUserService.querySuperAdmin();
-			if(s!=null&&!"".equals(s)){
-				queryWrapper.eq("belong_id",s);
+		SysUser sysuser = (SysUser) SecurityUtils.getSubject().getPrincipal();
+			if(s==null||"".equals(s)){
+				queryWrapper.eq("belong_id",sysuser.getId());
 			}
 		Page<Goods> page = new Page<Goods>(pageNo, pageSize);
 		IPage<Goods> pageList = goodsService.page(page, queryWrapper);

@@ -54,20 +54,16 @@ public class RestUserMessageController {
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
-
-        IPage<UserMessage> page = userMessageService.queryPageList(pageNo,pageSize);
-
-        /*IPage<UserMessage> pageList = null;
-        IPage<Message> pageList1 =null;
+        IPage<Message> pageList1 = new Page<>(pageNo,pageSize);
         try {
-            Page<Message> page = new Page<Message>(pageNo, pageSize);
-             pageList1  = messageService.page(page);
-            pageList  = userMessageService.queryPageList(user.getId(),pageNo,pageSize);
+            Page<UserMessage> page = new Page<UserMessage>(pageNo, pageSize);
+            QueryWrapper<UserMessage> queryWrapper = new QueryWrapper<>();
+            queryWrapper.lambda().eq(UserMessage::getUserId,user.getId()).eq(UserMessage::getDelFlag,"1").eq(UserMessage::getReadFlag,"0");
+            IPage<UserMessage> pageList = userMessageService.page(page, queryWrapper);
             List<UserMessage> records = pageList.getRecords();
             LinkedList<Message> messages = new LinkedList<>();
             records.forEach(msg->{
                 Message message = messageService.getById(msg.getMessageId());
-                message.setReadFlag(msg.getReadFlag());
                 messages.add(message);
             });
             pageList1.setTotal(pageList.getTotal());
@@ -78,9 +74,7 @@ public class RestUserMessageController {
             e.printStackTrace();
             return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
         }
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), pageList1);*/
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), page);
-
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), pageList1);
     }
 
 

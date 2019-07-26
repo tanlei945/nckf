@@ -95,7 +95,6 @@ public class MessageController {
 			list.forEach(user ->
 					userMessageService.save(
 							new UserMessage().setUserId(user.getId())
-									.setReadFlag("1")
 									.setMessageId(message.getId())
 					)
 			);
