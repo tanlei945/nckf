@@ -11,7 +11,7 @@ public interface ISMSService {
 
     public String send(String mobile, String event);
 
-    public SendSmsResponse aliSend(String mobile, String event);
+    public SendSmsResponse aliSend(String mobile, String event, int code , String templeteCode);
 
     public int check(String mobile, String event, String captcha);
 

@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.benben.common.api.vo.RestResponseBean;
+import org.benben.common.constant.CommonConstant;
 import org.benben.common.menu.ResultEnum;
 import org.benben.common.menu.SMSResultEnum;
 import org.benben.common.util.DateUtils;
@@ -84,21 +85,67 @@ public class RestSmsController {
     }
 
     @PostMapping(value = "/aliSend")
-//    @ApiOperation(value = "使用阿里云发送验证码 ",tags = {"短信接口"},notes = "使用阿里云发送验证码 ")
+    @ApiOperation(value = "使用阿里云发送验证码 ",tags = {"短信接口"},notes = "使用阿里云发送验证码 ")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "mobile",value = "手机号",dataType = "String",required = true),
+            @ApiImplicitParam(name = "event",value = "login、register、forget、changePwd、binding、changePhone",dataType = "String",required = true)
+    })
     public RestResponseBean aliSend(@RequestParam String mobile,@RequestParam String event) {
+
+        String templeteCode = "";
 
         if (StringUtils.isBlank(mobile)|| StringUtils.isBlank(event)) {
             return new RestResponseBean(ResultEnum.PARAMETER_MISSING.getValue(), ResultEnum.PARAMETER_MISSING.getDesc(), null);
         }
 
+        User user = userService.queryByMobile(mobile);
+
+        if(StringUtils.equals(event,CommonConstant.SMS_EVENT_REGISTER) || StringUtils.equals(event, CommonConstant.SMS_EVENT_BINGDING)){ //注册、换绑
+
+            if(user != null ){
+                return new RestResponseBean(ResultEnum.MOBILE_EXIST_REGISTER.getValue(),ResultEnum.MOBILE_EXIST_REGISTER.getDesc(),null);
+            }
+
+        }else{ //忘记密码/重置支付密码/登录
+
+            if(user == null){
+                return new RestResponseBean(ResultEnum.MOBILE_NOT_EXIST.getValue(),ResultEnum.MOBILE_NOT_REGISTER.getDesc(),null);
+            }
+
+        }
+
+        // 根据事件判断采用什么短信模板,注册
+        if(StringUtils.equals(event,CommonConstant.SMS_EVENT_REGISTER)){
+            templeteCode = "SMS_171070943";
+        }
+
+        // 根据事件判断采用什么短信模块,登录
+        if(StringUtils.equals(event,CommonConstant.SMS_EVENT_LOGIN)){
+            templeteCode = "SMS_171070945";
+        }
+
+        // 根据事件判断采用什么短信模块,修改密码,忘记密码
+        if(StringUtils.equals(event,CommonConstant.SMS_EVENT_FORGET)||StringUtils.equals(event,CommonConstant.SMS_EVENT_CHANGE_PWD)){
+            templeteCode = "SMS_171070942";
+        }
+
+        // 根据事件判断采用什么短信模块,信息变更
+        if(StringUtils.equals(event,CommonConstant.SMS_EVENT_BINGDING)||StringUtils.equals(event,CommonConstant.SMS_EVENT_CHANGE_PWD)){
+            templeteCode = "SMS_171070941";
+        }
+
+        Integer code = (int) ((Math.random() * 9 + 1) * 100000);
+
         //发送短信
-        SendSmsResponse sendSmsResponse =  ismsService.aliSend(mobile,event);
+        SendSmsResponse sendSmsResponse =  ismsService.aliSend(mobile,event,code,templeteCode);
 
         log.error("短信返回请求时间"+ DateUtils.now() +"返回code"+sendSmsResponse.getCode());
         if(sendSmsResponse.getCode()!= null && sendSmsResponse.getCode().equals("OK")){
 
-            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), code);
         }
+
+        //TODO isv.BUSINESS_LIMIT_CONTROL 短信限流次数处理
 
         return new RestResponseBean(ResultEnum.SMS_SEND_FAIL.getValue(), ResultEnum.SMS_SEND_FAIL.getDesc(), null);
 
