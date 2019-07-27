@@ -5,7 +5,7 @@ import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 @Data
 public class MessageVo {
-
+    private java.lang.String id;
     /**标题*/
     private java.lang.String title;
     /**内容*/

@@ -14,11 +14,14 @@ import org.benben.modules.business.message.service.IMessageService;
 import org.benben.modules.business.user.entity.User;
 import org.benben.modules.business.userMessage.entity.UserMessage;
 import org.benben.modules.business.userMessage.service.IUserMessageService;
+import org.benben.modules.business.userMessage.vo.MessageVo;
 import org.benben.modules.shiro.LoginUser;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -54,27 +57,40 @@ public class RestUserMessageController {
         if(user==null) {
             return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
         }
-        IPage<Message> pageList1 = new Page<>(pageNo,pageSize);
+        List<MessageVo> messageVoList = new ArrayList<>();
+        //IPage<Message> pageList1 = new Page<>(pageNo,pageSize);
         try {
             Page<UserMessage> page = new Page<UserMessage>(pageNo, pageSize);
             QueryWrapper<UserMessage> queryWrapper = new QueryWrapper<>();
-            queryWrapper.lambda().eq(UserMessage::getUserId,user.getId()).eq(UserMessage::getDelFlag,"1").eq(UserMessage::getReadFlag,"0");
+            queryWrapper.lambda().eq(UserMessage::getUserId,user.getId()).eq(UserMessage::getDelFlag,"1");
             IPage<UserMessage> pageList = userMessageService.page(page, queryWrapper);
             List<UserMessage> records = pageList.getRecords();
-            LinkedList<Message> messages = new LinkedList<>();
-            records.forEach(msg->{
-                Message message = messageService.getById(msg.getMessageId());
-                messages.add(message);
-            });
-            pageList1.setTotal(pageList.getTotal());
-            pageList1.setRecords(messages);
+
+            for (UserMessage userMessage : records) {
+               Message message = messageService.getById(userMessage.getMessageId());
+               MessageVo messageVo = new MessageVo();
+
+               BeanUtils.copyProperties(message,messageVo);
+               messageVo.setReadFlag(userMessage.getReadFlag());
+               messageVoList.add(messageVo);
+            }
+
+            IPage<MessageVo> pageList1 = new Page<>(pageNo,pageSize);
+            pageList1.setRecords(messageVoList);
+            pageList1.setTotal((long)messageVoList.size());
             pageList1.setCurrent(pageList.getCurrent());
             pageList1.setPages(pageList.getPages());
+            pageList1.setSize((pageList.getSize()));
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), pageList1);
+           /* pageList1.setTotal(pageList.getTotal());
+            pageList1.setRecords(messages);
+            pageList1.setCurrent(pageList.getCurrent());
+            pageList1.setPages(pageList.getPages());*/
         } catch (Exception e) {
             e.printStackTrace();
             return new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(), ResultEnum.OPERATION_FAIL.getDesc(), null);
         }
-        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), pageList1);
+
     }
 
 
@@ -97,7 +113,10 @@ public class RestUserMessageController {
 
         UserMessage userMessage = null;
         try {
-            userMessage = userMessageService.getById(messageId);
+            QueryWrapper<UserMessage> queryWrapper =new QueryWrapper<>();
+            queryWrapper.eq("message_id",messageId).eq("user_id",user.getId());
+
+            userMessage = userMessageService.getOne(queryWrapper);
             userMessage.setReadFlag("1");
             userMessageService.updateById(userMessage);
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);

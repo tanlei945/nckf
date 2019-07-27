@@ -105,6 +105,7 @@ public class SMSServiceImpl implements ISMSService {
         return returncode;
     }
 
+
     /**
      * 短信发送公用模板
      * @param mobile
@@ -113,7 +114,7 @@ public class SMSServiceImpl implements ISMSService {
      * @throws Exception
      */
     @Override
-    public SendSmsResponse aliSend(String mobile, String event) {
+    public SendSmsResponse aliSend(String mobile, String event, int code , String templeteCode) {
 
         log.error("请求短信serve" + DateUtils.now());
 
@@ -123,16 +124,15 @@ public class SMSServiceImpl implements ISMSService {
 
         if (StringUtils.isNotBlank(event)) {   //发起短信验证
 
-            Integer code = (int) ((Math.random() * 9 + 1) * 100000);
 
             map.put("code", code);
 
 //            log.error("调用redis,Set值"+System.currentTimeMillis());
-            log.error("调用redis,Set值" + mobile + event + "code: " + code.toString() + "  时间" + System.currentTimeMillis());
+            log.error("调用redis,Set值" + mobile + event + "code: " + code + "  时间" + System.currentTimeMillis());
             redisUtil.set(mobile + "," + event, String.valueOf(code), 300);
 
 //            log.error("短信服务调起时间"+System.currentTimeMillis());
-            sendSmsResponse = AliMessageSend.sendSms(mobile, JSONObject.toJSONString(map), "SMS_139570048");
+            sendSmsResponse = AliMessageSend.sendSms(mobile, JSONObject.toJSONString(map), templeteCode);
 //            log.error("手机验证码"+sendSmsResponse);
 //            log.error("短信服务响应时间"+System.currentTimeMillis());
 //            log.error("*************结束*************");

@@ -67,7 +67,7 @@ public class ApiFilter implements Filter {
 		HttpSession session = httpServletRequest.getSession();
 		String currPath = httpServletRequest.getRequestURI();    //当前请求的URL
 		currPath = currPath.replace(projectName,""); //去掉项目名，以api开头
-		log.info(currPath);
+		//log.info(currPath);
 		//判断接口地址是否相同
 		if (filterlist.size() != 0 ) {
 			for (String s : filterlist) {
@@ -78,14 +78,13 @@ public class ApiFilter implements Filter {
 				//匹配/**
 				if(s.contains("/**")){
 					String path = s.replace("/**","");
-					log.info(path);
-					log.info(currPath);
+					//log.info(path);
+					//log.info(currPath);
 					if(currPath.contains(path)){
 						chain.doFilter(httpServletRequest, httpServletResponse);
 						return;
 					}
 				}
-
 			}
 		}
 		//假如token为空返回
@@ -104,6 +103,8 @@ public class ApiFilter implements Filter {
 		if(StringUtils.isNotBlank(id)){
 			//查询用户信息
 			userInfo = (User) redisUtil.get(CommonConstant.SIGN_PHONE_USER + id);
+			log.info(userInfo.toString());
+			log.info(id+"idididididididididid");
 			mobile = userInfo.getMobile();
 			userId = userInfo.getId();
 			password = userInfo.getPassword();
