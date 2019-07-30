@@ -20,6 +20,7 @@ import org.benben.modules.business.goods.entity.SpecDict;
 import org.benben.modules.business.goods.service.IGoodsService;
 import org.benben.modules.business.store.entity.Store;
 import org.benben.modules.business.store.service.IStoreService;
+import org.benben.modules.business.store.service.impl.StoreServiceImpl;
 import org.benben.modules.system.entity.SysUser;
 import org.benben.modules.system.service.ISysUserService;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
@@ -60,14 +61,18 @@ public class GoodsController {
 									  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 									  HttpServletRequest req) {
 		Result<IPage<Goods>> result = new Result<IPage<Goods>>();
-			QueryWrapper<Goods> queryWrapper = QueryGenerator.initQueryWrapper(goods, req.getParameterMap());
-			String s = sysUserService.querySuperAdmin();
+		QueryWrapper<Store> queryWrapper = new QueryWrapper<>();
+		String s = sysUserService.querySuperAdmin();
 		SysUser sysuser = (SysUser) SecurityUtils.getSubject().getPrincipal();
 			if(s==null||"".equals(s)){
 				queryWrapper.eq("belong_id",sysuser.getId());
 			}
+		Store one = storeService.getOne(queryWrapper);
+
 		Page<Goods> page = new Page<Goods>(pageNo, pageSize);
-		IPage<Goods> pageList = goodsService.page(page, queryWrapper);
+		QueryWrapper<Goods> queryWrappergood = QueryGenerator.initQueryWrapper(goods, req.getParameterMap());
+		queryWrappergood.eq("belong_id",one.getId());
+		IPage<Goods> pageList = goodsService.page(page, queryWrappergood);
 		result.setSuccess(true);
 		result.setResult(pageList);
 		return result;
@@ -95,6 +100,7 @@ public class GoodsController {
 		SysUser sysuser = (SysUser) SecurityUtils.getSubject().getPrincipal();
 		Goods goods = JSON.parseObject(jsonObject.toJSONString(), Goods.class);
 		QueryWrapper<Store> storeQueryWrapper = new QueryWrapper<Store>();
+		storeQueryWrapper.eq("belong_id",sysuser.getId());
 		Store one = storeService.getOne(storeQueryWrapper);
 		goods.setBelongId(one.getId());
 		goodsService.save(goods);
@@ -265,8 +271,10 @@ public class GoodsController {
 		Result result = new Result<>();
 		Goods byId = goodsService.getById(goodId);
 		String categoryType = byId.getCategoryType();
-		String[] split = categoryType.split(",");
-		result.setResult(split);
+		if(categoryType!=null&&!"".equals(categoryType)){
+			String[] split = categoryType.split(",");
+			result.setResult(split);
+		}
 		return result;
 	}
 }

@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.benben.common.api.vo.Result;
 import org.benben.common.system.query.QueryGenerator;
 import org.benben.common.util.oConvertUtils;
+import org.benben.modules.business.coupons.entity.Coupons;
 import org.benben.modules.business.evaluate.entity.Evaluate;
 import org.benben.modules.business.evaluate.service.IEvaluateService;
 import org.benben.modules.business.store.entity.Store;
@@ -73,61 +74,19 @@ public class EvaluateController {
 			QueryWrapper<Evaluate> queryWrapper = QueryGenerator.initQueryWrapper(evaluate, req.getParameterMap());
             Page<Evaluate> page = new Page<Evaluate>(pageNo, pageSize);
             IPage<Evaluate> pageList = evaluateService.page(page, queryWrapper);
-
-            /*List<Evaluate> records = pageList.getRecords();
-            for (Evaluate record : records) {
-                String userId = record.getUserId();
-                User user = userService.getById(userId);
-                if(user != null){
-                    evaluateService.updateById(record);
-                    record.setUsername(user.getUsername());
-                }
-                String belongId = record.getBelongId();
-                Store store = storeService.getById(belongId);
-                if(store != null){
-                    record.setStorename(store.getStoreName());
-                    evaluateService.updateById(record);
-                }
-            }
-
-            pageList.setRecords(records);
-*/
-
             result.setSuccess(true);
             result.setResult(pageList);
             return result;
         }else{
-            Result<IPage<Evaluate>> result = new Result<IPage<Evaluate>>();
-            evaluate.setStoreId(storeId);
 			QueryWrapper<Evaluate> queryWrapper = QueryGenerator.initQueryWrapper(evaluate, req.getParameterMap());
-            queryWrapper.eq("belong_id",storeId);
-            Page<Evaluate> page = new Page<Evaluate>(pageNo, pageSize);
-            IPage<Evaluate> pageList = evaluateService.page(page, queryWrapper);
-
-            /*List<Evaluate> records = pageList.getRecords();
-            for (Evaluate record : records) {
-                String userId = record.getUserId();
-                User user = userService.getById(userId);
-                if(user != null){
-                    evaluateService.updateById(record);
-                    record.setUsername(user.getUsername());
-                }
-                String belongId = record.getBelongId();
-                Store store = storeService.getById(belongId);
-                if(store != null){
-                    record.setStorename(store.getStoreName());
-                    evaluateService.updateById(record);
-                }
-            }
-
-            pageList.setRecords(records);*/
-
-
+			queryWrapper.lambda().eq(Evaluate::getStoreId,storeId);
+			Page<Evaluate> page = new Page<Evaluate>(pageNo, pageSize);
+			IPage<Evaluate> pageList = evaluateService.page(page, queryWrapper);
+			Result<IPage<Evaluate>> result = new Result<IPage<Evaluate>>();
             result.setSuccess(true);
             result.setResult(pageList);
             return result;
         }
-
     }
 	
 	/**
