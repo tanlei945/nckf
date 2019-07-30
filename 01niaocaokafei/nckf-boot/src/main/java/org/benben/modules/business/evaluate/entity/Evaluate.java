@@ -39,7 +39,6 @@ public class Evaluate implements Serializable {
 	private java.lang.String avatar;
 	/**商家id*/
 	@Excel(name = "门店id", width = 15)
-	@ApiModelProperty(required = true)
 	private java.lang.String storeId;
 	/**商家id*/
 	@Excel(name = "门店名称", width = 15)
@@ -76,7 +75,7 @@ public class Evaluate implements Serializable {
 	private java.util.Date updateTime;
 	/**星级*/
 	@Excel(name = "星星数量", width = 15)
-	private int starCount;
+	private java.lang.Integer starCount;
 
 	/**骑手id*/
 	@Excel(name = "骑手id", width = 15)

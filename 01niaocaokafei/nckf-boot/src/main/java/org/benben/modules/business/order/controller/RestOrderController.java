@@ -529,6 +529,7 @@ public class RestOrderController {
            if(address!=null){
                order.setUserLat(address.getLat());
                order.setUserLng(address.getLng());
+               order.setUserAddress(address.getDetailedAddress());
            }
 
        }
