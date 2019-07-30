@@ -9,7 +9,9 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.benben.common.api.vo.RestResponseBean;
+import org.benben.common.api.vo.Result;
 import org.benben.common.menu.ResultEnum;
+import org.benben.common.system.query.QueryGenerator;
 import org.benben.modules.business.commen.service.ICommonService;
 import org.benben.modules.business.order.entity.Order;
 import org.benben.modules.business.order.service.IOrderService;
@@ -18,6 +20,7 @@ import org.benben.modules.business.store.service.IStoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 
@@ -34,7 +37,20 @@ public class RestStoreController {
    private IOrderService orderService;
 
 
-
+    @GetMapping(value = "/list")
+    @ApiOperation(value="list", tags = {"门店管理接口"})
+    public Result<IPage<Store>> queryPageList(
+                                              @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+                                              @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
+                                              HttpServletRequest req) {
+        Result<IPage<Store>> result = new Result<IPage<Store>>();
+        QueryWrapper<Store> queryWrapper = new QueryWrapper<>();
+        Page<Store> page = new Page<Store>(pageNo, pageSize);
+        IPage<Store> pageList = storeService.page(page, queryWrapper);
+        result.setSuccess(true);
+        result.setResult(pageList);
+        return result;
+    }
 
 
     /**
