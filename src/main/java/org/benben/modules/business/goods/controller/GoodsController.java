@@ -103,6 +103,17 @@ public class GoodsController {
 		storeQueryWrapper.eq("belong_id",sysuser.getId());
 		Store one = storeService.getOne(storeQueryWrapper);
 		goods.setBelongId(one.getId());
+
+		List<String> selectedCategory = (List<String>)jsonObject.get("selectedCategorys");
+		String categoryType = "";
+		for (int i=0;i<selectedCategory.size();i++) {
+			if(i!=selectedCategory.size()-1){
+				categoryType+=selectedCategory.get(i)+",";
+			}else{
+				categoryType+=selectedCategory.get(i);
+			}
+		}
+		goods.setCategoryType(categoryType);
 		goodsService.save(goods);
 
 		Object selectedRole = jsonObject.get("selectedroles");
