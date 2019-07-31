@@ -91,6 +91,8 @@ public class CouponsController {
 		SysUser sysuser = (SysUser) SecurityUtils.getSubject().getPrincipal();
 		if(s==null||"".equals(s)){
 			queryWrapper.eq("belong_id",sysuser.getId());
+		}else{
+			coupons.setCommonFlag("1");
 		}
 		Store store = storeService.getOne(queryWrapper);
 		coupons.setStoreId(store.getId());
