@@ -8,6 +8,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.shiro.SecurityUtils;
 import org.benben.common.api.vo.Result;
 import org.benben.common.system.query.QueryGenerator;
 import org.benben.common.util.oConvertUtils;
@@ -19,6 +21,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
+import org.benben.modules.business.store.entity.Store;
+import org.benben.modules.business.store.service.IStoreService;
+import org.benben.modules.system.entity.SysUser;
+import org.benben.modules.system.service.ISysUserService;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -45,7 +51,10 @@ import com.alibaba.fastjson.JSON;
 public class CouponsController {
 	@Autowired
 	private ICouponsService couponsService;
-	
+	 @Autowired
+	 private ISysUserService sysUserService;
+	 @Autowired
+	 private IStoreService storeService;
 	/**
 	  * 分页列表查询
 	 * @param coupons
@@ -77,8 +86,16 @@ public class CouponsController {
 	public Result<Coupons> add(@RequestBody Coupons coupons) {
 		Result<Coupons> result = new Result<Coupons>();
 		try {
-			couponsService.save(coupons);
-			result.success("添加成功！");
+		QueryWrapper<Store> queryWrapper = new QueryWrapper<>();
+		String s = sysUserService.querySuperAdmin();
+		SysUser sysuser = (SysUser) SecurityUtils.getSubject().getPrincipal();
+		if(s==null||"".equals(s)){
+			queryWrapper.eq("belong_id",sysuser.getId());
+		}
+		Store store = storeService.getOne(queryWrapper);
+		coupons.setStoreId(store.getId());
+		couponsService.save(coupons);
+		result.success("添加成功！");
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.info(e.getMessage());
