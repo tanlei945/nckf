@@ -1,9 +1,11 @@
 package org.benben.modules.business.userstore.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
 import org.jeecgframework.poi.excel.annotation.Excel;
 import org.springframework.format.annotation.DateTimeFormat;
 
+@Data
 public class UserStoreVo {
 
     /**身份证号*/

@@ -41,10 +41,10 @@ public class Config implements Serializable {
 	private java.lang.String configType;
 	/**值*/
 	@Excel(name = "值", width = 15)
-	private java.lang.Object configValue;
+	private java.lang.String configValue;
 	/**变量字典数据*/
 	@Excel(name = "变量字典数据", width = 15)
-	private java.lang.Object content;
+	private java.lang.String content;
 	/**验证规则*/
 	@Excel(name = "验证规则", width = 15)
 	private java.lang.String rule;

@@ -1,5 +1,6 @@
 package org.benben.modules.business.order.controller;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +64,15 @@ public class OrderDetailController {
 		QueryWrapper<OrderDetail> queryWrapper = QueryGenerator.initQueryWrapper(orderDetail, req.getParameterMap());
 		Page<OrderDetail> page = new Page<OrderDetail>(pageNo, pageSize);
 		IPage<OrderDetail> pageList = orderDetailService.page(page, queryWrapper);
+
+		List<OrderDetail> records = pageList.getRecords();
+		for (OrderDetail record : records) {
+			String goodsSpecValues = record.getGoodsSpecValues();
+			if(goodsSpecValues.startsWith(File.separator)){
+				goodsSpecValues.replace(File.separator," ");
+			}
+		}
+		pageList.setRecords(records);
 		result.setSuccess(true);
 		result.setResult(pageList);
 		return result;

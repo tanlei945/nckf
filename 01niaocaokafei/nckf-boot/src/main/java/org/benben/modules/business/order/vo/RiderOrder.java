@@ -158,5 +158,7 @@ public class RiderOrder {
     private String accountFlag;
     private String thirdPay;
 
+    private String receiveName;
+
     private List<OrderGoods> orderGoodsList;
 }

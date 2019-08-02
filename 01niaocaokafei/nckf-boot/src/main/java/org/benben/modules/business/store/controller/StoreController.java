@@ -9,6 +9,7 @@ import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.benben.common.api.vo.RestResponseBean;
 import org.benben.common.api.vo.Result;
 import org.benben.common.menu.ResultEnum;
@@ -45,12 +46,15 @@ public class StoreController {
 	
 
 	@GetMapping(value = "/list")
-	public Result<IPage<Store>> queryPageList(Store store,
+	public Result<IPage<Store>> queryPageList(String storeName,
 									  @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-									  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
-									  HttpServletRequest req) {
+									  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize) {
 		Result<IPage<Store>> result = new Result<IPage<Store>>();
-		QueryWrapper<Store> queryWrapper = QueryGenerator.initQueryWrapper(store, req.getParameterMap());
+		//QueryWrapper<Store> queryWrapper = QueryGenerator.initQueryWrapper(store, req.getParameterMap());
+		QueryWrapper<Store> queryWrapper = new QueryWrapper<>();
+		if(StringUtils.isNotBlank(storeName)){
+			queryWrapper.like("store_name",storeName);
+		}
 		Page<Store> page = new Page<Store>(pageNo, pageSize);
 		IPage<Store> pageList = storeService.page(page, queryWrapper);
 		result.setSuccess(true);

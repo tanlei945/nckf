@@ -528,11 +528,18 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 			return new ArrayList<RiderOrder>();
 		}
 		//遍历订单，得到用户下单地址的经纬度和门店的经纬度
+
+
+
 		for (Order order : list) {
 			RiderOrder riderOrder = new RiderOrder();
 			BeanUtils.copyProperties(order,riderOrder);
 			double lat = order.getUserLat();
 			double lng = order.getUserLng();
+
+			User user1 = userService.getById(order.getUserId());
+
+			riderOrder.setUsername(user1.getRealname());
 
 			Store store = storeService.getById(order.getStoreId());
 
@@ -548,13 +555,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 			}
 			riderOrder.setStorename(store.getStoreName());
 			riderOrder.setStoreAddress(store.getAddressDesc());
+			riderOrder.setUsername(order.getReceiveName());
 			String userId = order.getUserId();
 			User reciveUser = userService.getById(userId);
 			riderOrder.setUserAddress(order.getUserAddress());
 			riderOrder.setUserPhone(reciveUser.getMobile());
 			riderOrderList.add(riderOrder);
 		}
-
 		return riderOrderList;
 	}
 }

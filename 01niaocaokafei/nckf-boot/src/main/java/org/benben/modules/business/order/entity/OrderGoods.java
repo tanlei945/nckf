@@ -20,7 +20,7 @@ import java.util.Date;
 @TableName("bb_order_goods")
 public class OrderGoods implements Serializable {
     private static final long serialVersionUID = 1L;
-    
+
 	/**主键id*/
 	@TableId(type = IdType.UUID)
 	private String id;
@@ -32,11 +32,11 @@ public class OrderGoods implements Serializable {
 	private String goodsId;
 
 	/**商品id*/
-	@Excel(name = "商品id", width = 15)
+	@Excel(name = "商品名称", width = 15)
 	private String goodsName;
 
 	/**orderId*/
-	@Excel(name = "订单id", width = 15)
+	@Excel(name = "订单编号", width = 15)
 	private String orderId;
 	/**门店id*/
 	@Excel(name = "门店id", width = 15)

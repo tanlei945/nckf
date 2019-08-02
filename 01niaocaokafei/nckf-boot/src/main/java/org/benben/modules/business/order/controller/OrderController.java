@@ -29,6 +29,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -199,6 +200,15 @@ public class OrderController {
 	public Result<List<OrderGoods>> queryOrderGoodsListByMainId(@RequestParam(name="id",required=true) String id) {
 		Result<List<OrderGoods>> result = new Result<List<OrderGoods>>();
 		List<OrderGoods> orderGoodsList = orderGoodsService.selectByMainId(id);
+
+
+		for (OrderGoods record : orderGoodsList) {
+			String goodsSpecValues = record.getGoodsSpecValues();
+			if(goodsSpecValues.startsWith(File.separator)){
+				goodsSpecValues.replace(File.separator," ");
+			}
+		}
+
 		result.setResult(orderGoodsList);
 		result.setSuccess(true);
 		return result;

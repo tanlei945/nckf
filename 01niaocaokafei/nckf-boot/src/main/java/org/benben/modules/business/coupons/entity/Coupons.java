@@ -43,7 +43,6 @@ public class Coupons implements Serializable {
 	private java.lang.String delFlag;
 	/**是否新用户 0--否  1--是*/
 	@Excel(name = "门店id", width = 15)
-	//@Dict(dicCode = "new_user_flag")
 	private java.lang.String storeId;
 	/**是否所有商检通用：0-否 1-是*/
 	@Excel(name = "是否所有商家通用：0-否 1-是", width = 15,dicCode = "common_flag")
@@ -57,7 +56,7 @@ public class Coupons implements Serializable {
 	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	private java.util.Date useEndTime;
 	/**开始时间*/
-	@Excel(name = "过期时间", width = 20, format = "yyyy-MM-dd HH:mm:ss")
+	@Excel(name = "开始使用时间", width = 20, format = "yyyy-MM-dd HH:mm:ss")
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
 	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	private java.util.Date useStartTime;
