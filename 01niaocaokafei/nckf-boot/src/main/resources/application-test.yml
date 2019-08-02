@@ -25,6 +25,11 @@ spring:
 #            enable: true
 #            required: true
   ## quartz定时任务,采用数据库方式
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 200MB
   quartz:
      job-store-type: jdbc
   #json 时间戳统一转换
