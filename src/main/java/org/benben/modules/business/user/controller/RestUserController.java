@@ -852,7 +852,7 @@ public class RestUserController {
 
 		if (user == null) {
 			return new RestResponseBean(ResultEnum.USER_NOT_EXIST.getValue(), ResultEnum.USER_NOT_EXIST.getDesc(),
-					null);
+					"请先注册为用户再登录");
 		}
 
 		return new RestResponseBean(ResultEnum.LOGIN_SUCCESS.getValue(), ResultEnum.LOGIN_SUCCESS.getDesc(),

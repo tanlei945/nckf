@@ -46,7 +46,6 @@ public class RestUserCouponsController {
 	 * @description 个人优惠券查询
 	 * @method GET
 	 * @url /nckf-boot/api/v1/userCoupons/list
-	 * @param status 必填 String 优惠券状态(-1已过期 0 未使用 1已使用)
 	 * @return {"code": 1,"data": {"current": 1,"pages": 0,"records": [],"searchCount": true,"size": 10,"total": 0},"msg": "操作成功","time": "1561014704334"}
 	 * @return_param code String 响应状态
 	 * @return_param data List 优惠券信息
@@ -137,14 +136,13 @@ public class RestUserCouponsController {
 				QueryWrapper<UserCoupons> queryWrapper0 = new QueryWrapper<>();
 				//未使用
 				queryWrapper0.lambda().eq(UserCoupons::getUserId, user.getId()).eq(UserCoupons::getStatus, "0");
-				Page<UserCoupons> page0 = new Page<UserCoupons>(pageNo, pageSize);
+				Page<UserCoupons> page0 = new Page<>(pageNo, pageSize);
 				IPage<UserCoupons> pageList00 = userCouponsService.page(page0, queryWrapper0);
 				List<UserCoupons> list0 = pageList00.getRecords();
 
 				//剔除未使用也未过期的优惠券
 				if (list0 == null || list0.size() == 0) {
-					return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), null);
-
+					return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), pageList00);
 				}
 
 				List<UserCoupons> removeList = new ArrayList<>();
@@ -325,24 +323,21 @@ public class RestUserCouponsController {
 			}
 		}
 
-		//List<Coupons> list1 =  PageUtil.page(couponsList,pageNo,pageSize);
+		List<Coupons> list1 =  PageUtil.startPage(couponsList,pageNo,pageSize);
+		IPage<Coupons> pageList0 = new Page<>(pageNo,pageSize);
+		if(list1 == null){
+			return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), pageList0);
+		}
 
 		//拿到couponsId去查询优惠券
 
-
-		IPage<Coupons> pageList0 = new Page<>(pageNo,pageSize);
 		pageList0.setCurrent((long)pageNo);
 		pageList0.setRecords(couponsList);
 		pageList0.setTotal((long)couponsList.size());
-		int a = (couponsList.size() / pageSize) + 1;
-		pageList0.setPages(pageList.getSize());
-
-
+		pageList0.setPages(couponsList.size());
 
 		return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), pageList0);
 	}
-
-
 
 	@GetMapping(value = "/queryCouponsWdl")
 	@ApiOperation(value = "首页展示可领取优惠券-->未登录", notes = "首页展示可领取优惠券-->未登录",tags = {"优惠券"})

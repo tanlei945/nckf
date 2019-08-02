@@ -8,6 +8,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import io.swagger.annotations.Api;
 import org.benben.common.api.vo.Result;
 import org.benben.common.system.query.QueryGenerator;
 import org.benben.common.util.oConvertUtils;
@@ -241,4 +243,37 @@ public class ConfigController {
       return Result.ok("文件导入失败！");
   }
 
+
+
+	 /**
+	  * @return
+	  */
+	 @GetMapping(value = "/queryVersion")
+	 public Result<IPage<Config>> checkVersion( @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+												@RequestParam(name="pageSize", defaultValue="10") Integer pageSize) {
+		 Result<IPage<Config>> result = new Result<IPage<Config>>();
+		 Page<Config> page = new Page<Config>(pageNo, pageSize);
+		 QueryWrapper<Config> queryWrapper = new QueryWrapper<>();
+		 queryWrapper.eq("config_name","version");
+		 IPage<Config> pageList = configService.page(page,queryWrapper);
+		 result.setSuccess(true);
+		 result.setResult(pageList);
+		 return result;
+	 }
+
+
+	 /**
+	  * @return
+	  */
+	 @GetMapping(value = "/editVersion")
+	 public Result<Config> editVersion() {
+		 Result<Config> result = new Result<Config>();
+
+		 QueryWrapper<Config> queryWrapper = new QueryWrapper<>();
+		 queryWrapper.eq("config_name","version");
+		 Config config = configService.getOne(queryWrapper);
+		 result.setSuccess(true);
+		 result.setResult(config);
+		 return result;
+	 }
 }

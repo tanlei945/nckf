@@ -5,18 +5,23 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.benben.common.api.vo.Result;
 import org.benben.common.system.query.QueryGenerator;
+import org.benben.common.util.PageUtil;
 import org.benben.common.util.oConvertUtils;
+import org.benben.modules.business.store.service.IStoreService;
 import org.benben.modules.business.user.entity.User;
 import org.benben.modules.business.user.service.IUserService;
 import org.benben.modules.business.userstore.entity.UserStore;
 import org.benben.modules.business.userstore.service.IUserStoreService;
+import org.benben.modules.business.userstore.vo.UserStoreVo;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
 import org.jeecgframework.poi.excel.entity.ImportParams;
 import org.jeecgframework.poi.excel.view.JeecgEntityExcelView;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -45,27 +51,48 @@ import java.util.Map;
 public class UserStoreController {
 	@Autowired
 	private IUserStoreService userStoreService;
+	@Autowired
+	private IStoreService storeService;
 	
 	/**
 	  * 分页列表查询
-	 * @param userStore
+	 * @param idCard
 	 * @param pageNo
 	 * @param pageSize
-	 * @param req
 	 * @return
 	 */
 	@GetMapping(value = "/list")
-	public Result<IPage<UserStore>> queryPageList(UserStore userStore,
-									  @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-									  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
-									  HttpServletRequest req) {
-		Result<IPage<UserStore>> result = new Result<IPage<UserStore>>();
-		QueryWrapper<UserStore> queryWrapper = QueryGenerator.initQueryWrapper(userStore, req.getParameterMap());
+	public Result<IPage<UserStoreVo>> queryPageList(@RequestParam String idCard,
+													@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+													@RequestParam(name="pageSize", defaultValue="10") Integer pageSize) {
+		Result<IPage<UserStoreVo>> result = new Result<IPage<UserStoreVo>>();
+		//QueryWrapper<UserStore> queryWrapper = QueryGenerator.initQueryWrapper(userStore, req.getParameterMap());
+		QueryWrapper<UserStore> queryWrapper = new QueryWrapper<>();
+		if(StringUtils.isNotBlank(idCard)){
+			queryWrapper.like("id_card",idCard);
+		}
 		queryWrapper.orderByAsc("complete_flag");
 		Page<UserStore> page = new Page<UserStore>(pageNo, pageSize);
 		IPage<UserStore> pageList = userStoreService.page(page, queryWrapper);
+		List<UserStore> records = pageList.getRecords();
+		List<UserStoreVo> userStoreVoList = new ArrayList<>();
+		for (UserStore record : records) {
+			UserStoreVo userStoreVo = new UserStoreVo();
+			BeanUtils.copyProperties(record,userStoreVo);
+			userStoreVo.setMobile(userService.getById(record.getUserId()).getMobile());
+			userStoreVo.setStoreName(storeService.getById(record.getStoreId()).getStoreName());
+			userStoreVoList.add(userStoreVo);
+		}
+		List list = PageUtil.startPage(userStoreVoList,pageNo,pageSize);
+
+		IPage<UserStoreVo> iPage = new Page<>();
+		iPage.setRecords(list);
+		iPage.setSize(list.size());
+		//iPage.setCurrent();
+
+
 		result.setSuccess(true);
-		result.setResult(pageList);
+		result.setResult(iPage);
 		return result;
 	}
 	

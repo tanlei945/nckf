@@ -27,9 +27,14 @@ public class Announcement implements Serializable {
 	/**标题*/
 	@Excel(name = "标题", width = 15)
 	private java.lang.String title;
+
+	/**预览图片*/
+	@Excel(name = "预览图片", width = 15)
+	private java.lang.String yulanImg;
+
 	/**内容*/
 	@Excel(name = "内容", width = 15)
-	private java.lang.Object msgContent;
+	private java.lang.String msgContent;
 	/**开始时间*/
 	@Excel(name = "开始时间", width = 20, format = "yyyy-MM-dd HH:mm:ss")
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")

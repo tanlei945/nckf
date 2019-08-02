@@ -15,6 +15,7 @@ import org.benben.common.system.query.QueryGenerator;
 import org.benben.modules.business.announcement.entity.Announcement;
 import org.benben.modules.business.announcement.service.IAnnouncementService;
 import org.benben.modules.business.announcement.vo.AnnouncementVo;
+import org.benben.modules.business.commen.service.ICommonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import sun.security.x509.IPAddressName;
@@ -32,6 +33,8 @@ public class RestAnnouncementController {
 
 	@Autowired
 	private IAnnouncementService announcementService;
+	@Autowired
+	private ICommonService commonService;
 
 
 	/**
@@ -146,6 +149,8 @@ public class RestAnnouncementController {
 			AnnouncementVo announcementVo = new AnnouncementVo();
 			announcementVo.setAnnouncementId(announcement.getId());
 			announcementVo.setTitle(announcement.getTitle());
+			announcementVo.setSendTime(announcement.getCreateTime());
+			announcementVo.setImgUrl(commonService.getLocalUrl(announcement.getYulanImg()));
 			listVo.add(announcementVo);
 		}
 		IPage<AnnouncementVo> page = new Page<>(pageNo,pageSize);

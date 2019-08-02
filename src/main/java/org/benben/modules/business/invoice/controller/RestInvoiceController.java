@@ -91,7 +91,7 @@ public class RestInvoiceController {
            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
        }
        QueryWrapper<Invoice> queryWrapper = new QueryWrapper<>();
-       queryWrapper.eq("user_id",user.getId());
+       queryWrapper.lambda().eq(Invoice::getUserId,user.getId()).orderByDesc(Invoice::getCreateTime);
        Page<Invoice> page = new Page<Invoice>(pageNo, pageSize);
        IPage<Invoice> pageList = invoiceService.page(page, queryWrapper);
        if(pageList != null){

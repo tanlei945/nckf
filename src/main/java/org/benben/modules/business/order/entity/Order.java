@@ -31,6 +31,11 @@ public class Order implements Serializable {
 	/**用户id*/
 	@Excel(name = "用户id", width = 15)
 	private String userId;
+
+	/**收货人姓名*/
+	@Excel(name = "收货人姓名", width = 15)
+	private String receiveName;
+
 	/**username*/
 	@Excel(name = "用户名称", width = 15)
 	private String username;

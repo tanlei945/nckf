@@ -508,6 +508,7 @@ public class RestOrderController {
           userCoupons.setStatus("1");
           userCouponsService.updateById(userCoupons);
             order.setUserCouponsId(userCoupons.getId());
+            order.setOrderMoney(money);
 
 
        }
@@ -530,6 +531,7 @@ public class RestOrderController {
                order.setUserLat(address.getLat());
                order.setUserLng(address.getLng());
                order.setUserAddress(address.getDetailedAddress());
+               order.setReceiveName(address.getReciverName());
            }
 
        }
@@ -687,7 +689,7 @@ public class RestOrderController {
             riderOrder.setRiderAndUserDis(Double.parseDouble(disRU));
         }
         //如果是普通用户查看详情
-        if(user.getUserType().equals("0")){
+        if("0".equals(user.getUserType())){
             if("0".equals(order.getUserDelFlag())){
                 return  new RestResponseBean(ResultEnum.ORDER_ALREADY_DELETE.getValue(),ResultEnum.ORDER_ALREADY_DELETE.getDesc(),null);
             }
@@ -723,6 +725,7 @@ public class RestOrderController {
             riderOrder.setStoreLng(store.getLng());
             riderOrder.setStorename(store.getStoreName());
             riderOrder.setStoreAddress(store.getAddressDesc());
+            riderOrder.setUsername(order.getReceiveName());
             String userId = order.getUserId();
             User reciveUser = userService.getById(userId);
             riderOrder.setUserAddress(order.getUserAddress());
@@ -747,13 +750,18 @@ public class RestOrderController {
             List<OrderGoods> orderGoodsList = orderGoodsService.selectByMainId(id);
             riderOrder.setOrderGoodsList(orderGoodsList);
             String type = order.getOrderType();
+
             riderOrder.setStoreLat(store.getLat());
             riderOrder.setStoreLng(store.getLng());
             riderOrder.setStorename(store.getStoreName());
             riderOrder.setStoreAddress(store.getAddressDesc());
             String userId = order.getUserId();
             User reciveUser = userService.getById(userId);
-            riderOrder.setUserAddress(order.getUserAddress());
+            if("0".equals(type)){
+                riderOrder.setUserAddress(order.getUserAddress());
+                riderOrder.setUsername(order.getReceiveName());
+            }
+
             riderOrder.setUserPhone(reciveUser.getMobile());
             riderOrder.setStoreImage(store.getImgUrl());
             return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),riderOrder);
@@ -788,7 +796,7 @@ public class RestOrderController {
                 QueryWrapper<RiderAddress> riderAddressqw= new QueryWrapper<>();
                 riderAddressqw.eq("rider_id", order.getRiderId());
                 RiderAddress riderAddress = riderAddressService.getOne(riderAddressqw);
-                if(riderAddress!=null){
+                if(riderAddress!=null && store != null){
                     String disRU = DistanceUtil.algorithm(store.getLat(),store.getLng(),riderAddress.getLat(),riderAddress.getLng());
                     one.setRideranduserdis(disRU);
                 }
