@@ -1,5 +1,6 @@
 package org.benben.modules.business.config.controller;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import io.swagger.annotations.Api;
+import org.apache.commons.lang.StringUtils;
 import org.benben.common.api.vo.Result;
 import org.benben.common.system.query.QueryGenerator;
 import org.benben.common.util.oConvertUtils;
@@ -65,6 +67,20 @@ public class ConfigController {
 		QueryWrapper<Config> queryWrapper = QueryGenerator.initQueryWrapper(config, req.getParameterMap());
 		Page<Config> page = new Page<Config>(pageNo, pageSize);
 		IPage<Config> pageList = configService.page(page, queryWrapper);
+		//剔除版本控制
+		List<Config> records = pageList.getRecords();
+		log.info(records.toString());
+		//标记要移除的list
+		List<Config> removeList = new ArrayList<>();
+		for (Config record : records) {
+			if(StringUtils.equals("version",record.getConfigName())){
+				removeList.add(record);
+			}
+		}
+		//删除
+		records.removeAll(removeList);
+		pageList.setRecords(records);
+
 		result.setSuccess(true);
 		result.setResult(pageList);
 		return result;

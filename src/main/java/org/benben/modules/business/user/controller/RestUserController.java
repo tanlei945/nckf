@@ -1123,6 +1123,8 @@ public class RestUserController {
 
 		User user = userService.getById(userThird.getUserId());
 
+
+
 		return new RestResponseBean(ResultEnum.LOGIN_SUCCESS.getValue(), ResultEnum.LOGIN_SUCCESS.getDesc(),
 				tokenBuild(user));
 

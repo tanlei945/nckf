@@ -242,7 +242,6 @@ public class RestSmsController {
      * @url /nckf-boot/api/v1/sms/testSend
      * @param mobile 必填 String 登录手机号
      * @param event 必填 String 短信事件
-     * @param captcha 选填 String 验证码
      * @return {"code": 1,"data": 842811,"msg": "验证码发送成功","time": "1561015290370"}
      * @return_param code String 响应状态
      * @return_param data String 验证码信息
@@ -302,7 +301,9 @@ public class RestSmsController {
                 return new RestResponseBean(ResultEnum.MOBILE_EXIST_REGISTER.getValue(),ResultEnum.MOBILE_EXIST_REGISTER.getDesc(),null);
             }
 
-        }else{ //忘记密码/重置支付密码/登录
+        }else if(StringUtils.equals(event,CommonConstant.SMS_EVENT_THIRD)) {    //三方登录
+
+        }else{//忘记密码/重置支付密码/登录
 
             if(user == null){
                 return new RestResponseBean(ResultEnum.MOBILE_NOT_REGISTER.getValue(),ResultEnum.MOBILE_NOT_REGISTER.getDesc(),null);
@@ -326,9 +327,9 @@ public class RestSmsController {
         }
 
         // 根据事件判断采用什么短信模块,信息变更
-        /*if(StringUtils.equals(event,CommonConstant.SMS_EVENT_BINGDING)||StringUtils.equals(event,CommonConstant.SMS_EVENT_CHANGE_PWD)){
+        if(StringUtils.equals(event,CommonConstant.SMS_EVENT_BINGDING)||StringUtils.equals(event,CommonConstant.SMS_EVENT_THIRD)){
             templeteCode = "SMS_171070941";
-        }*/
+        }
 
         Integer code = (int) ((Math.random() * 9 + 1) * 100000);
 
@@ -344,7 +345,6 @@ public class RestSmsController {
         //TODO isv.BUSINESS_LIMIT_CONTROL 短信限流次数处理
 
         return new RestResponseBean(ResultEnum.SMS_SEND_FAIL.getValue(), ResultEnum.SMS_SEND_FAIL.getDesc(), null);
-
     }
 
 
