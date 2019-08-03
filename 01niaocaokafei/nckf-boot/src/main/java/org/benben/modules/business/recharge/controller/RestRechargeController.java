@@ -60,7 +60,7 @@ public class RestRechargeController {
 		}
 
         QueryWrapper<Recharge> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(Recharge::getUserId,user.getId());
+        queryWrapper.lambda().eq(Recharge::getUserId,user.getId()).orderByDesc(Recharge::getCreateTime);
         Page<Recharge> page = new Page<Recharge>(pageNo, pageSize);
         IPage<Recharge> pageList = rechargeService.page(page, queryWrapper);
 
