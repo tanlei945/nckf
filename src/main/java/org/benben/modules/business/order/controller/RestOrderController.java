@@ -35,6 +35,7 @@ import org.benben.modules.business.order.service.IOrderNoPayService;
 import org.benben.modules.business.order.service.IOrderService;
 import org.benben.modules.business.order.vo.OrderDistanceVo;
 import org.benben.modules.business.order.vo.OrderNoPay;
+import org.benben.modules.business.order.vo.OrderPayDesc;
 import org.benben.modules.business.order.vo.RiderOrder;
 import org.benben.modules.business.orderMessage.entity.OrderMessage;
 import org.benben.modules.business.orderMessage.service.IOrderMessageService;
@@ -623,10 +624,75 @@ public class RestOrderController {
    }
 
 
+    @ApiOperation(value = "用户生成订单发起支付", tags = {"订单购物车接口"}, notes = "用户生成订单发起支付")
+    @PostMapping(value = "/orderPayDescByOrderId")
+    public RestResponseBean orderPayDescByOrderId(@RequestParam(name="orderId",required=true) String orderId) {
+        User user = (User) LoginUser.getCurrentUser();
+        if(user==null) {
+            return new RestResponseBean(ResultEnum.TOKEN_OVERDUE.getValue(),ResultEnum.TOKEN_OVERDUE.getDesc(),null);
+        }
+        Order order = orderService.getById(orderId);
+        if(order != null){
+            OrderPayDesc orderPayDesc = new OrderPayDesc();
+            //判断用户的付款方式,如果不选择钱包支付
+            if(StringUtils.equals("0",order.getAccountFlag()) && StringUtils.equals("1",order.getThirdPay())){
+                //如果只选择支付宝支付
+                orderPayDesc.setPayType("2");
+                orderPayDesc.setAliMoney(order.getOrderMoney());
+                orderPayDesc.setAliMsg(xxPayService.getAliPayOrderStr(order.getOrderId(),order.getOrderMoney(),order.getStorename()+"的订单","商品信息"));
+                orderPayDesc.setOrderMoney(order.getOrderMoney());
+            }else if (StringUtils.equals("0",order.getAccountFlag()) && StringUtils.equals("2",order.getThirdPay())){
+                //如果只选择微信支付
+                orderPayDesc.setPayType("3");
+                orderPayDesc.setWechatMoney(order.getOrderMoney());
+                orderPayDesc.setWechatMsg(xxPayService.getWxParOederStr(order.getOrderId(),order.getOrderMoney(),order.getStorename()+"的订单","商品信息"));
+                orderPayDesc.setOrderMoney(order.getOrderMoney());
+            }else if(StringUtils.equals("1",order.getAccountFlag()) && StringUtils.equals("1",order.getThirdPay())){
+                //如果选择钱包加支付宝+钱包支付
+                Account account = accountService.getByUid(user.getId());
+                //钱包余额大于等于支付金额
+                if(account.getMoney() >= order.getOrderMoney()){
+                    orderPayDesc.setPayType("1");
+                    orderPayDesc.setAccountMoney(account.getMoney());
+                    orderPayDesc.setOrderMoney(order.getOrderMoney());
+                }else{
+                    //钱包余额小于支付金额
+                    orderPayDesc.setPayType("4");
+                    orderPayDesc.setAliMoney(order.getOrderMoney()-account.getMoney());
+                    orderPayDesc.setAliMsg(xxPayService.getAliPayOrderStr(order.getOrderId(),order.getOrderMoney(),order.getStorename()+"的订单","商品信息"));
+                    orderPayDesc.setOrderMoney(order.getOrderMoney());
+                }
+
+            }else{
+                //如果选择钱包加微信+钱包支付
+                Account account = accountService.getByUid(user.getId());
+                //钱包余额大于等于支付金额
+                if(account.getMoney() >= order.getOrderMoney()){
+                    orderPayDesc.setPayType("1");
+                    orderPayDesc.setAccountMoney(account.getMoney());
+                    orderPayDesc.setOrderMoney(order.getOrderMoney());
+                }else{
+                    //钱包余额小于支付金额
+                    orderPayDesc.setPayType("5");
+                    orderPayDesc.setWechatMoney(order.getOrderMoney()-account.getMoney());
+                    orderPayDesc.setWechatMsg(xxPayService.getWxParOederStr(order.getOrderId(),order.getOrderMoney(),order.getStorename()+"的订单","商品信息"));
+                    orderPayDesc.setOrderMoney(order.getOrderMoney());
+                }
+            }
+
+            return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(),ResultEnum.OPERATION_SUCCESS.getDesc(),null);
+        }
+        return  new RestResponseBean(ResultEnum.QUERY_NOT_EXIST.getValue(),ResultEnum.QUERY_NOT_EXIST.getDesc(),null);
+    }
 
 
 
-   /**
+
+
+
+
+
+    /**
      *  编辑
     * @param
     * @return
@@ -1004,10 +1070,6 @@ public class RestOrderController {
             return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
         }
         return  new RestResponseBean(ResultEnum.OPERATION_FAIL.getValue(),ResultEnum.OPERATION_FAIL.getDesc(),null);
-
-
-
-
     }
 
 
