@@ -9,6 +9,7 @@ import org.benben.common.api.vo.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +22,8 @@ import java.util.Map;
 
 
 @Slf4j
-@RestController("/benben_pay")
+@RestController
+@RequestMapping(value = "benben_pay")
 public class AliPayController {
     @Autowired
     private XXPayServiceImpl alipayServiceImpl;
@@ -60,7 +62,7 @@ public class AliPayController {
 
     @RequestMapping("/getAlipayOrder")
     @ApiOperation("订单结算")
-    @ApiImplicitParams({@ApiImplicitParam(name="orderId",value="商品订单id",dataType = "String",required = true),
+    @ApiImplicitParams({@ApiImplicitParam(name="orderId",value="商品de订单id",dataType = "String",required = true),
             @ApiImplicitParam(name="orderMoney",value="订单金额",dataType = "Double",required = true),
             @ApiImplicitParam(name="orderName",value="订单名称",dataType = "String",required = false),
             @ApiImplicitParam(name="body",value="订单描述",dataType = "String",required = false)
