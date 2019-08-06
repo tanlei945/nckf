@@ -56,11 +56,11 @@ public class RestConfigController {
     * @param versionNumber
     * @return
     */
-   @GetMapping(value = "/checkVersion")
-   @ApiOperation(value = "检测版本", tags = {"版本升级接口"}, notes = "检测版本")
-   public RestResponseBean checkVersion(@RequestParam Integer versionNumber) {
+   @GetMapping(value = "/checkVersionYhd")
+   @ApiOperation(value = "用户端检测版本", tags = {"版本升级接口"}, notes = "用户端检测版本")
+   public RestResponseBean checkVersionYhd(@RequestParam Integer versionNumber) {
        QueryWrapper<Config> queryWrapper = new QueryWrapper<>();
-       queryWrapper.eq("config_name","version");
+       queryWrapper.eq("config_name","yhd_version");
        Config config = configService.getOne(queryWrapper);
 
        String versionNumberDb = config.getConfigType();
@@ -84,6 +84,43 @@ public class RestConfigController {
 
        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), versionVo);
    }
+
+
+
+    /**
+     * 分页列表查询
+     * @param versionNumber
+     * @return
+     */
+    @GetMapping(value = "/checkVersionQsd")
+    @ApiOperation(value = "骑手端检测版本", tags = {"版本升级接口"}, notes = "骑手端检测版本")
+    public RestResponseBean checkVersionQsd(@RequestParam Integer versionNumber) {
+        QueryWrapper<Config> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("config_name","qsd_version");
+        Config config = configService.getOne(queryWrapper);
+
+        String versionNumberDb = config.getConfigType();
+        int i = Integer.parseInt(versionNumberDb);
+        VersionVo versionVo = new VersionVo();
+        //如果最新版本号比当前版本号高
+        if(i>versionNumber){
+
+            versionVo.setAppver(config.getContent());
+            versionVo.setIsNew("1");
+            versionVo.setVersionUrl(config.getConfigValue());
+            versionVo.setUpdateTip(config.getDescription());
+            versionVo.setVersionNumber(i);
+        }else{
+            versionVo.setAppver(config.getContent());
+            versionVo.setIsNew("0");
+            versionVo.setVersionUrl(config.getConfigValue());
+            versionVo.setUpdateTip(config.getDescription());
+            versionVo.setVersionNumber(i);
+        }
+
+        return new RestResponseBean(ResultEnum.OPERATION_SUCCESS.getValue(), ResultEnum.OPERATION_SUCCESS.getDesc(), versionVo);
+    }
+
 
 
 
