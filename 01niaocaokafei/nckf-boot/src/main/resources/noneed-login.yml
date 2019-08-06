@@ -37,4 +37,5 @@ filterlist:
   - /api/v1/orderMessage/queryMessageById
   - /api/v1/systemConfig/**
   - /api/v1/rechargeConfig/**
-  - /api/v1/config/checkVersion
+  - /api/v1/config/checkVersionQsd
+  - /api/v1/config/checkVersionYhd
