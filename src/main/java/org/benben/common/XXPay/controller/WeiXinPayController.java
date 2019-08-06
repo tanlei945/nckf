@@ -11,6 +11,7 @@ import com.github.binarywang.wxpay.config.WxPayConfig;
 import com.github.binarywang.wxpay.service.WxPayService;
 import org.apache.commons.io.IOUtils;
 import org.benben.common.XXPay.PayCommonUtil;
+import org.benben.common.XXPay.service.XXPayService;
 import org.benben.common.api.vo.Result;
 import org.benben.modules.business.order.entity.Order;
 import org.jdom.JDOMException;
@@ -30,7 +31,7 @@ import java.util.SortedMap;
 import java.util.UUID;
 
 @Controller
-@RequestMapping(value = "/api")
+@RequestMapping(value = "/wxpay")
 public class WeiXinPayController {
     private static String wxnotify = "/api/json/money/wxpay/succ";
 
@@ -114,17 +115,12 @@ public class WeiXinPayController {
     }
 
     @Autowired
-    WxPayService wxPayService;
+    XXPayService XxPayService;
     @GetMapping("/wxnotify")
     public String payNotify(HttpServletRequest request, HttpServletResponse response) {
         try {
             String xmlResult = IOUtils.toString(request.getInputStream(), request.getCharacterEncoding());
-            WxPayOrderNotifyResult result = wxPayService.parseOrderNotifyResult(xmlResult);
-            // 结果正确
-            String orderId = result.getOutTradeNo();
-            String tradeNo = result.getTransactionId();
-            String s = BaseWxPayResult.feeToYuan(result.getTotalFee());
-            //自己处理订单的业务逻辑，需要判断订单是否已经支付过，否则可能会重复调用
+            XxPayService.WxNotify(request,response);
             return WxPayNotifyResponse.success("处理成功!");
         } catch (Exception e) {
             //log.error("微信回调结果异常,异常原因{}", e.getMessage());

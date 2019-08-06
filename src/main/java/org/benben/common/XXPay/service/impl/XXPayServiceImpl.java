@@ -16,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.benben.common.XXPay.entity.ConversionParams;
 import org.benben.common.XXPay.service.XXPayService;
-import org.benben.config.AlipayConfig;
 import org.benben.modules.business.order.entity.Order;
 import org.benben.modules.business.order.service.impl.OrderServiceImpl;
 import org.benben.modules.business.recharge.service.IRechargeService;
@@ -145,6 +144,7 @@ public class XXPayServiceImpl implements XXPayService{
         try {
             WxPayUnifiedOrderRequest orderRequest = new WxPayUnifiedOrderRequest();
             orderRequest.setBody(body);
+            orderRequest.setNotifyUrl(wxPayService.getConfig().getNotifyUrl());
             orderRequest.setOutTradeNo(orderId);
             orderRequest.setAttach(orderName);
             orderRequest.setTradeType("APP");
